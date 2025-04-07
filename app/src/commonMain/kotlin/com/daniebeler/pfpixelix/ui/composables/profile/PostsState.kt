@@ -7,5 +7,6 @@ data class PostsState(
     val refreshing: Boolean = false,
     val endReached: Boolean = false,
     val posts: List<Post> = emptyList(),
+    val nextCursor: String = "",
     val error: String = ""
 )

@@ -24,7 +24,7 @@ class TrendingAccountElementViewModel @Inject constructor(
                 postsState = when (result) {
                     is Resource.Success -> {
                         TrendingAccountPostsState(
-                            posts = result.data ?: emptyList(), error = "", isLoading = false
+                            posts = result.data.posts ?: emptyList(), error = "", isLoading = false
                         )
                     }
 

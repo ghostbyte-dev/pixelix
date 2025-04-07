@@ -129,9 +129,9 @@ interface PixelfedApi {
     @GET("api/pixelfed/v1/accounts/{accountid}/statuses?pe=1")
     suspend fun getPostsByAccountId(
         @Path("accountid") accountId: String,
-        @Query("max_id") maxId: String? = null,
+        @Query("cursor") cursor: String? = null,
         @Query("limit") limit: Int
-    ): List<Post>
+    ): Call<List<Post>>
 
     @GET("api/v1/accounts/relationships")
     suspend fun getRelationships(

@@ -236,8 +236,8 @@ class OtherProfileViewModel(
         postService.getPostsOfAccount(userId).onEach { result ->
             postsState = when (result) {
                 is Resource.Success -> {
-                    val endReached = (result.data?.size ?: 0) < PixelfedApi.PROFILE_POSTS_LIMIT
-                    PostsState(posts = result.data ?: emptyList(), endReached = endReached)
+                    val endReached = (result.data.posts.size) < PixelfedApi.PROFILE_POSTS_LIMIT
+                    PostsState(posts = result.data.posts, endReached = endReached, nextCursor = result.data.cursor)
                 }
 
                 is Resource.Error -> {
@@ -253,13 +253,14 @@ class OtherProfileViewModel(
 
     fun getPostsPaginated(userId: String) {
         if (postsState.posts.isNotEmpty() && !postsState.isLoading && !postsState.endReached) {
-            postService.getPostsOfAccount(userId, postsState.posts.last().id).onEach { result ->
+            postService.getPostsOfAccount(userId, postsState.nextCursor).onEach { result ->
                 postsState = when (result) {
                     is Resource.Success -> {
-                        val endReached = (result.data?.size ?: 0) < PixelfedApi.PROFILE_POSTS_LIMIT
+                        val endReached = (result.data.posts.size ?: 0) < PixelfedApi.PROFILE_POSTS_LIMIT
                         PostsState(
-                            posts = postsState.posts + (result.data ?: emptyList()),
-                            endReached = endReached
+                            posts = postsState.posts + (result.data.posts ?: emptyList()),
+                            endReached = endReached,
+                            nextCursor = result.data.cursor
                         )
                     }
 

@@ -104,8 +104,12 @@ class OwnProfileViewModel @Inject constructor(
         postService.getOwnPosts().onEach { result ->
             postsState = when (result) {
                 is Resource.Success -> {
-                    val endReached = (result.data?.size ?: 0) < PixelfedApi.PROFILE_POSTS_LIMIT
-                    PostsState(posts = result.data ?: emptyList(), endReached = endReached)
+                    val endReached = (result.data.posts.size ?: 0) < PixelfedApi.PROFILE_POSTS_LIMIT
+                    PostsState(
+                        posts = result.data.posts ?: emptyList(),
+                        endReached = endReached,
+                        nextCursor = result.data.cursor
+                    )
                 }
 
                 is Resource.Error -> {
@@ -121,13 +125,15 @@ class OwnProfileViewModel @Inject constructor(
 
     fun getPostsPaginated() {
         if (postsState.posts.isNotEmpty() && !postsState.isLoading && !postsState.endReached) {
-            postService.getOwnPosts(postsState.posts.last().id).onEach { result ->
+            postService.getOwnPosts(postsState.nextCursor).onEach { result ->
                 postsState = when (result) {
                     is Resource.Success -> {
-                        val endReached = (result.data?.size ?: 0) < PixelfedApi.PROFILE_POSTS_LIMIT
+                        val endReached =
+                            (result.data.posts.size ?: 0) < PixelfedApi.PROFILE_POSTS_LIMIT
                         PostsState(
-                            posts = postsState.posts + (result.data ?: emptyList()),
-                            endReached = endReached
+                            posts = postsState.posts + (result.data.posts ?: emptyList()),
+                            endReached = endReached,
+                            nextCursor = result.data.cursor
                         )
                     }
 

@@ -1,9 +1,11 @@
 package com.daniebeler.pfpixelix.domain.service.post
 
+import co.touchlab.kermit.Logger
 import com.daniebeler.pfpixelix.domain.model.LikedPostsWithNext
 import com.daniebeler.pfpixelix.domain.model.NewReply
 import com.daniebeler.pfpixelix.domain.model.NewReport
 import com.daniebeler.pfpixelix.domain.model.Post
+import com.daniebeler.pfpixelix.domain.model.PostsWithCursor
 import com.daniebeler.pfpixelix.domain.repository.PixelfedApi
 import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
 import com.daniebeler.pfpixelix.domain.service.session.AuthService
@@ -36,7 +38,7 @@ class PostService(
 
     fun getOwnPosts(
         maxPostId: String? = null, limit: Int = PixelfedApi.PROFILE_POSTS_LIMIT
-    ): Flow<Resource<List<Post>>> {
+    ): Flow<Resource<PostsWithCursor>> {
         val current = authService.getCurrentSession()
         return if (current == null) {
             flowOf(Resource.Error("No account found"))
@@ -46,13 +48,31 @@ class PostService(
     }
 
     fun getPostsOfAccount(
-        accountId: String, maxPostId: String? = null, limit: Int = PixelfedApi.PROFILE_POSTS_LIMIT
-    ) = getPostsByAccountId(accountId, maxPostId, limit).filterSensitive()
+        accountId: String, cursor: String? = null, limit: Int = PixelfedApi.PROFILE_POSTS_LIMIT
+    ): Flow<Resource<PostsWithCursor>> = getPostsByAccountId(accountId, cursor, limit).filterSensitivePostsWithCursor()
 
     private fun getPostsByAccountId(
-        accountId: String, maxPostId: String?, limit: Int
-    ) = loadListResources {
-        api.getPostsByAccountId(accountId, maxPostId, limit)
+        accountId: String, cursor: String?, limit: Int
+    ): Flow<Resource<PostsWithCursor>> = flow {
+        emit(Resource.Loading())
+        try {
+            val (response, data) = api.getPostsByAccountId(accountId, cursor, limit).executeWithResponse()
+
+            val linkHeader = response.headers["link"] ?: ""
+            var onlyLink = linkHeader.substringAfter(", <", "").substringBefore(">", "")
+            if (onlyLink == "") {
+                onlyLink = linkHeader.substringAfter("<", "").substringBefore(">", "")
+            }
+            val nextCursor = onlyLink.substringAfter("cursor=", "")
+            Logger.d("cursor") {
+                nextCursor
+            }
+            val result = PostsWithCursor(data, nextCursor)
+
+            emit(Resource.Success(result))
+        }catch (e: Exception) {
+                emit(Resource.Error(e.message ?: "Unknown error"))
+            }
     }
 
     fun getLikedPosts(maxId: String? = null) = flow {
@@ -123,6 +143,16 @@ class PostService(
             val hideSensitiveContent = prefs.hideSensitiveContent
             val filtered = event.data.filter { !(hideSensitiveContent && it.sensitive) }
             Resource.Success(filtered)
+        } else {
+            event
+        }
+    }
+
+    private fun Flow<Resource<PostsWithCursor>>.filterSensitivePostsWithCursor(): Flow<Resource<PostsWithCursor>> = this.map { event ->
+        if (event is Resource.Success<PostsWithCursor>) {
+            val hideSensitiveContent = prefs.hideSensitiveContent
+            val filtered = event.data.posts.filter { !(hideSensitiveContent && it.sensitive) }
+            Resource.Success(PostsWithCursor(filtered, event.data.cursor))
         } else {
             event
         }

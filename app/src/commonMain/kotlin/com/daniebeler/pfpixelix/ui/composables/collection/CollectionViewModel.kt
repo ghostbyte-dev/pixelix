@@ -138,7 +138,7 @@ class CollectionViewModel @Inject constructor(
         postService.getOwnPosts().onEach { result ->
             when (result) {
                 is Resource.Success -> {
-                    val posts = result.data!!.filter { !editState.editPosts.contains(it) }
+                    val posts = result.data.posts.filter { !editState.editPosts.contains(it) }
                     editState = editState.copy(allPostsExceptCollection = posts)
                 }
 

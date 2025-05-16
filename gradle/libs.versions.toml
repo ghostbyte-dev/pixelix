@@ -1,7 +1,7 @@
 [versions]
-kotlin = "2.1.20"
-ksp = "2.1.20-2.0.1"
-agp = "8.9.2"
+kotlin = "2.1.21"
+ksp = "2.1.21-2.0.1"
+agp = "8.10.0"
 
 #https://github.com/JetBrains/compose-multiplatform/releases
 composeMultiplatform = "1.8.0"
@@ -10,7 +10,7 @@ navigationMultiplatform = "2.9.0-beta01"
 
 #JetBrains
 kotlinx-coroutines = "1.10.2"
-kotlinxCollectionsImmutable = "0.3.8"
+kotlinxCollectionsImmutable = "0.4.0"
 kotlinxSerializationJson = "1.8.1"
 ktor = "3.1.3"
 kotlinx-datetime = "0.6.2"
@@ -18,15 +18,15 @@ kotlinx-datetime = "0.6.2"
 #multiplatform
 ksoup = "0.2.3"
 kermit = "2.0.5"
-ktorfit = "2.5.1"
+ktorfit = "2.5.2"
 kotlinInject = "0.8.0"
 androidx-annotation = "1.9.1"
-coil = "3.1.0"
-datastorePreferences = "1.1.5"
+coil = "3.2.0"
+datastorePreferences = "1.1.6"
 multiplatformSettings = "1.3.0"
-filekitCompose = "0.10.0-beta03"
-krop = "0.2.0-beta01"
-composemediaplayer = "0.7.2"
+filekitCompose = "0.10.0-beta04"
+krop = "0.2.0"
+composemediaplayer = "0.7.4"
 
 #android
 accompanistSystemuicontroller = "0.36.0"

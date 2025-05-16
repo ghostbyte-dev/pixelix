@@ -731,7 +731,7 @@ fun PostImage(
                 showMediaDialog = mediaAttachment
             })
         }) {
-            if (mediaAttachment.type == "image") {
+            if (mediaAttachment.type != "video") {
                 ImageWrapper(
                     mediaAttachment,
                     { zoomState.setContentSize(it.painter.intrinsicSize) },
@@ -848,7 +848,7 @@ fun MediaDialog(
             contentAlignment = Alignment.Center
         ) {
             Box(modifier = Modifier.zIndex(2f).zoomable(zoomState).clickable { }) {
-                if (mediaAttachment.type == "image") {
+                if (mediaAttachment.type != "video") {
                     ImageWrapper(
                         mediaAttachment,
                         { zoomState.setContentSize(it.painter.intrinsicSize) },

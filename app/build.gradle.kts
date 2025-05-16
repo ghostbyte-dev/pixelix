@@ -179,6 +179,9 @@ android {
             isDebuggable = false
             isProfileable = false
             isShrinkResources = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
+            )
         }
     }
     packaging.resources {

@@ -5,18 +5,11 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.view.View
-import android.view.ViewGroup
-import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.ExperimentalComposeUiApi
-import androidx.compose.ui.platform.LocalView
-import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import androidx.compose.ui.window.DialogWindowProvider
+import androidx.core.content.FileProvider
 import io.github.vinceglb.filekit.FileKit
 import io.github.vinceglb.filekit.dialogs.init
 import java.io.File
@@ -34,22 +27,22 @@ class AppActivity : ComponentActivity() {
             App(MyApplication.appComponent) { finish() }
         }
         if (savedInstanceState == null) {
-            handleNewIntent(intent)
+            handleNewIntent(intent, this)
         }
     }
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        handleNewIntent(intent)
+        handleNewIntent(intent, this)
     }
 
-    private fun handleNewIntent(intent: Intent) {
+    private fun handleNewIntent(intent: Intent, appActivity: AppActivity) {
         when (intent.action) {
             Intent.ACTION_VIEW -> {
                 intent.dataString?.let { onExternalUrl(it) }
             }
             Intent.ACTION_SEND, Intent.ACTION_SEND_MULTIPLE -> {
-                val imageUris = handleSharePhotoIntent(intent, contentResolver, cacheDir)
+                val imageUris = handleSharePhotoIntent(intent, contentResolver, cacheDir, appActivity)
                 if (imageUris.isNotEmpty()) {
                     imageUris.forEach { uri ->
                         try {
@@ -88,7 +81,7 @@ actual fun EdgeToEdgeDialogProperties(
     decorFitsSystemWindows = false
 )
 
-private fun saveUriToCache(uri: Uri, contentResolver: ContentResolver, cacheDir: File): Uri? {
+private fun saveUriToCache(uri: Uri, contentResolver: ContentResolver, cacheDir: File, appActivity: AppActivity): Uri? {
     try {
         val inputStream: InputStream? = contentResolver.openInputStream(uri)
         inputStream?.use { input ->
@@ -96,7 +89,11 @@ private fun saveUriToCache(uri: Uri, contentResolver: ContentResolver, cacheDir:
             FileOutputStream(file).use { output ->
                 input.copyTo(output)
             }
-            return Uri.fromFile(file) // Return the new cached URI
+            return FileProvider.getUriForFile(
+                appActivity,
+                "${appActivity.packageName}.provider",
+                file
+            )
         }
     } catch (e: Exception) {
         e.printStackTrace()
@@ -105,7 +102,7 @@ private fun saveUriToCache(uri: Uri, contentResolver: ContentResolver, cacheDir:
 }
 
 private fun handleSharePhotoIntent(
-    intent: Intent, contentResolver: ContentResolver, cacheDir: File
+    intent: Intent, contentResolver: ContentResolver, cacheDir: File, appActivity: AppActivity
 ): List<Uri> {
     val action = intent.action
     val type = intent.type
@@ -125,7 +122,7 @@ private fun handleSharePhotoIntent(
                     ) as? Uri
                 }
                 singleUri?.let { uri ->
-                    val cachedUri = saveUriToCache(uri, contentResolver, cacheDir)
+                    val cachedUri = saveUriToCache(uri, contentResolver, cacheDir, appActivity)
                     imageUris =
                         cachedUri?.let { listOf(it) } ?: emptyList() // Wrap single image in a list
                 }
@@ -144,7 +141,7 @@ private fun handleSharePhotoIntent(
             }
             imageUris = receivedUris?.mapNotNull {
                 saveUriToCache(
-                    it, contentResolver, cacheDir
+                    it, contentResolver, cacheDir, appActivity
                 )
             } ?: emptyList()
         }

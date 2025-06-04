@@ -171,10 +171,10 @@ fun CustomNotification(
                         navController.navigate(
                             Destination.Post(
                                 id = if (doesMediaAttachmentExsist) {
-                                    notification.account.id
+                                    notification.post!!.id
                                 } else {
                                     viewModel.ancestor!!.id
-                                }, openReplies = true
+                                }, openReplies = !doesMediaAttachmentExsist
                             )
                         )
                     })

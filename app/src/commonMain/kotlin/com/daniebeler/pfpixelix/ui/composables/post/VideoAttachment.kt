@@ -19,10 +19,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,9 +28,9 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import com.daniebeler.pfpixelix.di.LocalAppComponent
 import com.daniebeler.pfpixelix.domain.model.MediaAttachment
-import com.daniebeler.pfpixelix.utils.VideoPlayer
+import io.github.kdroidfilter.composemediaplayer.VideoPlayerSurface
+import io.github.kdroidfilter.composemediaplayer.rememberVideoPlayerState
 
 @Composable
 fun VideoAttachment(
@@ -40,24 +38,26 @@ fun VideoAttachment(
     viewModel: PostViewModel,
     onReady: () -> Unit
 ) {
-    val coroutineScope = rememberCoroutineScope()
-    val context = LocalAppComponent.current.context
-    val player = remember { VideoPlayer(context, coroutineScope) }
-    var progress by remember { mutableFloatStateOf(0f) }
-    var hasAudio by remember { mutableStateOf(false) }
-    var isPlaying by remember { mutableStateOf(false) }
+    val player = rememberVideoPlayerState().apply {
+        loop = true
+        userDragging = false
+    }
+    LaunchedEffect(attachment) {
+        player.openUri(attachment.url.orEmpty())
+    }
 
     var videoFrameIsVisible by remember { mutableStateOf(false) }
 
     Column {
         Box(Modifier.clickable {
-            if (isPlaying) {
+            if (player.isPlaying) {
                 player.pause()
             } else {
                 player.play()
             }
         }) {
-            player.view(
+            VideoPlayerSurface(
+                playerState = player,
                 modifier = Modifier
                     .fillMaxWidth()
                     .run {
@@ -66,6 +66,7 @@ fun VideoAttachment(
                     }
                     .isVisible(threshold = 50) { videoFrameIsVisible = it }
             )
+            val hasAudio = (player.metadata.audioChannels ?: 0) > 0
             if (hasAudio) {
                 IconButton(
                     modifier = Modifier
@@ -93,38 +94,22 @@ fun VideoAttachment(
             }
         }
         LinearProgressIndicator(
-            progress = { progress },
+            progress = { player.sliderPos / 1000 },
             modifier = Modifier.fillMaxWidth(),
             trackColor = MaterialTheme.colorScheme.background
         )
     }
 
-    LaunchedEffect(attachment) {
-        player.prepare(attachment.url.orEmpty())
-    }
-    val started = progress > 0
-    LaunchedEffect(started) { onReady() }
+    val started = player.sliderPos > 0
+    LaunchedEffect(started) { if (started) onReady() }
 
     LaunchedEffect(viewModel.volume) {
-        player.audio(viewModel.volume)
+        player.volume = if (viewModel.volume) 1f else 0f
     }
 
-    DisposableEffect(Unit) {
-        player.progress = { current, duration ->
-            progress = current.toFloat() / duration.toFloat()
-        }
-        player.hasAudio = { hasAudio = it }
-        player.isVideoPlaying = { isPlaying = it }
-
-        onDispose {
-            player.progress = null
-            player.hasAudio = null
-            player.release()
-        }
-    }
-
-    LaunchedEffect(videoFrameIsVisible) {
-        if (videoFrameIsVisible && viewModel.isAutoplayVideos) {
+    val autoPlay = videoFrameIsVisible && viewModel.isAutoplayVideos
+    LaunchedEffect(autoPlay) {
+        if (autoPlay) {
             player.play()
         } else {
             player.pause()

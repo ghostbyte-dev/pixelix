@@ -1,3 +1,4 @@
+import com.google.devtools.ksp.gradle.KspAATask
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat.*
 
 plugins {
@@ -93,6 +94,9 @@ kotlin {
 
             //image crop
             implementation(libs.krop)
+
+            //video player
+            implementation(libs.composemediaplayer)
         }
 
         androidMain.dependencies {
@@ -111,12 +115,8 @@ kotlin {
             implementation(libs.material)
 
             //media
-            implementation(libs.androidx.media3.exoplayer)
-            implementation(libs.androidx.media3.exoplayer.dash)
-            implementation(libs.androidx.media3.ui)
-            implementation(libs.android.image.cropper)
-            implementation(libs.coil.video)
             implementation(libs.coil.gif)
+            implementation(libs.coil.video)
 
             // widget
             implementation(libs.androidx.glance.appwidget)
@@ -133,11 +133,7 @@ kotlin {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutines.swing)
             implementation(libs.ktor.client.okhttp)
-            implementation(libs.appdirs)
             implementation(libs.slf4j.simple)
-            implementation(libs.vlcj)
-            implementation(libs.jna)
-            implementation(libs.jna.platform)
         }
     }
 
@@ -154,8 +150,8 @@ android {
         applicationId = "com.daniebeler.pfpixelix"
         minSdk = 26
         targetSdk = 35
-        versionCode = 31
-        versionName = "4.1.0"
+        versionCode = 32
+        versionName = "4.1.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -183,6 +179,9 @@ android {
             isDebuggable = false
             isProfileable = false
             isShrinkResources = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
+            )
         }
     }
     packaging.resources {
@@ -242,4 +241,9 @@ compose.desktop {
             }
         }
     }
+}
+
+tasks.configureEach {
+    if (this is KspAATask && name != "kspCommonMainKotlinMetadata")
+        dependsOn("kspCommonMainKotlinMetadata")
 }

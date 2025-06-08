@@ -79,9 +79,9 @@ import com.daniebeler.pfpixelix.utils.KmpUri
 import com.daniebeler.pfpixelix.utils.getPlatformUriObject
 import com.daniebeler.pfpixelix.utils.imeAwareInsets
 import com.daniebeler.pfpixelix.utils.toKmpUri
-import io.github.vinceglb.filekit.compose.rememberFilePickerLauncher
-import io.github.vinceglb.filekit.core.PickerMode
-import io.github.vinceglb.filekit.core.PickerType
+import io.github.vinceglb.filekit.dialogs.FileKitMode
+import io.github.vinceglb.filekit.dialogs.FileKitType
+import io.github.vinceglb.filekit.dialogs.compose.rememberFilePickerLauncher
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
@@ -314,7 +314,7 @@ fun ImagesPager(
                 Spacer(Modifier.height(48.dp))
 
                 val launcher = rememberFilePickerLauncher(
-                    type = PickerType.ImageAndVideo, mode = PickerMode.Multiple()
+                    type = FileKitType.ImageAndVideo, mode = FileKitMode.Multiple()
                 ) { files ->
                     files?.forEach { file ->
                         addImage(file.toKmpUri())

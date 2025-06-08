@@ -433,8 +433,10 @@ class PostViewModel @Inject constructor(
         platform.openUrl(url)
     }
 
-    fun saveImage(name: String?, url: String) {
-        fileService.downloadFile(name, url)
+    fun saveImage(url: String) {
+        viewModelScope.launch {
+            fileService.download(url)
+        }
     }
 
     fun shareText(text: String) {

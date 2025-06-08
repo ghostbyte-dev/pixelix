@@ -12,11 +12,13 @@ import com.daniebeler.pfpixelix.domain.model.NewPost
 import com.daniebeler.pfpixelix.domain.model.Visibility
 import com.daniebeler.pfpixelix.domain.service.editor.PostEditorService
 import com.daniebeler.pfpixelix.domain.service.file.FileService
+import com.daniebeler.pfpixelix.domain.service.file.PlatformFile
 import com.daniebeler.pfpixelix.domain.service.instance.InstanceService
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.ui.navigation.Destination
-import com.daniebeler.pfpixelix.utils.EmptyKmpUri
 import com.daniebeler.pfpixelix.utils.KmpUri
+import io.github.vinceglb.filekit.exists
+import io.github.vinceglb.filekit.size
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.flowOn
@@ -96,8 +98,9 @@ class NewPostViewModel @Inject constructor(
     }
 
     fun addImage(uri: KmpUri) {
-        val file = fileService.getFile(uri) ?: return
-        val fileType = file.getMimeType()
+        val file = PlatformFile(uri)
+        if (!file.exists()) return
+        val fileType = fileService.getMimeType(file)
         if (instance != null && !instance!!.configuration.mediaAttachmentConfig.supportedMimeTypes.contains(
                 fileType
             )
@@ -108,7 +111,7 @@ class NewPostViewModel @Inject constructor(
             )
             return
         }
-        val size = file.getSize()
+        val size = file.size()
 
         if (fileType.take(5) == "image") {
             if (instance != null && size > instance!!.configuration.mediaAttachmentConfig.imageSizeLimit) {
@@ -284,8 +287,13 @@ class NewPostViewModel @Inject constructor(
         postEditorService.createPost(createPostDto).onEach { result ->
             createPostState = when (result) {
                 is Resource.Success -> {
-                    navController.navigate(Destination.OwnProfile)
-                    CreatePostState(post = result.data, isLoading = true)
+                    navController.navigate(Destination.HomeTabOwnProfile) {
+                        restoreState = false
+                        popUpTo<Destination.HomeTabNewPost> {
+                            inclusive = true
+                        }
+                    }
+                    CreatePostState()
                 }
 
                 is Resource.Error -> {

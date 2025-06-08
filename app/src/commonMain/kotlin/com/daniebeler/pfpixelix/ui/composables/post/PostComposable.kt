@@ -617,7 +617,8 @@ fun PostComposable(
                         viewModel,
                         post,
                         pagerState.currentPage,
-                        navController
+                        navController,
+                        { showBottomSheet = 0 }
                     )
                 } else {
                     ShareBottomSheet(
@@ -626,7 +627,8 @@ fun PostComposable(
                         viewModel,
                         post,
                         pagerState.currentPage,
-                        navController
+                        navController,
+                        { showBottomSheet = 0 }
                     )
                 }
             } else if (showBottomSheet == 3) {
@@ -729,7 +731,7 @@ fun PostImage(
                 showMediaDialog = mediaAttachment
             })
         }) {
-            if (mediaAttachment.type == "image") {
+            if (mediaAttachment.type != "video") {
                 ImageWrapper(
                     mediaAttachment,
                     { zoomState.setContentSize(it.painter.intrinsicSize) },
@@ -846,7 +848,7 @@ fun MediaDialog(
             contentAlignment = Alignment.Center
         ) {
             Box(modifier = Modifier.zIndex(2f).zoomable(zoomState).clickable { }) {
-                if (mediaAttachment.type == "image") {
+                if (mediaAttachment.type != "video") {
                     ImageWrapper(
                         mediaAttachment,
                         { zoomState.setContentSize(it.painter.intrinsicSize) },

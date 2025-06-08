@@ -20,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.daniebeler.pfpixelix.LocalSnackbarPresenter
 import com.daniebeler.pfpixelix.domain.model.MediaAttachment
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.model.Visibility
@@ -42,13 +43,13 @@ import pixelix.app.generated.resources.license
 import pixelix.app.generated.resources.open_in_browser
 import pixelix.app.generated.resources.open_outline
 import pixelix.app.generated.resources.pencil_outline
+import pixelix.app.generated.resources.report_this_post
 import pixelix.app.generated.resources.share_social_outline
 import pixelix.app.generated.resources.share_this_post
 import pixelix.app.generated.resources.trash_outline
 import pixelix.app.generated.resources.unlisted
 import pixelix.app.generated.resources.visibility_x
 import pixelix.app.generated.resources.warning
-import pixelix.app.generated.resources.report_this_post
 
 @Composable
 fun ShareBottomSheet(
@@ -57,7 +58,8 @@ fun ShareBottomSheet(
     viewModel: PostViewModel,
     post: Post,
     currentMediaAttachmentNumber: Int,
-    navController: NavController
+    navController: NavController,
+    closeBottomSheet: () -> Unit
 ) {
 
     var humanReadableVisibility by remember {
@@ -106,6 +108,7 @@ fun ShareBottomSheet(
                     Res.string.license, mediaAttachment.license.title
                 ), onClick = {
                     viewModel.openUrl(mediaAttachment.license.url)
+                    closeBottomSheet()
                 })
         }
 
@@ -116,6 +119,7 @@ fun ShareBottomSheet(
                 Res.string.open_in_browser
             ), onClick = {
                 viewModel.openUrl(url)
+                closeBottomSheet()
             })
 
         ButtonRowElement(
@@ -123,19 +127,23 @@ fun ShareBottomSheet(
             text = stringResource(Res.string.share_this_post),
             onClick = {
                 viewModel.shareText(url)
+                closeBottomSheet()
             })
 
-        if (mediaAttachment != null && PlatformFeatures.downloadToGallery && mediaAttachment.type == "image") {
+        if (
+            PlatformFeatures.downloadToGallery &&
+            mediaAttachment?.url != null
+        ) {
+            val snackbarPresenter = LocalSnackbarPresenter.current
             ButtonRowElement(
                 icon = Res.drawable.cloud_download_outline,
                 text = stringResource(Res.string.download_image),
                 onClick = {
-
-                    viewModel.saveImage(
-                        post.account.username,
-                        viewModel.post!!.mediaAttachments[currentMediaAttachmentNumber].url!!
-                    )
-                })
+                    viewModel.saveImage(mediaAttachment.url)
+                    snackbarPresenter("Image saved to the gallery")
+                    closeBottomSheet()
+                }
+            )
         }
 
         if (minePost) {

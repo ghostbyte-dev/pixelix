@@ -22,7 +22,7 @@ class AndroidAppIconManager(
     private val iconIds = mapOf(
         Res.drawable.app_icon_00 to "com.daniebeler.pfpixelix.Icon04",
         Res.drawable.app_icon_01 to "com.daniebeler.pfpixelix.Icon01",
-        Res.drawable.app_icon_02 to "com.daniebeler.pfpixelix.AppActivity",
+        Res.drawable.app_icon_02 to "com.daniebeler.pfpixelix.Icon02",
         Res.drawable.app_icon_03 to "com.daniebeler.pfpixelix.Icon03",
         Res.drawable.app_icon_05 to "com.daniebeler.pfpixelix.Icon05",
         Res.drawable.app_icon_06 to "com.daniebeler.pfpixelix.Icon06",
@@ -45,22 +45,15 @@ class AndroidAppIconManager(
         try {
             val pm = context.packageManager
             for ((res, id) in iconIds.entries) {
-                if (res != icon) {
-                    val i = pm.getComponentEnabledSetting(ComponentName(context, id))
-                    if (i == PackageManager.COMPONENT_ENABLED_STATE_ENABLED) {
-                        pm.setComponentEnabledSetting(
-                            ComponentName(context, id),
-                            PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
-                            PackageManager.DONT_KILL_APP
-                        )
-                    }
-                } else {
-                    pm.setComponentEnabledSetting(
-                        ComponentName(context, iconIds[icon]!!),
-                        PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
-                        PackageManager.DONT_KILL_APP
-                    )
-                }
+                val state =
+                    if (res == icon) PackageManager.COMPONENT_ENABLED_STATE_ENABLED
+                    else PackageManager.COMPONENT_ENABLED_STATE_DISABLED
+
+                pm.setComponentEnabledSetting(
+                    ComponentName(context, id),
+                    state,
+                    PackageManager.DONT_KILL_APP
+                )
             }
         } catch (e: Error) {
             Logger.e("enableCustomIcon", e)

@@ -4,8 +4,15 @@ import com.daniebeler.pfpixelix.domain.model.NewPost
 import com.daniebeler.pfpixelix.domain.model.UpdatePost
 import com.daniebeler.pfpixelix.domain.repository.PixelfedApi
 import com.daniebeler.pfpixelix.domain.service.file.FileService
+import com.daniebeler.pfpixelix.domain.service.file.PlatformFile
 import com.daniebeler.pfpixelix.domain.service.utils.loadResource
 import com.daniebeler.pfpixelix.utils.KmpUri
+import io.github.vinceglb.filekit.FileKit
+import io.github.vinceglb.filekit.ImageFormat
+import io.github.vinceglb.filekit.compressImage
+import io.github.vinceglb.filekit.exists
+import io.github.vinceglb.filekit.nameWithoutExtension
+import io.github.vinceglb.filekit.readBytes
 import io.ktor.client.request.forms.MultiPartFormDataContent
 import io.ktor.client.request.forms.formData
 import io.ktor.http.Headers
@@ -21,16 +28,26 @@ class PostEditorService(
 ) {
 
     fun uploadMedia(uri: KmpUri, description: String) = loadResource {
-        val file = fileService.getFile(uri) ?: error("File doesn't exist")
+        val file = PlatformFile(uri)
+        if (!file.exists()) error("File doesn't exist")
         val bytes = file.readBytes()
-        val thumbnail = file.getThumbnail()
+        val mimeType = fileService.getMimeType(file)
+        val thumbnail = if (mimeType.startsWith("image")) {
+            FileKit.compressImage(
+                bytes = bytes,
+                quality = 85,
+                maxWidth = 400,
+                maxHeight = 400,
+                imageFormat = ImageFormat.PNG
+            )
+        } else null
 
         val data = MultiPartFormDataContent(
             parts = formData {
                 append("description", description)
                 append("file", bytes, Headers.build {
-                    append(HttpHeaders.ContentType, file.getMimeType())
-                    append(HttpHeaders.ContentDisposition, "filename=${file.getName()}")
+                    append(HttpHeaders.ContentType, mimeType)
+                    append(HttpHeaders.ContentDisposition, "filename=${file.nameWithoutExtension}")
                 })
                 if (thumbnail != null) {
                     append("thumbnail", thumbnail, Headers.build {

@@ -96,17 +96,6 @@ fun IconSelectionComposable(
                 state = lazyGridState,
                 columns = GridCells.Fixed(3)
             ) {
-                item(span = { GridItemSpan(3) }) {
-                    Column {
-                        Row {
-                            Text(text = stringResource(Res.string.two_icons_info))
-                        }
-
-                        HorizontalDivider(Modifier.padding(vertical = 12.dp))
-                    }
-
-                }
-
                 items(viewModel.icons) { icon ->
                     Image(
                         painterResource(icon),

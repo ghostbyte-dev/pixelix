@@ -1,0 +1,4 @@
+- Fix image sharing
+- Fix custom App icon
+- Fix notifications
+- Other bug fixes

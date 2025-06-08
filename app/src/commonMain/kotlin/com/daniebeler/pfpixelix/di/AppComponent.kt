@@ -15,6 +15,7 @@ import com.daniebeler.pfpixelix.domain.repository.PixelfedApi
 import com.daniebeler.pfpixelix.domain.repository.createPixelfedApi
 import com.daniebeler.pfpixelix.domain.repository.serializers.SavedSearchesSerializer
 import com.daniebeler.pfpixelix.domain.service.file.FileService
+import com.daniebeler.pfpixelix.domain.service.file.toOkIoPath
 import com.daniebeler.pfpixelix.domain.service.icon.AppIconManager
 import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
 import com.daniebeler.pfpixelix.domain.service.search.SearchFieldFocus
@@ -32,6 +33,8 @@ import com.russhwolf.settings.ExperimentalSettingsImplementation
 import com.russhwolf.settings.datastore.DataStoreSettings
 import de.jensklingenberg.ktorfit.Ktorfit
 import de.jensklingenberg.ktorfit.converter.CallConverterFactory
+import io.github.vinceglb.filekit.resolve
+import io.github.vinceglb.filekit.toKotlinxIoPath
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.HttpSend
 import io.ktor.client.plugins.HttpTimeout
@@ -56,7 +59,6 @@ annotation class AppSingleton
 @Component
 abstract class AppComponent(
     @get:Provides val context: KmpContext,
-    @get:Provides val fileService: FileService,
     @get:Provides val iconManager: AppIconManager,
 ) {
     abstract val systemUrlHandler: SystemUrlHandler
@@ -88,7 +90,7 @@ abstract class AppComponent(
             logger = object : io.ktor.client.plugins.logging.Logger {
                 override fun log(message: String) {
                     Logger.v("Pixelix HttpClient") {
-                        message.lines().joinToString { "\n\t\t$it"}
+                        message.lines().joinToString { "\n\t\t$it" }
                     }
                 }
             }
@@ -121,7 +123,9 @@ abstract class AppComponent(
         PreferenceDataStoreFactory.createWithPath(
             corruptionHandler = null,
             migrations = emptyList(),
-            produceFile = { fileService.dataStoreDir.resolve("settings.preferences_pb") },
+            produceFile = {
+                FileService.dataStoreDir.resolve("settings.preferences_pb").toOkIoPath()
+            },
         )
 
     @Provides
@@ -130,7 +134,9 @@ abstract class AppComponent(
         DataStoreFactory.create(
             storage = OkioStorage(
                 fileSystem = FileSystem.SYSTEM,
-                producePath = { fileService.dataStoreDir.resolve("saved_searches.json") },
+                producePath = {
+                    FileService.dataStoreDir.resolve("saved_searches.json").toOkIoPath()
+                },
                 serializer = SavedSearchesSerializer,
             )
         )
@@ -141,7 +147,9 @@ abstract class AppComponent(
         DataStoreFactory.create(
             storage = OkioStorage(
                 fileSystem = FileSystem.SYSTEM,
-                producePath = { fileService.dataStoreDir.resolve("session_storage_datastore.json") },
+                producePath = {
+                    FileService.dataStoreDir.resolve("session_storage_datastore.json").toOkIoPath()
+                },
                 serializer = SessionStorageDataSerializer,
             )
         )
@@ -165,7 +173,7 @@ abstract class AppComponent(
             .diskCache(
                 DiskCache.Builder()
                     .maxSizeBytes(50L * 1024L * 1024L)
-                    .directory(fileService.imageCacheDir)
+                    .directory(FileService.imageCacheDir.toOkIoPath())
                     .build()
             )
             .build()
@@ -176,6 +184,5 @@ abstract class AppComponent(
 @KmpComponentCreate
 expect fun AppComponent.Companion.create(
     context: KmpContext,
-    fileService: FileService,
     iconManager: AppIconManager,
 ): AppComponent

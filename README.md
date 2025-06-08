@@ -3,6 +3,7 @@
 Pixelix is an Android client for [Pixelfed](https://pixelfed.org/), the federated image-sharing social network.
 It's designed to provide a seamless and high-performance user experience. With Pixelix, you can easily browse, post, and interact with your Pixelfed network on the go.
 
+<a href="https://apps.apple.com/app/pixelix-a-pixelfed-client/id6743839819"><img alt="Get it on Google Play" src="https://github.com/ghostbyte-dev/pixelix/blob/db447657e1abd8ec90bbd1e1ca9edac4bb930878/appstorebadgewhite.svg" height="42" align="middle"></a>
 <a href="https://f-droid.org/packages/com.daniebeler.pfpixelix"><img alt="Get it on F-Droid" src="https://fdroid.gitlab.io/artwork/badge/get-it-on.png" height="60" align="middle"></a>
 <a href="https://play.google.com/store/apps/details?id=com.daniebeler.pfpixelix"><img alt="Get it on Google Play" src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" height="60" align="middle"></a>
 <a href="https://apt.izzysoft.de/fdroid/index/apk/com.daniebeler.pfpixelix"><img src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png" alt="Get it from IzzyOnDroid" height="60" align="middle"></a>

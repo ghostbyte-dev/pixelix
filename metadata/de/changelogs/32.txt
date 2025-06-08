@@ -1,0 +1,4 @@
+- Bild teilen gefixt
+- Benutzerdefiniertes App Icon gefixt
+- Benachrichtigungen gefixt
+- Weitere Bugs gefixt

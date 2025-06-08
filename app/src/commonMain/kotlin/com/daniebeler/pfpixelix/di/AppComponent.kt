@@ -94,7 +94,7 @@ abstract class AppComponent(
                     }
                 }
             }
-            level = LogLevel.ALL
+            level = LogLevel.NONE
         }
         install(HttpTimeout) {
             requestTimeoutMillis = 60000

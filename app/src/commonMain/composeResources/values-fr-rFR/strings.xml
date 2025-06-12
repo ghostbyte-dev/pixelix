@@ -85,7 +85,7 @@
     <string name="media_description">Description du média</string>
     <string name="no_posts_yet">Aucune publication pour l’instant</string>
     <string name="mentioned_you_in_a_post">vous a mentionné·e</string>
-    <string name="no_bookmarked_posts">Aucune publication favorite</string>
+    <string name="no_bookmarked_posts">Aucune publication sauvegardée</string>
     <string name="nothing_to_show">Rien à afficher</string>
     <string name="new_post">Nouvelle publication</string>
     <string name="release">Publier</string>
@@ -160,11 +160,11 @@
     <string name="unmute_account">Ne plus masquer le compte ?</string>
     <string name="mute">Masquer</string>
     <string name="mute_account">Masquer le compte ?</string>
-    <string name="sent_a_dm">a envoyé un mp</string>
-    <string name="theme_system">système</string>
-    <string name="theme_dark">sombre</string>
-    <string name="theme_light">clair</string>
-    <string name="app_theme">Thème de l\'application</string>
+    <string name="sent_a_dm">a envoyé un message privé</string>
+    <string name="theme_system">Système</string>
+    <string name="theme_dark">Sombre</string>
+    <string name="theme_light">Clair</string>
+    <string name="app_theme">Thème de l'application</string>
     <string name="send_message">Envoyer le message</string>
     <string name="select_recipient">Sélectionner un destinataire</string>
     <string name="new_direct_message">Nouveau Message Privé</string>
@@ -200,7 +200,7 @@
     <string name="two_icons_info">Si une icône autre que celle par défaut est sélectionnée, deux icônes s’afficheront dans votre tiroir d’applications.</string>
     <string name="current_account">Compte Actif :</string>
     <string name="other_accounts">Autres comptes :</string>
-    <string name="add_pixelfed_account">Ajouter un compte Pixeled</string>
+    <string name="add_pixelfed_account">Ajouter un compte Pixelfed</string>
     <string name="download_image">Télécharger l’image</string>
     <string name="profile">Profil</string>
     <string name="alerts">Boîte de réception</string>

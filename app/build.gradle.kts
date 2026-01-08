@@ -150,12 +150,12 @@ kotlin {
 
 android {
     namespace = "com.daniebeler.pfpixelix"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.daniebeler.pfpixelix"
         minSdk = 26
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 33
         versionName = "4.2.0"
 

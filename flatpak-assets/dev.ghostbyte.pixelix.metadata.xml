@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+    <id>dev.ghostbyte.pixelix</id>
+    <metadata_license>CC0-1.0</metadata_license>
+    <project_license>MIT</project_license>
+    <name>Pixelix</name>
+    <summary>A Pixelix Kotlin Multiplatform App</summary>
+    <description>
+        <p>Pixelix is a powerful tool built with Compose Multiplatform.</p>
+    </description>
+    <launchable type="desktop-id">dev.ghostbyte.pixelix.desktop</launchable>
+</component>

@@ -1,0 +1,26 @@
+app-id: dev.ghostbyte.pixelix
+runtime: org.freedesktop.Platform
+runtime-version: '23.08'
+sdk: org.freedesktop.Sdk
+command: Pixelix
+finish-args:
+  - --share=ipc
+  - --socket=fallback-x11
+  - --socket=wayland
+  - --device=dri
+  - --share=network
+  - --filesystem=home
+
+modules:
+  - name: pixelix
+    buildsystem: simple
+    build-commands:
+      # 1. Copy the application files
+      - cp -r ./pixelix-dist/* /app/bin/
+      # 2. Install metadata with the NEW ID
+      - install -D dev.ghostbyte.pixelix.desktop /app/share/applications/dev.ghostbyte.pixelix.desktop
+      - install -D dev.ghostbyte.pixelix.metainfo.xml /app/share/metainfo/dev.ghostbyte.pixelix.metainfo.xml
+      - install -D dev.ghostbyte.pixelix.png /app/share/icons/hicolor/128x128/apps/dev.ghostbyte.pixelix.png
+    sources:
+      - type: dir
+        path: ./build/compose/binaries/main/app

@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Pixelix
+Comment=Kotlin Multiplatform Pixel App
+Exec=Pixelix
+Icon=dev.ghostbyte.pixelix
+Terminal=false
+Categories=Graphics;Utility;

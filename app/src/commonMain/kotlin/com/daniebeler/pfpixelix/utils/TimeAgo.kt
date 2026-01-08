@@ -1,68 +1,69 @@
 package com.daniebeler.pfpixelix.utils
 
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
 import org.jetbrains.compose.resources.getPluralString
 import org.jetbrains.compose.resources.getString
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.ago
-import pixelix.app.generated.resources.second
-import pixelix.app.generated.resources.minute
-import pixelix.app.generated.resources.hour
 import pixelix.app.generated.resources.day
-import pixelix.app.generated.resources.week
+import pixelix.app.generated.resources.hour
+import pixelix.app.generated.resources.minute
 import pixelix.app.generated.resources.month
+import pixelix.app.generated.resources.second
+import pixelix.app.generated.resources.week
 import pixelix.app.generated.resources.year
+import kotlin.time.Clock
+import kotlin.time.Instant
 
 object TimeAgo {
 
     suspend fun convertTimeToText(dataDate: String): String {
-        var convTime: String = ""
+        var convTime = ""
         val suffix = getString(Res.string.ago)
+
         try {
             val pasTime: Instant = Instant.parse(dataDate)
+            // Using the new standard library Clock
             val nowTime: Instant = Clock.System.now()
             val dateDiff = nowTime - pasTime
 
-            val second: Long = dateDiff.inWholeSeconds
-            val minute: Long = dateDiff.inWholeMinutes
-            val hour: Long = dateDiff.inWholeHours
-            val day: Long = dateDiff.inWholeDays
-            if (second < 60) {
-                convTime =
-                    "$second ${getPluralString(Res.plurals.second, second.toInt(), 1)} $suffix"
-            } else if (minute < 60) {
-                convTime =
-                    "$minute ${getPluralString(Res.plurals.minute, minute.toInt(), 1)} $suffix"
-            } else if (hour < 24) {
-                convTime = "$hour ${getPluralString(Res.plurals.hour, hour.toInt(), 1)} $suffix"
-            } else if (day >= 7) {
-                if (day > 360) {
-                    convTime = "${(day / 360)} ${
-                        getPluralString(
-                            Res.plurals.year,
-                            (day / 360).toInt()
-                        )
-                    } $suffix"
-                } else if (day > 30) {
-                    convTime = "${(day / 30)} ${
-                        getPluralString(
-                            Res.plurals.month,
-                            (day / 30).toInt()
-                        )
-                    } $suffix"
-                } else {
-                    convTime = "${(day / 7)} ${
-                        getPluralString(
-                            Res.plurals.week,
-                            (day / 7).toInt()
-                        )
-                    } $suffix"
+            val seconds = dateDiff.inWholeSeconds
+            val minutes = dateDiff.inWholeMinutes
+            val hours = dateDiff.inWholeHours
+            val days = dateDiff.inWholeDays
+
+            // Logic flow from smallest to largest unit
+            convTime = when {
+                seconds < 60 -> {
+                    val count = seconds.toInt()
+                    "$count ${getPluralString(Res.plurals.second, count)} $suffix"
                 }
-            } else if (day < 7) {
-                convTime = "$day ${getPluralString(Res.plurals.day, day.toInt())} $suffix"
+                minutes < 60 -> {
+                    val count = minutes.toInt()
+                    "$count ${getPluralString(Res.plurals.minute, count)} $suffix"
+                }
+                hours < 24 -> {
+                    val count = hours.toInt()
+                    "$count ${getPluralString(Res.plurals.hour, count)} $suffix"
+                }
+                days < 7 -> {
+                    val count = days.toInt()
+                    "$count ${getPluralString(Res.plurals.day, count)} $suffix"
+                }
+                days < 30 -> {
+                    val count = (days / 7).toInt()
+                    "$count ${getPluralString(Res.plurals.week, count)} $suffix"
+                }
+                days < 365 -> {
+                    val count = (days / 30).toInt()
+                    "$count ${getPluralString(Res.plurals.month, count)} $suffix"
+                }
+                else -> {
+                    val count = (days / 365).toInt()
+                    "$count ${getPluralString(Res.plurals.year, count)} $suffix"
+                }
             }
-        } catch (e: IllegalArgumentException) {
+        } catch (e: Exception) {
+            // Instant.parse can throw DateTimeFormatException or IllegalArgumentException
             e.printStackTrace()
         }
         return convTime

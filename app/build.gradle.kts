@@ -238,7 +238,7 @@ compose.desktop {
                           <string>Pixelix auth redirect</string>
                           <key>CFBundleURLSchemes</key>
                           <array>
-                            <string>pixelix-android-auth</string>
+                            <string>dev.ghostbyte.pixelix</string>
                           </array>
                         </dict>
                       </array>

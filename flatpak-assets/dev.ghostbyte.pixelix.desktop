@@ -7,3 +7,4 @@ Exec=Pixelix
 Icon=dev.ghostbyte.pixelix
 Terminal=false
 Categories=Graphics;Utility;
+MimeType=x-scheme-handler/dev.ghostbyte.pixelix;

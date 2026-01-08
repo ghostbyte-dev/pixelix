@@ -10,6 +10,7 @@ finish-args:
   - --device=dri
   - --share=network
   - --filesystem=home
+  - --talk-name=org.freedesktop.portal.Desktop
 
 modules:
   - name: pixelix

@@ -1,1 +1,1 @@
-Pixelix: a user-friendly Pixelfed client for photo uploads, browsing, & sharing.
+Pixelix: een gebruikersvriendelijke Pixelfed client voor het delen van foto's.

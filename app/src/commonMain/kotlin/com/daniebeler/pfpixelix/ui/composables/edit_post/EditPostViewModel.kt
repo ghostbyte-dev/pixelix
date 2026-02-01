@@ -14,6 +14,7 @@ import com.daniebeler.pfpixelix.domain.model.Place
 import com.daniebeler.pfpixelix.domain.model.UpdatePost
 import com.daniebeler.pfpixelix.domain.service.editor.PostEditorService
 import com.daniebeler.pfpixelix.domain.service.post.PostService
+import com.daniebeler.pfpixelix.ui.navigation.Destination
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.launchIn
@@ -106,9 +107,10 @@ class EditPostViewModel @Inject constructor(
                 editPostState = when (result) {
                     is Resource.Success -> {
                         navController.popBackStack()
-                        navController.navigate("single_post_screen/$postId?refresh=true") {
+
+                        navController.navigate(Destination.Post(postId, refresh = true), {
                             launchSingleTop = true
-                        }
+                        })
 
                         EditPostState(post = editPostState.post)
                     }

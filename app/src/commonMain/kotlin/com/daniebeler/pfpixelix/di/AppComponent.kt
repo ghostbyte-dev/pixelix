@@ -85,6 +85,7 @@ abstract class AppComponent(
         json: Json,
         session: Session
     ): HttpClient = HttpClient {
+        expectSuccess = true
         install(ContentNegotiation) { json(json) }
         install(Logging) {
             logger = object : io.ktor.client.plugins.logging.Logger {
@@ -94,7 +95,7 @@ abstract class AppComponent(
                     }
                 }
             }
-            level = LogLevel.NONE
+            level = LogLevel.ALL
         }
         install(HttpTimeout) {
             requestTimeoutMillis = 60000

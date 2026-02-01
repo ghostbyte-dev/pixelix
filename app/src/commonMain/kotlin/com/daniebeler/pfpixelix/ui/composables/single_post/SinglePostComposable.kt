@@ -21,6 +21,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
@@ -29,6 +30,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import co.touchlab.kermit.Logger
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.ui.composables.post.PostComposable
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
@@ -63,18 +65,28 @@ fun SinglePostComposable(
 
     Scaffold(contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top)) { paddingValues ->
         Box(
-            modifier = Modifier.padding(paddingValues).padding(top = TopAppBarDefaults.TopAppBarExpandedHeight - 24.dp)
+            modifier = Modifier.padding(paddingValues)
+                .padding(top = TopAppBarDefaults.TopAppBarExpandedHeight - 24.dp)
                 .fillMaxSize()
         ) {
-            Column(modifier = Modifier.verticalScroll(scrollState).padding(top = 28.dp, start = 4.dp, end = 4.dp, bottom = 28.dp)) {
-                if (viewModel.postState.post != null) {
-                    PostComposable(
-                        viewModel.postState.post!!, navController, postGetsDeleted = {
-                        navController.navigate(Destination.OwnProfile) {
-                            popUpTo(0) { inclusive = true }
-                        }
-                    }, setZindex = { }, openReplies
-                    )
+            PullToRefreshBox(
+                isRefreshing = viewModel.postState.isLoading,
+                onRefresh = { viewModel.getPost(postId) },
+                modifier = Modifier.fillMaxSize()
+            ) {
+                Column(
+                    modifier = Modifier.verticalScroll(scrollState)
+                        .padding(top = 28.dp, start = 4.dp, end = 4.dp, bottom = 28.dp)
+                ) {
+                    if (viewModel.postState.post != null) {
+                        PostComposable(
+                            viewModel.postState.post!!, navController, postGetsDeleted = {
+                                navController.navigate(Destination.OwnProfile) {
+                                    popUpTo(0) { inclusive = true }
+                                }
+                            }, setZindex = { }, openReplies
+                        )
+                    }
                 }
             }
 
@@ -84,31 +96,31 @@ fun SinglePostComposable(
 
         TopAppBar(
             modifier = Modifier.clip(
-            RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)
-        ), title = {
-            Column {
-                Text(
-                    text = stringResource(Res.string.post),
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp
-                )
-                Text(
-                    text = stringResource(
-                        Res.string.by, (viewModel.postState.post?.account?.username ?: "")
-                    ), fontSize = 12.sp, lineHeight = 6.sp
-                )
-            }
-        }, navigationIcon = {
-            IconButton(onClick = {
-                navController.popBackStack()
-            }) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = ""
-                )
-            }
-        }, colors = TopAppBarDefaults.mediumTopAppBarColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainer
-        )
+                RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)
+            ), title = {
+                Column {
+                    Text(
+                        text = stringResource(Res.string.post),
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp
+                    )
+                    Text(
+                        text = stringResource(
+                            Res.string.by, (viewModel.postState.post?.account?.username ?: "")
+                        ), fontSize = 12.sp, lineHeight = 6.sp
+                    )
+                }
+            }, navigationIcon = {
+                IconButton(onClick = {
+                    navController.popBackStack()
+                }) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = ""
+                    )
+                }
+            }, colors = TopAppBarDefaults.mediumTopAppBarColors(
+                containerColor = MaterialTheme.colorScheme.surfaceContainer
+            )
         )
     }
 }

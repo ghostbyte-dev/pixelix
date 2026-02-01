@@ -29,7 +29,7 @@ class SinglePostViewModel @Inject constructor(
                 }
 
                 is Resource.Loading -> {
-                    SinglePostState(isLoading = true)
+                    postState.copy(isLoading = true)
                 }
             }
         }.launchIn(viewModelScope)

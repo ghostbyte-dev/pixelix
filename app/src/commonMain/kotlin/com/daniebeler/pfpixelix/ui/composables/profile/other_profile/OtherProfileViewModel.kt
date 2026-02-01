@@ -89,7 +89,7 @@ class OtherProfileViewModel(
         getAccountByUsername(username, refreshing)
     }
 
-    private fun getRelationship(userId: String) {
+    fun getRelationship(userId: String) {
         searchService.getRelationships(List(1) { userId }).onEach { result ->
             relationshipState = when (result) {
                 is Resource.Success -> {

@@ -67,6 +67,7 @@ import com.daniebeler.pfpixelix.ui.composables.profile.ProfileTopSection
 import com.daniebeler.pfpixelix.ui.composables.profile.SwitchViewComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.server_stats.DomainSoftwareComposable
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
+import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposableDialog
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -408,6 +409,7 @@ fun OtherProfileComposable(
         UnMuteAccountAlert(
             onDismissRequest = { showUnMuteAlert = false }, onConfirmation = {
                 showUnMuteAlert = false
+                showBottomSheet = false
                 viewModel.unMuteAccount(viewModel.userId)
             }, account = viewModel.accountState.account!!
         )
@@ -416,6 +418,7 @@ fun OtherProfileComposable(
         MuteAccountAlert(
             onDismissRequest = { showMuteAlert = false }, onConfirmation = {
                 showMuteAlert = false
+                showBottomSheet = false
                 viewModel.muteAccount(viewModel.userId)
             }, account = viewModel.accountState.account!!
         )
@@ -424,6 +427,7 @@ fun OtherProfileComposable(
         BlockAccountAlert(
             onDismissRequest = { showBlockAlert = false }, onConfirmation = {
                 showBlockAlert = false
+                showBottomSheet = false
                 viewModel.blockAccount(viewModel.userId)
             }, account = viewModel.accountState.account!!
         )
@@ -432,10 +436,20 @@ fun OtherProfileComposable(
         UnBlockAccountAlert(
             onDismissRequest = { showUnBlockAlert = false }, onConfirmation = {
                 showUnBlockAlert = false
+                showBottomSheet = false
                 viewModel.unblockAccount(viewModel.userId)
             }, account = viewModel.accountState.account!!
         )
     }
+
+    ErrorComposableDialog(
+        errorMessage = viewModel.relationshipState.error,
+        onDismiss = {
+            viewModel.relationshipState = viewModel.relationshipState.copy(error = "")
+            viewModel.getRelationship(userId)
+            showBottomSheet = false
+        }
+    )
 }
 
 @Composable

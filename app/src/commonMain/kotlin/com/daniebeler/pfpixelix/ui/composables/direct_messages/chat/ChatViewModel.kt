@@ -89,6 +89,7 @@ class ChatViewModel @Inject constructor(
     }
 
     fun sendMessage(accountId: String) {
+        if (newMessage.length > 500) return
         val newMsg = NewMessage(
             toId = accountId, message = newMessage, type = "text"
         )

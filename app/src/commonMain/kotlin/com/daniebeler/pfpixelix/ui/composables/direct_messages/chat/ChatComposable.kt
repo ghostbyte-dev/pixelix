@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
@@ -34,6 +35,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -152,24 +154,44 @@ fun ChatComposable(
                                 }
                             }
                         })
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.Bottom
+                    ) {
+                        Column(
+                            modifier = Modifier.weight(1f),
+                        ) {
+                            OutlinedTextField(
+                                value = viewModel.newMessage,
+                                onValueChange = { viewModel.newMessage = it },
+                                label = { Text(stringResource(Res.string.message)) },
+                                singleLine = false,
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                                    disabledContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                                    unfocusedBorderColor = MaterialTheme.colorScheme.background
+                                ),
+                                modifier = Modifier.fillMaxWidth().heightIn(max = 200.dp),
+                                shape = RoundedCornerShape(12.dp),
+                                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Default),
+                            )
+                            if (viewModel.newMessage.length in 471..500) {
+                                Text(
+                                    text = "${viewModel.newMessage.length} / 500 characters",
+                                    fontSize = 16.sp,
+                                    modifier = Modifier.padding(top = 4.dp, bottom = 4.dp),
+                                )
+                            } else if (viewModel.newMessage.length > 500) {
+                                Text(
+                                    text = "${viewModel.newMessage.length} / 500 characters",
+                                    color = MaterialTheme.colorScheme.error,
+                                    fontSize = 16.sp,
+                                    modifier = Modifier.padding(top = 4.dp, bottom = 4.dp),
+                                )
+                            }
+                        }
 
-
-                    Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.Bottom) {
-                        OutlinedTextField(
-                            value = viewModel.newMessage,
-                            onValueChange = { viewModel.newMessage = it },
-                            label = { Text(stringResource(Res.string.message)) },
-                            singleLine = false,
-                            colors = OutlinedTextFieldDefaults.colors(
-                                focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
-                                unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
-                                disabledContainerColor = MaterialTheme.colorScheme.surfaceContainer,
-                                unfocusedBorderColor = MaterialTheme.colorScheme.background
-                            ),
-                            shape = RoundedCornerShape(12.dp),
-                            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Default),
-                            modifier = Modifier.weight(1f)
-                        )
                         Spacer(Modifier.width(12.dp))
                         if (viewModel.newMessageState.isLoading) {
                             Box(
@@ -191,10 +213,12 @@ fun ChatComposable(
                                 onClick = {
                                     viewModel.sendMessage(accountId)
                                 },
-                                Modifier
-                                    .height(56.dp)
-                                    .width(56.dp)
-                                    .padding(0.dp, 0.dp),
+                                enabled = viewModel.newMessage.length <= 500,
+                                modifier =
+                                    Modifier
+                                        .height(56.dp)
+                                        .width(56.dp)
+                                        .padding(0.dp, 0.dp),
                                 shape = RoundedCornerShape(12.dp),
                                 contentPadding = PaddingValues(12.dp)
                             ) {
@@ -208,7 +232,6 @@ fun ChatComposable(
                             }
                         }
                     }
-
                     ErrorComposable(message = viewModel.chatState.error)
                 }
             }

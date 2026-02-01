@@ -279,4 +279,5 @@
     <string name="terrorism">Terrorismo</string>
     <string name="reported">Reporte enviado</string>
     <string name="delete_account">Eliminar la cuenta</string>
+    <string name="character_count">%1$d / %2$d characters</string>
 </resources>

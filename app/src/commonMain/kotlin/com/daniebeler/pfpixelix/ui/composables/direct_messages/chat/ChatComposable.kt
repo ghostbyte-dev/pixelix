@@ -35,7 +35,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -61,6 +60,7 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.beginning_of_chat_note
+import pixelix.app.generated.resources.character_count
 import pixelix.app.generated.resources.default_avatar
 import pixelix.app.generated.resources.message
 
@@ -154,12 +154,12 @@ fun ChatComposable(
                                 }
                             }
                         })
-                    Row(
+                    Column(
                         modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.Bottom
                     ) {
-                        Column(
-                            modifier = Modifier.weight(1f),
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.Bottom
                         ) {
                             OutlinedTextField(
                                 value = viewModel.newMessage,
@@ -172,64 +172,70 @@ fun ChatComposable(
                                     disabledContainerColor = MaterialTheme.colorScheme.surfaceContainer,
                                     unfocusedBorderColor = MaterialTheme.colorScheme.background
                                 ),
-                                modifier = Modifier.fillMaxWidth().heightIn(max = 200.dp),
+                                modifier = Modifier.weight(1f).heightIn(max = 200.dp),
                                 shape = RoundedCornerShape(12.dp),
                                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Default),
                             )
-                            if (viewModel.newMessage.length in 471..500) {
-                                Text(
-                                    text = "${viewModel.newMessage.length} / 500 characters",
-                                    fontSize = 16.sp,
-                                    modifier = Modifier.padding(top = 4.dp, bottom = 4.dp),
-                                )
-                            } else if (viewModel.newMessage.length > 500) {
-                                Text(
-                                    text = "${viewModel.newMessage.length} / 500 characters",
-                                    color = MaterialTheme.colorScheme.error,
-                                    fontSize = 16.sp,
-                                    modifier = Modifier.padding(top = 4.dp, bottom = 4.dp),
-                                )
-                            }
-                        }
 
-                        Spacer(Modifier.width(12.dp))
-                        if (viewModel.newMessageState.isLoading) {
-                            Box(
-                                contentAlignment = Alignment.Center,
-                                modifier = Modifier
-                                    .height(56.dp)
-                                    .width(56.dp)
-                                    .padding(0.dp, 0.dp)
-                                    .clip(RoundedCornerShape(12.dp))
-                                    .background(MaterialTheme.colorScheme.primary)
-                            ) {
-                                CircularProgressIndicator(
-                                    modifier = Modifier.size(24.dp),
-                                    color = MaterialTheme.colorScheme.onPrimary
-                                )
-                            }
-                        } else {
-                            Button(
-                                onClick = {
-                                    viewModel.sendMessage(accountId)
-                                },
-                                enabled = viewModel.newMessage.length <= 500,
-                                modifier =
-                                    Modifier
+
+                            Spacer(Modifier.width(12.dp))
+                            if (viewModel.newMessageState.isLoading) {
+                                Box(
+                                    contentAlignment = Alignment.Center,
+                                    modifier = Modifier
                                         .height(56.dp)
                                         .width(56.dp)
-                                        .padding(0.dp, 0.dp),
-                                shape = RoundedCornerShape(12.dp),
-                                contentPadding = PaddingValues(12.dp)
-                            ) {
-                                Icon(
-                                    imageVector = Icons.AutoMirrored.Filled.Send,
-                                    contentDescription = "send",
-                                    Modifier
-                                        .fillMaxSize()
-                                        .fillMaxWidth()
-                                )
+                                        .padding(0.dp, 0.dp)
+                                        .clip(RoundedCornerShape(12.dp))
+                                        .background(MaterialTheme.colorScheme.primary)
+                                ) {
+                                    CircularProgressIndicator(
+                                        modifier = Modifier.size(24.dp),
+                                        color = MaterialTheme.colorScheme.onPrimary
+                                    )
+                                }
+                            } else {
+                                Button(
+                                    onClick = {
+                                        viewModel.sendMessage(accountId)
+                                    },
+                                    enabled = viewModel.newMessage.length <= 500,
+                                    modifier =
+                                        Modifier
+                                            .height(56.dp)
+                                            .width(56.dp)
+                                            .padding(0.dp, 0.dp),
+                                    shape = RoundedCornerShape(12.dp),
+                                    contentPadding = PaddingValues(12.dp)
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.AutoMirrored.Filled.Send,
+                                        contentDescription = "send",
+                                        Modifier
+                                            .fillMaxSize()
+                                            .fillMaxWidth()
+                                    )
+                                }
                             }
+                        }
+                        if (viewModel.newMessage.length > 470) {
+                            Text(
+                                text = stringResource(
+                                    Res.string.character_count,
+                                    viewModel.newMessage.length,
+                                    500
+                                ),
+                                style = MaterialTheme.typography.labelSmall,
+                                color = if (viewModel.newMessage.length > 500)
+                                    MaterialTheme.colorScheme.error
+                                else
+                                    MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier.padding(
+                                    top = 4.dp,
+                                    start = 4.dp,
+                                    bottom = 4.dp
+                                )
+                            )
                         }
                     }
                     ErrorComposable(message = viewModel.chatState.error)
@@ -261,7 +267,7 @@ fun ChatComposable(
 
                         Column {
 
-                            Text(text = viewModel.chatState.chat!!.name ?: "")
+                            Text(text = viewModel.chatState.chat!!.name)
                             Text(
                                 text = viewModel.chatState.chat!!.url.substringAfter("https://")
                                     .substringBefore("/"),

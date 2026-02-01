@@ -163,9 +163,9 @@ fun ExploreComposable(
                 viewModel.textInputChange(textFieldState.text.toString())
             }
 
-            if (textFieldState.text.isBlank() && viewModel.savedSearches.pastSearches.isNotEmpty()) {
+            if (textFieldState.text.isBlank() && viewModel.savedSearches.isNotEmpty()) {
                 LazyColumn(modifier = Modifier.imeAwareInsets(90.dp)) {
-                    items(viewModel.savedSearches.pastSearches.reversed()) {
+                    items(viewModel.savedSearches.reversed()) {
                         if (it.savedSearchType == SavedSearchType.Account) {
                             Row {
                                 CustomAccount(account = it.account!!,

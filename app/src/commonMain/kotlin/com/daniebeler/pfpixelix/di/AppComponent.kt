@@ -136,7 +136,7 @@ abstract class AppComponent(
             storage = OkioStorage(
                 fileSystem = FileSystem.SYSTEM,
                 producePath = {
-                    FileService.dataStoreDir.resolve("saved_searches.json").toOkIoPath()
+                    FileService.dataStoreDir.resolve("saved_searches_2.json").toOkIoPath()
                 },
                 serializer = SavedSearchesSerializer,
             )

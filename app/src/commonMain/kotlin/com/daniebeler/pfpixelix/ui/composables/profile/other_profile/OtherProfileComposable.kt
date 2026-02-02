@@ -69,6 +69,7 @@ import com.daniebeler.pfpixelix.ui.composables.profile.server_stats.DomainSoftwa
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposableDialog
 import com.daniebeler.pfpixelix.ui.navigation.Destination
+import com.daniebeler.pfpixelix.utils.DomainFormat
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import pixelix.app.generated.resources.Res
@@ -302,7 +303,7 @@ fun OtherProfileComposable(
                             fontSize = 18.sp
                         )
                         Text(
-                            text = viewModel.domain, fontSize = 12.sp, lineHeight = 6.sp
+                            text = DomainFormat.formatDomain(viewModel.domain), fontSize = 12.sp, lineHeight = 6.sp
                         )
                     }
 

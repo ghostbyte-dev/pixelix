@@ -7,7 +7,9 @@
 "files": [
   {
     "source": "/app/src/commonMain/composeResources/values/strings.xml",
-    "translation": "/app/src/commonMain/composeResources/values-%android_code%/strings.xml"
+    "translation": "/app/src/commonMain/composeResources/values-%android_code%/strings.xml",
+    "escape_quotes": 0,
+    "escape_special_characters": 0
   },
   {
     "source": "/metadata/en-US/full_description.txt",

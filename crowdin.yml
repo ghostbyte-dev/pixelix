@@ -8,10 +8,12 @@
   {
     "source": "/app/src/commonMain/composeResources/values/strings.xml",
     "translation": "/app/src/commonMain/composeResources/values-%android_code%/strings.xml",
-    "type": "android",  # Force the Android parser
+    "type": "xml",  # <--- Change this from 'android' to 'xml'
     "content_segmentation": 0,
-    "escape_quotes": 0,            # Disable \' escaping
-    "escape_special_characters": 0 # Disable escaping of symbols
+    "parser_config": {
+      "escape_quotes": 0,
+      "escape_special_characters": 0
+    }
   },
   {
     "source": "/metadata/en-US/full_description.txt",

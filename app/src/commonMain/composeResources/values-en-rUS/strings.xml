@@ -171,7 +171,7 @@
     <string name="warning">Warning</string>
     <string name="direct_messages_encryption_description">"Direct messages on Pixelfed are not end-to-end encrypted. Use caution when sharing sensitive data. "</string>
     <string name="confirm">Confirm</string>
-    <string name="beginning_of_chat_note">This is the beginning of your chat with this user. Don\'t forget to be respectful.</string>
+    <string name="beginning_of_chat_note">This is the beginning of your chat with this user. Don't forget to be respectful.</string>
     <string name="rate_us">Rate us</string>
     <string name="about_pixelix">About Pixelix</string>
     <string name="developed_by">Developed by</string>

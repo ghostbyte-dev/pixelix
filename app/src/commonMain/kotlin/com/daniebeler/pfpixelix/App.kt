@@ -218,6 +218,16 @@ fun App(
                     }
                 }
 
+                LaunchedEffect(Unit) {
+                    appComponent.accountIntentHandler.pendingAccountId.collect { accountId ->
+                        if (accountId.isNotEmpty()) {
+                            navController.navigate(
+                                Destination.Profile(accountId)
+                            )
+                        }
+                    }
+                }
+
                 if (showAccountSwitchBottomSheet) {
                     ModalBottomSheet(
                         onDismissRequest = {

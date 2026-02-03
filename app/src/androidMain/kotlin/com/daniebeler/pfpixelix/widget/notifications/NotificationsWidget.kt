@@ -17,6 +17,7 @@ import androidx.glance.action.ActionParameters
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.CircularProgressIndicator
 import androidx.glance.appwidget.GlanceAppWidget
+import androidx.glance.appwidget.ImageProvider
 import androidx.glance.appwidget.SizeMode
 import androidx.glance.appwidget.action.ActionCallback
 import androidx.glance.appwidget.action.actionRunCallback
@@ -46,6 +47,10 @@ import com.daniebeler.pfpixelix.widget.latest_image.utils.GetImageProvider
 import com.daniebeler.pfpixelix.widget.notifications.models.NotificationStoreItem
 import com.daniebeler.pfpixelix.widget.notifications.models.NotificationsStore
 import com.daniebeler.pfpixelix.widget.notifications.work_manager.NotificationsWorkManager
+import androidx.core.net.toUri
+import androidx.glance.action.actionParametersOf
+import androidx.glance.action.actionStartActivity
+import com.daniebeler.pfpixelix.AppActivity
 
 //private val destinationKey = ActionParameters.Key<String>(
 //    MainActivity.KEY_DESTINATION
@@ -181,7 +186,17 @@ class NotificationsWidget : GlanceAppWidget() {
     @Composable
     private fun NotificationItem(notification: NotificationStoreItem, context: Context) {
         val size = LocalSize.current
+        val destinationKey = ActionParameters.Key<String>("navigation_destination")
+        val destinationKeyParam = ActionParameters.Key<String>("account_id")
         Box(
+            modifier = GlanceModifier.clickable(
+                actionStartActivity<AppActivity>(
+                    actionParametersOf(
+                        destinationKey to "profile",
+                        destinationKeyParam to notification.accountId
+                    )
+                )
+            )
 //            modifier = GlanceModifier.clickable(
 //                actionStartActivity<MainActivity>(
 //                    actionParametersOf(
@@ -195,14 +210,15 @@ class NotificationsWidget : GlanceAppWidget() {
                 Spacer(GlanceModifier.height(12.dp))
                 Row(verticalAlignment = Alignment.Vertical.CenterVertically) {
                     Image(
-                        provider = GetImageProvider()(
-                            notification.accountAvatarUri,
-                            context,
-                            1000f
-                        ),
+                        provider = if (notification.accountAvatarBitmap != null) {
+                            ImageProvider(notification.accountAvatarBitmap)
+                        } else {
+                            ImageProvider(R.drawable.default_avatar)
+                        },
                         contentDescription = "",
                         modifier = GlanceModifier.height(34.dp).width(34.dp).cornerRadius(34.dp)
                     )
+
                     Spacer(GlanceModifier.width(6.dp))
                     Column {
                         Row {

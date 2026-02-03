@@ -15,7 +15,6 @@ data class NotificationsStore(
 data class NotificationStoreItem(
     val id: String,
     val accountAvatarUrl: String,
-    val accountAvatarUri: String?,
     @Serializable(with = BitmapSerializer::class) // <--- Add this
     val accountAvatarBitmap: Bitmap?,
     val accountId: String,

@@ -52,12 +52,10 @@ class NotificationsTask(
             if (res is Resource.Success) {
                 val notifications = res.data.take(10)
                 val notificationStoreItems = notifications.map { notification ->
-                    val accountAvatarUri = getImageUri(context, notification.account.avatar)
                     val bitmap = getBitmap(context, notification.account.avatar)
                     NotificationStoreItem(
                         id = notification.id,
                         accountAvatarUrl = notification.account.avatar,
-                        accountAvatarUri = accountAvatarUri,
                         accountAvatarBitmap = bitmap,
                         accountId = notification.account.id,
                         accountUsername = notification.account.username,
@@ -109,54 +107,4 @@ class NotificationsTask(
         }
         return bitmap;
     }
-
-    private suspend fun getImageUri(context: Context, url: String): String? {
-
-        val headers = NetworkHeaders.Builder()
-            .add(
-                "User-Agent",
-                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-            )
-            .add("Accept", "image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8")
-            .build()
-        val request = ImageRequest.Builder(context).httpHeaders(headers).data(url)
-            .interceptorCoroutineContext(
-                Dispatchers.IO
-            ).build()
-
-        // Request the image to be loaded and throw error if it failed
-        val result = context.imageLoader.execute(request)
-        if (result is ErrorResult) {
-            return null;
-        }
-
-        // Get the path of the loaded image from DiskCache.
-        val path = context.imageLoader.diskCache?.openSnapshot(url)?.use { snapshot ->
-            val imageFile = snapshot.data.toFile()
-
-            // Use the FileProvider to create a content URI
-            val contentUri = getUriForFile(
-                context, "com.example.android.appwidget.fileprovider", imageFile
-            )
-
-            // Find the current launcher everytime to ensure it has read permissions
-            val resolveInfo = context.packageManager.resolveActivity(
-                Intent(Intent.ACTION_MAIN).apply { addCategory(Intent.CATEGORY_HOME) },
-                PackageManager.MATCH_DEFAULT_ONLY
-            )
-            val launcherName = resolveInfo?.activityInfo?.packageName
-            if (launcherName != null) {
-                context.grantUriPermission(
-                    launcherName,
-                    contentUri,
-                    FLAG_GRANT_READ_URI_PERMISSION or FLAG_GRANT_PERSISTABLE_URI_PERMISSION
-                )
-            }
-
-            // return the path
-            contentUri.toString()
-        }
-        return path;
-    }
-
 }

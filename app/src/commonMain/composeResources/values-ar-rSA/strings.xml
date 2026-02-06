@@ -132,7 +132,7 @@
     <string name="local_timeline_explained">The Local timeline shows posts from all users in your server</string>
     <string name="global_timeline_explained">The Global timeline shows posts from all users in all servers your server federates with</string>
     <string name="this_user_has_not_postet_anything_yet">This user has not postet anything yet</string>
-    <string name="you_don_t_have_any_notifications">You don\'t have any notifications</string>
+    <string name="you_don_t_have_any_notifications">You don't have any notifications</string>
     <string name="view_more">عرض المزيد</string>
     <string name="edit_profile">تعديل الملف الشخصي</string>
     <string name="save">حفظ</string>
@@ -183,7 +183,7 @@
     <string name="warning">تنبيه</string>
     <string name="direct_messages_encryption_description">"Direct messages on Pixelfed are not end-to-end encrypted. Use caution when sharing sensitive data. "</string>
     <string name="confirm">تأكيد</string>
-    <string name="beginning_of_chat_note">This is the beginning of your chat with this user. Don\'t forget to be respectful.</string>
+    <string name="beginning_of_chat_note">This is the beginning of your chat with this user. Don't forget to be respectful.</string>
     <string name="rate_us">Rate us</string>
     <string name="about_pixelix">عن بيكسيليكس Pixelix</string>
     <string name="developed_by">تم تطويره من طرف</string>

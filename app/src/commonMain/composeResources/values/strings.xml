@@ -121,7 +121,7 @@
     <string name="local_timeline_explained">The Local timeline shows posts from all users in your server</string>
     <string name="global_timeline_explained">The Global timeline shows posts from all users in all servers your server federates with</string>
     <string name="this_user_has_not_postet_anything_yet">This user has not postet anything yet</string>
-    <string name="you_don_t_have_any_notifications">You don't have any notifications</string>
+    <string name="you_don_t_have_any_notifications">You don\'t have any notifications</string>
     <string name="view_more">view more</string>
     <string name="edit_profile">Edit Profile</string>
     <string name="save">Save</string>

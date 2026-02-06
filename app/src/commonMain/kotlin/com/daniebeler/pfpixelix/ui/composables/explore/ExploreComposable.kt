@@ -164,7 +164,7 @@ fun ExploreComposable(
             }
 
             if (textFieldState.text.isBlank() && viewModel.savedSearches.isNotEmpty()) {
-                LazyColumn(modifier = Modifier.imeAwareInsets(90.dp)) {
+                LazyColumn(modifier = Modifier.imeAwareInsets(60.dp)) {
                     items(viewModel.savedSearches.reversed()) {
                         if (it.savedSearchType == SavedSearchType.Account) {
                             Row {
@@ -184,7 +184,7 @@ fun ExploreComposable(
                 }
             }
             viewModel.searchState.searchResult?.let { searchResult ->
-                LazyColumn(modifier = Modifier.imeAwareInsets(90.dp), content = {
+                LazyColumn(modifier = Modifier.imeAwareInsets(60.dp), content = {
                     items(searchResult.accounts) {
                         CustomAccount(
                             account = it,

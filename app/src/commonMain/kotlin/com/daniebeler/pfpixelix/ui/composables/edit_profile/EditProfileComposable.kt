@@ -92,7 +92,7 @@ fun EditProfileComposable(
         Column(
             Modifier.padding(paddingValues)
                 .padding(top = TopAppBarDefaults.TopAppBarExpandedHeight - 24.dp).fillMaxSize()
-                .padding(horizontal = 12.dp).verticalScroll(state = rememberScrollState()).imeAwareInsets(90.dp)
+                .padding(horizontal = 12.dp).verticalScroll(state = rememberScrollState()).imeAwareInsets(60.dp)
         ) {
 
             if (viewModel.accountState.account != null) {

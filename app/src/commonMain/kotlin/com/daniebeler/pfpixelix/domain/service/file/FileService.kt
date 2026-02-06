@@ -14,6 +14,7 @@ import io.github.vinceglb.filekit.exists
 import io.github.vinceglb.filekit.filesDir
 import io.github.vinceglb.filekit.isRegularFile
 import io.github.vinceglb.filekit.list
+import io.github.vinceglb.filekit.mimeType
 import io.github.vinceglb.filekit.path
 import io.github.vinceglb.filekit.resolve
 import io.github.vinceglb.filekit.saveImageToGallery
@@ -52,7 +53,7 @@ class FileService(
         }
     }
 
-    fun getMimeType(file: PlatformFile): String = context.getMimeType(file.toKmpUri())
+    fun getMimeType(file: PlatformFile): String = file.mimeType().toString()
 
     private suspend fun PlatformFile.sizeRecursively(): Long {
         return when {

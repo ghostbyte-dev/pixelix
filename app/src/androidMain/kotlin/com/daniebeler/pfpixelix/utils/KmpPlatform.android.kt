@@ -18,15 +18,3 @@ actual fun KmpUri.toPlatformFile(): PlatformFile = PlatformFile(this)
 
 actual typealias KmpContext = Context
 actual val KmpContext.coilContext: PlatformContext get() = this
-actual fun KmpContext.getMimeType(uri: KmpUri): String = when (uri.scheme) {
-    ContentResolver.SCHEME_FILE -> {
-        val fileExtension = MimeTypeMap.getFileExtensionFromUrl(uri.toString())
-        MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileExtension.lowercase())
-    }
-
-    ContentResolver.SCHEME_CONTENT -> {
-        contentResolver.getType(uri)
-    }
-
-    else -> null
-} ?: "image/*"

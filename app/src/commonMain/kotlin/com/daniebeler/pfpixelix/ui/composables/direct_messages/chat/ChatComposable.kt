@@ -77,6 +77,11 @@ fun ChatComposable(
         viewModel.getChat(accountId)
     }
 
+    LaunchedEffect(viewModel.newMessageState) {
+        if (viewModel.newMessageState.message != null) {
+            lazyListState.animateScrollToItem(0)
+        }
+    }
     Box(modifier = Modifier.fillMaxSize()) {
         val statusBarPadding = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
 

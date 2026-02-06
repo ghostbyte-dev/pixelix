@@ -116,7 +116,7 @@
     <string name="no_trending_hashtags">Немає популярних хештеґів</string>
     <string name="no_trending_posts">Немає популярних дописів</string>
     <string name="upload_your_first_post">Завантажте свою першу публікацію</string>
-    <string name="the_profiles_you_follow_will_appear_here">Профілі, за якими ви слідкуєте, з\'являться тут</string>
+    <string name="the_profiles_you_follow_will_appear_here">Профілі, за якими ви слідкуєте, з'являться тут</string>
     <string name="explore_trending_profiles">Переглянути популярні профілі</string>
     <string name="nobody_follows_you_yet">За вами ще ніхто не стежить</string>
     <string name="empty">Пусто</string>
@@ -124,7 +124,7 @@
     <string name="no_posts">Немає дописів</string>
     <string name="home_timeline_explained">Головна стрічка показує вам пости від людей і хештеґів, за якими ви слідкуєте</string>
     <string name="local_timeline_explained">Місцева стрічка показує повідомлення від всіх користувачів сервера</string>
-    <string name="global_timeline_explained">Глобальна лінія часу показує повідомлення від усіх користувачів на всіх серверах з об\'єднаними даними вашого сервера</string>
+    <string name="global_timeline_explained">Глобальна лінія часу показує повідомлення від усіх користувачів на всіх серверах з об'єднаними даними вашого сервера</string>
     <string name="this_user_has_not_postet_anything_yet">Цей користувач ще нічого не публікував</string>
     <string name="you_don_t_have_any_notifications">Немає сповіщень </string>
     <string name="view_more">переглянути більше</string>
@@ -203,7 +203,7 @@
     <string name="change">Змінити</string>
     <string name="mentioned_you">згадали вас</string>
     <string name="latest_image_widget_description">подивіться найновіший допис із домашньої хронології прямо на головному екрані</string>
-    <string name="two_icons_info">Якщо у меню програм буде встановлено іконку, що відрізняється від значка \"Типово\", у меню додатків буде відображатися дві піктограми.</string>
+    <string name="two_icons_info">Якщо у меню програм буде встановлено іконку, що відрізняється від значка "Типово", у меню додатків буде відображатися дві піктограми.</string>
     <string name="current_account">Поточний обліковий запис</string>
     <string name="other_accounts">Інші облікові записи:</string>
     <string name="add_pixelfed_account">Додати обліковий запис у Pixelfed</string>
@@ -223,7 +223,7 @@
     <string name="active_users">Активні користувачі:</string>
     <string name="server_version">%1$s версія %2$s</string>
     <string name="visit_url">Відвідати %1$s</string>
-    <string name="displayname">Відображуване ім\'я</string>
+    <string name="displayname">Відображуване ім'я</string>
     <string name="bio">Про себе</string>
     <string name="website">Веб-сайт</string>
     <string name="location">Місцезнаходження</string>
@@ -231,7 +231,7 @@
     <string name="explore">Досліджуйте</string>
     <string name="reblogged_by">репост від %1$s</string>
     <string name="focus_mode">Режим фокусу</string>
-    <string name="focus_mode_description">Приховує опис, кнопки \"подобається\" і \".</string>
+    <string name="focus_mode_description">Приховує опис, кнопки "подобається" і ".</string>
     <string name="repost_settings">Налаштування репостів</string>
     <string name="amoled">AMOLED</string>
     <string name="no_followers_yet">Поки немає підписників!</string>

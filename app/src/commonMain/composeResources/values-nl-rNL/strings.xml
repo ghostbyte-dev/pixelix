@@ -127,9 +127,9 @@
     <string name="delete_reply">Reactie verwijderen</string>
     <string name="reply">Reageren</string>
     <string name="post">Bericht</string>
-    <string name="pixelfed_description">Pixelfed is een netwerk om foto\'s en afbeeldingen te delen op de Fediverse met een foto-georiënteerde interface vol albums, filters, momenten, etc.</string>
+    <string name="pixelfed_description">Pixelfed is een netwerk om foto's en afbeeldingen te delen op de Fediverse met een foto-georiënteerde interface vol albums, filters, momenten, etc.</string>
     <string name="mastodon_description">Mastodon is een gratis en open source microblogging-platform</string>
-    <string name="peertube_description">PeerTube is een platform voor het delen van online video\'s ontwikkeld door Framasoft, een Franse non-profit.</string>
+    <string name="peertube_description">PeerTube is een platform voor het delen van online video's ontwikkeld door Framasoft, een Franse non-profit.</string>
     <string name="lemmy_description">Lemmy is een self-hosted platform voor discussies en het delen van links. Het is volledig vrij en open, en niet gecontroleerd door een bedrijf. Dit betekent dat er geen reclame, tracking of geheime algoritmes zijn. Inhoud is georganiseerd in gemeenschappen, dus het is makkelijk om te abonneren op onderwerpen waarin je geïnteresseerd bent en andere te negeren. Met behulp van stemmen worden de interessantste items bovenaan geplaatst.</string>
     <string name="threads_description">Threads is een app van Meta(!) waar u openbare gesprekken kunt bekijken en delen. Je kunt ook threads posten, antwoorden op anderen en profielen volgen waarin je geïnteresseerd bent.</string>
     <string name="more_information">Meer informatie</string>

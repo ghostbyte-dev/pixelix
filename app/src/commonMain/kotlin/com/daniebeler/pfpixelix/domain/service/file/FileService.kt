@@ -3,8 +3,6 @@ package com.daniebeler.pfpixelix.domain.service.file
 import co.touchlab.kermit.Logger
 import com.daniebeler.pfpixelix.utils.KmpContext
 import com.daniebeler.pfpixelix.utils.KmpUri
-import com.daniebeler.pfpixelix.utils.getMimeType
-import com.daniebeler.pfpixelix.utils.toKmpUri
 import com.daniebeler.pfpixelix.utils.toPlatformFile
 import io.github.vinceglb.filekit.FileKit
 import io.github.vinceglb.filekit.PlatformFile
@@ -30,7 +28,6 @@ import okio.Path.Companion.toPath
 
 @Inject
 class FileService(
-    private val context: KmpContext,
     private val httpClient: HttpClient
 ) {
     companion object {

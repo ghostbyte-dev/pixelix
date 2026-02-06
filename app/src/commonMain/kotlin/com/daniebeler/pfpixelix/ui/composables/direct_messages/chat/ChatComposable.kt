@@ -89,7 +89,7 @@ fun ChatComposable(
                 isRefreshing = viewModel.chatState.isRefreshing,
                 onRefresh = { viewModel.getChat(accountId, true) },
                 modifier = Modifier
-                    .imeAwareInsets(90.dp)
+                    .imeAwareInsets(60.dp)
             ) {
                 Column(
                     modifier = Modifier

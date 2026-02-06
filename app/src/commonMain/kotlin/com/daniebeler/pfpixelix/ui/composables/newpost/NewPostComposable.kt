@@ -129,7 +129,7 @@ fun NewPostComposable(
         ) {
             Box {
                 Column(
-                    Modifier.imeAwareInsets(90.dp).fillMaxSize()
+                    Modifier.imeAwareInsets(60.dp).fillMaxSize()
                         .verticalScroll(rememberScrollState()),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {

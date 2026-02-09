@@ -1,6 +1,5 @@
 package com.daniebeler.pfpixelix.domain.repository.serializers
 
-import co.touchlab.kermit.Logger
 import com.fleeksoft.ksoup.Ksoup
 import com.fleeksoft.ksoup.nodes.Document
 import kotlinx.serialization.KSerializer
@@ -14,7 +13,8 @@ internal object HtmlAsTextSerializer : KSerializer<String> {
     override fun serialize(encoder: Encoder, value: String) = encoder.encodeString(value)
     override fun deserialize(decoder: Decoder): String {
         val html = decoder.decodeString()
-        val document = Ksoup.parse(html)
+        val htmlWithBreaks = html.replace("\n", "<br>")
+        val document = Ksoup.parse(htmlWithBreaks)
         document.outputSettings(Document.OutputSettings().prettyPrint(false)) // Prevent auto formatting
         document.select("br").append("\\n") // Replace <br> with newlines
         document.select("p").prepend("\\n\\n") // Add double newline for paragraphs

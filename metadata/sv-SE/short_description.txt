@@ -1,1 +1,1 @@
-Pixelix: en användarvänlig Pixelfed-klient för fotouppladdningar, surfning och delning.
+Pixelix: Enkel Pixelfed-klient för fotouppladdning, surfning och delning.

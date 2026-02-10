@@ -1,1 +1,1 @@
-Pixelix: um cliente Pixelfed de fácil utilização para carregar, navegar e partilhar fotografias.
+Pixelix: cliente Pixelfed intuitivo para carregar, ver e partilhar fotos.

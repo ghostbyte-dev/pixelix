@@ -1,6 +1,5 @@
 package com.daniebeler.pfpixelix
 
-import androidx.compose.foundation.ComposeFoundationFlags
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.window.ComposeUIViewController
@@ -18,8 +17,6 @@ class IosUrlCallback {
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalComposeUiApi::class)
 fun AppViewController(urlCallback: IosUrlCallback): UIViewController {
-    //https://youtrack.jetbrains.com/issue/CMP-7623 iOS - Gesture handling is incorrect in 1.8.0-alpha03
-    ComposeFoundationFlags.DragGesturePickUpEnabled = false
 
     var viewController: UIViewController? = null
     val appComponent = AppComponent.Companion.create(

@@ -1,1 +1,1 @@
-Pixelix: um cliente Pixelfed amigável para uploads de fotos, navegação e compartilhamento.
+Pixelix: app Pixelfed para postar, ver e compartilhar fotos.

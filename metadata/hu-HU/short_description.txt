@@ -1,1 +1,1 @@
-Pixelix: felhasználóbarát Pixelfed kliens fényképek feltöltéséhez, böngészéséhez és megosztásához.
+Pixelix: Pixelfed kliens fotók feltöltéséhez, böngészéséhez és megosztásához.

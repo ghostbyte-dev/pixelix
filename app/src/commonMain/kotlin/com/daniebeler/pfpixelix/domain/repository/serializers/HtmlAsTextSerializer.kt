@@ -13,7 +13,8 @@ internal object HtmlAsTextSerializer : KSerializer<String> {
     override fun serialize(encoder: Encoder, value: String) = encoder.encodeString(value)
     override fun deserialize(decoder: Decoder): String {
         val html = decoder.decodeString()
-        val htmlWithBreaks = html.replace("\n", "<br>")
+        val withoutDoubleBreaks = html.replace("<br />\n", "\n")
+        val htmlWithBreaks = withoutDoubleBreaks.replace("\n", "<br>")
         val document = Ksoup.parse(htmlWithBreaks)
         document.outputSettings(Document.OutputSettings().prettyPrint(false)) // Prevent auto formatting
         document.select("br").append("\\n") // Replace <br> with newlines

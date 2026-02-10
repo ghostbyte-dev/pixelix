@@ -86,7 +86,7 @@ fun TextFieldMentionsComposable(
 
             if (submitButton != null) {
                 Spacer(modifier = Modifier.width(12.dp))
-                submitButton((maxLength ?: Int.MAX_VALUE) <= text.text.length && text.text.isNotEmpty())
+                submitButton((maxLength ?: Int.MAX_VALUE) >= text.text.length && text.text.isNotEmpty())
             }
         }
         if (viewModel.mentionsDropdownOpen) {

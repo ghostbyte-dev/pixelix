@@ -74,6 +74,7 @@ import com.daniebeler.pfpixelix.domain.model.Visibility
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposableDialog
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pfpixelix.ui.composables.textfield_location.TextFieldLocationsComposable
+import com.daniebeler.pfpixelix.ui.composables.textfield_mentions.TextFieldMentionsComposable
 import com.daniebeler.pfpixelix.utils.KmpUri
 import com.daniebeler.pfpixelix.utils.getPlatformUriObject
 import com.daniebeler.pfpixelix.utils.imeAwareInsets
@@ -150,11 +151,22 @@ fun NewPostComposable(
                     Column(
                         Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
-                        NewPostTextField(
+                        TextFieldMentionsComposable(
+                            submit = {},
+                            text = viewModel.caption,
+                            changeText = { text -> viewModel.caption = text },
+                            labelStringId = Res.string.caption,
+                            modifier = Modifier.fillMaxWidth(),
+                            imeAction = ImeAction.Default,
+                            suggestionsBoxColor = MaterialTheme.colorScheme.surfaceContainer,
+                            submitButton = null,
+                            maxLength = viewModel.instance?.configuration?.statusConfig?.maxCharacters
+                        )
+                        /*NewPostTextField(
                             value = viewModel.caption,
                             onChange = { viewModel.caption = it },
                             label = stringResource(Res.string.caption)
-                        )
+                        )*/
                         NewPostPref(
                             leadingIcon = Res.drawable.browsers_outline,
                             title = stringResource(Res.string.sensitive_nsfw_media),
@@ -307,7 +319,7 @@ fun NewPostComposable(
             }, actions = {
                 Button(
                     onClick = { showReleaseAlert = true },
-                    enabled = (viewModel.images.isNotEmpty() && viewModel.images.none { it.isLoading })
+                    enabled = (viewModel.images.isNotEmpty() && viewModel.images.none { it.isLoading } && viewModel.caption.text.length <= (viewModel.instance?.configuration?.statusConfig?.maxCharacters ?: Int.MAX_VALUE))
                 ) {
                     Text(text = stringResource(Res.string.release))
                 }

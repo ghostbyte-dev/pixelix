@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -14,7 +15,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,6 +34,8 @@ import androidx.compose.ui.unit.dp
 import com.daniebeler.pfpixelix.di.injectViewModel
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
+import pixelix.app.generated.resources.Res
+import pixelix.app.generated.resources.character_count
 
 @Composable
 fun TextFieldMentionsComposable(
@@ -38,19 +43,24 @@ fun TextFieldMentionsComposable(
     text: TextFieldValue,
     changeText: (newText: TextFieldValue) -> Unit,
     labelStringId: StringResource,
-    submitButton: (@Composable () -> Unit)?,
+    submitButton: (@Composable (enabled: Boolean) -> Unit)?,
     modifier: Modifier?,
     imeAction: ImeAction,
     suggestionsBoxColor: Color,
-    viewModel: TextFieldMentionsViewModel = injectViewModel("textFieldMentionsViewModel") { textFieldMentionsViewModel }
+    viewModel: TextFieldMentionsViewModel = injectViewModel("textFieldMentionsViewModel") { textFieldMentionsViewModel },
+    maxLength: Int? = null,
+    colors: TextFieldColors = TextFieldDefaults.colors(
+        unfocusedIndicatorColor = Color.Transparent,
+        focusedIndicatorColor = Color.Transparent,
+        focusedContainerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(4.dp),
+        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(4.dp)
+    ),
 ) {
 
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
     Column {
-
-        Row(verticalAlignment = Alignment.CenterVertically) {
-
+        Row(verticalAlignment = Alignment.Bottom) {
             TextField(
                 value = text,
                 singleLine = false,
@@ -59,27 +69,24 @@ fun TextFieldMentionsComposable(
                     changeText(it)
                 },
                 placeholder = { Text(stringResource(labelStringId)) },
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.weight(1f).heightIn(max = 200.dp),
                 shape = RoundedCornerShape(16.dp),
-                colors = TextFieldDefaults.colors(
-                    unfocusedIndicatorColor = Color.Transparent,
-                    focusedIndicatorColor = Color.Transparent,
-                    focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
-                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer
-                ),
+                colors = colors,
                 keyboardOptions = KeyboardOptions(imeAction = imeAction),
                 keyboardActions = KeyboardActions(onDone = {
-                    keyboardController?.hide()
-                    focusManager.clearFocus()
-                    submit(text.text)
-                    viewModel.mentionsDropdownOpen = false
+                    if ((maxLength ?: Int.MAX_VALUE) <= text.text.length && text.text.isNotEmpty()) {
+                        keyboardController?.hide()
+                        focusManager.clearFocus()
+                        submit(text.text)
+                        viewModel.mentionsDropdownOpen = false
+                    }
                 })
             )
 
 
             if (submitButton != null) {
                 Spacer(modifier = Modifier.width(12.dp))
-                submitButton()
+                submitButton((maxLength ?: Int.MAX_VALUE) <= text.text.length && text.text.isNotEmpty())
             }
         }
         if (viewModel.mentionsDropdownOpen) {
@@ -113,6 +120,28 @@ fun TextFieldMentionsComposable(
                         }
                     }
                 }
+            }
+        }
+        if (maxLength != null) {
+            if (text.text.length > maxLength - 30
+            ) {
+                Text(
+                    text = stringResource(
+                        Res.string.character_count,
+                        text.text.length,
+                        maxLength
+                    ),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = if (text.text.length > maxLength)
+                        MaterialTheme.colorScheme.error
+                    else
+                        MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(
+                        top = 4.dp,
+                        start = 4.dp,
+                        bottom = 4.dp
+                    )
+                )
             }
         }
     }

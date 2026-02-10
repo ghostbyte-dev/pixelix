@@ -8,12 +8,14 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
-import com.daniebeler.pfpixelix.domain.service.utils.Resource
+import com.daniebeler.pfpixelix.domain.model.Instance
 import com.daniebeler.pfpixelix.domain.model.MediaAttachment
 import com.daniebeler.pfpixelix.domain.model.Place
 import com.daniebeler.pfpixelix.domain.model.UpdatePost
 import com.daniebeler.pfpixelix.domain.service.editor.PostEditorService
+import com.daniebeler.pfpixelix.domain.service.instance.InstanceService
 import com.daniebeler.pfpixelix.domain.service.post.PostService
+import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -24,7 +26,8 @@ import me.tatarka.inject.annotations.Inject
 
 class EditPostViewModel @Inject constructor(
     private val postService: PostService,
-    private val postEditorService: PostEditorService
+    private val postEditorService: PostEditorService,
+    private val instanceService: InstanceService
 ) : ViewModel() {
     data class MediaDescriptionItem(
         val imageId: String, var description: String, var changed: Boolean
@@ -39,10 +42,29 @@ class EditPostViewModel @Inject constructor(
     var mediaAttachmentsBefore = mutableStateListOf<MediaAttachment>()
     var mediaDescriptionItems = mutableStateListOf<MediaDescriptionItem>()
     var deleteMediaDialog by mutableStateOf<String?>(null)
+    var instance: Instance? = null
 
     fun loadData(postId: String) {
         loadPost(postId)
+        getInstance()
     }
+
+    private fun getInstance() {
+        instanceService.getInstance().onEach { result ->
+            when (result) {
+                is Resource.Success -> {
+                    instance = result.data
+                }
+
+                is Resource.Error -> {
+                }
+
+                is Resource.Loading -> {
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
+
 
     private fun loadPost(postId: String) {
         postService.getPostById(postId).onEach { result ->

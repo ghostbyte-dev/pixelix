@@ -11,11 +11,14 @@ import androidx.glance.Image
 import androidx.glance.ImageProvider
 import androidx.glance.LocalContext
 import androidx.glance.action.ActionParameters
+import androidx.glance.action.actionParametersOf
+import androidx.glance.action.actionStartActivity
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.CircularProgressIndicator
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.action.ActionCallback
 import androidx.glance.appwidget.action.actionRunCallback
+import androidx.glance.appwidget.cornerRadius
 import androidx.glance.appwidget.provideContent
 import androidx.glance.background
 import androidx.glance.currentState
@@ -30,6 +33,7 @@ import androidx.glance.layout.padding
 import androidx.glance.state.GlanceStateDefinition
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
+import com.daniebeler.pfpixelix.AppActivity
 import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.widget.WidgetColors
 import com.daniebeler.pfpixelix.widget.latest_image.utils.GetImageProvider
@@ -40,13 +44,6 @@ import com.daniebeler.pfpixelix.widget.notifications.work_manager.LatestImageWor
 class LatestImageWidget : GlanceAppWidget() {
 
     override var stateDefinition: GlanceStateDefinition<*> = CustomLatestImageStateDefinition
-
-//    private val destinationKey = ActionParameters.Key<String>(
-//        MainActivity.KEY_DESTINATION
-//    )
-//    private val destinationKeyParam = ActionParameters.Key<String>(
-//        MainActivity.KEY_DESTINATION_PARAM
-//    )
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         provideContent {
@@ -63,19 +60,12 @@ class LatestImageWidget : GlanceAppWidget() {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) GlanceTheme.colors
             else WidgetColors.colors
         ) {
-            if (state.latestImageUri.isNotBlank()) {
+            if (state.latestImageBitmap != null) {
                 Image(
-                    provider = GetImageProvider()(state.latestImageUri, context,50f),
+                    provider = ImageProvider(state.latestImageBitmap),
                     contentDescription = "latest home timeline picture",
                     modifier = GlanceModifier.fillMaxSize()
-//                        .clickable(
-//                        actionStartActivity<MainActivity>(
-//                            actionParametersOf(
-//                                destinationKey to MainActivity.Companion.StartNavigation.Post.toString(),
-//                                destinationKeyParam to state.postId
-//                            )
-//                        )
-//                    )
+                        .clickable(actionStartActivity<AppActivity>())
                 )
             } else {
                 Column(
@@ -104,7 +94,7 @@ class LatestImageWidget : GlanceAppWidget() {
                         Text(
                             text = state.error, style = TextStyle(color = GlanceTheme.colors.error)
                         )
-                    } else if (state.refreshing || state.latestImageUri.isBlank()) {
+                    } else if (state.refreshing) {
                         CircularProgressIndicator(color = GlanceTheme.colors.primary)
                     }
                 }

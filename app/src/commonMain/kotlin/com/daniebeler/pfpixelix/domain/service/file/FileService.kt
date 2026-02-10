@@ -3,8 +3,6 @@ package com.daniebeler.pfpixelix.domain.service.file
 import co.touchlab.kermit.Logger
 import com.daniebeler.pfpixelix.utils.KmpContext
 import com.daniebeler.pfpixelix.utils.KmpUri
-import com.daniebeler.pfpixelix.utils.getMimeType
-import com.daniebeler.pfpixelix.utils.toKmpUri
 import com.daniebeler.pfpixelix.utils.toPlatformFile
 import io.github.vinceglb.filekit.FileKit
 import io.github.vinceglb.filekit.PlatformFile
@@ -14,6 +12,7 @@ import io.github.vinceglb.filekit.exists
 import io.github.vinceglb.filekit.filesDir
 import io.github.vinceglb.filekit.isRegularFile
 import io.github.vinceglb.filekit.list
+import io.github.vinceglb.filekit.mimeType
 import io.github.vinceglb.filekit.path
 import io.github.vinceglb.filekit.resolve
 import io.github.vinceglb.filekit.saveImageToGallery
@@ -29,7 +28,6 @@ import okio.Path.Companion.toPath
 
 @Inject
 class FileService(
-    private val context: KmpContext,
     private val httpClient: HttpClient
 ) {
     companion object {
@@ -52,7 +50,7 @@ class FileService(
         }
     }
 
-    fun getMimeType(file: PlatformFile): String = context.getMimeType(file.toKmpUri())
+    fun getMimeType(file: PlatformFile): String = file.mimeType().toString()
 
     private suspend fun PlatformFile.sizeRecursively(): Long {
         return when {

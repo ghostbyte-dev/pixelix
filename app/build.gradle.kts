@@ -13,6 +13,10 @@ plugins {
     alias(libs.plugins.ktorfit)
 }
 
+ktorfit {
+    compilerPluginVersion.set("2.3.3")
+}
+
 kotlin {
     jvmToolchain(17)
     androidTarget()
@@ -146,14 +150,14 @@ kotlin {
 
 android {
     namespace = "com.daniebeler.pfpixelix"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.daniebeler.pfpixelix"
         minSdk = 26
-        targetSdk = 35
-        versionCode = 33
-        versionName = "4.2.0"
+        targetSdk = 36
+        versionCode = 34
+        versionName = "4.3.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -234,7 +238,7 @@ compose.desktop {
                           <string>Pixelix auth redirect</string>
                           <key>CFBundleURLSchemes</key>
                           <array>
-                            <string>pixelix-android-auth</string>
+                            <string>dev.ghostbyte.pixelix</string>
                           </array>
                         </dict>
                       </array>

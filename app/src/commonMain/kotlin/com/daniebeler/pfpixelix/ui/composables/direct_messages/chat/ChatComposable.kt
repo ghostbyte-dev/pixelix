@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
@@ -59,6 +60,7 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.beginning_of_chat_note
+import pixelix.app.generated.resources.character_count
 import pixelix.app.generated.resources.default_avatar
 import pixelix.app.generated.resources.message
 
@@ -75,6 +77,11 @@ fun ChatComposable(
         viewModel.getChat(accountId)
     }
 
+    LaunchedEffect(viewModel.newMessageState) {
+        if (viewModel.newMessageState.message != null) {
+            lazyListState.animateScrollToItem(0)
+        }
+    }
     Box(modifier = Modifier.fillMaxSize()) {
         val statusBarPadding = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
 
@@ -87,7 +94,7 @@ fun ChatComposable(
                 isRefreshing = viewModel.chatState.isRefreshing,
                 onRefresh = { viewModel.getChat(accountId, true) },
                 modifier = Modifier
-                    .imeAwareInsets(90.dp)
+                    .imeAwareInsets(60.dp)
             ) {
                 Column(
                     modifier = Modifier
@@ -152,63 +159,90 @@ fun ChatComposable(
                                 }
                             }
                         })
-
-
-                    Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.Bottom) {
-                        OutlinedTextField(
-                            value = viewModel.newMessage,
-                            onValueChange = { viewModel.newMessage = it },
-                            label = { Text(stringResource(Res.string.message)) },
-                            singleLine = false,
-                            colors = OutlinedTextFieldDefaults.colors(
-                                focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
-                                unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
-                                disabledContainerColor = MaterialTheme.colorScheme.surfaceContainer,
-                                unfocusedBorderColor = MaterialTheme.colorScheme.background
-                            ),
-                            shape = RoundedCornerShape(12.dp),
-                            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Default),
-                            modifier = Modifier.weight(1f)
-                        )
-                        Spacer(Modifier.width(12.dp))
-                        if (viewModel.newMessageState.isLoading) {
-                            Box(
-                                contentAlignment = Alignment.Center,
-                                modifier = Modifier
-                                    .height(56.dp)
-                                    .width(56.dp)
-                                    .padding(0.dp, 0.dp)
-                                    .clip(RoundedCornerShape(12.dp))
-                                    .background(MaterialTheme.colorScheme.primary)
-                            ) {
-                                CircularProgressIndicator(
-                                    modifier = Modifier.size(24.dp),
-                                    color = MaterialTheme.colorScheme.onPrimary
-                                )
-                            }
-                        } else {
-                            Button(
-                                onClick = {
-                                    viewModel.sendMessage(accountId)
-                                },
-                                Modifier
-                                    .height(56.dp)
-                                    .width(56.dp)
-                                    .padding(0.dp, 0.dp),
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.Bottom
+                        ) {
+                            OutlinedTextField(
+                                value = viewModel.newMessage,
+                                onValueChange = { viewModel.newMessage = it },
+                                label = { Text(stringResource(Res.string.message)) },
+                                singleLine = false,
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                                    disabledContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                                    unfocusedBorderColor = MaterialTheme.colorScheme.background
+                                ),
+                                modifier = Modifier.weight(1f).heightIn(max = 200.dp),
                                 shape = RoundedCornerShape(12.dp),
-                                contentPadding = PaddingValues(12.dp)
-                            ) {
-                                Icon(
-                                    imageVector = Icons.AutoMirrored.Filled.Send,
-                                    contentDescription = "send",
-                                    Modifier
-                                        .fillMaxSize()
-                                        .fillMaxWidth()
-                                )
+                                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Default),
+                            )
+
+
+                            Spacer(Modifier.width(12.dp))
+                            if (viewModel.newMessageState.isLoading) {
+                                Box(
+                                    contentAlignment = Alignment.Center,
+                                    modifier = Modifier
+                                        .height(56.dp)
+                                        .width(56.dp)
+                                        .padding(0.dp, 0.dp)
+                                        .clip(RoundedCornerShape(12.dp))
+                                        .background(MaterialTheme.colorScheme.primary)
+                                ) {
+                                    CircularProgressIndicator(
+                                        modifier = Modifier.size(24.dp),
+                                        color = MaterialTheme.colorScheme.onPrimary
+                                    )
+                                }
+                            } else {
+                                Button(
+                                    onClick = {
+                                        viewModel.sendMessage(accountId)
+                                    },
+                                    enabled = viewModel.newMessage.length <= 500,
+                                    modifier =
+                                        Modifier
+                                            .height(56.dp)
+                                            .width(56.dp)
+                                            .padding(0.dp, 0.dp),
+                                    shape = RoundedCornerShape(12.dp),
+                                    contentPadding = PaddingValues(12.dp)
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.AutoMirrored.Filled.Send,
+                                        contentDescription = "send",
+                                        Modifier
+                                            .fillMaxSize()
+                                            .fillMaxWidth()
+                                    )
+                                }
                             }
                         }
+                        if (viewModel.newMessage.length > 470) {
+                            Text(
+                                text = stringResource(
+                                    Res.string.character_count,
+                                    viewModel.newMessage.length,
+                                    500
+                                ),
+                                style = MaterialTheme.typography.labelSmall,
+                                color = if (viewModel.newMessage.length > 500)
+                                    MaterialTheme.colorScheme.error
+                                else
+                                    MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier.padding(
+                                    top = 4.dp,
+                                    start = 4.dp,
+                                    bottom = 4.dp
+                                )
+                            )
+                        }
                     }
-
                     ErrorComposable(message = viewModel.chatState.error)
                 }
             }
@@ -238,7 +272,7 @@ fun ChatComposable(
 
                         Column {
 
-                            Text(text = viewModel.chatState.chat!!.name ?: "")
+                            Text(text = viewModel.chatState.chat!!.name)
                             Text(
                                 text = viewModel.chatState.chat!!.url.substringAfter("https://")
                                     .substringBefore("/"),

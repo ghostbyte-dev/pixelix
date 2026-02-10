@@ -134,7 +134,7 @@
     <string name="threads_description">Threads es una aplicación de Meta en la que puedes ver y compartir conversaciones públicas. También puedes publicar hilos, responder a otros y seguir perfiles que te interesen.</string>
     <string name="more_information">Más información</string>
     <string name="what_makes_a_post_trend">¿Qué hace que una publicación sea tendencia?</string>
-    <string name="trending_post_description">Las publicaciones son populares si se publicaron durante el periodo de tiempo seleccionado y tienen muchos \"me gusta\".</string>
+    <string name="trending_post_description">Las publicaciones son populares si se publicaron durante el periodo de tiempo seleccionado y tienen muchos "me gusta".</string>
     <string name="trending_account_description">La sección de perfiles en tendencia muestra los perfiles de tu instancia con más seguidores. Los perfiles que ya sigues están ocultos.</string>
     <string name="what_makes_an_account_trend">¿Qué hace que una cuenta sea tendencia?</string>
     <string name="what_makes_a_hashtag_trend">¿Qué hace que un hashtag sea popular?</string>
@@ -279,4 +279,5 @@
     <string name="terrorism">Terrorismo</string>
     <string name="reported">Reporte enviado</string>
     <string name="delete_account">Eliminar la cuenta</string>
+    <string name="character_count">%1$d / %2$d caracteres</string>
 </resources>

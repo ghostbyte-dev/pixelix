@@ -15,4 +15,3 @@ expect fun KmpUri.toPlatformFile(): PlatformFile
 expect abstract class KmpContext
 
 expect val KmpContext.coilContext: PlatformContext
-expect fun KmpContext.getMimeType(uri: KmpUri): String

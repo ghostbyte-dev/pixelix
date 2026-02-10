@@ -14,6 +14,7 @@ class WidgetService(
     }
 
     fun getLatestImage() = loadResource {
-        api.getHomeTimeline(limit = 1).first()
+        api.getHomeTimeline(limit = 5)
+            .first { post -> post.mediaAttachments[0].type == "image" }
     }
 }

@@ -90,7 +90,7 @@
 
                 <data
                     android:host="callback"
-                    android:scheme="pixelix-android-auth" />
+                    android:scheme="dev.ghostbyte.pixelix" />
             </intent-filter>
         </activity-alias>
 
@@ -113,7 +113,7 @@
 
                 <data
                     android:host="callback"
-                    android:scheme="pixelix-android-auth" />
+                    android:scheme="dev.ghostbyte.pixelix" />
             </intent-filter>
         </activity-alias>
 
@@ -136,7 +136,7 @@
 
                 <data
                     android:host="callback"
-                    android:scheme="pixelix-android-auth" />
+                    android:scheme="dev.ghostbyte.pixelix" />
             </intent-filter>
         </activity-alias>
 
@@ -159,7 +159,7 @@
 
                 <data
                     android:host="callback"
-                    android:scheme="pixelix-android-auth" />
+                    android:scheme="dev.ghostbyte.pixelix" />
             </intent-filter>
         </activity-alias>
 
@@ -182,7 +182,7 @@
 
                 <data
                     android:host="callback"
-                    android:scheme="pixelix-android-auth" />
+                    android:scheme="dev.ghostbyte.pixelix" />
             </intent-filter>
         </activity-alias>
 
@@ -205,7 +205,7 @@
 
                 <data
                     android:host="callback"
-                    android:scheme="pixelix-android-auth" />
+                    android:scheme="dev.ghostbyte.pixelix" />
             </intent-filter>
         </activity-alias>
 
@@ -228,7 +228,7 @@
 
                 <data
                     android:host="callback"
-                    android:scheme="pixelix-android-auth" />
+                    android:scheme="dev.ghostbyte.pixelix" />
             </intent-filter>
         </activity-alias>
 
@@ -251,7 +251,7 @@
 
                 <data
                     android:host="callback"
-                    android:scheme="pixelix-android-auth" />
+                    android:scheme="dev.ghostbyte.pixelix" />
             </intent-filter>
         </activity-alias>
 
@@ -274,7 +274,7 @@
 
                 <data
                     android:host="callback"
-                    android:scheme="pixelix-android-auth" />
+                    android:scheme="dev.ghostbyte.pixelix" />
             </intent-filter>
         </activity-alias>
 

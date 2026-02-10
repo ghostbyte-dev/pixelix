@@ -39,6 +39,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -49,6 +50,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
@@ -58,6 +60,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.di.injectViewModel
+import com.daniebeler.pfpixelix.domain.model.Instance
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.model.Visibility
 import com.daniebeler.pfpixelix.ui.composables.hashtagMentionText.HashtagsMentionsTextView
@@ -115,59 +118,63 @@ fun CommentsBottomSheet(
                         place = null,
                         inReplyToId = null
                     )
-                    ReplyElement(reply = ownDescription,
+                    ReplyElement(
+                        reply = ownDescription,
                         true,
                         navController = navController,
                         {},
                         viewModel.myAccountId,
-                        { url -> viewModel.openUrl(url) })
+                        { url -> viewModel.openUrl(url) }, instance = viewModel.instance)
                 }
-
-                TextFieldMentionsComposable(submit = { text ->
-                    replyText = TextFieldValue()
-                    viewModel.createReply(
-                        post.id, text
-                    )
-                },
-                    replyText,
-                    changeText = { newText -> replyText = newText },
-                    labelStringId = Res.string.reply,
-                    modifier = null,
-                    imeAction = ImeAction.Send,
-                    suggestionsBoxColor = MaterialTheme.colorScheme.surface,
-                    submitButton = {
-                        Button(
-                            onClick = {
-                                if (!viewModel.ownReplyState.isLoading) {
-                                    viewModel.createReply(post.id, replyText.text)
-                                    replyText = replyText.copy(text = "")
+                Column {
+                    TextFieldMentionsComposable(
+                        submit = { text ->
+                            replyText = TextFieldValue()
+                            viewModel.createReply(
+                                post.id, text
+                            )
+                        },
+                        replyText,
+                        changeText = { newText -> replyText = newText },
+                        labelStringId = Res.string.reply,
+                        modifier = null,
+                        imeAction = ImeAction.Send,
+                        suggestionsBoxColor = MaterialTheme.colorScheme.surface,
+                        submitButton = { enabled ->
+                            Button(
+                                onClick = {
+                                    if (!viewModel.ownReplyState.isLoading) {
+                                        viewModel.createReply(post.id, replyText.text)
+                                        replyText = replyText.copy(text = "")
+                                    }
+                                },
+                                Modifier
+                                    .height(56.dp)
+                                    .width(56.dp)
+                                    .padding(0.dp, 0.dp),
+                                shape = RoundedCornerShape(16.dp),
+                                contentPadding = PaddingValues(12.dp),
+                                enabled = enabled
+                            ) {
+                                if (viewModel.ownReplyState.isLoading) {
+                                    CircularProgressIndicator(
+                                        modifier = Modifier.size(24.dp),
+                                        color = MaterialTheme.colorScheme.onPrimary
+                                    )
+                                } else {
+                                    Icon(
+                                        imageVector = Icons.AutoMirrored.Filled.Send,
+                                        contentDescription = "submit",
+                                        Modifier
+                                            .fillMaxSize()
+                                            .fillMaxWidth()
+                                    )
                                 }
-                            },
-                            Modifier
-                                .height(56.dp)
-                                .width(56.dp)
-                                .padding(0.dp, 0.dp),
-                            shape = RoundedCornerShape(16.dp),
-                            contentPadding = PaddingValues(12.dp),
-                            enabled = replyText.text.isNotBlank()
-                        ) {
-                            if (viewModel.ownReplyState.isLoading) {
-                                CircularProgressIndicator(
-                                    modifier = Modifier.size(24.dp),
-                                    color = MaterialTheme.colorScheme.onPrimary
-                                )
-                            } else {
-                                Icon(
-                                    imageVector = Icons.AutoMirrored.Filled.Send,
-                                    contentDescription = "submit",
-                                    Modifier
-                                        .fillMaxSize()
-                                        .fillMaxWidth()
-                                )
-                            }
 
-                        }
-                    })
+                            }
+                        },
+                        maxLength = viewModel.instance?.configuration?.statusConfig?.maxCharacters)
+                }
 
                 HorizontalDivider(Modifier.padding(12.dp))
             }
@@ -175,12 +182,13 @@ fun CommentsBottomSheet(
             items(viewModel.repliesState.replies, key = {
                 it.id
             }) { reply ->
-                ReplyElement(reply = reply,
+                ReplyElement(
+                    reply = reply,
                     false,
                     navController = navController,
                     { viewModel.deleteReply(reply.id) },
                     viewModel.myAccountId,
-                    { url -> viewModel.openUrl(url) })
+                    { url -> viewModel.openUrl(url) }, instance = viewModel.instance)
             }
 
             if (viewModel.repliesState.isLoading) {
@@ -209,7 +217,7 @@ fun CommentsBottomSheet(
 
             if (!viewModel.repliesState.isLoading && viewModel.repliesState.error.isNotBlank() && viewModel.repliesState.replies.isEmpty()) {
                 item {
-                     ErrorComposable(viewModel.repliesState.error)
+                    ErrorComposable(viewModel.repliesState.error)
                 }
             }
 
@@ -235,7 +243,8 @@ private fun ReplyElement(
     deleteReply: () -> Unit,
     myAccountId: String?,
     openUrl: (url: String) -> Unit,
-    viewModel: ReplyElementViewModel = injectViewModel(key = reply.id) { replyElementViewModel }
+    viewModel: ReplyElementViewModel = injectViewModel(key = reply.id) { replyElementViewModel },
+    instance: Instance?
 ) {
 
     var timeAgo: String by remember { mutableStateOf("") }
@@ -253,7 +262,8 @@ private fun ReplyElement(
     }
     Column(modifier = Modifier.padding(vertical = 8.dp)) {
         Row {
-            AsyncImage(model = reply.account.avatar,
+            AsyncImage(
+                model = reply.account.avatar,
                 contentDescription = "",
                 modifier = Modifier
                     .height(42.dp)
@@ -267,7 +277,8 @@ private fun ReplyElement(
 
             Column {
                 Row {
-                    Text(text = reply.account.acct,
+                    Text(
+                        text = reply.account.acct,
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.clickable {
@@ -283,7 +294,8 @@ private fun ReplyElement(
                 }
 
 
-                HashtagsMentionsTextView(text = reply.content,
+                HashtagsMentionsTextView(
+                    text = reply.content,
                     mentions = reply.mentions,
                     navController = navController,
                     openUrl = { url -> openUrl(url) })
@@ -358,7 +370,7 @@ private fun ReplyElement(
                                 reply = it, false, navController = navController, {
                                     viewModel.deleteReply(it.id)
                                     replyCount--
-                                }, myAccountId, openUrl
+                                }, myAccountId, openUrl, instance = instance
                             )
                         }
                     }
@@ -373,7 +385,7 @@ private fun ReplyElement(
             if (myAccountId != null) {
                 viewModel.createReply(reply.id, it, myAccountId)
             }
-        })
+        }, instance = instance)
     }
 
     if (showDeleteReplyDialog.value) {
@@ -408,11 +420,12 @@ private fun ReplyElement(
 @Composable
 fun AddReplyDialog(
     onDismissRequest: () -> Unit,
-    onConfirmation: (replyText: String) -> Unit
+    onConfirmation: (replyText: String) -> Unit,
+    instance: Instance?
 ) {
     var replyText by remember { mutableStateOf(TextFieldValue("")) }
 
-    AlertDialog(icon = {
+    AlertDialog(modifier = Modifier.imePadding(),icon = {
         Icon(Icons.Outlined.Edit, contentDescription = "Edit")
     }, title = {
         Text(text = stringResource(Res.string.reply))
@@ -430,14 +443,21 @@ fun AddReplyDialog(
             modifier = null,
             imeAction = ImeAction.Send,
             submitButton = null,
-            suggestionsBoxColor = MaterialTheme.colorScheme.surface
-            )
+            suggestionsBoxColor = MaterialTheme.colorScheme.surface,
+            maxLength = (instance?.configuration?.statusConfig?.maxCharacters),
+            colors = TextFieldDefaults.colors(
+                unfocusedIndicatorColor = Color.Transparent,
+                focusedIndicatorColor = Color.Transparent,
+                focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer
+            ),
+        )
     }, onDismissRequest = {
         onDismissRequest()
     }, confirmButton = {
         TextButton(onClick = {
             onConfirmation(replyText.text)
-        }) {
+        }, enabled = ((instance?.configuration?.statusConfig?.maxCharacters ?: Int.MAX_VALUE) > replyText.text.length)) {
             Text("Send")
         }
     }, dismissButton = {

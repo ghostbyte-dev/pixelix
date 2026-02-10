@@ -4,13 +4,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.domain.service.account.AccountService
 import com.daniebeler.pfpixelix.utils.EmptyKmpUri
-import com.daniebeler.pfpixelix.utils.KmpContext
-import com.daniebeler.pfpixelix.utils.KmpUri
 import com.daniebeler.pfpixelix.utils.toKmpUri
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -24,7 +23,7 @@ class EditProfileViewModel @Inject constructor(
 
     var firstLoaded by mutableStateOf(false)
     var displayname by mutableStateOf("")
-    var note by mutableStateOf("")
+    var note by mutableStateOf(TextFieldValue())
     var website by mutableStateOf("")
     var avatarUri by mutableStateOf(EmptyKmpUri)
     var newAvatar by mutableStateOf<ImageBitmap?>(null)
@@ -39,7 +38,7 @@ class EditProfileViewModel @Inject constructor(
                 is Resource.Success -> {
                     accountState = EditProfileState(account = result.data)
                     displayname = accountState.account?.displayname ?: ""
-                    note = accountState.account?.note ?: ""
+                    note = TextFieldValue(accountState.account?.note ?: "")
                     website = accountState.account?.website?.replace("https://", "") ?: ""
                     avatarUri = accountState.account?.avatar!!.toKmpUri()
                     privateProfile = accountState.account?.locked ?: false
@@ -48,7 +47,7 @@ class EditProfileViewModel @Inject constructor(
 
                 is Resource.Error -> {
                     accountState =
-                        EditProfileState(error = result.message ?: "An unexpected error occurred")
+                        EditProfileState(error = result.message)
                 }
 
                 is Resource.Loading -> {
@@ -61,7 +60,7 @@ class EditProfileViewModel @Inject constructor(
 
     fun save() {
         accountService.updateAccount(
-            displayname, note, "https://$website", privateProfile, newAvatar
+            displayname, note.text, "https://$website", privateProfile, newAvatar
         ).onEach { result ->
             accountState = when (result) {
                 is Resource.Success -> {
@@ -69,7 +68,7 @@ class EditProfileViewModel @Inject constructor(
                 }
 
                 is Resource.Error -> {
-                    EditProfileState(error = result.message ?: "An unexpected error occurred")
+                    EditProfileState(error = result.message)
                 }
 
                 is Resource.Loading -> {

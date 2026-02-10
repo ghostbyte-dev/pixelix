@@ -24,6 +24,7 @@ import com.daniebeler.pfpixelix.domain.service.session.Session
 import com.daniebeler.pfpixelix.domain.service.session.SessionStorage
 import com.daniebeler.pfpixelix.domain.service.session.SessionStorageDataSerializer
 import com.daniebeler.pfpixelix.domain.service.session.SystemUrlHandler
+import com.daniebeler.pfpixelix.domain.service.share.AccountIntentHandler
 import com.daniebeler.pfpixelix.domain.service.share.SystemFileShare
 import com.daniebeler.pfpixelix.domain.service.widget.WidgetService
 import com.daniebeler.pfpixelix.utils.KmpContext
@@ -63,6 +64,9 @@ abstract class AppComponent(
 ) {
     abstract val systemUrlHandler: SystemUrlHandler
     abstract val systemFileShare: SystemFileShare
+
+    abstract val accountIntentHandler: AccountIntentHandler
+
     abstract val authService: AuthService
     abstract val widgetService: WidgetService
 
@@ -85,6 +89,7 @@ abstract class AppComponent(
         json: Json,
         session: Session
     ): HttpClient = HttpClient {
+        expectSuccess = true
         install(ContentNegotiation) { json(json) }
         install(Logging) {
             logger = object : io.ktor.client.plugins.logging.Logger {
@@ -94,7 +99,7 @@ abstract class AppComponent(
                     }
                 }
             }
-            level = LogLevel.NONE
+            level = LogLevel.ALL
         }
         install(HttpTimeout) {
             requestTimeoutMillis = 60000
@@ -135,7 +140,7 @@ abstract class AppComponent(
             storage = OkioStorage(
                 fileSystem = FileSystem.SYSTEM,
                 producePath = {
-                    FileService.dataStoreDir.resolve("saved_searches.json").toOkIoPath()
+                    FileService.dataStoreDir.resolve("saved_searches_2.json").toOkIoPath()
                 },
                 serializer = SavedSearchesSerializer,
             )

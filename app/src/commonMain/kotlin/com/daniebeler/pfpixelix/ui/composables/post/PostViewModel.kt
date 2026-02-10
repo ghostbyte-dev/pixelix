@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
+import com.daniebeler.pfpixelix.domain.model.Instance
 import com.daniebeler.pfpixelix.domain.model.LikedBy
 import com.daniebeler.pfpixelix.domain.model.NewReport
 import com.daniebeler.pfpixelix.domain.model.Post
@@ -13,6 +14,7 @@ import com.daniebeler.pfpixelix.domain.model.ReportObjectType
 import com.daniebeler.pfpixelix.domain.service.account.AccountService
 import com.daniebeler.pfpixelix.domain.service.editor.PostEditorService
 import com.daniebeler.pfpixelix.domain.service.file.FileService
+import com.daniebeler.pfpixelix.domain.service.instance.InstanceService
 import com.daniebeler.pfpixelix.domain.service.platform.Platform
 import com.daniebeler.pfpixelix.domain.service.post.PostService
 import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
@@ -35,7 +37,8 @@ class PostViewModel @Inject constructor(
     private val authService: AuthService,
     private val accountService: AccountService,
     private val platform: Platform,
-    private val fileService: FileService
+    private val fileService: FileService,
+    private val instanceService: InstanceService
 ) : ViewModel() {
 
     var post: Post? by mutableStateOf(null)
@@ -58,13 +61,14 @@ class PostViewModel @Inject constructor(
     var isInFocusMode by mutableStateOf(false)
     var isAutoplayVideos by mutableStateOf(true)
     var blurSensitiveContent by mutableStateOf(false)
+    var instance: Instance? = null
 
     var volume by mutableStateOf(prefs.enableVolume)
 
     init {
         myAccountId = authService.getCurrentSession()!!.accountId
         myUsername = authService.getCurrentSession()!!.username
-
+        getInstance()
         viewModelScope.launch {
             prefs.hideAltTextButtonFlow.collect {
                 isAltTextButtonHidden = it
@@ -99,6 +103,22 @@ class PostViewModel @Inject constructor(
         }
     }
 
+    private fun getInstance() {
+        instanceService.getInstance().onEach { result ->
+            when (result) {
+                is Resource.Success -> {
+                    instance = result.data
+                }
+
+                is Resource.Error -> {
+                }
+
+                is Resource.Loading -> {
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
+
     fun deletePost(postId: String) {
         deleteDialog = null
         postEditorService.deletePost(postId).onEach { result ->
@@ -108,7 +128,7 @@ class PostViewModel @Inject constructor(
                 }
 
                 is Resource.Error -> {
-                    DeleteState(error = result.message ?: "An unexpected error occurred")
+                    DeleteState(error = result.message)
                 }
 
                 is Resource.Loading -> {
@@ -126,11 +146,11 @@ class PostViewModel @Inject constructor(
         postService.getReplies(postId).onEach { result ->
             repliesState = when (result) {
                 is Resource.Success -> {
-                    RepliesState(replies = result.data?.descendants ?: emptyList())
+                    RepliesState(replies = result.data.descendants)
                 }
 
                 is Resource.Error -> {
-                    RepliesState(error = result.message ?: "An unexpected error occurred")
+                    RepliesState(error = result.message)
                 }
 
                 is Resource.Loading -> {
@@ -147,12 +167,12 @@ class PostViewModel @Inject constructor(
                     is Resource.Success -> {
                         ownReplyState = OwnReplyState(reply = result.data)
                         repliesState =
-                            repliesState.copy(replies = repliesState.replies + result.data!!)
+                            repliesState.copy(replies = repliesState.replies + result.data)
                     }
 
                     is Resource.Error -> {
                         ownReplyState =
-                            OwnReplyState(error = result.message ?: "An unexpected error occurred")
+                            OwnReplyState(error = result.message)
                     }
 
                     is Resource.Loading -> {
@@ -187,11 +207,11 @@ class PostViewModel @Inject constructor(
         accountService.getLikedBy(postId).onEach { result ->
             likedByState = when (result) {
                 is Resource.Success -> {
-                    LikedByState(likedBy = result.data ?: emptyList())
+                    LikedByState(likedBy = result.data)
                 }
 
                 is Resource.Error -> {
-                    LikedByState(error = result.message ?: "An unexpected error occurred")
+                    LikedByState(error = result.message)
                 }
 
                 is Resource.Loading -> {
@@ -220,8 +240,8 @@ class PostViewModel @Inject constructor(
                     when (result) {
                         is Resource.Success -> {
                             post = post?.copy(
-                                favourited = result.data?.favourited ?: true,
-                                favouritesCount = result.data?.favouritesCount ?: 0,
+                                favourited = result.data.favourited,
+                                favouritesCount = result.data.favouritesCount,
                             )
                             post?.let { updatePost(it) }
                         }
@@ -274,7 +294,7 @@ class PostViewModel @Inject constructor(
             postService.unlikePost(postId).onEach { result ->
                 when (result) {
                     is Resource.Success -> {
-                        post = post?.copy(favourited = result.data?.favourited ?: false)
+                        post = post?.copy(favourited = result.data.favourited)
                         post?.let { updatePost(it) }
                     }
 
@@ -301,7 +321,7 @@ class PostViewModel @Inject constructor(
                 postService.reblogPost(postId).onEach { result ->
                     when (result) {
                         is Resource.Success -> {
-                            post = post?.copy(reblogged = result.data?.reblogged ?: false)
+                            post = post?.copy(reblogged = result.data.reblogged)
                             post?.let { updatePost(it) }
                         }
 
@@ -326,7 +346,7 @@ class PostViewModel @Inject constructor(
                 postService.unreblogPost(postId).onEach { result ->
                     when (result) {
                         is Resource.Success -> {
-                            post = post?.copy(reblogged = result.data?.reblogged ?: false)
+                            post = post?.copy(reblogged = result.data.reblogged)
                             post?.let { updatePost(it) }
                         }
 
@@ -376,7 +396,7 @@ class PostViewModel @Inject constructor(
                 postService.unBookmarkPost(postId).onEach { result ->
                     when (result) {
                         is Resource.Success -> {
-                            post = post?.copy(bookmarked = result.data?.bookmarked ?: false)
+                            post = post?.copy(bookmarked = result.data.bookmarked)
                             post?.let { updatePost(it) }
                         }
 

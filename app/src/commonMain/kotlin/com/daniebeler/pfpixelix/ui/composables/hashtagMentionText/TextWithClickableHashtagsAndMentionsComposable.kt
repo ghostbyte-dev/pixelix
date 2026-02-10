@@ -53,9 +53,9 @@ fun HashtagsMentionsTextView(
     val primaryStyle = SpanStyle(color = colorScheme.primary)
 
     val hashtags =
-        Regex("(?=[^\\w!])[@#][\\u4e00-\\u9fa5\\w']+(?:@[\\w']+)?(?:\\.\\w+)?(?:\\/\\w+)*|https?:\\/\\/\\S+")
+        Regex("(?=[^\\w!])[@#][\\u4e00-\\u9fa5\\w']+(?:@[\\w']+)?(?:\\.\\w+)*(?:\\/\\w+)*|https?:\\/\\/\\S+")
 
-    val annotatedStringList = remember {
+    val annotatedStringList = remember(text) {
 
         var lastIndex = 0
         val annotatedStringList = mutableStateListOf<AnnotatedString.Range<String>>()

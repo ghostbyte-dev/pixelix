@@ -39,6 +39,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -49,6 +50,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.decodeToImageBitmap
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -64,6 +66,7 @@ import com.attafitamim.krop.ui.CropperPreview
 import com.attafitamim.krop.ui.DefaultControls
 import com.daniebeler.pfpixelix.EdgeToEdgeDialogProperties
 import com.daniebeler.pfpixelix.di.injectViewModel
+import com.daniebeler.pfpixelix.ui.composables.textfield_mentions.TextFieldMentionsComposable
 import com.daniebeler.pfpixelix.utils.imeAwareInsets
 import io.github.vinceglb.filekit.dialogs.FileKitMode
 import io.github.vinceglb.filekit.dialogs.FileKitType
@@ -73,6 +76,7 @@ import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.bio
+import pixelix.app.generated.resources.caption
 import pixelix.app.generated.resources.displayname
 import pixelix.app.generated.resources.edit_profile
 import pixelix.app.generated.resources.private_profile
@@ -92,7 +96,7 @@ fun EditProfileComposable(
         Column(
             Modifier.padding(paddingValues)
                 .padding(top = TopAppBarDefaults.TopAppBarExpandedHeight - 24.dp).fillMaxSize()
-                .padding(horizontal = 12.dp).verticalScroll(state = rememberScrollState()).imeAwareInsets(90.dp)
+                .padding(horizontal = 12.dp).verticalScroll(state = rememberScrollState()).imeAwareInsets(60.dp)
         ) {
 
             if (viewModel.accountState.account != null) {
@@ -157,8 +161,8 @@ fun EditProfileComposable(
                     colors = TextFieldDefaults.colors(
                         unfocusedIndicatorColor = Color.Transparent,
                         focusedIndicatorColor = Color.Transparent,
-                        focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
-                        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer
+                        focusedContainerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(4.dp),
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(4.dp)
                     )
                 )
 
@@ -171,18 +175,15 @@ fun EditProfileComposable(
 
                 Spacer(Modifier.height(6.dp))
 
-
-                TextField(
-                    value = viewModel.note,
-                    onValueChange = { viewModel.note = it },
+                TextFieldMentionsComposable(
+                    submit = {},
+                    text = viewModel.note,
+                    changeText = { text -> viewModel.note = text },
+                    labelStringId = Res.string.caption,
                     modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(16.dp),
-                    colors = TextFieldDefaults.colors(
-                        unfocusedIndicatorColor = Color.Transparent,
-                        focusedIndicatorColor = Color.Transparent,
-                        focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
-                        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer
-                    )
+                    imeAction = ImeAction.Default,
+                    suggestionsBoxColor = MaterialTheme.colorScheme.surfaceContainer,
+                    submitButton = null,
                 )
 
                 Spacer(modifier = Modifier.height(18.dp))
@@ -208,8 +209,8 @@ fun EditProfileComposable(
                     colors = TextFieldDefaults.colors(
                         unfocusedIndicatorColor = Color.Transparent,
                         focusedIndicatorColor = Color.Transparent,
-                        focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
-                        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer
+                        focusedContainerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(4.dp),
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(4.dp)
                     )
                 )
 

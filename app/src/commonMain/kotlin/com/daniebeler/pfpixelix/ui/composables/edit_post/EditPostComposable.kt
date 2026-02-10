@@ -47,6 +47,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -68,7 +69,6 @@ import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.model.MediaAttachment
-import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposableDialog
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pfpixelix.ui.composables.textfield_location.TextFieldLocationsComposable
@@ -135,7 +135,7 @@ fun EditPostComposable(
                         val mediaAttachmentsEditIds = viewModel.mediaAttachmentsEdit.map { it.id }
                         val mediaAttachmentsBeforeIds =
                             viewModel.mediaAttachmentsBefore.map { it.id }
-                        if (viewModel.mediaDescriptionItems.any { it.changed } || viewModel.caption.text != viewModel.editPostState.post!!.content || viewModel.sensitive != viewModel.editPostState.post!!.sensitive || mediaAttachmentsBeforeIds != mediaAttachmentsEditIds || viewModel.editPostState.post!!.place != viewModel.location) {
+                        if ((viewModel.mediaDescriptionItems.any { it.changed } || viewModel.caption.text != viewModel.editPostState.post!!.content || viewModel.sensitive != viewModel.editPostState.post!!.sensitive || mediaAttachmentsBeforeIds != mediaAttachmentsEditIds || viewModel.editPostState.post!!.place != viewModel.location) && viewModel.caption.text.length <= (viewModel.instance?.configuration?.statusConfig?.maxCharacters ?: Int.MAX_VALUE)) {
                             if (viewModel.editPostState.isLoading) {
                                 Button(
                                     onClick = { }, modifier = Modifier.width(120.dp)
@@ -278,7 +278,8 @@ fun EditPostComposable(
                         modifier = Modifier.fillMaxWidth(),
                         imeAction = ImeAction.Default,
                         suggestionsBoxColor = MaterialTheme.colorScheme.surfaceContainer,
-                        submitButton = null
+                        submitButton = null,
+                        maxLength = viewModel.instance?.configuration?.statusConfig?.maxCharacters
                     )
 
                     Row(
@@ -301,6 +302,8 @@ fun EditPostComposable(
                             colors = TextFieldDefaults.colors(
                                 unfocusedIndicatorColor = Color.Transparent,
                                 focusedIndicatorColor = Color.Transparent,
+                                focusedContainerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(4.dp),
+                                unfocusedContainerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(4.dp)
                             ),
                             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Default),
                             keyboardActions = KeyboardActions(onDone = {
@@ -493,8 +496,8 @@ fun ImagesPagerEditPost(
                 colors = TextFieldDefaults.colors(
                     unfocusedIndicatorColor = Color.Transparent,
                     focusedIndicatorColor = Color.Transparent,
-                    focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
-                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer
+                    focusedContainerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(4.dp),
+                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(4.dp)
                 ),
                 label = { Text(stringResource(Res.string.alt_text)) },
             )

@@ -89,9 +89,7 @@ class OwnProfileViewModel @Inject constructor(
                 }
 
                 is Resource.Loading -> {
-                    AccountState(
-                        isLoading = true, account = accountState.account, refreshing = refreshing
-                    )
+                    accountState.copy(isLoading = true, refreshing = refreshing)
                 }
             }
         }.launchIn(viewModelScope)
@@ -191,6 +189,14 @@ class OwnProfileViewModel @Inject constructor(
 
     fun postGetsDeleted(postId: String) {
         postsState = postsState.copy(posts = postsState.posts.filter { post -> post.id != postId })
+        accountState = accountState.copy(
+            account = accountState.account?.copy(
+                postsCount = accountState.account?.postsCount?.minus(
+                    1
+                )
+                    ?: 0
+            )
+        )
     }
 
     fun updatePost(post: Post) {

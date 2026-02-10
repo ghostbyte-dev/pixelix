@@ -12,6 +12,7 @@ import com.daniebeler.pfpixelix.domain.model.SavedSearchType
 import com.daniebeler.pfpixelix.domain.model.SavedSearches
 import com.daniebeler.pfpixelix.domain.service.hashtag.SearchService
 import com.daniebeler.pfpixelix.domain.service.search.SavedSearchesService
+import com.daniebeler.pfpixelix.domain.service.session.AuthService
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.launchIn
@@ -21,50 +22,65 @@ import me.tatarka.inject.annotations.Inject
 
 class ExploreViewModel @Inject constructor(
     private val searchService: SearchService,
-    private val savedSearchesService: SavedSearchesService
+    private val savedSearchesService: SavedSearchesService,
+    private val authService: AuthService
 ) : ViewModel() {
     var searchState by mutableStateOf(SearchState())
-    var savedSearches: SavedSearches by mutableStateOf(SavedSearches())
+    var savedSearches by mutableStateOf<List<SavedSearchItem>>(emptyList())
+        private set
 
     init {
-        viewModelScope.launch { getSavedSearches() }
-    }
-
-    private suspend fun getSavedSearches() {
-        savedSearchesService.getSavedSearches().collect {
-            savedSearches = it
+        viewModelScope.launch {
+            // 1. Observe the active user flow
+            authService.activeUser.collect { accountId ->
+                if (accountId != null) {
+                    savedSearchesService.getSavedSearches(accountId).collect { list ->
+                        savedSearches = list
+                    }
+                } else {
+                    savedSearches = emptyList()
+                }
+            }
         }
     }
 
     fun saveAccount(accountUsername: String, account: Account) {
         viewModelScope.launch {
-            savedSearchesService.addAccount(accountUsername, account)
+            val currentUserId = authService.getCurrentSession()?.accountId ?: return@launch
+            savedSearchesService.addAccount(accountUsername, account, currentUserId)
         }
     }
 
     fun saveHashtag(accountId: String) {
         viewModelScope.launch {
-            savedSearchesService.addHashtag(accountId)
+            val currentUserId = authService.getCurrentSession()?.accountId ?: return@launch
+
+            savedSearchesService.addHashtag(accountId, currentUserId)
         }
     }
 
     fun saveSearch(text: String) {
         if (text.isNotBlank()) {
 
-            val savedSearchesBefore = savedSearches.pastSearches.filter { it.savedSearchType == SavedSearchType.Search }
+            /*val savedSearchesBefore =
+                savedSearches.pastSearches.filter { it.savedSearchType == SavedSearchType.Search }
             if (savedSearchesBefore.find { it.value == text } != null) {
                 return
-            }
+            }*/
 
             viewModelScope.launch {
-                savedSearchesService.addSearch(text)
+                val currentUserId = authService.getCurrentSession()?.accountId ?: return@launch
+
+                savedSearchesService.addSearch(text, currentUserId)
             }
         }
     }
 
     fun deleteSavedSearch(item: SavedSearchItem) {
         viewModelScope.launch {
-            savedSearchesService.deleteElement(item)
+            val currentUserId = authService.getCurrentSession()?.accountId ?: return@launch
+
+            savedSearchesService.deleteElement(item, currentUserId)
         }
     }
 

@@ -12,6 +12,7 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.core.content.FileProvider
 import io.github.vinceglb.filekit.FileKit
 import io.github.vinceglb.filekit.dialogs.init
+import io.ktor.util.logging.Logger
 import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
@@ -57,6 +58,13 @@ class AppActivity : ComponentActivity() {
                 }
             }
         }
+
+        val destination = intent.getStringExtra("navigation_destination")
+        val accountId = intent.getStringExtra("account_id")
+
+        if (destination == "profile" && accountId != null) {
+            onExternalNotification(accountId)
+        }
     }
 
     private fun onExternalUrl(url: String) {
@@ -67,6 +75,11 @@ class AppActivity : ComponentActivity() {
     private fun onExternalFileShare(uris: List<Uri>) {
         val systemFileShare = MyApplication.appComponent.systemFileShare
         systemFileShare.share(uris)
+    }
+
+    private fun onExternalNotification(accountId: String) {
+        val accountIntentHandler = MyApplication.appComponent.accountIntentHandler
+        accountIntentHandler.onAccountOpen(accountId);
     }
 }
 

@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class SavedSearches(
-    val pastSearches: List<SavedSearchItem> = emptyList()
+    val accountData: Map<String, List<SavedSearchItem>> = emptyMap()
 )
 
 @Serializable

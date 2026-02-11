@@ -3,6 +3,9 @@ package com.daniebeler.pfpixelix.domain.service.platform
 import co.touchlab.kermit.Logger
 import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
 import com.daniebeler.pfpixelix.utils.KmpContext
+import com.daniebeler.pfpixelix.utils.KmpUri
+import com.daniebeler.pfpixelix.utils.toKmpUri
+import io.github.vinceglb.filekit.PlatformFile
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.useContents
 import me.tatarka.inject.annotations.Inject
@@ -22,7 +25,12 @@ actual class Platform actual constructor(
     private val context: KmpContext,
     private val prefs: UserPreferences
 ) {
-    actual fun openUrl(url: String) {
+
+    actual fun toSafeUri(platformFile: PlatformFile): KmpUri {
+        return platformFile.toKmpUri()
+    }
+
+        actual fun openUrl(url: String) {
         if (prefs.useInAppBrowser) {
             val safariViewController = SFSafariViewController(uRL = NSURL(string = url))
             val self = context.viewController

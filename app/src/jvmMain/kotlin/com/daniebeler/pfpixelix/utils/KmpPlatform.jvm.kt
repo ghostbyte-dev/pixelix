@@ -23,4 +23,3 @@ actual fun KmpUri.toPlatformFile(): PlatformFile = PlatformFile(File(uri))
 
 actual abstract class KmpContext
 actual val KmpContext.coilContext get() = PlatformContext.INSTANCE
-actual fun KmpContext.getMimeType(uri: KmpUri): String = Files.probeContentType(uri.uri.toPath())

@@ -2,6 +2,9 @@ package com.daniebeler.pfpixelix.domain.service.platform
 
 import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
 import com.daniebeler.pfpixelix.utils.KmpContext
+import com.daniebeler.pfpixelix.utils.KmpUri
+import com.daniebeler.pfpixelix.utils.toKmpUri
+import io.github.vinceglb.filekit.PlatformFile
 import me.tatarka.inject.annotations.Inject
 import java.awt.Desktop
 import java.net.URI
@@ -24,4 +27,7 @@ actual class Platform actual constructor(
     }
 
     actual fun pinWidget() {}
+    actual fun toSafeUri(platformFile: PlatformFile): KmpUri {
+        return platformFile.toKmpUri()
+    }
 }

@@ -5,18 +5,37 @@ import android.content.ComponentName
 import android.content.Intent
 import android.net.Uri
 import androidx.browser.customtabs.CustomTabsIntent
+import androidx.core.content.FileProvider
 import co.touchlab.kermit.Logger
 import com.daniebeler.pfpixelix.MyApplication
 import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
 import com.daniebeler.pfpixelix.utils.KmpContext
+import com.daniebeler.pfpixelix.utils.KmpUri
 import com.daniebeler.pfpixelix.widget.notifications.NotificationWidgetReceiver
+import io.github.vinceglb.filekit.PlatformFile
+import io.github.vinceglb.filekit.path
 import me.tatarka.inject.annotations.Inject
+import java.io.File
 
 @Inject
 actual class Platform actual constructor(
     private val context: KmpContext,
     private val prefs: UserPreferences
 ) {
+    actual fun toSafeUri(platformFile: PlatformFile): KmpUri {
+        val file = File(platformFile.path)
+
+        val authority = "${context.packageName}.fileprovider"
+
+        val contentUri = FileProvider.getUriForFile(
+            context,
+            authority,
+            file
+        )
+
+        return contentUri
+    }
+
     actual fun openUrl(url: String) {
         val activity = MyApplication.currentActivity?.get()
         if (activity != null) {

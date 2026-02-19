@@ -118,7 +118,7 @@
     <string name="no_posts">Nincs bejegyzés</string>
     <string name="home_timeline_explained">A Kezdőlap idővonalán az általad követett emberek bejegyzéseid találod, vagy amelyek tartalmazzák a követett hashtagjeid</string>
     <string name="local_timeline_explained">A Helyi idővonalon az általad használt szerver összes felhasználójának bejegyzéseit láthatod</string>
-    <string name="global_timeline_explained">A Föderációs idővonal mutatja minden felhasználó bejegyzését azokról a szerverekről is, amelyekkel a te kiszolgálód együttműködik</string>
+    <string name="global_timeline_explained">A Globális idővonal mutatja minden felhasználó bejegyzését azokról a szerverekről is, amelyekkel a te kiszolgálód együttműködik</string>
     <string name="this_user_has_not_postet_anything_yet">Ez a felhasználó még nem tett közzé semmit</string>
     <string name="you_don_t_have_any_notifications">Nincs értesítésed</string>
     <string name="view_more">tovább</string>
@@ -279,5 +279,5 @@
     <string name="terrorism">Terrorizmus</string>
     <string name="reported">Jelentve</string>
     <string name="delete_account">Fiók törlése</string>
-    <string name="character_count">%1$d / %2$d characters</string>
+    <string name="character_count">%1$d / %2$d karakter</string>
 </resources>

@@ -1,12 +1,16 @@
 [versions]
+componentsResources = "1.10.1"
 kotlin = "2.3.10"
-ksp = "2.3.2"
-agp = "9.0.0"
+ksp = "2.3.5"
+agp = "9.0.1"
 
 #https://github.com/JetBrains/compose-multiplatform/releases
-composeMultiplatform = "1.10.0"
+composeMultiplatform = "1.10.1"
 lifecycleMultiplatform = "2.9.6"
-navigationMultiplatform = "2.9.1"
+material3 = "1.9.0"
+materialIconsExtended = "1.7.3"
+materialVersion = "1.10.1"
+navigationMultiplatform = "2.9.2"
 
 #JetBrains
 kotlinx-coroutines = "1.10.2"
@@ -16,7 +20,7 @@ ktor = "3.4.0"
 kotlinx-datetime = "0.7.1"
 
 #multiplatform
-ksoup = "0.2.5"
+ksoup = "0.2.6"
 kermit = "2.0.8"
 ktorfit = "2.7.2"
 kotlinInject = "0.9.0"
@@ -30,7 +34,7 @@ composemediaplayer = "0.8.7"
 
 #android
 accompanistSystemuicontroller = "0.36.0"
-activityCompose = "1.12.3"
+activityCompose = "1.12.4"
 browser = "1.9.0"
 coreKtx = "1.17.0"
 glance = "1.1.1"
@@ -43,13 +47,14 @@ slf4jSimple = "2.0.17"
 
 [libraries]
 
+components-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "componentsResources" }
+jetbrains-material = { module = "org.jetbrains.compose.material:material", version.ref = "materialVersion" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 kotlinx-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "kotlinxCollectionsImmutable" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutines-swing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-datetime" }
-
 compose-ui-graphics = { module = "org.jetbrains.compose.ui:ui-graphics", version.ref = "composeMultiplatform" }
 
 androidx-lifecycle-runtime-compose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycleMultiplatform" }
@@ -91,6 +96,8 @@ androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version
 material = { module = "com.google.android.material:material", version.ref = "material" }
 ksoup = { module = "com.fleeksoft.ksoup:ksoup", version.ref = "ksoup" }
 kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
+material-icons-extended = { module = "org.jetbrains.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }
+material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "material3" }
 multiplatform-settings = { module = "com.russhwolf:multiplatform-settings", version.ref = "multiplatformSettings" }
 multiplatform-settings-coroutines = { module = "com.russhwolf:multiplatform-settings-coroutines", version.ref = "multiplatformSettings" }
 multiplatform-settings-datastore = { module = "com.russhwolf:multiplatform-settings-datastore", version.ref = "multiplatformSettings" }
@@ -99,6 +106,7 @@ filekit-compose = { module = "io.github.vinceglb:filekit-dialogs-compose", versi
 krop = { module = "com.attafitamim.krop:ui", version.ref = "krop" }
 slf4j-simple = { module = "org.slf4j:slf4j-simple", version.ref = "slf4jSimple" }
 composemediaplayer = { module = "io.github.kdroidfilter:composemediaplayer", version.ref = "composemediaplayer" }
+ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "composeMultiplatform" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

@@ -4,34 +4,50 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
+import co.touchlab.kermit.Logger
+import coil3.Bitmap
 import com.daniebeler.pfpixelix.domain.model.Instance
 import com.daniebeler.pfpixelix.domain.model.NewPost
 import com.daniebeler.pfpixelix.domain.model.Visibility
 import com.daniebeler.pfpixelix.domain.service.editor.PostEditorService
 import com.daniebeler.pfpixelix.domain.service.file.FileService
 import com.daniebeler.pfpixelix.domain.service.file.PlatformFile
+import com.daniebeler.pfpixelix.domain.service.file.toOkIoPath
 import com.daniebeler.pfpixelix.domain.service.instance.InstanceService
+import com.daniebeler.pfpixelix.domain.service.platform.Platform
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import com.daniebeler.pfpixelix.utils.KmpUri
+import io.github.vinceglb.filekit.FileKit
+import io.github.vinceglb.filekit.ImageFormat
+import io.github.vinceglb.filekit.cacheDir
+import io.github.vinceglb.filekit.compressImage
+import io.github.vinceglb.filekit.dialogs.compose.util.toImageBitmap
 import io.github.vinceglb.filekit.exists
+import io.github.vinceglb.filekit.nameWithoutExtension
+import io.github.vinceglb.filekit.readBytes
+import io.github.vinceglb.filekit.resolve
 import io.github.vinceglb.filekit.size
+import io.github.vinceglb.filekit.write
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import me.tatarka.inject.annotations.Inject
+import kotlin.time.Clock
 
 
 class NewPostViewModel @Inject constructor(
     private val postEditorService: PostEditorService,
     private val instanceService: InstanceService,
-    private val fileService: FileService
+    private val fileService: FileService,
+    private val platform: Platform
 ) : ViewModel() {
     data class ImageItem(
         val imageUri: KmpUri,
@@ -50,7 +66,8 @@ class NewPostViewModel @Inject constructor(
     var mediaUploadState by mutableStateOf(MediaUploadState())
     var createPostState by mutableStateOf(CreatePostState())
     var instance: Instance? = null
-    var addImageError by mutableStateOf(Pair("", ""))
+    var addImageError by mutableStateOf(AddMediaError())
+    var compressionLoading by mutableStateOf(false)
 
     init {
         getInstance()
@@ -100,13 +117,16 @@ class NewPostViewModel @Inject constructor(
 
     fun addImage(uri: KmpUri) {
         val file = PlatformFile(uri)
-        if (!file.exists()) return
+        if (!file.exists()) {
+            return
+        }
         val fileType = fileService.getMimeType(file)
         if (instance != null && !instance!!.configuration.mediaAttachmentConfig.supportedMimeTypes.contains(
                 fileType
             )
         ) {
-            addImageError = Pair(
+            addImageError = AddMediaError(
+                AddMediaErrorType.ERROR,
                 "Media type is not supported",
                 "The media type $fileType is not supportet by this server"
             )
@@ -116,18 +136,20 @@ class NewPostViewModel @Inject constructor(
 
         if (fileType.take(5) == "image") {
             if (instance != null && size > instance!!.configuration.mediaAttachmentConfig.imageSizeLimit) {
-                addImageError = Pair(
+                addImageError = AddMediaError(
+                    AddMediaErrorType.TOO_BIG_MEDIA,
                     "Image is to big", "This image is to big, the max size for this server is ${
                         bytesIntoHumanReadable(
                             instance!!.configuration.mediaAttachmentConfig.imageSizeLimit.toLong()
                         )
-                    }, your video has ${bytesIntoHumanReadable(size)}"
+                    }, your video has ${bytesIntoHumanReadable(size)}", uri
                 )
                 return
             }
         } else if (fileType.take(5) == "video") {
             if (instance != null && size > instance!!.configuration.mediaAttachmentConfig.videoSizeLimit) {
-                addImageError = Pair(
+                addImageError = AddMediaError(
+                    AddMediaErrorType.ERROR,
                     "Video is to big", "This Video is to big, the max size for this server is ${
                         bytesIntoHumanReadable(
                             instance!!.configuration.mediaAttachmentConfig.videoSizeLimit.toLong()
@@ -139,7 +161,8 @@ class NewPostViewModel @Inject constructor(
         }
         val imagesNumber = images.size + 1
         if (instance != null && imagesNumber > instance!!.configuration.statusConfig.maxMediaAttachments) {
-            addImageError = Pair(
+            addImageError = AddMediaError(
+                AddMediaErrorType.ERROR,
                 "To many images",
                 "You have added to many images, your Server does only allow ${instance!!.configuration.statusConfig.maxMediaAttachments} images per post"
             )
@@ -147,6 +170,82 @@ class NewPostViewModel @Inject constructor(
         }
         images += ImageItem(uri, fileType, null, "", true)
         uploadImage(uri, "")
+    }
+
+    suspend fun compressImage(uri: KmpUri) {
+        addImageError = AddMediaError()
+        compressionLoading = true
+        try {
+
+            val file = PlatformFile(uri)
+            if (!file.exists()) {
+                addImageError = AddMediaError(
+                    AddMediaErrorType.ERROR,
+                    "Unexpected Error",
+                    "An unexpected Error occurred while compressing your image"
+                )
+                return
+            }
+            val imageBytes = file.readBytes()
+            val compressedBytes = compressToLimit(
+                imageBytes,
+                instance!!.configuration.mediaAttachmentConfig.imageSizeLimit,
+                file.toImageBitmap()
+            )
+            val timestamp = Clock.System.now().toEpochMilliseconds()
+            val compressedFileName = "compressed_${timestamp}_${file.nameWithoutExtension}.jpg"
+            val compressedFile = FileKit.cacheDir.resolve(compressedFileName)
+            compressedFile.write(compressedBytes)
+            val safeUri = platform.toSafeUri(compressedFile)
+            compressionLoading = false
+            addImage(safeUri)
+        } catch (exception: Exception) {
+            Logger.e(exception.message ?: "unexpected error", null, "compression")
+        }
+    }
+
+    suspend fun compressToLimit(bytes: ByteArray, byteLimits: Int, bitmap: ImageBitmap): ByteArray {
+        var currentBytes = bytes
+        var currentMaxWidth = bitmap.width
+        var currentMaxHeight = bitmap.height
+        val qualityRatio = byteLimits.toDouble() / bytes.size.toDouble()
+        var currentQuality = (qualityRatio * 100).toInt().coerceIn(50, 90)
+
+        var runsCounter = 0
+        Logger.i("start compression, bytes: ${bytes.size}", null, "compression")
+
+        while (currentBytes.size > byteLimits && runsCounter < 10) {
+            runsCounter++;
+            Logger.i(
+                "Compressing: Current Size: ${currentBytes.size} vs Limit: $byteLimits (Quality: $currentQuality)",
+                null,
+                "compression"
+            )
+            try {
+                currentBytes = FileKit.compressImage(
+                    bytes = bytes,
+                    quality = currentQuality,
+                    maxWidth = currentMaxWidth,
+                    maxHeight = currentMaxHeight,
+                    imageFormat = ImageFormat.JPEG
+                )
+            } catch (exception: Exception) {
+                Logger.e(exception.message ?: "unexpected error", null, "compression");
+                break;
+            }
+
+            if (currentBytes.size > byteLimits) {
+                if (currentQuality > 50) {
+                    currentQuality -= 15
+                } else {
+                    currentMaxWidth = (currentMaxWidth * 0.8).toInt()
+                    currentMaxHeight = (currentMaxHeight * 0.8).toInt()
+                    currentQuality = 70
+                }
+            }
+        }
+
+        return currentBytes
     }
 
     fun deleteMedia(index: Int) {

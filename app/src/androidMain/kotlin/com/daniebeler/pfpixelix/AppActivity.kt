@@ -23,6 +23,7 @@ class AppActivity : ComponentActivity() {
         FileKit.init(this)
         MyApplication.currentActivity = WeakReference(this)
         super.onCreate(savedInstanceState)
+
         enableEdgeToEdge()
         setContent {
             App(MyApplication.appComponent) { finish() }

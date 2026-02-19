@@ -71,6 +71,7 @@ import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.model.Visibility
+import com.daniebeler.pfpixelix.ui.composables.CustomLoader
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposableDialog
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pfpixelix.ui.composables.textfield_location.TextFieldLocationsComposable
@@ -113,7 +114,7 @@ fun NewPostComposable(
     var showReleaseAlert by remember {
         mutableStateOf(false)
     }
-
+    val scope = rememberCoroutineScope()
     LaunchedEffect(uris) {
         uris?.let {
             uris.forEach { viewModel.addImage(uri = it) }
@@ -257,19 +258,56 @@ fun NewPostComposable(
                     }
                 }
 
-                if (viewModel.addImageError.first.isNotBlank()) {
+                if (viewModel.addImageError.type == AddMediaErrorType.ERROR) {
                     AlertDialog(title = {
-                        Text(text = viewModel.addImageError.first)
+                        Text(text = viewModel.addImageError.title)
                     }, text = {
-                        Text(text = viewModel.addImageError.second)
+                        Text(text = viewModel.addImageError.description)
                     }, onDismissRequest = {
-                        viewModel.addImageError = Pair("", "")
+                        viewModel.addImageError = AddMediaError()
                     }, confirmButton = {
                         TextButton(onClick = {
-                            viewModel.addImageError = Pair("", "")
+                            viewModel.addImageError = AddMediaError()
                         }) {
                             Text("Ok")
                         }
+                    })
+                }
+
+                if (viewModel.addImageError.type == AddMediaErrorType.TOO_BIG_MEDIA) {
+                    AlertDialog(title = {
+                        Text(text = viewModel.addImageError.title)
+                    }, text = {
+                        Text(text = viewModel.addImageError.description)
+                    }, onDismissRequest = {
+                        viewModel.addImageError = AddMediaError()
+                    }, dismissButton = {
+                        TextButton(onClick = {
+                            viewModel.addImageError = AddMediaError()
+                        }) {
+                            Text("Cancel")
+                        }
+                    }, confirmButton = {
+                        TextButton(onClick = {
+                            scope.launch {
+                                viewModel.compressImage(viewModel.addImageError.uri)
+                            }                        }) {
+                            Text("Compress")
+                        }
+                    })
+                }
+
+                if (viewModel.compressionLoading) {
+                    AlertDialog(title = {
+                        Text(text = "Compressing...")
+                    }, text = {
+                        CustomLoader()
+                    }, onDismissRequest = {
+                        null
+                    }, dismissButton = {
+                        null
+                    }, confirmButton = {
+                        null
                     })
                 }
 
@@ -319,7 +357,8 @@ fun NewPostComposable(
             }, actions = {
                 Button(
                     onClick = { showReleaseAlert = true },
-                    enabled = (viewModel.images.isNotEmpty() && viewModel.images.none { it.isLoading } && viewModel.caption.text.length <= (viewModel.instance?.configuration?.statusConfig?.maxCharacters ?: Int.MAX_VALUE))
+                    enabled = (viewModel.images.isNotEmpty() && viewModel.images.none { it.isLoading } && viewModel.caption.text.length <= (viewModel.instance?.configuration?.statusConfig?.maxCharacters
+                        ?: Int.MAX_VALUE))
                 ) {
                     Text(text = stringResource(Res.string.release))
                 }

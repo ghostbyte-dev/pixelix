@@ -35,11 +35,11 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             //compose
-            implementation(compose.ui)
-            implementation(compose.material)
-            implementation(compose.material3)
-            implementation(compose.materialIconsExtended)
-            implementation(compose.components.resources)
+            implementation(libs.ui)
+            implementation(libs.jetbrains.material)
+            implementation(libs.material3)
+            implementation(libs.material.icons.extended)
+            implementation(libs.components.resources)
             implementation(libs.compose.ui.graphics)
 
             //logger
@@ -156,8 +156,8 @@ android {
         applicationId = "com.daniebeler.pfpixelix"
         minSdk = 26
         targetSdk = 36
-        versionCode = 35
-        versionName = "4.3.1"
+        versionCode = 36
+        versionName = "4.3.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {

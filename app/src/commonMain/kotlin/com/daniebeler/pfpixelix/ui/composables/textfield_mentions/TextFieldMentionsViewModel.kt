@@ -3,7 +3,6 @@ package com.daniebeler.pfpixelix.ui.composables.textfield_mentions
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.getTextBeforeSelection
 import androidx.lifecycle.ViewModel
@@ -21,10 +20,10 @@ class TextFieldMentionsViewModel @Inject constructor(
     var text by mutableStateOf(TextFieldValue(""))
     var mentionsDropdownOpen by mutableStateOf(false)
     var mentionSuggestions by mutableStateOf(SuggestionsState())
+    val regex = Regex("\\B((#\\w*)|(@\\w+(@[\\w.-]*)?))$")
 
     fun changeText(newText: TextFieldValue) {
         text = newText
-        val regex = Regex("\\B([@#])\\w*$")
 
         val textBeforeSelection = newText.getTextBeforeSelection(9999).toString()
         val result = regex.find(textBeforeSelection)
@@ -51,7 +50,7 @@ class TextFieldMentionsViewModel @Inject constructor(
 
                 is Resource.Error -> {
                     SuggestionsState(
-                        error = result.message ?: "An unexpected error occurred"
+                        error = result.message
                     )
                 }
 
@@ -60,12 +59,5 @@ class TextFieldMentionsViewModel @Inject constructor(
                 }
             }
         }.launchIn(viewModelScope)
-    }
-
-    fun clickMention(acct: String) {
-        val index = text.text.lastIndexOf("@") + 1
-        val newText = text.text.substring(0, index) + acct
-        text = text.copy(text = newText, selection = TextRange(newText.length))
-
     }
 }

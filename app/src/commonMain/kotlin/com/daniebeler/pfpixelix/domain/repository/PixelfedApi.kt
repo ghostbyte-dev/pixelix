@@ -314,7 +314,7 @@ interface PixelfedApi {
     @GET("api/v1/blocks")
     suspend fun getBlockedAccounts(): List<Account>
 
-    @GET("api/v2/search?_pe=1&resolve")
+    @GET("api/v2/search?_pe=1")
     suspend fun getSearch(
         @Query("q") searchText: String, @Query("type") type: String?, @Query("limit") limit: Int
     ): Search

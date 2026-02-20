@@ -100,17 +100,24 @@ fun TextFieldMentionsComposable(
                     Column(
                         modifier = Modifier.padding(12.dp)
                     ) {
-                        viewModel.mentionSuggestions.suggestions.map {
+                        viewModel.mentionSuggestions.suggestions.forEach {
                             TextButton(onClick = {
                                 viewModel.mentionsDropdownOpen = false
                                 val textBeforeSelection = text.getTextBeforeSelection(9999).toString()
-                                val index = textBeforeSelection.lastIndexOf(it.toCharArray().first())
-                                val newText = textBeforeSelection.substring(0, index) + it
-                                changeText(
-                                    text.copy(
-                                        text = newText + text.getTextAfterSelection(9999).toString(), selection = TextRange(newText.length)
+
+                                val match = viewModel.regex.find(textBeforeSelection)
+
+                                if (match != null) {
+                                    val startIndex = match.range.first
+                                    val newTextBeforeSelection = textBeforeSelection.substring(0, startIndex) + it
+
+                                    changeText(
+                                        text.copy(
+                                            text = newTextBeforeSelection + text.getTextAfterSelection(9999).toString(),
+                                            selection = TextRange(newTextBeforeSelection.length)
+                                        )
                                     )
-                                )
+                                }
                             }) {
                                 Text(
                                     text = it,

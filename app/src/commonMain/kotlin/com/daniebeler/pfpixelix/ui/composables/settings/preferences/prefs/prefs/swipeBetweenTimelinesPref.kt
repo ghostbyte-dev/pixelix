@@ -8,19 +8,19 @@ import com.daniebeler.pfpixelix.di.LocalAppComponent
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.basic.SwitchPref
 import org.jetbrains.compose.resources.stringResource
 import pixelix.app.generated.resources.Res
-import pixelix.app.generated.resources.autoplay
-import pixelix.app.generated.resources.autoplay_videos
+import pixelix.app.generated.resources.swipe_arrows
+import pixelix.app.generated.resources.swipe_between_tabs
 
 @Composable
-fun AutoplayVideoPref() {
+fun SwipeBetweenTimelines() {
     val prefs = LocalAppComponent.current.preferences
-    val state = remember { mutableStateOf(prefs.autoplayVideo) }
+    val state = remember { mutableStateOf(prefs.enableSwipeBetweenTabs) }
     LaunchedEffect(state.value) {
-        prefs.autoplayVideo = state.value
+        prefs.enableSwipeBetweenTabs = state.value
     }
     SwitchPref(
-        leadingIcon =  Res.drawable.autoplay,
-        title = stringResource(Res.string.autoplay_videos),
+        leadingIcon =  Res.drawable.swipe_arrows,
+        title = stringResource(Res.string.swipe_between_tabs),
         state = state
     )
 }

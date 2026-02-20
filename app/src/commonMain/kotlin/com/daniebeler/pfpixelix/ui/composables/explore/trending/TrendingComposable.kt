@@ -46,7 +46,7 @@ import pixelix.app.generated.resources.what_makes_an_account_trend
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TrendingComposable(navController: NavController, initialPage: Int) {
+fun TrendingComposable(navController: NavController, initialPage: Int, isSwipeEnabled: Boolean) {
 
     val pagerState = rememberPagerState(initialPage = initialPage, pageCount = { 3 })
 
@@ -62,6 +62,7 @@ fun TrendingComposable(navController: NavController, initialPage: Int) {
         Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)
     ) {
         HorizontalPager(
+            userScrollEnabled = isSwipeEnabled,
             state = pagerState,
             beyondViewportPageCount = 3,
             modifier = Modifier.padding(top = 24.dp).background(MaterialTheme.colorScheme.background)

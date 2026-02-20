@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.daniebeler.pfpixelix.ui.composables.HomeViewModel
 import com.daniebeler.pfpixelix.ui.composables.collection.CollectionViewModel
 import com.daniebeler.pfpixelix.ui.composables.custom_account.CustomAccountViewModel
 import com.daniebeler.pfpixelix.ui.composables.direct_messages.chat.ChatViewModel
@@ -95,6 +96,7 @@ abstract class ViewModelComponent(
     abstract val textFieldLocationsViewModel: TextFieldLocationsViewModel
     abstract val textFieldMentionsViewModel: TextFieldMentionsViewModel
     abstract val clearCacheViewModel: ClearCacheViewModel
+    abstract val homeViewModel: HomeViewModel
 
     companion object
 }

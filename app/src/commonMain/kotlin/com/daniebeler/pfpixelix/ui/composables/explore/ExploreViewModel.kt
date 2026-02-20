@@ -8,9 +8,8 @@ import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.model.SavedSearchItem
-import com.daniebeler.pfpixelix.domain.model.SavedSearchType
-import com.daniebeler.pfpixelix.domain.model.SavedSearches
 import com.daniebeler.pfpixelix.domain.service.hashtag.SearchService
+import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
 import com.daniebeler.pfpixelix.domain.service.search.SavedSearchesService
 import com.daniebeler.pfpixelix.domain.service.session.AuthService
 import kotlinx.coroutines.Job
@@ -23,11 +22,14 @@ import me.tatarka.inject.annotations.Inject
 class ExploreViewModel @Inject constructor(
     private val searchService: SearchService,
     private val savedSearchesService: SavedSearchesService,
-    private val authService: AuthService
+    private val authService: AuthService,
+    private val prefs: UserPreferences
 ) : ViewModel() {
     var searchState by mutableStateOf(SearchState())
     var savedSearches by mutableStateOf<List<SavedSearchItem>>(emptyList())
         private set
+
+    var isSwipeEnabled by mutableStateOf(true)
 
     init {
         viewModelScope.launch {
@@ -41,6 +43,9 @@ class ExploreViewModel @Inject constructor(
                     savedSearches = emptyList()
                 }
             }
+        }
+        viewModelScope.launch {
+            prefs.enableSwipeBetweenTabsFlow.collect { isSwipeEnabled = it }
         }
     }
 

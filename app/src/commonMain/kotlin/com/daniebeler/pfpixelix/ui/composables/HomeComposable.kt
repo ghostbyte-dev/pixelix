@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
+import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.ui.composables.timelines.global_timeline.GlobalTimelineComposable
 import com.daniebeler.pfpixelix.ui.composables.timelines.home_timeline.HomeTimelineComposable
 import com.daniebeler.pfpixelix.ui.composables.timelines.local_timeline.LocalTimelineComposable
@@ -61,7 +62,8 @@ import pixelix.app.generated.resources.settings_outline
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeComposable(navController: NavController, openPreferencesDrawer: () -> Unit) {
+fun HomeComposable(navController: NavController, openPreferencesDrawer: () -> Unit, viewModel: HomeViewModel = injectViewModel("homeViewModel") { homeViewModel },
+) {
     val pagerState = rememberPagerState { 3 }
     val scope = rememberCoroutineScope()
 
@@ -160,6 +162,7 @@ fun HomeComposable(navController: NavController, openPreferencesDrawer: () -> Un
                 HorizontalPager(
                     state = pagerState,
                     beyondViewportPageCount = 3,
+                    userScrollEnabled = viewModel.isSwipeBetweenTabsEnabled,
                     modifier = Modifier.padding(top = 24.dp)
                         .background(MaterialTheme.colorScheme.background).zIndex(0f)
                 ) { tabIndex ->

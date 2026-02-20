@@ -31,7 +31,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.service.platform.PlatformFeatures
-import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.AutoplayVideoPref
+import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.AutoplayVideoPref
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.ClearCachePref
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.CustomizeAppIconPref
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.DeleteAccountPref
@@ -41,6 +41,7 @@ import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.HideSe
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.LogoutPref
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.MoreSettingsPref
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.RepostSettingsPref
+import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.SwipeBetweenTimelines
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.ThemePref
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.UseInAppBrowserPref
 import org.jetbrains.compose.resources.stringResource
@@ -93,6 +94,8 @@ fun PreferencesComposable(
             }
 
             AutoplayVideoPref()
+
+            SwipeBetweenTimelines()
 
             RepostSettingsPref { viewModel.openRepostSettings() }
 

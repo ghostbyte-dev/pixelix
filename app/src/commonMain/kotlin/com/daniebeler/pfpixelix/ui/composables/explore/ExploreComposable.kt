@@ -222,7 +222,7 @@ fun ExploreComposable(
                     navController = navController
                 )
             } else {
-                TrendingComposable(navController, initialPage = initialPage)
+                TrendingComposable(navController, initialPage = initialPage, isSwipeEnabled = viewModel.isSwipeEnabled)
             }
         }
     }

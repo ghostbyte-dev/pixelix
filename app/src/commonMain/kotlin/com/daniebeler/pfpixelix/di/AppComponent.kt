@@ -35,7 +35,6 @@ import com.russhwolf.settings.datastore.DataStoreSettings
 import de.jensklingenberg.ktorfit.Ktorfit
 import de.jensklingenberg.ktorfit.converter.CallConverterFactory
 import io.github.vinceglb.filekit.resolve
-import io.github.vinceglb.filekit.toKotlinxIoPath
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.HttpSend
 import io.ktor.client.plugins.HttpTimeout
@@ -99,7 +98,7 @@ abstract class AppComponent(
                     }
                 }
             }
-            level = LogLevel.ALL
+            level = LogLevel.NONE
         }
         install(HttpTimeout) {
             requestTimeoutMillis = 60000

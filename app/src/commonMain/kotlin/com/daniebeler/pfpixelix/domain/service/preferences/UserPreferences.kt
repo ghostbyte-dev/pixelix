@@ -9,7 +9,6 @@ import com.russhwolf.settings.coroutines.toBlockingSettings
 import com.russhwolf.settings.datastore.DataStoreSettings
 import com.russhwolf.settings.int
 import com.russhwolf.settings.long
-import com.russhwolf.settings.string
 import me.tatarka.inject.annotations.Inject
 
 @OptIn(ExperimentalSettingsApi::class, ExperimentalSettingsImplementation::class)
@@ -44,4 +43,7 @@ class UserPreferences(observableSettings: DataStoreSettings) {
 
     var accentColor by settings.long("k_accent_color", AppAccentColor.GREEN)
     val accentColorFlow = observableSettings.getLongFlow("k_accent_color", accentColor)
+
+    var enableSwipeBetweenTabs by settings.boolean("k_enable_swipe_between_timelines", true)
+    val enableSwipeBetweenTabsFlow = observableSettings.getBooleanFlow("k_enable_swipe_between_timelines", enableSwipeBetweenTabs)
 }

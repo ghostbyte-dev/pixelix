@@ -29,6 +29,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.daniebeler.pfpixelix.domain.model.MediaAttachment
+import com.daniebeler.pfpixelix.utils.KeepScreenOn
 import io.github.kdroidfilter.composemediaplayer.VideoPlayerSurface
 import io.github.kdroidfilter.composemediaplayer.rememberVideoPlayerState
 
@@ -47,6 +48,10 @@ fun VideoAttachment(
     }
 
     var videoFrameIsVisible by remember { mutableStateOf(false) }
+
+    if (player.isPlaying) {
+        KeepScreenOn()
+    }
 
     Column {
         Box(Modifier.clickable {

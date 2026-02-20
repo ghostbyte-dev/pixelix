@@ -56,7 +56,7 @@ class TextFieldMentionsViewModel @Inject constructor(
                 }
 
                 is Resource.Loading -> {
-                    SuggestionsState(isLoading = true)
+                    mentionSuggestions.copy(isLoading = true)
                 }
             }
         }.launchIn(viewModelScope)

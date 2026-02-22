@@ -3,6 +3,7 @@ package com.daniebeler.pfpixelix.ui.composables.post
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
@@ -19,6 +20,7 @@ import com.daniebeler.pfpixelix.domain.service.platform.Platform
 import com.daniebeler.pfpixelix.domain.service.post.PostService
 import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
 import com.daniebeler.pfpixelix.domain.service.session.AuthService
+import com.daniebeler.pfpixelix.domain.service.suggestions.SuggestionsManager
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.ui.composables.post.reply.OwnReplyState
 import com.daniebeler.pfpixelix.ui.composables.post.reply.RepliesState
@@ -38,7 +40,8 @@ class PostViewModel @Inject constructor(
     private val accountService: AccountService,
     private val platform: Platform,
     private val fileService: FileService,
-    private val instanceService: InstanceService
+    private val instanceService: InstanceService,
+    val suggestionsManager: SuggestionsManager
 ) : ViewModel() {
 
     var post: Post? by mutableStateOf(null)
@@ -62,6 +65,7 @@ class PostViewModel @Inject constructor(
     var isAutoplayVideos by mutableStateOf(true)
     var blurSensitiveContent by mutableStateOf(false)
     var instance: Instance? = null
+    var replyText by mutableStateOf(TextFieldValue())
 
     var volume by mutableStateOf(prefs.enableVolume)
 
@@ -463,4 +467,8 @@ class PostViewModel @Inject constructor(
         platform.shareText(text)
     }
 
+    fun updateReplyText(newReplyText: TextFieldValue) {
+        replyText = newReplyText
+        suggestionsManager.changeText(newReplyText, viewModelScope)
+    }
 }

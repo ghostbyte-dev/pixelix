@@ -61,21 +61,24 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.model.Visibility
 import com.daniebeler.pfpixelix.ui.composables.CustomLoader
+import com.daniebeler.pfpixelix.ui.composables.MaxLengthTextField
+import com.daniebeler.pfpixelix.ui.composables.SuggestionsBar
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposableDialog
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pfpixelix.ui.composables.textfield_location.TextFieldLocationsComposable
-import com.daniebeler.pfpixelix.ui.composables.textfield_mentions.TextFieldMentionsComposable
 import com.daniebeler.pfpixelix.utils.KmpUri
 import com.daniebeler.pfpixelix.utils.getPlatformUriObject
 import com.daniebeler.pfpixelix.utils.imeAwareInsets
@@ -120,7 +123,7 @@ fun NewPostComposable(
             uris.forEach { viewModel.addImage(uri = it) }
         }
     }
-
+    val suggestionsState by viewModel.suggestionsManager.suggestionsState.collectAsStateWithLifecycle()
     Box(modifier = Modifier.fillMaxSize()) {
 
         val statusBarPadding = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
@@ -132,129 +135,141 @@ fun NewPostComposable(
             Box {
                 Column(
                     Modifier.imeAwareInsets(60.dp).fillMaxSize()
-                        .verticalScroll(rememberScrollState()),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    Spacer(Modifier.height(24.dp))
-
-                    ImagesPager(
-                        viewModel.images,
-                        { index, altText ->
-                            viewModel.updateAltTextVariable(
-                                index, altText
-                            )
-                        },
-                        { index -> viewModel.moveMediaAttachmentUp(index) },
-                        { index -> viewModel.moveMediaAttachmentDown(index) },
-                        { index -> viewModel.deleteMedia(index) },
-                        { kmpUri: KmpUri -> viewModel.addImage(kmpUri) })
-
                     Column(
-                        Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(10.dp)
+                        Modifier.weight(1f).verticalScroll(rememberScrollState()),
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        TextFieldMentionsComposable(
-                            submit = {},
-                            text = viewModel.caption,
-                            changeText = { text -> viewModel.caption = text },
-                            labelStringId = Res.string.caption,
-                            modifier = Modifier.fillMaxWidth(),
-                            imeAction = ImeAction.Default,
-                            suggestionsBoxColor = MaterialTheme.colorScheme.surfaceContainer,
-                            submitButton = null,
-                            maxLength = viewModel.instance?.configuration?.statusConfig?.maxCharacters
-                        )
-                        /*NewPostTextField(
-                            value = viewModel.caption,
-                            onChange = { viewModel.caption = it },
-                            label = stringResource(Res.string.caption)
-                        )*/
-                        NewPostPref(
-                            leadingIcon = Res.drawable.browsers_outline,
-                            title = stringResource(Res.string.sensitive_nsfw_media),
-                            trailingContent = {
-                                Switch(
-                                    checked = viewModel.sensitive,
-                                    onCheckedChange = { viewModel.sensitive = it })
-                            })
-                        AnimatedVisibility(
-                            visible = viewModel.sensitive,
-                            enter = slideInVertically() + fadeIn(),
-                            exit = shrinkVertically(animationSpec = spring(stiffness = Spring.StiffnessMedium)) + fadeOut(),
+                        Spacer(Modifier.height(24.dp))
+
+                        ImagesPager(
+                            viewModel.images,
+                            { index, altText ->
+                                viewModel.updateAltTextVariable(
+                                    index, altText
+                                )
+                            },
+                            { index -> viewModel.moveMediaAttachmentUp(index) },
+                            { index -> viewModel.moveMediaAttachmentDown(index) },
+                            { index -> viewModel.deleteMedia(index) },
+                            { kmpUri: KmpUri -> viewModel.addImage(kmpUri) })
+
+                        Column(
+                            Modifier.padding(12.dp),
+                            verticalArrangement = Arrangement.spacedBy(10.dp)
                         ) {
-                            NewPostTextField(
-                                value = viewModel.sensitiveText,
-                                onChange = { viewModel.sensitiveText = it },
-                                label = stringResource(Res.string.content_warning_or_spoiler_text)
+                            MaxLengthTextField(
+                                value = viewModel.caption,
+                                onValueChange = { viewModel.updateCaption(it) },
+                                textFieldModifier = Modifier.fillMaxWidth().onFocusChanged { focusState ->
+                                    viewModel.suggestionsManager.onFocusChanged(focusState.isFocused)
+                                },
+                                label = Res.string.caption,
+                                maxLength = viewModel.instance?.configuration?.statusConfig?.maxCharacters,
+                                submit = {}
+                            )
+                            NewPostPref(
+                                leadingIcon = Res.drawable.browsers_outline,
+                                title = stringResource(Res.string.sensitive_nsfw_media),
+                                trailingContent = {
+                                    Switch(
+                                        checked = viewModel.sensitive,
+                                        onCheckedChange = { viewModel.sensitive = it })
+                                })
+                            AnimatedVisibility(
+                                visible = viewModel.sensitive,
+                                enter = slideInVertically() + fadeIn(),
+                                exit = shrinkVertically(animationSpec = spring(stiffness = Spring.StiffnessMedium)) + fadeOut(),
+                            ) {
+                                NewPostTextField(
+                                    value = viewModel.sensitiveText,
+                                    onChange = { viewModel.sensitiveText = it },
+                                    label = stringResource(Res.string.content_warning_or_spoiler_text)
+                                )
+                            }
+                            NewPostPref(
+                                leadingIcon = Res.drawable.browsers_outline,
+                                title = stringResource(Res.string.audience),
+                                trailingContent = {
+                                    Box {
+                                        OutlinedButton(onClick = { expanded = !expanded }) {
+                                            val buttonText: String = when (viewModel.audience) {
+                                                Visibility.PUBLIC -> stringResource(Res.string.audience_public)
+                                                Visibility.UNLISTED -> stringResource(Res.string.unlisted)
+                                                Visibility.PRIVATE -> stringResource(Res.string.followers_only)
+                                                else -> ""
+                                            }
+                                            Text(text = buttonText)
+                                        }
+                                        DropdownMenu(
+                                            expanded = expanded,
+                                            onDismissRequest = { expanded = false }) {
+                                            DropdownMenuItem(
+                                                text = { Text(stringResource(Res.string.audience_public)) },
+                                                onClick = {
+                                                    viewModel.audience = Visibility.PUBLIC
+                                                },
+                                                trailingIcon = {
+                                                    if (viewModel.audience == Visibility.PUBLIC) {
+                                                        Icon(
+                                                            imageVector = Icons.Outlined.Check,
+                                                            contentDescription = null,
+                                                            tint = MaterialTheme.colorScheme.primary
+                                                        )
+                                                    }
+                                                })
+                                            DropdownMenuItem(
+                                                text = { Text(stringResource(Res.string.unlisted)) },
+                                                onClick = {
+                                                    viewModel.audience = Visibility.UNLISTED
+                                                },
+                                                trailingIcon = {
+                                                    if (viewModel.audience == Visibility.UNLISTED) {
+                                                        Icon(
+                                                            imageVector = Icons.Outlined.Check,
+                                                            contentDescription = null,
+                                                            tint = MaterialTheme.colorScheme.primary
+                                                        )
+                                                    }
+                                                })
+                                            DropdownMenuItem(
+                                                text = { Text(stringResource(Res.string.followers_only)) },
+                                                onClick = {
+                                                    viewModel.audience = Visibility.PRIVATE
+                                                },
+                                                trailingIcon = {
+                                                    if (viewModel.audience == Visibility.PRIVATE) {
+                                                        Icon(
+                                                            imageVector = Icons.Outlined.Check,
+                                                            contentDescription = null,
+                                                            tint = MaterialTheme.colorScheme.primary
+                                                        )
+                                                    }
+                                                })
+                                        }
+
+
+                                    }
+                                })
+                            TextFieldLocationsComposable(
+                                submit = { viewModel.setLocation(it) },
+                                submitPlace = {},
+                                initialValue = null,
+                                labelStringId = Res.string.location,
+                                modifier = Modifier.fillMaxWidth(),
+                                imeAction = ImeAction.Default,
+                                suggestionsBoxColor = MaterialTheme.colorScheme.surfaceContainer,
+                                submitButton = null
                             )
                         }
-                        NewPostPref(
-                            leadingIcon = Res.drawable.browsers_outline,
-                            title = stringResource(Res.string.audience),
-                            trailingContent = {
-                                Box {
-                                    OutlinedButton(onClick = { expanded = !expanded }) {
-                                        val buttonText: String = when (viewModel.audience) {
-                                            Visibility.PUBLIC -> stringResource(Res.string.audience_public)
-                                            Visibility.UNLISTED -> stringResource(Res.string.unlisted)
-                                            Visibility.PRIVATE -> stringResource(Res.string.followers_only)
-                                            else -> ""
-                                        }
-                                        Text(text = buttonText)
-                                    }
-                                    DropdownMenu(
-                                        expanded = expanded,
-                                        onDismissRequest = { expanded = false }) {
-                                        DropdownMenuItem(
-                                            text = { Text(stringResource(Res.string.audience_public)) },
-                                            onClick = { viewModel.audience = Visibility.PUBLIC },
-                                            trailingIcon = {
-                                                if (viewModel.audience == Visibility.PUBLIC) {
-                                                    Icon(
-                                                        imageVector = Icons.Outlined.Check,
-                                                        contentDescription = null,
-                                                        tint = MaterialTheme.colorScheme.primary
-                                                    )
-                                                }
-                                            })
-                                        DropdownMenuItem(
-                                            text = { Text(stringResource(Res.string.unlisted)) },
-                                            onClick = { viewModel.audience = Visibility.UNLISTED },
-                                            trailingIcon = {
-                                                if (viewModel.audience == Visibility.UNLISTED) {
-                                                    Icon(
-                                                        imageVector = Icons.Outlined.Check,
-                                                        contentDescription = null,
-                                                        tint = MaterialTheme.colorScheme.primary
-                                                    )
-                                                }
-                                            })
-                                        DropdownMenuItem(
-                                            text = { Text(stringResource(Res.string.followers_only)) },
-                                            onClick = { viewModel.audience = Visibility.PRIVATE },
-                                            trailingIcon = {
-                                                if (viewModel.audience == Visibility.PRIVATE) {
-                                                    Icon(
-                                                        imageVector = Icons.Outlined.Check,
-                                                        contentDescription = null,
-                                                        tint = MaterialTheme.colorScheme.primary
-                                                    )
-                                                }
-                                            })
-                                    }
-
-
-                                }
+                    }
+                    if (viewModel.suggestionsManager.suggestionsOpen) {
+                        SuggestionsBar(
+                            state = suggestionsState, onSelected = { selected ->
+                                viewModel.caption = viewModel.suggestionsManager.selectSuggestion(
+                                    selected, viewModel.caption
+                                )
                             })
-                        TextFieldLocationsComposable(
-                            submit = { viewModel.setLocation(it) },
-                            submitPlace = {},
-                            initialValue = null,
-                            labelStringId = Res.string.location,
-                            modifier = Modifier.fillMaxWidth(),
-                            imeAction = ImeAction.Default,
-                            suggestionsBoxColor = MaterialTheme.colorScheme.surfaceContainer,
-                            submitButton = null
-                        )
                     }
                 }
 
@@ -291,7 +306,8 @@ fun NewPostComposable(
                         TextButton(onClick = {
                             scope.launch {
                                 viewModel.compressImage(viewModel.addImageError.uri)
-                            }                        }) {
+                            }
+                        }) {
                             Text("Compress")
                         }
                     })
@@ -347,24 +363,23 @@ fun NewPostComposable(
         }
         TopAppBar(
             modifier = Modifier.clip(
-                RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)
-            ), title = {
-                Text(
-                    text = stringResource(Res.string.new_post),
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp
-                )
-            }, actions = {
-                Button(
-                    onClick = { showReleaseAlert = true },
-                    enabled = (viewModel.images.isNotEmpty() && viewModel.images.none { it.isLoading } && viewModel.caption.text.length <= (viewModel.instance?.configuration?.statusConfig?.maxCharacters
-                        ?: Int.MAX_VALUE))
-                ) {
-                    Text(text = stringResource(Res.string.release))
-                }
-            }, colors = TopAppBarDefaults.mediumTopAppBarColors(
-                containerColor = MaterialTheme.colorScheme.surfaceContainer
+            RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)
+        ), title = {
+            Text(
+                text = stringResource(Res.string.new_post),
+                fontWeight = FontWeight.Bold,
+                fontSize = 18.sp
             )
+        }, actions = {
+            Button(
+                onClick = { showReleaseAlert = true },
+                enabled = (viewModel.images.isNotEmpty() && viewModel.images.none { it.isLoading } && viewModel.caption.text.length <= (viewModel.instance?.configuration?.statusConfig?.maxCharacters
+                    ?: Int.MAX_VALUE))) {
+                Text(text = stringResource(Res.string.release))
+            }
+        }, colors = TopAppBarDefaults.mediumTopAppBarColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainer
+        )
         )
     }
 }

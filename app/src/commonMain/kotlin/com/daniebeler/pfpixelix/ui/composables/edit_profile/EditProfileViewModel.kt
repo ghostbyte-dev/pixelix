@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.domain.service.account.AccountService
+import com.daniebeler.pfpixelix.domain.service.suggestions.SuggestionsManager
 import com.daniebeler.pfpixelix.utils.EmptyKmpUri
 import com.daniebeler.pfpixelix.utils.toKmpUri
 import kotlinx.coroutines.flow.launchIn
@@ -16,13 +17,14 @@ import kotlinx.coroutines.flow.onEach
 import me.tatarka.inject.annotations.Inject
 
 class EditProfileViewModel @Inject constructor(
-    private val accountService: AccountService
+    private val accountService: AccountService,
+    val suggestionsManager: SuggestionsManager
 ) : ViewModel() {
 
     var accountState by mutableStateOf(EditProfileState())
 
     var firstLoaded by mutableStateOf(false)
-    var displayname by mutableStateOf("")
+    var displayName by mutableStateOf(TextFieldValue())
     var note by mutableStateOf(TextFieldValue())
     var website by mutableStateOf("")
     var avatarUri by mutableStateOf(EmptyKmpUri)
@@ -37,7 +39,7 @@ class EditProfileViewModel @Inject constructor(
             when (result) {
                 is Resource.Success -> {
                     accountState = EditProfileState(account = result.data)
-                    displayname = accountState.account?.displayname ?: ""
+                    displayName = TextFieldValue(accountState.account?.displayname ?: "")
                     note = TextFieldValue(accountState.account?.note ?: "")
                     website = accountState.account?.website?.replace("https://", "") ?: ""
                     avatarUri = accountState.account?.avatar!!.toKmpUri()
@@ -60,7 +62,7 @@ class EditProfileViewModel @Inject constructor(
 
     fun save() {
         accountService.updateAccount(
-            displayname, note.text, "https://$website", privateProfile, newAvatar
+            displayName.text, note.text, "https://$website", privateProfile, newAvatar
         ).onEach { result ->
             accountState = when (result) {
                 is Resource.Success -> {
@@ -76,5 +78,10 @@ class EditProfileViewModel @Inject constructor(
                 }
             }
         }.launchIn(viewModelScope)
+    }
+
+    fun updateNote(newNote: TextFieldValue) {
+        note = newNote
+        suggestionsManager.changeText(newNote, viewModelScope)
     }
 }

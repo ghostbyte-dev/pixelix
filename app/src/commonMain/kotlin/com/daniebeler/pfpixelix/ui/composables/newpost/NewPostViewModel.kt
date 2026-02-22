@@ -10,16 +10,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import co.touchlab.kermit.Logger
-import coil3.Bitmap
 import com.daniebeler.pfpixelix.domain.model.Instance
 import com.daniebeler.pfpixelix.domain.model.NewPost
 import com.daniebeler.pfpixelix.domain.model.Visibility
 import com.daniebeler.pfpixelix.domain.service.editor.PostEditorService
 import com.daniebeler.pfpixelix.domain.service.file.FileService
 import com.daniebeler.pfpixelix.domain.service.file.PlatformFile
-import com.daniebeler.pfpixelix.domain.service.file.toOkIoPath
 import com.daniebeler.pfpixelix.domain.service.instance.InstanceService
 import com.daniebeler.pfpixelix.domain.service.platform.Platform
+import com.daniebeler.pfpixelix.domain.service.suggestions.SuggestionsManager
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import com.daniebeler.pfpixelix.utils.KmpUri
@@ -47,7 +46,8 @@ class NewPostViewModel @Inject constructor(
     private val postEditorService: PostEditorService,
     private val instanceService: InstanceService,
     private val fileService: FileService,
-    private val platform: Platform
+    private val platform: Platform,
+    val suggestionsManager: SuggestionsManager
 ) : ViewModel() {
     data class ImageItem(
         val imageUri: KmpUri,
@@ -71,6 +71,11 @@ class NewPostViewModel @Inject constructor(
 
     init {
         getInstance()
+    }
+
+    fun updateCaption(newCaption: TextFieldValue) {
+        caption = newCaption
+        suggestionsManager.changeText(newCaption, viewModelScope)
     }
 
     private fun getInstance() {
@@ -215,7 +220,7 @@ class NewPostViewModel @Inject constructor(
         Logger.i("start compression, bytes: ${bytes.size}", null, "compression")
 
         while (currentBytes.size > byteLimits && runsCounter < 10) {
-            runsCounter++;
+            runsCounter++
             Logger.i(
                 "Compressing: Current Size: ${currentBytes.size} vs Limit: $byteLimits (Quality: $currentQuality)",
                 null,
@@ -230,8 +235,8 @@ class NewPostViewModel @Inject constructor(
                     imageFormat = ImageFormat.JPEG
                 )
             } catch (exception: Exception) {
-                Logger.e(exception.message ?: "unexpected error", null, "compression");
-                break;
+                Logger.e(exception.message ?: "unexpected error", null, "compression")
+                break
             }
 
             if (currentBytes.size > byteLimits) {

@@ -43,17 +43,19 @@ import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.decodeToImageBitmap
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import com.attafitamim.krop.core.crop.CropResult
@@ -66,7 +68,7 @@ import com.attafitamim.krop.ui.CropperPreview
 import com.attafitamim.krop.ui.DefaultControls
 import com.daniebeler.pfpixelix.EdgeToEdgeDialogProperties
 import com.daniebeler.pfpixelix.di.injectViewModel
-import com.daniebeler.pfpixelix.ui.composables.textfield_mentions.TextFieldMentionsComposable
+import com.daniebeler.pfpixelix.ui.composables.SuggestionsBar
 import com.daniebeler.pfpixelix.utils.imeAwareInsets
 import io.github.vinceglb.filekit.dialogs.FileKitMode
 import io.github.vinceglb.filekit.dialogs.FileKitType
@@ -89,148 +91,179 @@ fun EditProfileComposable(
     navController: NavController,
     viewModel: EditProfileViewModel = injectViewModel(key = "edit-profile-viewmodel-key") { editProfileViewModel }
 ) {
+    val suggestionsState by viewModel.suggestionsManager.suggestionsState.collectAsStateWithLifecycle()
 
     Scaffold(
         contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top)
     ) { paddingValues ->
         Column(
-            Modifier.padding(paddingValues)
-                .padding(top = TopAppBarDefaults.TopAppBarExpandedHeight - 24.dp).fillMaxSize()
-                .padding(horizontal = 12.dp).verticalScroll(state = rememberScrollState()).imeAwareInsets(60.dp)
+            Modifier.imeAwareInsets(60.dp).fillMaxSize()
         ) {
+            Column(
+                Modifier.padding(paddingValues)
+                    .padding(top = TopAppBarDefaults.TopAppBarExpandedHeight - 24.dp).weight(1f)
+                    .padding(horizontal = 12.dp).verticalScroll(state = rememberScrollState())
+            ) {
 
-            if (viewModel.accountState.account != null) {
+                if (viewModel.accountState.account != null) {
 
-                Spacer(Modifier.height(32.dp))
+                    Spacer(Modifier.height(32.dp))
 
-                Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                    val coroutineScope = rememberCoroutineScope()
-                    val imageCropper = rememberImageCropper()
-                    val cropState = imageCropper.cropState
-                    if (cropState != null) {
-                        ImageCropperFullscreenDialog(cropState)
-                    }
+                    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                        val coroutineScope = rememberCoroutineScope()
+                        val imageCropper = rememberImageCropper()
+                        val cropState = imageCropper.cropState
+                        if (cropState != null) {
+                            ImageCropperFullscreenDialog(cropState)
+                        }
 
-                    val filePicker = rememberFilePickerLauncher(
-                        type = FileKitType.Image, mode = FileKitMode.Single
-                    ) { file ->
-                        file ?: return@rememberFilePickerLauncher
-                        coroutineScope.launch {
-                            val cropResult = imageCropper.crop {
-                                ImageBitmapSrc(file.readBytes().decodeToImageBitmap())
+                        val filePicker = rememberFilePickerLauncher(
+                            type = FileKitType.Image, mode = FileKitMode.Single
+                        ) { file ->
+                            file ?: return@rememberFilePickerLauncher
+                            coroutineScope.launch {
+                                val cropResult = imageCropper.crop {
+                                    ImageBitmapSrc(file.readBytes().decodeToImageBitmap())
+                                }
+                                if (cropResult is CropResult.Success) {
+                                    viewModel.newAvatar = cropResult.bitmap
+                                }
                             }
-                            if (cropResult is CropResult.Success) {
-                                viewModel.newAvatar = cropResult.bitmap
-                            }
+                        }
+
+                        val newAvatar = viewModel.newAvatar
+                        if (newAvatar != null) {
+                            Image(
+                                bitmap = newAvatar,
+                                contentDescription = "",
+                                modifier = Modifier.height(112.dp).width(112.dp).clip(CircleShape)
+                                    .clickable { filePicker.launch() })
+                        } else {
+                            AsyncImage(
+                                model = viewModel.avatarUri.toString(),
+                                contentDescription = "",
+                                modifier = Modifier.height(112.dp).width(112.dp).clip(CircleShape)
+                                    .clickable { filePicker.launch() })
                         }
                     }
 
-                    val newAvatar = viewModel.newAvatar
-                    if (newAvatar != null) {
-                        Image(
-                            bitmap = newAvatar,
-                            contentDescription = "",
-                            modifier = Modifier.height(112.dp).width(112.dp).clip(CircleShape)
-                                .clickable { filePicker.launch() })
-                    } else {
-                        AsyncImage(
-                            model = viewModel.avatarUri.toString(),
-                            contentDescription = "",
-                            modifier = Modifier.height(112.dp).width(112.dp).clip(CircleShape)
-                                .clickable { filePicker.launch() })
+                    Spacer(modifier = Modifier.height(18.dp))
+
+                    Row {
+                        Spacer(Modifier.width(6.dp))
+                        Text(
+                            text = stringResource(Res.string.displayname),
+                            fontWeight = FontWeight.Bold
+                        )
                     }
+
+                    Spacer(Modifier.height(6.dp))
+
+                    TextField(
+                        value = viewModel.displayName,
+                        singleLine = true,
+                        onValueChange = { viewModel.displayName = it },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = TextFieldDefaults.colors(
+                            unfocusedIndicatorColor = Color.Transparent,
+                            focusedIndicatorColor = Color.Transparent,
+                            focusedContainerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(
+                                4.dp
+                            ),
+                            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(
+                                4.dp
+                            )
+                        )
+                    )
+
+                    Spacer(modifier = Modifier.height(18.dp))
+
+                    Row {
+                        Spacer(Modifier.width(6.dp))
+                        Text(text = stringResource(Res.string.bio), fontWeight = FontWeight.Bold)
+                    }
+
+                    Spacer(Modifier.height(6.dp))
+
+                    TextField(
+                        value = viewModel.note,
+                        onValueChange = { viewModel.updateNote(it) },
+                        modifier = Modifier.fillMaxWidth().onFocusChanged { focusState ->
+                            viewModel.suggestionsManager.onFocusChanged(focusState.isFocused)
+                        },
+                        label = { Text(stringResource(Res.string.caption)) },
+                        shape = MaterialTheme.shapes.medium,
+                        colors = TextFieldDefaults.colors(
+                            unfocusedIndicatorColor = Color.Transparent,
+                            focusedIndicatorColor = Color.Transparent,
+                            focusedContainerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(
+                                4.dp
+                            ),
+                            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(
+                                4.dp
+                            )
+                        )
+                    )
+
+                    Spacer(modifier = Modifier.height(18.dp))
+
+                    Row {
+                        Spacer(Modifier.width(6.dp))
+                        Text(
+                            text = stringResource(Res.string.website), fontWeight = FontWeight.Bold
+                        )
+                    }
+
+                    Spacer(Modifier.height(6.dp))
+
+                    TextField(
+                        value = viewModel.website,
+                        singleLine = true,
+                        prefix = {
+                            Text(text = "https://")
+                        },
+                        onValueChange = { viewModel.website = it },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = TextFieldDefaults.colors(
+                            unfocusedIndicatorColor = Color.Transparent,
+                            focusedIndicatorColor = Color.Transparent,
+                            focusedContainerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(
+                                4.dp
+                            ),
+                            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(
+                                4.dp
+                            )
+                        )
+                    )
+
+                    Spacer(modifier = Modifier.height(18.dp))
+
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Spacer(Modifier.width(6.dp))
+                        Text(
+                            text = stringResource(Res.string.private_profile),
+                            fontWeight = FontWeight.Bold
+                        )
+                        Spacer(modifier = Modifier.weight(1f))
+                        Switch(
+                            checked = viewModel.privateProfile,
+                            onCheckedChange = { viewModel.privateProfile = it })
+                    }
+
+                    Spacer(Modifier.height(24.dp))
                 }
 
-                Spacer(modifier = Modifier.height(18.dp))
-
-                Row {
-                    Spacer(Modifier.width(6.dp))
-                    Text(
-                        text = stringResource(Res.string.displayname), fontWeight = FontWeight.Bold
-                    )
-                }
-
-                Spacer(Modifier.height(6.dp))
-
-                TextField(
-                    value = viewModel.displayname,
-                    singleLine = true,
-                    onValueChange = { viewModel.displayname = it },
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(16.dp),
-                    colors = TextFieldDefaults.colors(
-                        unfocusedIndicatorColor = Color.Transparent,
-                        focusedIndicatorColor = Color.Transparent,
-                        focusedContainerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(4.dp),
-                        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(4.dp)
-                    )
-                )
-
-                Spacer(modifier = Modifier.height(18.dp))
-
-                Row {
-                    Spacer(Modifier.width(6.dp))
-                    Text(text = stringResource(Res.string.bio), fontWeight = FontWeight.Bold)
-                }
-
-                Spacer(Modifier.height(6.dp))
-
-                TextFieldMentionsComposable(
-                    submit = {},
-                    text = viewModel.note,
-                    changeText = { text -> viewModel.note = text },
-                    labelStringId = Res.string.caption,
-                    modifier = Modifier.fillMaxWidth(),
-                    imeAction = ImeAction.Default,
-                    suggestionsBoxColor = MaterialTheme.colorScheme.surfaceContainer,
-                    submitButton = null,
-                )
-
-                Spacer(modifier = Modifier.height(18.dp))
-
-                Row {
-                    Spacer(Modifier.width(6.dp))
-                    Text(
-                        text = stringResource(Res.string.website), fontWeight = FontWeight.Bold
-                    )
-                }
-
-                Spacer(Modifier.height(6.dp))
-
-                TextField(
-                    value = viewModel.website,
-                    singleLine = true,
-                    prefix = {
-                        Text(text = "https://")
-                    },
-                    onValueChange = { viewModel.website = it },
-                    modifier = Modifier.fillMaxWidth(),
-                    shape = RoundedCornerShape(16.dp),
-                    colors = TextFieldDefaults.colors(
-                        unfocusedIndicatorColor = Color.Transparent,
-                        focusedIndicatorColor = Color.Transparent,
-                        focusedContainerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(4.dp),
-                        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(4.dp)
-                    )
-                )
-
-                Spacer(modifier = Modifier.height(18.dp))
-
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Spacer(Modifier.width(6.dp))
-                    Text(
-                        text = stringResource(Res.string.private_profile),
-                        fontWeight = FontWeight.Bold
-                    )
-                    Spacer(modifier = Modifier.weight(1f))
-                    Switch(
-                        checked = viewModel.privateProfile,
-                        onCheckedChange = { viewModel.privateProfile = it })
-                }
-
-                Spacer(Modifier.height(24.dp))
             }
-
+            if (viewModel.suggestionsManager.suggestionsOpen) {
+                SuggestionsBar(
+                    state = suggestionsState, onSelected = { selected ->
+                        viewModel.note = viewModel.suggestionsManager.selectSuggestion(
+                            selected, viewModel.note
+                        )
+                    })
+            }
         }
 
         TopAppBar(
@@ -252,7 +285,7 @@ fun EditProfileComposable(
                 }
             }, actions = {
                 if (viewModel.firstLoaded) {
-                    if (viewModel.displayname == (viewModel.accountState.account?.displayname
+                    if (viewModel.displayName == (viewModel.accountState.account?.displayname
                             ?: "") && viewModel.note == (viewModel.accountState.account?.note
                             ?: "") && "https://" + viewModel.website == (viewModel.accountState.account?.website
                             ?: "") && viewModel.newAvatar == null && viewModel.privateProfile == viewModel.accountState.account?.locked

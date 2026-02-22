@@ -125,7 +125,7 @@ fun HashtagsMentionsTextView(
             overflow = TextOverflow.Ellipsis,
             maxLines = maxLines,
             onTextLayout = { textLayoutResult: TextLayoutResult ->
-                if (textLayoutResult.lineCount > maxLines -1) {           //Adding this check to avoid ArrayIndexOutOfBounds Exception
+                if (textLayoutResult.lineCount > maxLines -1) {
                     if (textLayoutResult.isLineEllipsized(maxLines-1)) showReadMoreButtonState = true
                 }
             },

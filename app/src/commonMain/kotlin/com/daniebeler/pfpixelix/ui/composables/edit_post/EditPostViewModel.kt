@@ -15,6 +15,7 @@ import com.daniebeler.pfpixelix.domain.model.UpdatePost
 import com.daniebeler.pfpixelix.domain.service.editor.PostEditorService
 import com.daniebeler.pfpixelix.domain.service.instance.InstanceService
 import com.daniebeler.pfpixelix.domain.service.post.PostService
+import com.daniebeler.pfpixelix.domain.service.suggestions.SuggestionsManager
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import kotlinx.coroutines.CoroutineScope
@@ -27,7 +28,8 @@ import me.tatarka.inject.annotations.Inject
 class EditPostViewModel @Inject constructor(
     private val postService: PostService,
     private val postEditorService: PostEditorService,
-    private val instanceService: InstanceService
+    private val instanceService: InstanceService,
+    val suggestionsManager: SuggestionsManager
 ) : ViewModel() {
     data class MediaDescriptionItem(
         val imageId: String, var description: String, var changed: Boolean
@@ -195,6 +197,11 @@ class EditPostViewModel @Inject constructor(
 
     fun _setLocation(_location: Place?) {
         location = _location
+    }
+
+    fun updateCaption(newCaption: TextFieldValue) {
+        caption = newCaption
+        suggestionsManager.changeText(newCaption, viewModelScope)
     }
 }
 

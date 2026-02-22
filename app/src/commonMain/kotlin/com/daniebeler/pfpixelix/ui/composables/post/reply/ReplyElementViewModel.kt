@@ -3,12 +3,14 @@ package com.daniebeler.pfpixelix.ui.composables.post.reply
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.service.editor.PostEditorService
 import com.daniebeler.pfpixelix.domain.service.post.PostService
+import com.daniebeler.pfpixelix.domain.service.suggestions.SuggestionsManager
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -16,13 +18,14 @@ import me.tatarka.inject.annotations.Inject
 
 class ReplyElementViewModel @Inject constructor(
     private val postEditorService: PostEditorService,
-    private val postService: PostService
+    private val postService: PostService,
+    val suggestionsManager: SuggestionsManager
     ): ViewModel()
 {
     var repliesState by mutableStateOf(RepliesState())
     var likedReply by mutableStateOf(false)
     var newReplyState by mutableStateOf(OwnReplyState())
-
+    var replyText by mutableStateOf(TextFieldValue())
     fun onInit(reply: Post, myAccountId: String) {
         likedReply = reply.likedBy?.id == myAccountId
     }
@@ -118,5 +121,10 @@ class ReplyElementViewModel @Inject constructor(
                 }
             }
         }.launchIn(viewModelScope)
+    }
+
+    fun updateReplyText(newReplyText: TextFieldValue) {
+        replyText = newReplyText
+        suggestionsManager.changeText(newReplyText, viewModelScope)
     }
 }

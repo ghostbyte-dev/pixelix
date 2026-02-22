@@ -42,7 +42,6 @@ import com.daniebeler.pfpixelix.ui.composables.settings.preferences.PreferencesV
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.ClearCacheViewModel
 import com.daniebeler.pfpixelix.ui.composables.single_post.SinglePostViewModel
 import com.daniebeler.pfpixelix.ui.composables.textfield_location.TextFieldLocationsViewModel
-import com.daniebeler.pfpixelix.ui.composables.textfield_mentions.TextFieldMentionsViewModel
 import com.daniebeler.pfpixelix.ui.composables.timelines.global_timeline.GlobalTimelineViewModel
 import com.daniebeler.pfpixelix.ui.composables.timelines.hashtag_timeline.HashtagTimelineViewModel
 import com.daniebeler.pfpixelix.ui.composables.timelines.home_timeline.HomeTimelineViewModel
@@ -94,7 +93,6 @@ abstract class ViewModelComponent(
     abstract val conversationsViewModel: ConversationsViewModel
     abstract val editPostViewModel: EditPostViewModel
     abstract val textFieldLocationsViewModel: TextFieldLocationsViewModel
-    abstract val textFieldMentionsViewModel: TextFieldMentionsViewModel
     abstract val clearCacheViewModel: ClearCacheViewModel
     abstract val homeViewModel: HomeViewModel
 

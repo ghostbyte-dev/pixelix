@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -18,6 +17,7 @@ import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
@@ -37,6 +37,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextFieldDefaults
@@ -50,6 +51,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -57,17 +59,21 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.model.Instance
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.model.Visibility
+import com.daniebeler.pfpixelix.ui.composables.MaxLengthTextField
+import com.daniebeler.pfpixelix.ui.composables.SuggestionsBar
 import com.daniebeler.pfpixelix.ui.composables.hashtagMentionText.HashtagsMentionsTextView
 import com.daniebeler.pfpixelix.ui.composables.post.reply.ReplyElementViewModel
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
 import com.daniebeler.pfpixelix.ui.composables.states.FixedHeightLoadingComposable
-import com.daniebeler.pfpixelix.ui.composables.textfield_mentions.TextFieldMentionsComposable
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import com.daniebeler.pfpixelix.utils.TimeAgo
 import org.jetbrains.compose.resources.stringResource
@@ -83,151 +89,202 @@ import pixelix.app.generated.resources.this_action_cannot_be_undone
 fun CommentsBottomSheet(
     post: Post, navController: NavController, viewModel: PostViewModel
 ) {
-    var replyText by remember { mutableStateOf(TextFieldValue("")) }
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 12.dp)
-    ) {
-        LazyColumn(
-            modifier = Modifier
-                .imePadding()
-                .fillMaxHeight()
-                .align(Alignment.TopStart)
-        ) {
-            item {
-                if (post.content.isNotEmpty()) {
-                    val ownDescription = Post(
-                        "0",
-                        content = post.content,
-                        mentions = post.mentions,
-                        account = post.account,
-                        createdAt = post.createdAt,
-                        replyCount = post.replyCount,
-                        likedBy = post.likedBy,
-                        mediaAttachments = emptyList(),
-                        favouritesCount = 0,
-                        tags = emptyList(),
-                        url = "",
-                        reblogged = false,
-                        sensitive = false,
-                        bookmarked = false,
-                        favourited = false,
-                        visibility = Visibility.PUBLIC,
-                        spoilerText = "",
-                        place = null,
-                        inReplyToId = null
-                    )
-                    ReplyElement(
-                        reply = ownDescription,
-                        true,
-                        navController = navController,
-                        {},
-                        viewModel.myAccountId,
-                        { url -> viewModel.openUrl(url) }, instance = viewModel.instance)
-                }
-                Column {
-                    TextFieldMentionsComposable(
-                        submit = { text ->
-                            replyText = TextFieldValue()
-                            viewModel.createReply(
-                                post.id, text
-                            )
-                        },
-                        replyText,
-                        changeText = { newText -> replyText = newText },
-                        labelStringId = Res.string.reply,
-                        modifier = null,
-                        imeAction = ImeAction.Send,
-                        suggestionsBoxColor = MaterialTheme.colorScheme.surface,
-                        submitButton = { enabled ->
-                            Button(
-                                onClick = {
-                                    if (!viewModel.ownReplyState.isLoading) {
-                                        viewModel.createReply(post.id, replyText.text)
-                                        replyText = replyText.copy(text = "")
-                                    }
-                                },
-                                Modifier
-                                    .height(56.dp)
-                                    .width(56.dp)
-                                    .padding(0.dp, 0.dp),
-                                shape = RoundedCornerShape(16.dp),
-                                contentPadding = PaddingValues(12.dp),
-                                enabled = enabled
-                            ) {
-                                if (viewModel.ownReplyState.isLoading) {
-                                    CircularProgressIndicator(
-                                        modifier = Modifier.size(24.dp),
-                                        color = MaterialTheme.colorScheme.onPrimary
-                                    )
-                                } else {
-                                    Icon(
-                                        imageVector = Icons.AutoMirrored.Filled.Send,
-                                        contentDescription = "submit",
-                                        Modifier
-                                            .fillMaxSize()
-                                            .fillMaxWidth()
-                                    )
+    val suggestionsState by viewModel.suggestionsManager.suggestionsState.collectAsStateWithLifecycle()
+
+    Box {
+        Column(Modifier.fillMaxWidth().padding(horizontal = 12.dp).align(Alignment.TopStart)) {
+            LazyColumn(
+                modifier = Modifier.weight(1f, fill = false)
+            ) {
+                item {
+                    if (post.content.isNotEmpty()) {
+                        val ownDescription = Post(
+                            "0",
+                            content = post.content,
+                            mentions = post.mentions,
+                            account = post.account,
+                            createdAt = post.createdAt,
+                            replyCount = post.replyCount,
+                            likedBy = post.likedBy,
+                            mediaAttachments = emptyList(),
+                            favouritesCount = 0,
+                            tags = emptyList(),
+                            url = "",
+                            reblogged = false,
+                            sensitive = false,
+                            bookmarked = false,
+                            favourited = false,
+                            visibility = Visibility.PUBLIC,
+                            spoilerText = "",
+                            place = null,
+                            inReplyToId = null
+                        )
+                        ReplyElement(
+                            reply = ownDescription,
+                            true,
+                            navController = navController,
+                            {},
+                            viewModel.myAccountId,
+                            { url -> viewModel.openUrl(url) },
+                            instance = viewModel.instance
+                        )
+                    }
+//                Column {
+//                    TextFieldMentionsComposable(
+//                        submit = { text ->
+//                            viewModel.replyText = TextFieldValue()
+//                            viewModel.createReply(
+//                                post.id, text
+//                            )
+//                        },
+//                        viewModel.replyText,
+//                        changeText = { newText -> viewModel.replyText = newText },
+//                        labelStringId = Res.string.reply,
+//                        modifier = null,
+//                        imeAction = ImeAction.Send,
+//                        suggestionsBoxColor = MaterialTheme.colorScheme.surface,
+//                        submitButton = { enabled ->
+//                            Button(
+//                                onClick = {
+//                                    if (!viewModel.ownReplyState.isLoading) {
+//                                        viewModel.createReply(post.id, viewModel.replyText.text)
+//                                        viewModel.replyText = viewModel.replyText.copy(text = "")
+//                                    }
+//                                },
+//                                Modifier
+//                                    .height(56.dp)
+//                                    .width(56.dp)
+//                                    .padding(0.dp, 0.dp),
+//                                shape = RoundedCornerShape(16.dp),
+//                                contentPadding = PaddingValues(12.dp),
+//                                enabled = enabled
+//                            ) {
+//                                if (viewModel.ownReplyState.isLoading) {
+//                                    CircularProgressIndicator(
+//                                        modifier = Modifier.size(24.dp),
+//                                        color = MaterialTheme.colorScheme.onPrimary
+//                                    )
+//                                } else {
+//                                    Icon(
+//                                        imageVector = Icons.AutoMirrored.Filled.Send,
+//                                        contentDescription = "submit",
+//                                        Modifier
+//                                            .fillMaxSize()
+//                                            .fillMaxWidth()
+//                                    )
+//                                }
+//
+//                            }
+//                        },
+//                        maxLength = viewModel.instance?.configuration?.statusConfig?.maxCharacters)
+//                }
+
+                    Row(verticalAlignment = Alignment.Bottom, modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                        MaxLengthTextField(
+                            value = viewModel.replyText,
+                            onValueChange = { viewModel.updateReplyText(it) },
+                            textFieldModifier = Modifier.fillMaxWidth().onFocusChanged { focusState ->
+                                viewModel.suggestionsManager.onFocusChanged(focusState.isFocused)
+                            },
+                            modifier = Modifier.weight(1f),
+                            label = Res.string.reply,
+                            imeAction = ImeAction.Send,
+                            maxLength = viewModel.instance?.configuration?.statusConfig?.maxCharacters,
+                            submit = { text ->
+                                viewModel.replyText = TextFieldValue()
+                                viewModel.createReply(
+                                    post.id, text
+                                )
+                            },
+                        )
+                        Button(
+                            onClick = {
+                                if (!viewModel.ownReplyState.isLoading) {
+                                    viewModel.createReply(post.id, viewModel.replyText.text)
+                                    viewModel.replyText = viewModel.replyText.copy(text = "")
                                 }
-
+                            },
+                            Modifier.height(56.dp).width(56.dp).padding(0.dp, 0.dp),
+                            shape = RoundedCornerShape(16.dp),
+                            contentPadding = PaddingValues(12.dp),
+                            enabled = viewModel.replyText.text.length < (viewModel.instance?.configuration?.statusConfig?.maxCharacters
+                                ?: Int.MAX_VALUE)
+                        ) {
+                            if (viewModel.ownReplyState.isLoading) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier.size(24.dp),
+                                    color = MaterialTheme.colorScheme.onPrimary
+                                )
+                            } else {
+                                Icon(
+                                    imageVector = Icons.AutoMirrored.Filled.Send,
+                                    contentDescription = "submit",
+                                    Modifier.fillMaxSize().fillMaxWidth()
+                                )
                             }
-                        },
-                        maxLength = viewModel.instance?.configuration?.statusConfig?.maxCharacters)
+
+                        }
+
+                    }
+
+                    HorizontalDivider(Modifier.padding(12.dp))
                 }
 
-                HorizontalDivider(Modifier.padding(12.dp))
-            }
-
-            items(viewModel.repliesState.replies, key = {
-                it.id
-            }) { reply ->
-                ReplyElement(
-                    reply = reply,
-                    false,
-                    navController = navController,
-                    { viewModel.deleteReply(reply.id) },
-                    viewModel.myAccountId,
-                    { url -> viewModel.openUrl(url) }, instance = viewModel.instance)
-            }
-
-            if (viewModel.repliesState.isLoading) {
-                item {
-                    CircularProgressIndicator(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(80.dp)
-                            .wrapContentSize(Alignment.Center)
+                items(viewModel.repliesState.replies, key = {
+                    it.id
+                }) { reply ->
+                    ReplyElement(
+                        reply = reply,
+                        false,
+                        navController = navController,
+                        { viewModel.deleteReply(reply.id) },
+                        viewModel.myAccountId,
+                        { url -> viewModel.openUrl(url) },
+                        instance = viewModel.instance
                     )
                 }
-            }
 
-            if (!viewModel.repliesState.isLoading && viewModel.repliesState.error.isBlank() && viewModel.repliesState.replies.isEmpty()) {
-                item {
-                    Row(
-                        modifier = Modifier
-                            .padding(vertical = 32.dp)
-                            .fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        Text(text = stringResource(Res.string.no_comments_yet))
+                if (viewModel.repliesState.isLoading) {
+                    item {
+                        CircularProgressIndicator(
+                            modifier = Modifier.fillMaxWidth().height(80.dp)
+                                .wrapContentSize(Alignment.Center)
+                        )
                     }
                 }
-            }
 
-            if (!viewModel.repliesState.isLoading && viewModel.repliesState.error.isNotBlank() && viewModel.repliesState.replies.isEmpty()) {
+                if (!viewModel.repliesState.isLoading && viewModel.repliesState.error.isBlank() && viewModel.repliesState.replies.isEmpty()) {
+                    item {
+                        Row(
+                            modifier = Modifier.padding(vertical = 32.dp).fillMaxWidth(),
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            Text(text = stringResource(Res.string.no_comments_yet))
+                        }
+                    }
+                }
+
+                if (!viewModel.repliesState.isLoading && viewModel.repliesState.error.isNotBlank() && viewModel.repliesState.replies.isEmpty()) {
+                    item {
+                        ErrorComposable(viewModel.repliesState.error)
+                    }
+                }
+
                 item {
-                    ErrorComposable(viewModel.repliesState.error)
+                    Spacer(modifier = Modifier.height(18.dp))
+                    Spacer(
+                        Modifier.windowInsetsBottomHeight(WindowInsets.navigationBars)
+                            .background(MaterialTheme.colorScheme.surfaceContainerLow)
+                    )
                 }
             }
-
-            item {
-                Spacer(modifier = Modifier.height(18.dp))
-                Spacer(
-                    Modifier
-                        .windowInsetsBottomHeight(WindowInsets.navigationBars)
-                        .background(MaterialTheme.colorScheme.surfaceContainerLow)
-                )
+            if (viewModel.suggestionsManager.suggestionsOpen) {
+                SuggestionsBar(
+                    state = suggestionsState, onSelected = { selected ->
+                        viewModel.replyText = viewModel.suggestionsManager.selectSuggestion(
+                            selected, viewModel.replyText
+                        )
+                    })
             }
         }
 
@@ -265,13 +322,9 @@ private fun ReplyElement(
             AsyncImage(
                 model = reply.account.avatar,
                 contentDescription = "",
-                modifier = Modifier
-                    .height(42.dp)
-                    .width(42.dp)
-                    .clip(CircleShape)
-                    .clickable {
-                        navController.navigate(Destination.Profile(reply.account.id))
-                    })
+                modifier = Modifier.height(42.dp).width(42.dp).clip(CircleShape).clickable {
+                    navController.navigate(Destination.Profile(reply.account.id))
+                })
 
             Spacer(modifier = Modifier.width(12.dp))
 
@@ -385,7 +438,7 @@ private fun ReplyElement(
             if (myAccountId != null) {
                 viewModel.createReply(reply.id, it, myAccountId)
             }
-        }, instance = instance)
+        }, instance = instance, viewModel = viewModel)
     }
 
     if (showDeleteReplyDialog.value) {
@@ -421,50 +474,92 @@ private fun ReplyElement(
 fun AddReplyDialog(
     onDismissRequest: () -> Unit,
     onConfirmation: (replyText: String) -> Unit,
-    instance: Instance?
+    instance: Instance?,
+    viewModel: ReplyElementViewModel
 ) {
-    var replyText by remember { mutableStateOf(TextFieldValue("")) }
+    val suggestionsState by viewModel.suggestionsManager.suggestionsState.collectAsStateWithLifecycle()
 
-    AlertDialog(modifier = Modifier.imePadding(),icon = {
-        Icon(Icons.Outlined.Edit, contentDescription = "Edit")
-    }, title = {
-        Text(text = stringResource(Res.string.reply))
-    }, text = {
-        TextFieldMentionsComposable(
-            submit = { text ->
-                replyText = TextFieldValue()
-                onConfirmation(
-                    text
-                )
-            },
-            text = replyText,
-            changeText = { newText -> replyText = newText },
-            Res.string.reply,
-            modifier = null,
-            imeAction = ImeAction.Send,
-            submitButton = null,
-            suggestionsBoxColor = MaterialTheme.colorScheme.surface,
-            maxLength = (instance?.configuration?.statusConfig?.maxCharacters),
-            colors = TextFieldDefaults.colors(
-                unfocusedIndicatorColor = Color.Transparent,
-                focusedIndicatorColor = Color.Transparent,
-                focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
-                unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer
-            ),
+    Dialog(
+        onDismissRequest = onDismissRequest, properties = DialogProperties(
+            usePlatformDefaultWidth = false
         )
-    }, onDismissRequest = {
-        onDismissRequest()
-    }, confirmButton = {
-        TextButton(onClick = {
-            onConfirmation(replyText.text)
-        }, enabled = ((instance?.configuration?.statusConfig?.maxCharacters ?: Int.MAX_VALUE) > replyText.text.length)) {
-            Text("Send")
+    ) {
+        Box(
+            modifier = Modifier.fillMaxSize()
+                .imePadding()
+        ) {
+            Surface(
+                modifier = Modifier.align(Alignment.Center).padding(24.dp)
+                    .widthIn(max = 400.dp),
+                shape = RoundedCornerShape(28.dp),
+                color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                tonalElevation = 6.dp
+            ) {
+                Column(
+                    modifier = Modifier.padding(24.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Icon(Icons.Outlined.Edit, contentDescription = null)
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        text = stringResource(Res.string.reply),
+                        style = MaterialTheme.typography.headlineSmall
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    MaxLengthTextField(
+                        value = viewModel.replyText,
+                        onValueChange = { viewModel.updateReplyText(it) },
+                        textFieldModifier = Modifier.fillMaxWidth().onFocusChanged { focusState ->
+                            viewModel.suggestionsManager.onFocusChanged(focusState.isFocused)
+                        },
+                        label = Res.string.reply,
+                        maxLength = instance?.configuration?.statusConfig?.maxCharacters,
+                        submit = { text ->
+                            viewModel.replyText = TextFieldValue()
+                            onConfirmation(
+                                text
+                            )
+                        },
+                        colors = TextFieldDefaults.colors(
+                            unfocusedIndicatorColor = Color.Transparent,
+                            focusedIndicatorColor = Color.Transparent,
+                            focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer
+
+                        ),
+                    )
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End
+                    ) {
+                        TextButton(onClick = onDismissRequest) { Text("Dismiss") }
+                        TextButton(
+                            onClick = {
+                                viewModel.replyText = TextFieldValue()
+                                onConfirmation(viewModel.replyText.text)
+                            },
+                            enabled = (instance?.configuration?.statusConfig?.maxCharacters
+                                ?: Int.MAX_VALUE) > viewModel.replyText.text.length
+                        ) { Text("Send") }
+                    }
+                }
+            }
+
+            if (viewModel.suggestionsManager.suggestionsOpen) {
+                Box(
+                    modifier = Modifier.align(Alignment.BottomCenter).fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.surfaceContainerHighest)
+                ) {
+                    SuggestionsBar(
+                        state = suggestionsState, onSelected = { selected ->
+                            viewModel.replyText = viewModel.suggestionsManager.selectSuggestion(
+                                selected, viewModel.replyText
+                            )
+                        })
+                }
+            }
         }
-    }, dismissButton = {
-        TextButton(onClick = {
-            onDismissRequest()
-        }) {
-            Text("Dismiss")
-        }
-    })
+    }
 }

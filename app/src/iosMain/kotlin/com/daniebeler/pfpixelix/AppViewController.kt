@@ -18,9 +18,6 @@ class IosUrlCallback {
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalComposeUiApi::class)
 fun AppViewController(urlCallback: IosUrlCallback): UIViewController {
-    //https://youtrack.jetbrains.com/issue/CMP-7623 iOS - Gesture handling is incorrect in 1.8.0-alpha03
-    ComposeFoundationFlags.DragGesturePickUpEnabled = false
-
     var viewController: UIViewController? = null
     val appComponent = AppComponent.Companion.create(
         object : KmpContext() {

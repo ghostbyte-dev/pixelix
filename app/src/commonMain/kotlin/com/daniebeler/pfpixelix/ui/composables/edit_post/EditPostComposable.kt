@@ -111,7 +111,7 @@ fun EditPostComposable(
     LaunchedEffect(Unit) {
         viewModel.loadData(postId)
     }
-    val suggestionsState by viewModel.suggestionsManager.suggestionsState.collectAsStateWithLifecycle()
+    val suggestionsState by viewModel.hashtagMentionsSuggestionsManager.suggestionsState.collectAsStateWithLifecycle()
 
     Scaffold(contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top),
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -279,7 +279,7 @@ fun EditPostComposable(
                             value = viewModel.caption,
                             onValueChange = { viewModel.updateCaption(it) },
                             textFieldModifier = Modifier.fillMaxWidth().onFocusChanged { focusState ->
-                                viewModel.suggestionsManager.onFocusChanged(focusState.isFocused)
+                                viewModel.hashtagMentionsSuggestionsManager.onFocusChanged(focusState.isFocused)
                             },
                             label = Res.string.caption,
                             maxLength = viewModel.instance?.configuration?.statusConfig?.maxCharacters,
@@ -334,10 +334,10 @@ fun EditPostComposable(
                         onDismiss = { viewModel.editPostState = viewModel.editPostState.copy(error = "") }
                     )
                 }
-                if (viewModel.suggestionsManager.suggestionsOpen) {
+                if (viewModel.hashtagMentionsSuggestionsManager.suggestionsOpen) {
                     SuggestionsBar(
                         state = suggestionsState, onSelected = { selected ->
-                            viewModel.caption = viewModel.suggestionsManager.selectSuggestion(
+                            viewModel.caption = viewModel.hashtagMentionsSuggestionsManager.selectSuggestion(
                                 selected, viewModel.caption
                             )
                         })

@@ -89,7 +89,7 @@ import pixelix.app.generated.resources.this_action_cannot_be_undone
 fun CommentsBottomSheet(
     post: Post, navController: NavController, viewModel: PostViewModel
 ) {
-    val suggestionsState by viewModel.suggestionsManager.suggestionsState.collectAsStateWithLifecycle()
+    val suggestionsState by viewModel.hashtagMentionsSuggestionsManager.suggestionsState.collectAsStateWithLifecycle()
 
     Box {
         Column(Modifier.fillMaxWidth().padding(horizontal = 12.dp).align(Alignment.TopStart)) {
@@ -184,7 +184,7 @@ fun CommentsBottomSheet(
                             value = viewModel.replyText,
                             onValueChange = { viewModel.updateReplyText(it) },
                             textFieldModifier = Modifier.fillMaxWidth().onFocusChanged { focusState ->
-                                viewModel.suggestionsManager.onFocusChanged(focusState.isFocused)
+                                viewModel.hashtagMentionsSuggestionsManager.onFocusChanged(focusState.isFocused)
                             },
                             modifier = Modifier.weight(1f),
                             label = Res.string.reply,
@@ -278,10 +278,10 @@ fun CommentsBottomSheet(
                     )
                 }
             }
-            if (viewModel.suggestionsManager.suggestionsOpen) {
+            if (viewModel.hashtagMentionsSuggestionsManager.suggestionsOpen) {
                 SuggestionsBar(
                     state = suggestionsState, onSelected = { selected ->
-                        viewModel.replyText = viewModel.suggestionsManager.selectSuggestion(
+                        viewModel.replyText = viewModel.hashtagMentionsSuggestionsManager.selectSuggestion(
                             selected, viewModel.replyText
                         )
                     })
@@ -477,7 +477,7 @@ fun AddReplyDialog(
     instance: Instance?,
     viewModel: ReplyElementViewModel
 ) {
-    val suggestionsState by viewModel.suggestionsManager.suggestionsState.collectAsStateWithLifecycle()
+    val suggestionsState by viewModel.hashtagMentionsSuggestionsManager.suggestionsState.collectAsStateWithLifecycle()
 
     Dialog(
         onDismissRequest = onDismissRequest, properties = DialogProperties(
@@ -511,7 +511,7 @@ fun AddReplyDialog(
                         value = viewModel.replyText,
                         onValueChange = { viewModel.updateReplyText(it) },
                         textFieldModifier = Modifier.fillMaxWidth().onFocusChanged { focusState ->
-                            viewModel.suggestionsManager.onFocusChanged(focusState.isFocused)
+                            viewModel.hashtagMentionsSuggestionsManager.onFocusChanged(focusState.isFocused)
                         },
                         label = Res.string.reply,
                         maxLength = instance?.configuration?.statusConfig?.maxCharacters,
@@ -547,14 +547,14 @@ fun AddReplyDialog(
                 }
             }
 
-            if (viewModel.suggestionsManager.suggestionsOpen) {
+            if (viewModel.hashtagMentionsSuggestionsManager.suggestionsOpen) {
                 Box(
                     modifier = Modifier.align(Alignment.BottomCenter).fillMaxWidth()
                         .background(MaterialTheme.colorScheme.surfaceContainerHighest)
                 ) {
                     SuggestionsBar(
                         state = suggestionsState, onSelected = { selected ->
-                            viewModel.replyText = viewModel.suggestionsManager.selectSuggestion(
+                            viewModel.replyText = viewModel.hashtagMentionsSuggestionsManager.selectSuggestion(
                                 selected, viewModel.replyText
                             )
                         })

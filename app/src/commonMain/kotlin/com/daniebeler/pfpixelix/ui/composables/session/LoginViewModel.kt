@@ -6,20 +6,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.daniebeler.pfpixelix.domain.model.Server
-import com.daniebeler.pfpixelix.domain.service.instance.InstanceService
 import com.daniebeler.pfpixelix.domain.service.platform.Platform
 import com.daniebeler.pfpixelix.domain.service.session.AuthService
-import com.daniebeler.pfpixelix.domain.service.utils.Resource
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import com.daniebeler.pfpixelix.domain.service.suggestions.ServersSuggestionsManager
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 
 @Inject
 class LoginViewModel(
     private val authService: AuthService,
-    private val instanceService: InstanceService,
+    val serversSuggestionsManager: ServersSuggestionsManager,
     private val platform: Platform
 ) : ViewModel() {
 
@@ -35,32 +31,15 @@ class LoginViewModel(
     var error by mutableStateOf<String?>(null)
         private set
 
-    var openServers by mutableStateOf<List<Server>>(emptyList())
-        private set
-
-    init {
-       getOpenServers()
-    }
-
-    private fun getOpenServers() {
-        instanceService.getOpenServers().onEach { result ->
-            when (result) {
-                is Resource.Success -> {
-                    openServers = result.data
-                }
-
-                is Resource.Error -> {
-                }
-
-                is Resource.Loading -> {
-                }
-            }
-        }.launchIn(viewModelScope)
-    }
-
     fun updateServerHost(host: TextFieldValue) {
         serverHost = host
         isValidHost = authService.isValidHost(serverHost.text)
+        serversSuggestionsManager.changeText(host, viewModelScope)
+    }
+
+    fun selectSuggestion(newHost: TextFieldValue) {
+        serverHost = newHost
+        isValidHost = true
     }
 
     fun auth() {

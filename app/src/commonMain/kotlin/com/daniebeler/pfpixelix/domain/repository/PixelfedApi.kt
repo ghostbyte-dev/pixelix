@@ -6,6 +6,7 @@ import com.daniebeler.pfpixelix.domain.model.Collection
 import com.daniebeler.pfpixelix.domain.model.Conversation
 import com.daniebeler.pfpixelix.domain.model.FediServerData
 import com.daniebeler.pfpixelix.domain.model.FediSoftware
+import com.daniebeler.pfpixelix.domain.model.FediseaServersResponse
 import com.daniebeler.pfpixelix.domain.model.Instance
 import com.daniebeler.pfpixelix.domain.model.MediaAttachment
 import com.daniebeler.pfpixelix.domain.model.Message
@@ -18,7 +19,6 @@ import com.daniebeler.pfpixelix.domain.model.RelatedHashtag
 import com.daniebeler.pfpixelix.domain.model.Relationship
 import com.daniebeler.pfpixelix.domain.model.ReportResponse
 import com.daniebeler.pfpixelix.domain.model.Search
-import com.daniebeler.pfpixelix.domain.model.Server
 import com.daniebeler.pfpixelix.domain.model.Settings
 import com.daniebeler.pfpixelix.domain.model.Tag
 import de.jensklingenberg.ktorfit.Call
@@ -27,7 +27,6 @@ import de.jensklingenberg.ktorfit.http.DELETE
 import de.jensklingenberg.ktorfit.http.Field
 import de.jensklingenberg.ktorfit.http.FormUrlEncoded
 import de.jensklingenberg.ktorfit.http.GET
-import de.jensklingenberg.ktorfit.http.Header
 import de.jensklingenberg.ktorfit.http.Headers
 import de.jensklingenberg.ktorfit.http.POST
 import de.jensklingenberg.ktorfit.http.PUT
@@ -381,8 +380,12 @@ interface PixelfedApi {
         @Path("slug") domain: String
     ): FediServerData
 
-    @GET("https://pixelfed.org/api/v1/mobile-app/servers/open.json")
+    @GET("https://api.fedisea.surf/v1/instances")
     suspend fun getOpenServers(
-        @Header("X-Pixelfed-App") pixelfedApp: Int = 1
-    ): List<Server>
+        @Query("search") search: String,
+        @Query("size") size: Int = 10,
+        @Query("software") software: String = "pixelfed",
+        @Query("sort") sort: String = "activeUsersMonth",
+        @Query("order") order: String = "desc"
+    ): FediseaServersResponse
 }

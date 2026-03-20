@@ -25,7 +25,7 @@ class InstanceService(
         api.getServerFromFediDB(domain = slug).data
     }
 
-    fun getOpenServers() = loadResource {
-        api.getOpenServers()
+    fun getOpenServers(search: String, limit: Int) = loadResource {
+        api.getOpenServers(search, limit)
     }
 }

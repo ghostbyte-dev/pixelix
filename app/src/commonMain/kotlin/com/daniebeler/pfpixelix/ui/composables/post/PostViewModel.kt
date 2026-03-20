@@ -20,7 +20,7 @@ import com.daniebeler.pfpixelix.domain.service.platform.Platform
 import com.daniebeler.pfpixelix.domain.service.post.PostService
 import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
 import com.daniebeler.pfpixelix.domain.service.session.AuthService
-import com.daniebeler.pfpixelix.domain.service.suggestions.SuggestionsManager
+import com.daniebeler.pfpixelix.domain.service.suggestions.HashtagMentionsSuggestionsManager
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.ui.composables.post.reply.OwnReplyState
 import com.daniebeler.pfpixelix.ui.composables.post.reply.RepliesState
@@ -41,7 +41,7 @@ class PostViewModel @Inject constructor(
     private val platform: Platform,
     private val fileService: FileService,
     private val instanceService: InstanceService,
-    val suggestionsManager: SuggestionsManager
+    val hashtagMentionsSuggestionsManager: HashtagMentionsSuggestionsManager
 ) : ViewModel() {
 
     var post: Post? by mutableStateOf(null)
@@ -469,6 +469,6 @@ class PostViewModel @Inject constructor(
 
     fun updateReplyText(newReplyText: TextFieldValue) {
         replyText = newReplyText
-        suggestionsManager.changeText(newReplyText, viewModelScope)
+        hashtagMentionsSuggestionsManager.changeText(newReplyText, viewModelScope)
     }
 }

@@ -19,7 +19,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import me.tatarka.inject.annotations.Inject
 
-class SuggestionsManager @Inject constructor(
+class HashtagMentionsSuggestionsManager @Inject constructor(
     private val searchService: SearchService
 ) {
     var suggestionsOpen by mutableStateOf(false)

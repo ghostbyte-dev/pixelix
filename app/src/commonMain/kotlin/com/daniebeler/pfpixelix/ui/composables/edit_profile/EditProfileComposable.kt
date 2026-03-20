@@ -91,7 +91,7 @@ fun EditProfileComposable(
     navController: NavController,
     viewModel: EditProfileViewModel = injectViewModel(key = "edit-profile-viewmodel-key") { editProfileViewModel }
 ) {
-    val suggestionsState by viewModel.suggestionsManager.suggestionsState.collectAsStateWithLifecycle()
+    val suggestionsState by viewModel.hashtagMentionsSuggestionsManager.suggestionsState.collectAsStateWithLifecycle()
 
     Scaffold(
         contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top)
@@ -190,7 +190,7 @@ fun EditProfileComposable(
                         value = viewModel.note,
                         onValueChange = { viewModel.updateNote(it) },
                         modifier = Modifier.fillMaxWidth().onFocusChanged { focusState ->
-                            viewModel.suggestionsManager.onFocusChanged(focusState.isFocused)
+                            viewModel.hashtagMentionsSuggestionsManager.onFocusChanged(focusState.isFocused)
                         },
                         label = { Text(stringResource(Res.string.caption)) },
                         shape = MaterialTheme.shapes.medium,
@@ -256,10 +256,10 @@ fun EditProfileComposable(
                 }
 
             }
-            if (viewModel.suggestionsManager.suggestionsOpen) {
+            if (viewModel.hashtagMentionsSuggestionsManager.suggestionsOpen) {
                 SuggestionsBar(
                     state = suggestionsState, onSelected = { selected ->
-                        viewModel.note = viewModel.suggestionsManager.selectSuggestion(
+                        viewModel.note = viewModel.hashtagMentionsSuggestionsManager.selectSuggestion(
                             selected, viewModel.note
                         )
                     })

@@ -9,7 +9,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.domain.service.account.AccountService
-import com.daniebeler.pfpixelix.domain.service.suggestions.SuggestionsManager
+import com.daniebeler.pfpixelix.domain.service.suggestions.HashtagMentionsSuggestionsManager
 import com.daniebeler.pfpixelix.utils.EmptyKmpUri
 import com.daniebeler.pfpixelix.utils.toKmpUri
 import kotlinx.coroutines.flow.launchIn
@@ -18,7 +18,7 @@ import me.tatarka.inject.annotations.Inject
 
 class EditProfileViewModel @Inject constructor(
     private val accountService: AccountService,
-    val suggestionsManager: SuggestionsManager
+    val hashtagMentionsSuggestionsManager: HashtagMentionsSuggestionsManager
 ) : ViewModel() {
 
     var accountState by mutableStateOf(EditProfileState())
@@ -82,6 +82,6 @@ class EditProfileViewModel @Inject constructor(
 
     fun updateNote(newNote: TextFieldValue) {
         note = newNote
-        suggestionsManager.changeText(newNote, viewModelScope)
+        hashtagMentionsSuggestionsManager.changeText(newNote, viewModelScope)
     }
 }

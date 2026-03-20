@@ -123,7 +123,7 @@ fun NewPostComposable(
             uris.forEach { viewModel.addImage(uri = it) }
         }
     }
-    val suggestionsState by viewModel.suggestionsManager.suggestionsState.collectAsStateWithLifecycle()
+    val suggestionsState by viewModel.hashtagMentionsSuggestionsManager.suggestionsState.collectAsStateWithLifecycle()
     Box(modifier = Modifier.fillMaxSize()) {
 
         val statusBarPadding = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
@@ -162,7 +162,7 @@ fun NewPostComposable(
                                 value = viewModel.caption,
                                 onValueChange = { viewModel.updateCaption(it) },
                                 textFieldModifier = Modifier.fillMaxWidth().onFocusChanged { focusState ->
-                                    viewModel.suggestionsManager.onFocusChanged(focusState.isFocused)
+                                    viewModel.hashtagMentionsSuggestionsManager.onFocusChanged(focusState.isFocused)
                                 },
                                 label = Res.string.caption,
                                 maxLength = viewModel.instance?.configuration?.statusConfig?.maxCharacters,
@@ -263,10 +263,10 @@ fun NewPostComposable(
                             )
                         }
                     }
-                    if (viewModel.suggestionsManager.suggestionsOpen) {
+                    if (viewModel.hashtagMentionsSuggestionsManager.suggestionsOpen) {
                         SuggestionsBar(
                             state = suggestionsState, onSelected = { selected ->
-                                viewModel.caption = viewModel.suggestionsManager.selectSuggestion(
+                                viewModel.caption = viewModel.hashtagMentionsSuggestionsManager.selectSuggestion(
                                     selected, viewModel.caption
                                 )
                             })

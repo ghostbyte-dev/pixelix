@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -33,17 +34,21 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.utils.StringFormat
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.active_users
+import pixelix.app.generated.resources.default_avatar
+import pixelix.app.generated.resources.fediverse_logo
 import pixelix.app.generated.resources.instances
 import pixelix.app.generated.resources.server_version
 import pixelix.app.generated.resources.total_posts
@@ -53,7 +58,8 @@ import pixelix.app.generated.resources.visit_url
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DomainSoftwareComposable(
-    domain: String, viewModel: ServerStatsViewModel = injectViewModel(key = "serverstats$domain") { serverStatsViewModel }
+    domain: String,
+    viewModel: ServerStatsViewModel = injectViewModel(key = "serverstats$domain") { serverStatsViewModel }
 ) {
     var showBottomSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -62,13 +68,16 @@ fun DomainSoftwareComposable(
         viewModel.getData(domain)
     }
 
-    if (viewModel.statsState.fediSoftware?.icon != null) {
-        Image(painterResource(viewModel.statsState.fediSoftware!!.icon!!),
-            contentDescription = viewModel.statsState.fediSoftware!!.name,
+    if (!viewModel.statsState.isLoading) {
+        AsyncImage(
+            model = viewModel.statsState.fediSoftware?.iconUrl
+                ?: Res.drawable.fediverse_logo,
+            error = painterResource(Res.drawable.fediverse_logo),
+            contentDescription = "",
             modifier = Modifier
                 .height(24.dp)
                 .clickable { showBottomSheet = true })
-    } else if (viewModel.statsState.isLoading) {
+    } else {
         CircularProgressIndicator(Modifier.size(18.dp))
     }
 
@@ -91,88 +100,90 @@ fun DomainSoftwareComposable(
                         horizontalArrangement = Arrangement.Center,
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Image(
-                            painterResource(viewModel.statsState.fediSoftware!!.icon!!),
-                            contentDescription = null,
+                        viewModel.statsState.fediSoftware?.let {
+
+                        }
+                        AsyncImage(
+                            model = viewModel.statsState.fediSoftware?.iconUrl
+                                ?: Res.drawable.fediverse_logo,
+                            error = painterResource(Res.drawable.fediverse_logo),
+                            contentDescription = "",
                             modifier = Modifier.height(56.dp)
                         )
                         Spacer(modifier = Modifier.width(12.dp))
                         Text(
-                            text = viewModel.statsState.fediSoftware!!.name,
+                            text = viewModel.statsState.fediSoftware!!.name
+                                ?: viewModel.statsState.fediSoftware!!.identifier,
                             fontSize = 32.sp,
                             fontWeight = FontWeight.Bold
                         )
                     }
 
-                    if (viewModel.statsState.fediSoftware!!.description.isNotBlank()) {
+                    if (viewModel.statsState.fediSoftware!!.description != null) {
                         Spacer(modifier = Modifier.height(12.dp))
-                        Text(text = viewModel.statsState.fediSoftware!!.description)
+                        Text(text = viewModel.statsState.fediSoftware!!.description!!)
                     }
 
-                    if (viewModel.statsState.fediSoftware!!.instanceCount != -1) {
-                        Spacer(modifier = Modifier.height(12.dp))
+                    Spacer(modifier = Modifier.height(12.dp))
 
-                        Row {
-                            Text(stringResource(Res.string.instances))
-                            Spacer(Modifier.width(8.dp))
-                            Text(
-                                text = StringFormat.groupDigits(
-                                    viewModel.statsState.fediSoftware!!.instanceCount
-                                ), fontWeight = FontWeight.Bold
-                            )
-                        }
-                    }
-
-                    if (viewModel.statsState.fediSoftware!!.statusCount != -1) {
-                        Spacer(modifier = Modifier.height(12.dp))
-
-                        Row {
-                            Text(stringResource(Res.string.total_posts))
-                            Spacer(Modifier.width(8.dp))
-                            Text(
-                                text = StringFormat.groupDigits(
-                                    viewModel.statsState.fediSoftware!!.statusCount
-                                ), fontWeight = FontWeight.Bold
-                            )
-                        }
-                    }
-
-                    if (viewModel.statsState.fediSoftware!!.userCount != -1) {
-                        Spacer(modifier = Modifier.height(12.dp))
-
-                        Row {
-                            Text(stringResource(Res.string.total_users))
-                            Spacer(Modifier.width(8.dp))
-                            Text(
-                                text = StringFormat.groupDigits(
-                                    viewModel.statsState.fediSoftware!!.userCount
-                                ), fontWeight = FontWeight.Bold
-                            )
-                        }
-                    }
-
-                    if (viewModel.statsState.fediSoftware!!.activeUserCount != -1) {
-                        Spacer(modifier = Modifier.height(12.dp))
-
-                        Row {
-                            Text(stringResource(Res.string.active_users))
-                            Spacer(Modifier.width(8.dp))
-                            Text(
-                                text = StringFormat.groupDigits(
-                                    viewModel.statsState.fediSoftware!!.activeUserCount
-                                ), fontWeight = FontWeight.Bold
-                            )
-                        }
+                    Row {
+                        Text(stringResource(Res.string.instances))
+                        Spacer(Modifier.width(8.dp))
+                        Text(
+                            text = StringFormat.groupDigits(
+                                viewModel.statsState.fediSoftware!!.instances
+                            ), fontWeight = FontWeight.Bold
+                        )
                     }
 
 
                     Spacer(modifier = Modifier.height(12.dp))
 
-                    if (viewModel.statsState.fediSoftware!!.website.isNotEmpty()) {
+                    Row {
+                        Text(stringResource(Res.string.total_posts))
+                        Spacer(Modifier.width(8.dp))
+                        Text(
+                            text = StringFormat.groupDigits(
+                                viewModel.statsState.fediSoftware!!.localPosts
+                            ), fontWeight = FontWeight.Bold
+                        )
+                    }
+
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    Row {
+                        Text(stringResource(Res.string.total_users))
+                        Spacer(Modifier.width(8.dp))
+                        Text(
+                            text = StringFormat.groupDigits(
+                                viewModel.statsState.fediSoftware!!.totalUsers
+                            ), fontWeight = FontWeight.Bold
+                        )
+                    }
+
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    Row {
+                        Text(stringResource(Res.string.active_users))
+                        Spacer(Modifier.width(8.dp))
+                        Text(
+                            text = StringFormat.groupDigits(
+                                viewModel.statsState.fediSoftware!!.totalUsers
+                            ), fontWeight = FontWeight.Bold
+                        )
+                    }
+
+
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    if (viewModel.statsState.fediSoftware!!.website != null) {
                         TextButton(
                             onClick = {
                                 viewModel.openUrl(
-                                    viewModel.statsState.fediSoftware!!.website
+                                    viewModel.statsState.fediSoftware!!.website!!
                                 )
                             },
                             shape = RoundedCornerShape(12.dp),
@@ -180,7 +191,8 @@ fun DomainSoftwareComposable(
                         ) {
                             Text(
                                 text = stringResource(
-                                    Res.string.visit_url, viewModel.statsState.fediSoftware!!.website
+                                    Res.string.visit_url,
+                                    viewModel.statsState.fediSoftware!!.website!!
                                 )
                             )
                         }
@@ -203,9 +215,9 @@ fun DomainSoftwareComposable(
                         modifier = Modifier.fillMaxWidth()
                     )
 
-                    if (viewModel.statsState.fediServer!!.description.isNotBlank()) {
+                    if (viewModel.statsState.fediServer!!.description != null) {
                         Spacer(modifier = Modifier.height(12.dp))
-                        Text(viewModel.statsState.fediServer!!.description)
+                        Text(viewModel.statsState.fediServer!!.description!!)
                         Spacer(modifier = Modifier.height(24.dp))
                     }
 
@@ -213,66 +225,38 @@ fun DomainSoftwareComposable(
                         Text(
                             stringResource(
                                 Res.string.server_version,
-                                viewModel.statsState.fediServer!!.software.name,
-                                viewModel.statsState.fediServer!!.software.version
+                                viewModel.statsState.fediServer!!.software,
+                                viewModel.statsState.fediServer!!.version
                             )
                         )
                     }
 
                     Spacer(modifier = Modifier.height(12.dp))
 
-                    if (viewModel.statsState.fediServer!!.location.city != null || viewModel.statsState.fediServer!!.location.country != null) {
-                        Row {
-                            Text(
-                                "Server location:"
+
+                    Row {
+                        Text(
+                            "Open registration:"
+                        )
+                        Spacer(Modifier.width(8.dp))
+
+                        if (viewModel.statsState.fediServer!!.openRegistration) {
+                            Icon(
+                                imageVector = Icons.Rounded.Check,
+                                tint = Color.Green,
+                                contentDescription = "true",
                             )
-                            Spacer(Modifier.width(8.dp))
-
-                            if (viewModel.statsState.fediServer!!.location.city != null && viewModel.statsState.fediServer!!.location.country != null) {
-                                Text(
-                                    text = viewModel.statsState.fediServer!!.location.city.toString() + ", " + viewModel.statsState.fediServer!!.location.country.toString(),
-                                    fontWeight = FontWeight.Bold
-                                )
-                            } else if (viewModel.statsState.fediServer!!.location.country != null) {
-                                Text(
-                                    text = viewModel.statsState.fediServer!!.location.country.toString(),
-                                    fontWeight = FontWeight.Bold
-                                )
-                            } else {
-                                Text(
-                                    text = viewModel.statsState.fediServer!!.location.city.toString(),
-                                    fontWeight = FontWeight.Bold
-                                )
-                            }
+                        } else {
+                            Icon(
+                                imageVector = Icons.Rounded.Close,
+                                tint = Color.Red,
+                                contentDescription = "false",
+                            )
                         }
-
-                        Spacer(modifier = Modifier.height(24.dp))
                     }
 
-                    if (viewModel.statsState.fediServer!!.openRegistration != null) {
-                        Row {
-                            Text(
-                                "Open registration:"
-                            )
-                            Spacer(Modifier.width(8.dp))
+                    Spacer(modifier = Modifier.height(24.dp))
 
-                            if (viewModel.statsState.fediServer!!.openRegistration!!) {
-                                Icon(
-                                    imageVector = Icons.Rounded.Check,
-                                    tint = Color.Green,
-                                    contentDescription = "true",
-                                )
-                            } else {
-                                Icon(
-                                    imageVector = Icons.Rounded.Close,
-                                    tint = Color.Red,
-                                    contentDescription = "false",
-                                )
-                            }
-                        }
-
-                        Spacer(modifier = Modifier.height(24.dp))
-                    }
 
 
                     Row {
@@ -280,7 +264,7 @@ fun DomainSoftwareComposable(
                         Spacer(Modifier.width(8.dp))
                         Text(
                             text = StringFormat.groupDigits(
-                                viewModel.statsState.fediServer!!.stats.statusCount
+                                viewModel.statsState.fediServer!!.localPosts
                             ), fontWeight = FontWeight.Bold
                         )
                     }
@@ -292,7 +276,7 @@ fun DomainSoftwareComposable(
                         Spacer(Modifier.width(8.dp))
                         Text(
                             text = StringFormat.groupDigits(
-                                viewModel.statsState.fediServer!!.stats.userCount
+                                viewModel.statsState.fediServer!!.totalUsers
                             ), fontWeight = FontWeight.Bold
                         )
                     }
@@ -304,7 +288,7 @@ fun DomainSoftwareComposable(
                         Spacer(Modifier.width(8.dp))
                         Text(
                             text = StringFormat.groupDigits(
-                                viewModel.statsState.fediServer!!.stats.monthlyActiveUsers
+                                viewModel.statsState.fediServer!!.activeUsersMonth
                             ), fontWeight = FontWeight.Bold
                         )
                     }

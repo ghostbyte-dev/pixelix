@@ -4,9 +4,9 @@ import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.model.Chat
 import com.daniebeler.pfpixelix.domain.model.Collection
 import com.daniebeler.pfpixelix.domain.model.Conversation
-import com.daniebeler.pfpixelix.domain.model.FediServerData
-import com.daniebeler.pfpixelix.domain.model.FediSoftware
+import com.daniebeler.pfpixelix.domain.model.FediseaInstance
 import com.daniebeler.pfpixelix.domain.model.FediseaServersResponse
+import com.daniebeler.pfpixelix.domain.model.FediseaSoftware
 import com.daniebeler.pfpixelix.domain.model.Instance
 import com.daniebeler.pfpixelix.domain.model.MediaAttachment
 import com.daniebeler.pfpixelix.domain.model.Message
@@ -370,15 +370,21 @@ interface PixelfedApi {
     @GET
     suspend fun getNodeInfo(@Url domain: String): NodeInfo
 
-    @GET("https://api.fedidb.org/v1/software/{slug}")
+   /* @GET("https://api.fedidb.org/v1/software/{slug}")
     suspend fun getSoftwareFromFediDB(
         @Path("slug") slug: String
     ): FediSoftware
+*/
 
-    @GET("https://api.fedidb.org/v1/server/domain/{slug}")
-    suspend fun getServerFromFediDB(
+    @GET("https://api.fedisea.surf/v1/software/{slug}")
+    suspend fun getSoftwareFromFedisea(
+        @Path("slug") slug: String
+    ): FediseaSoftware
+
+    @GET("https://api.fedisea.surf/v1/instances/{slug}")
+    suspend fun getServerFromFedisea(
         @Path("slug") domain: String
-    ): FediServerData
+    ): FediseaInstance
 
     @GET("https://api.fedisea.surf/v1/instances")
     suspend fun getOpenServers(

@@ -27,7 +27,7 @@ class Session {
     suspend fun Sender.intercept(request: HttpRequestBuilder): HttpClientCall {
         credentials.value?.let { creds ->
             request.apply {
-                if (url.host != "api.fedidb.org" && url.host != "pixelfed.org") {
+                if (url.host != "api.fedisea.surf" && url.host != "pixelfed.org") {
                     url.set(host = Url(creds.serverUrl).host)
                     headers["Authorization"] = "Bearer ${creds.token}"
                 }

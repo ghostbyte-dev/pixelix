@@ -25,14 +25,14 @@ class ServerStatsViewModel @Inject constructor(
     }
 
     private fun getFediServer(domain: String) {
-        instanceService.getServerFromFediDB(domain).onEach { result ->
+        instanceService.getServerFromFedisea(domain).onEach { result ->
             when (result) {
                 is Resource.Success -> {
                     statsState = DomainSoftwareState(
                         fediServer = result.data, fediSoftware = statsState.fediSoftware
                     )
-                    if (result.data?.software?.name?.isNotEmpty() == true) {
-                        getFediSoftware(result.data.software.name.lowercase())
+                    if (result.data.software.isNotEmpty()) {
+                        getFediSoftware(result.data.software)
                     }
                 }
 
@@ -56,7 +56,7 @@ class ServerStatsViewModel @Inject constructor(
     }
 
     private fun getFediSoftware(softwareSlug: String) {
-        instanceService.getSoftwareFromFediDB(softwareSlug).onEach { result ->
+        instanceService.getSoftwareFromFedisea(softwareSlug).onEach { result ->
             statsState = when (result) {
                 is Resource.Success -> {
                     DomainSoftwareState(

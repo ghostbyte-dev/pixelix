@@ -97,6 +97,7 @@ kotlin {
             //image loader
             implementation(libs.coil.compose)
             implementation(libs.coil.network)
+            implementation(libs.coil.svg)
 
             //image crop
             implementation(libs.krop)

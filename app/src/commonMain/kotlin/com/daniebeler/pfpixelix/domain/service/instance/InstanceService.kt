@@ -17,12 +17,12 @@ class InstanceService(
         api.getNodeInfo(domain)
     }
 
-    fun getSoftwareFromFediDB(slug: String) = loadResource {
-        api.getSoftwareFromFediDB(slug)
+    fun getSoftwareFromFedisea(slug: String) = loadResource {
+        api.getSoftwareFromFedisea(slug)
     }
 
-    fun getServerFromFediDB(slug: String) = loadResource {
-        api.getServerFromFediDB(domain = slug).data
+    fun getServerFromFedisea(slug: String) = loadResource {
+        api.getServerFromFedisea(domain = slug)
     }
 
     fun getOpenServers(search: String, limit: Int) = loadResource {

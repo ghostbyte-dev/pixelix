@@ -17,12 +17,23 @@ class SystemUrlHandler {
 
     var uriHandler: UriHandler? = null
 
+    var isAuthInProgress: Boolean = false
+
     fun openBrowser(url: String) {
         uriHandler?.openUri(url)
     }
 
     @OptIn(DelicateCoroutinesApi::class)
     fun onRedirect(url: String) {
+        isAuthInProgress = false
         GlobalScope.launch { redirectsFlow.emit(url) }
+    }
+
+    @OptIn(DelicateCoroutinesApi::class)
+    fun cancelWaiting() {
+        if (isAuthInProgress) {
+            isAuthInProgress = false
+            GlobalScope.launch { redirectsFlow.emit("CANCELLED") }
+        }
     }
 }

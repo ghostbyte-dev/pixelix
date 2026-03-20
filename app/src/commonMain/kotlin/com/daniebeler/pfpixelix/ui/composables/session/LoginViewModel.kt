@@ -23,7 +23,6 @@ class LoginViewModel(
         private set
 
     var isLoading by mutableStateOf(false)
-        private set
 
     var isValidHost by mutableStateOf(false)
         private set

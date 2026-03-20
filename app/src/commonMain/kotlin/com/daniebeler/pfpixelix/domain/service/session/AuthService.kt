@@ -52,12 +52,15 @@ class AuthService(
             }
         }.build()
 
-       // urlHandler.openBrowser(authUrl.toString())
+        urlHandler.isAuthInProgress = true
         platform.openUrl(authUrl.toString())
-
-        val redirect = Url(urlHandler.redirects.first())
+        val redirectString = urlHandler.redirects.first()
         platform.dismissBrowser()
 
+        if (redirectString == "CANCELLED") {
+            error("User canceled the authentication flow.")
+        }
+        val redirect = Url(redirectString)
         val code = redirect.parameters["code"] ?: error("Redirect doesn't have a code")
 
         val token = api.getToken(

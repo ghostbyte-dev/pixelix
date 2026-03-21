@@ -2,14 +2,6 @@ package com.daniebeler.pfpixelix.domain.model
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import org.jetbrains.compose.resources.DrawableResource
-import pixelix.app.generated.resources.Res
-import pixelix.app.generated.resources.fediverse_logo
-import pixelix.app.generated.resources.lemmy_logo
-import pixelix.app.generated.resources.mastodon_logo
-import pixelix.app.generated.resources.misskey_logo
-import pixelix.app.generated.resources.peertube_logo
-import pixelix.app.generated.resources.pixelfed_logo
 
 @Serializable
 data class NodeInfo(

@@ -722,7 +722,9 @@ fun PostImage(
                     showHeart = true
                 }
             }, onTap = {
-                showMediaDialog = mediaAttachment
+                if (mediaAttachment.type != "video") {
+                    showMediaDialog = mediaAttachment
+                }
             })
         }) {
             if (mediaAttachment.type != "video") {

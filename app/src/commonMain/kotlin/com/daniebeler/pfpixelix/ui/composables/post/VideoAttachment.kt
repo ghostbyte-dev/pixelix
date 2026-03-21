@@ -101,7 +101,6 @@ fun VideoAttachment(
                                 totalVerticalDrag = 0f
                             },
                             onVerticalDrag = { change, dragAmount ->
-                                // Only care about downward movement (positive dragAmount)
                                 if (dragAmount > 0 || totalVerticalDrag > 0) {
                                     totalVerticalDrag += dragAmount
                                     change.consume()
@@ -112,7 +111,8 @@ fun VideoAttachment(
                             if (controlsVisible) {
                                 IconButton(
                                     onClick = { player.toggleFullscreen() },
-                                    modifier = Modifier.align(Alignment.TopEnd).padding(16.dp)
+                                    modifier = Modifier.align(Alignment.TopEnd).padding(16.dp),
+                                    colors = IconButtonDefaults.filledTonalIconButtonColors()
                                 ) {
                                     Icon(
                                         imageVector = Icons.Default.Close,
@@ -133,13 +133,13 @@ fun VideoAttachment(
                                         if (player.isPlaying) {
                                             Icon(
                                                 Icons.Default.Pause,
-                                                contentDescription = "Volume on",
+                                                contentDescription = "Pause",
                                                 Modifier.size(18.dp)
                                             )
                                         } else {
                                             Icon(
                                                 Icons.Default.PlayArrow,
-                                                contentDescription = "Volume off",
+                                                contentDescription = "Play",
                                                 Modifier.size(18.dp)
                                             )
                                         }
@@ -216,13 +216,13 @@ fun VideoAttachment(
                     if (player.isPlaying) {
                         Icon(
                             Icons.Default.Pause,
-                            contentDescription = "Volume on",
+                            contentDescription = "Pause",
                             Modifier.size(18.dp)
                         )
                     } else {
                         Icon(
                             Icons.Default.PlayArrow,
-                            contentDescription = "Volume off",
+                            contentDescription = "Play",
                             Modifier.size(18.dp)
                         )
                     }

@@ -1,9 +1,6 @@
 package com.daniebeler.pfpixelix.ui.composables.post
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectHorizontalDragGestures
-import androidx.compose.foundation.gestures.detectVerticalDragGestures
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -17,7 +14,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.VolumeOff
 import androidx.compose.material.icons.automirrored.outlined.VolumeUp
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.FullscreenExit
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Icon
@@ -39,17 +35,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.navigationevent.NavigationEventInfo
+import androidx.navigationevent.compose.NavigationBackHandler
+import androidx.navigationevent.compose.rememberNavigationEventState
 import com.daniebeler.pfpixelix.domain.model.MediaAttachment
 import com.daniebeler.pfpixelix.utils.KeepScreenOn
 import io.github.kdroidfilter.composemediaplayer.VideoPlayerState
 import io.github.kdroidfilter.composemediaplayer.VideoPlayerSurface
 import io.github.kdroidfilter.composemediaplayer.rememberVideoPlayerState
-import kotlin.math.roundToInt
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -80,34 +77,17 @@ fun VideoAttachment(
             }.isVisible(threshold = 50) { videoFrameIsVisible = it }) {
                 Box(modifier = Modifier.fillMaxSize()) {
                     if (player.isFullscreen) {
+                        NavigationBackHandler(
+                            state = rememberNavigationEventState(NavigationEventInfo.None),
+                            isBackEnabled = true,
+                            onBackCompleted = {
+                                player.toggleFullscreen()
+                            }
+                        )
                         var controlsVisible by remember { mutableStateOf(true) }
                         Box(modifier = Modifier.clickable {
                             controlsVisible = !controlsVisible
-                        }.fillMaxSize().pointerInput(Unit) {
-                        var totalVerticalDrag = 0f
-                        val triggerThreshold = 150.dp.toPx() // Distance to drag down before exiting
-
-                        detectVerticalDragGestures(
-                            onDragStart = {
-                                totalVerticalDrag = 0f
-                            },
-                            onDragEnd = {
-                                // If swiped down far enough, close fullscreen
-                                if (totalVerticalDrag > triggerThreshold) {
-                                    player.isFullscreen = false
-                                }
-                            },
-                            onDragCancel = {
-                                totalVerticalDrag = 0f
-                            },
-                            onVerticalDrag = { change, dragAmount ->
-                                if (dragAmount > 0 || totalVerticalDrag > 0) {
-                                    totalVerticalDrag += dragAmount
-                                    change.consume()
-                                }
-                            }
-                        )
-                    }) {
+                        }.fillMaxSize()) {
                             if (controlsVisible) {
                                 IconButton(
                                     onClick = { player.toggleFullscreen() },
@@ -120,7 +100,10 @@ fun VideoAttachment(
                                         tint = Color.White
                                     )
                                 }
-                                Row(modifier = Modifier.align(Alignment.BottomCenter), verticalAlignment = Alignment.CenterVertically) {
+                                Row(
+                                    modifier = Modifier.align(Alignment.BottomCenter),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
                                     IconButton(
                                         modifier = Modifier.padding(8.dp), onClick = {
                                             if (player.isPlaying) {
@@ -312,6 +295,9 @@ fun TimelineControls(
                 "--:--"
             }
         }
-        Text(text = remainingText, modifier = Modifier.padding(PaddingValues(4.dp, 0.dp, 0.dp, 0.dp)))
+        Text(
+            text = remainingText,
+            modifier = Modifier.padding(PaddingValues(4.dp, 0.dp, 0.dp, 0.dp))
+        )
     }
 }

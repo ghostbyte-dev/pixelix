@@ -41,7 +41,7 @@ kotlin {
             implementation(libs.material.icons.extended)
             implementation(libs.components.resources)
             implementation(libs.compose.ui.graphics)
-
+            implementation(libs.compose.navigationevent)
             //logger
             implementation(libs.kermit)
 

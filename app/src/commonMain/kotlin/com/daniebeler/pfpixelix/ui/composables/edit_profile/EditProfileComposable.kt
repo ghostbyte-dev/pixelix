@@ -285,8 +285,8 @@ fun EditProfileComposable(
                 }
             }, actions = {
                 if (viewModel.firstLoaded) {
-                    if (viewModel.displayName == (viewModel.accountState.account?.displayname
-                            ?: "") && viewModel.note == (viewModel.accountState.account?.note
+                    if (viewModel.displayName.text == (viewModel.accountState.account?.displayname
+                            ?: "") && viewModel.note.text == (viewModel.accountState.account?.note
                             ?: "") && "https://" + viewModel.website == (viewModel.accountState.account?.website
                             ?: "") && viewModel.newAvatar == null && viewModel.privateProfile == viewModel.accountState.account?.locked
                     ) {

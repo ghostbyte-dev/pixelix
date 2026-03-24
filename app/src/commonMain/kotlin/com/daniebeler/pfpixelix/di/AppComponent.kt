@@ -14,6 +14,7 @@ import com.daniebeler.pfpixelix.domain.model.SavedSearches
 import com.daniebeler.pfpixelix.domain.repository.PixelfedApi
 import com.daniebeler.pfpixelix.domain.repository.createPixelfedApi
 import com.daniebeler.pfpixelix.domain.repository.serializers.SavedSearchesSerializer
+import com.daniebeler.pfpixelix.domain.service.account.AccountService
 import com.daniebeler.pfpixelix.domain.service.file.FileService
 import com.daniebeler.pfpixelix.domain.service.file.toOkIoPath
 import com.daniebeler.pfpixelix.domain.service.icon.AppIconManager
@@ -67,6 +68,7 @@ abstract class AppComponent(
     abstract val accountIntentHandler: AccountIntentHandler
 
     abstract val authService: AuthService
+    abstract val accountService: AccountService
     abstract val widgetService: WidgetService
 
     abstract val preferences: UserPreferences

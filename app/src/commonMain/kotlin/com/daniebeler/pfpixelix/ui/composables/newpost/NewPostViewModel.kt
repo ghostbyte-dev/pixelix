@@ -13,6 +13,7 @@ import co.touchlab.kermit.Logger
 import com.daniebeler.pfpixelix.domain.model.Instance
 import com.daniebeler.pfpixelix.domain.model.NewPost
 import com.daniebeler.pfpixelix.domain.model.Visibility
+import com.daniebeler.pfpixelix.domain.service.account.AccountService
 import com.daniebeler.pfpixelix.domain.service.editor.PostEditorService
 import com.daniebeler.pfpixelix.domain.service.file.FileService
 import com.daniebeler.pfpixelix.domain.service.file.PlatformFile
@@ -20,6 +21,7 @@ import com.daniebeler.pfpixelix.domain.service.instance.InstanceService
 import com.daniebeler.pfpixelix.domain.service.platform.Platform
 import com.daniebeler.pfpixelix.domain.service.suggestions.HashtagMentionsSuggestionsManager
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
+import com.daniebeler.pfpixelix.ui.composables.profile.AccountState
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import com.daniebeler.pfpixelix.utils.KmpUri
 import io.github.vinceglb.filekit.FileKit
@@ -38,6 +40,7 @@ import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 import kotlin.time.Clock
 
@@ -47,7 +50,8 @@ class NewPostViewModel @Inject constructor(
     private val instanceService: InstanceService,
     private val fileService: FileService,
     private val platform: Platform,
-    val hashtagMentionsSuggestionsManager: HashtagMentionsSuggestionsManager
+    val hashtagMentionsSuggestionsManager: HashtagMentionsSuggestionsManager,
+    private val accountService: AccountService
 ) : ViewModel() {
     data class ImageItem(
         val imageUri: KmpUri,
@@ -56,7 +60,6 @@ class NewPostViewModel @Inject constructor(
         var text: String = "",
         var isLoading: Boolean
     )
-
     var images = mutableStateListOf<ImageItem>()
     var caption by mutableStateOf(TextFieldValue())
     private var locationId: String by mutableStateOf("")
@@ -68,9 +71,13 @@ class NewPostViewModel @Inject constructor(
     var instance: Instance? = null
     var addImageError by mutableStateOf(AddMediaError())
     var compressionLoading by mutableStateOf(false)
+    var accountState by mutableStateOf(AccountState())
 
     init {
-        getInstance()
+        viewModelScope.launch {
+            getInstance()
+            getAccount()
+        }
     }
 
     fun updateCaption(newCaption: TextFieldValue) {
@@ -93,6 +100,28 @@ class NewPostViewModel @Inject constructor(
             }
         }.launchIn(viewModelScope)
     }
+
+    private fun getAccount() {
+        accountService.getOwnAccount().onEach { result ->
+            accountState = when (result) {
+                is Resource.Success -> {
+                    if (result.data.locked) {
+                        audience = Visibility.PRIVATE
+                    }
+                    AccountState(account = result.data)
+                }
+
+                is Resource.Error -> {
+                    AccountState(error = result.message)
+                }
+
+                is Resource.Loading -> {
+                    accountState.copy(isLoading = true, refreshing = false)
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
+
 
     fun updateAltTextVariable(index: Int, newAltText: String) {
         images = images.also {

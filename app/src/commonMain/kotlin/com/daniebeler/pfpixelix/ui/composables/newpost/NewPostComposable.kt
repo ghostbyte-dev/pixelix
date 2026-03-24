@@ -161,9 +161,12 @@ fun NewPostComposable(
                             MaxLengthTextField(
                                 value = viewModel.caption,
                                 onValueChange = { viewModel.updateCaption(it) },
-                                textFieldModifier = Modifier.fillMaxWidth().onFocusChanged { focusState ->
-                                    viewModel.hashtagMentionsSuggestionsManager.onFocusChanged(focusState.isFocused)
-                                },
+                                textFieldModifier = Modifier.fillMaxWidth()
+                                    .onFocusChanged { focusState ->
+                                        viewModel.hashtagMentionsSuggestionsManager.onFocusChanged(
+                                            focusState.isFocused
+                                        )
+                                    },
                                 label = Res.string.caption,
                                 maxLength = viewModel.instance?.configuration?.statusConfig?.maxCharacters,
                                 submit = {}
@@ -204,34 +207,38 @@ fun NewPostComposable(
                                         DropdownMenu(
                                             expanded = expanded,
                                             onDismissRequest = { expanded = false }) {
-                                            DropdownMenuItem(
-                                                text = { Text(stringResource(Res.string.audience_public)) },
-                                                onClick = {
-                                                    viewModel.audience = Visibility.PUBLIC
-                                                },
-                                                trailingIcon = {
-                                                    if (viewModel.audience == Visibility.PUBLIC) {
-                                                        Icon(
-                                                            imageVector = Icons.Outlined.Check,
-                                                            contentDescription = null,
-                                                            tint = MaterialTheme.colorScheme.primary
-                                                        )
-                                                    }
-                                                })
-                                            DropdownMenuItem(
-                                                text = { Text(stringResource(Res.string.unlisted)) },
-                                                onClick = {
-                                                    viewModel.audience = Visibility.UNLISTED
-                                                },
-                                                trailingIcon = {
-                                                    if (viewModel.audience == Visibility.UNLISTED) {
-                                                        Icon(
-                                                            imageVector = Icons.Outlined.Check,
-                                                            contentDescription = null,
-                                                            tint = MaterialTheme.colorScheme.primary
-                                                        )
-                                                    }
-                                                })
+                                            if (!(viewModel.accountState.account?.locked
+                                                    ?: false)
+                                            ) {
+                                                DropdownMenuItem(
+                                                    text = { Text(stringResource(Res.string.audience_public)) },
+                                                    onClick = {
+                                                        viewModel.audience = Visibility.PUBLIC
+                                                    },
+                                                    trailingIcon = {
+                                                        if (viewModel.audience == Visibility.PUBLIC) {
+                                                            Icon(
+                                                                imageVector = Icons.Outlined.Check,
+                                                                contentDescription = null,
+                                                                tint = MaterialTheme.colorScheme.primary
+                                                            )
+                                                        }
+                                                    })
+                                                DropdownMenuItem(
+                                                    text = { Text(stringResource(Res.string.unlisted)) },
+                                                    onClick = {
+                                                        viewModel.audience = Visibility.UNLISTED
+                                                    },
+                                                    trailingIcon = {
+                                                        if (viewModel.audience == Visibility.UNLISTED) {
+                                                            Icon(
+                                                                imageVector = Icons.Outlined.Check,
+                                                                contentDescription = null,
+                                                                tint = MaterialTheme.colorScheme.primary
+                                                            )
+                                                        }
+                                                    })
+                                            }
                                             DropdownMenuItem(
                                                 text = { Text(stringResource(Res.string.followers_only)) },
                                                 onClick = {
@@ -266,9 +273,10 @@ fun NewPostComposable(
                     if (viewModel.hashtagMentionsSuggestionsManager.suggestionsOpen) {
                         SuggestionsBar(
                             state = suggestionsState, onSelected = { selected ->
-                                viewModel.caption = viewModel.hashtagMentionsSuggestionsManager.selectSuggestion(
-                                    selected, viewModel.caption
-                                )
+                                viewModel.caption =
+                                    viewModel.hashtagMentionsSuggestionsManager.selectSuggestion(
+                                        selected, viewModel.caption
+                                    )
                             })
                     }
                 }
@@ -363,23 +371,23 @@ fun NewPostComposable(
         }
         TopAppBar(
             modifier = Modifier.clip(
-            RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)
-        ), title = {
-            Text(
-                text = stringResource(Res.string.new_post),
-                fontWeight = FontWeight.Bold,
-                fontSize = 18.sp
+                RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)
+            ), title = {
+                Text(
+                    text = stringResource(Res.string.new_post),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp
+                )
+            }, actions = {
+                Button(
+                    onClick = { showReleaseAlert = true },
+                    enabled = (viewModel.images.isNotEmpty() && viewModel.images.none { it.isLoading } && viewModel.caption.text.length <= (viewModel.instance?.configuration?.statusConfig?.maxCharacters
+                        ?: Int.MAX_VALUE))) {
+                    Text(text = stringResource(Res.string.release))
+                }
+            }, colors = TopAppBarDefaults.mediumTopAppBarColors(
+                containerColor = MaterialTheme.colorScheme.surfaceContainer
             )
-        }, actions = {
-            Button(
-                onClick = { showReleaseAlert = true },
-                enabled = (viewModel.images.isNotEmpty() && viewModel.images.none { it.isLoading } && viewModel.caption.text.length <= (viewModel.instance?.configuration?.statusConfig?.maxCharacters
-                    ?: Int.MAX_VALUE))) {
-                Text(text = stringResource(Res.string.release))
-            }
-        }, colors = TopAppBarDefaults.mediumTopAppBarColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainer
-        )
         )
     }
 }

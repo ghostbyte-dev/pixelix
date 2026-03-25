@@ -204,7 +204,8 @@ fun App(
                                     if (activeUser == null) Destination.FirstLogin
                                     else Destination.HomeTabFeeds
                                 NavHost(
-                                    modifier = Modifier.fillMaxSize().padding(bottom = 60.dp).navigationBarsPadding(),
+                                    modifier = Modifier.fillMaxSize().padding(bottom = 60.dp)
+                                        .navigationBarsPadding(),
                                     navController = navController,
                                     startDestination = startDestination,
                                     builder = {
@@ -318,8 +319,8 @@ private fun BottomBar(
     LaunchedEffect(Unit) {
         val authService = appComponent.authService
         authService.activeUser.map { authService.getCurrentSession() }.collect {
-                avatar = it?.avatar
-            }
+            avatar = it?.avatar
+        }
     }
 
     NavigationBar(
@@ -388,12 +389,11 @@ private fun BottomBar(
                 ), interactionSource = interactionSource, onClick = {
                     if (!isLongPress) {
                         if (!isSelected) {
-                            //switch tab
                             navController.navigate(tab.destination) {
                                 launchSingleTop = true
                                 restoreState = true
-                                popUpTo(tabContainer.route!!) {
-                                    inclusive = true
+                                popUpTo(navController.graph.findStartDestination().id) {
+                                    inclusive = false
                                     saveState = true
                                 }
                             }

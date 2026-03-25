@@ -70,6 +70,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import androidx.navigationevent.NavigationEventInfo
+import androidx.navigationevent.compose.NavigationBackHandler
+import androidx.navigationevent.compose.rememberNavigationEventState
 import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.model.Visibility
@@ -98,6 +101,7 @@ import pixelix.app.generated.resources.browsers_outline
 import pixelix.app.generated.resources.cancel
 import pixelix.app.generated.resources.caption
 import pixelix.app.generated.resources.content_warning_or_spoiler_text
+import pixelix.app.generated.resources.discard
 import pixelix.app.generated.resources.followers_only
 import pixelix.app.generated.resources.location
 import pixelix.app.generated.resources.new_post
@@ -105,6 +109,9 @@ import pixelix.app.generated.resources.release
 import pixelix.app.generated.resources.sensitive_nsfw_media
 import pixelix.app.generated.resources.trash_outline
 import pixelix.app.generated.resources.unlisted
+import pixelix.app.generated.resources.are_you_sure
+import pixelix.app.generated.resources.cancel_post_warning
+import pixelix.app.generated.resources.ok
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -113,16 +120,25 @@ fun NewPostComposable(
     uris: List<KmpUri>? = null,
     viewModel: NewPostViewModel = injectViewModel(key = "new-post-viewmodel-key") { newPostViewModel }
 ) {
-    var expanded by remember { mutableStateOf(false) }
+    var isExpandedVisibility by remember { mutableStateOf(false) }
     var showReleaseAlert by remember {
         mutableStateOf(false)
     }
+    var isCancelAlertOpen by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
     LaunchedEffect(uris) {
         uris?.let {
             uris.forEach { viewModel.addImage(uri = it) }
         }
     }
+
+    NavigationBackHandler(
+        state = rememberNavigationEventState(NavigationEventInfo.None),
+        isBackEnabled = viewModel.images.isNotEmpty() || viewModel.caption.text.isNotBlank() || viewModel.caption.text.isNotBlank() || viewModel.locationId.isNotBlank(),
+        onBackCompleted = {
+            isCancelAlertOpen = true
+        })
+
     val suggestionsState by viewModel.hashtagMentionsSuggestionsManager.suggestionsState.collectAsStateWithLifecycle()
     Box(modifier = Modifier.fillMaxSize()) {
 
@@ -195,7 +211,9 @@ fun NewPostComposable(
                                 title = stringResource(Res.string.audience),
                                 trailingContent = {
                                     Box {
-                                        OutlinedButton(onClick = { expanded = !expanded }) {
+                                        OutlinedButton(onClick = {
+                                            isExpandedVisibility = !isExpandedVisibility
+                                        }) {
                                             val buttonText: String = when (viewModel.audience) {
                                                 Visibility.PUBLIC -> stringResource(Res.string.audience_public)
                                                 Visibility.UNLISTED -> stringResource(Res.string.unlisted)
@@ -205,8 +223,8 @@ fun NewPostComposable(
                                             Text(text = buttonText)
                                         }
                                         DropdownMenu(
-                                            expanded = expanded,
-                                            onDismissRequest = { expanded = false }) {
+                                            expanded = isExpandedVisibility,
+                                            onDismissRequest = { isExpandedVisibility = false }) {
                                             if (!(viewModel.accountState.account?.locked
                                                     ?: false)
                                             ) {
@@ -292,7 +310,7 @@ fun NewPostComposable(
                         TextButton(onClick = {
                             viewModel.addImageError = AddMediaError()
                         }) {
-                            Text("Ok")
+                            Text(stringResource(Res.string.ok))
                         }
                     })
                 }
@@ -308,7 +326,7 @@ fun NewPostComposable(
                         TextButton(onClick = {
                             viewModel.addImageError = AddMediaError()
                         }) {
-                            Text("Cancel")
+                            Text(stringResource(Res.string.cancel))
                         }
                     }, confirmButton = {
                         TextButton(onClick = {
@@ -317,6 +335,27 @@ fun NewPostComposable(
                             }
                         }) {
                             Text("Compress")
+                        }
+                    })
+                }
+
+                if (showReleaseAlert) {
+                    AlertDialog(title = {
+                        Text(text = stringResource(Res.string.are_you_sure))
+                    }, onDismissRequest = {
+                        showReleaseAlert = false
+                    }, dismissButton = {
+                        TextButton(onClick = {
+                            showReleaseAlert = false
+                        }) {
+                            Text(stringResource(Res.string.cancel))
+                        }
+                    }, confirmButton = {
+                        TextButton(onClick = {
+                            showReleaseAlert = false
+                            viewModel.post(navController)
+                        }) {
+                            Text(stringResource(Res.string.release))
                         }
                     })
                 }
@@ -335,26 +374,32 @@ fun NewPostComposable(
                     })
                 }
 
-                if (showReleaseAlert) {
-                    AlertDialog(title = {
-                        Text(text = "Are you sure?")
-                    }, onDismissRequest = {
-                        showReleaseAlert = false
-                    }, dismissButton = {
-                        TextButton(onClick = {
-                            showReleaseAlert = false
-                        }) {
-                            Text(stringResource(Res.string.cancel))
-                        }
-                    }, confirmButton = {
-                        TextButton(onClick = {
-                            showReleaseAlert = false
-                            viewModel.post(navController)
-                        }) {
-                            Text(stringResource(Res.string.release))
-                        }
-                    })
+                if (isCancelAlertOpen) {
+                    AlertDialog(
+                        title = {
+                            Text(text = stringResource(Res.string.are_you_sure))
+                        },
+                        text = {
+                            Text(text = stringResource(Res.string.cancel_post_warning))
+                        }, onDismissRequest = {
+                            isCancelAlertOpen = false
+                        }, dismissButton = {
+                            TextButton(onClick = {
+                                isCancelAlertOpen = false
+                            }) {
+                                Text(stringResource(Res.string.cancel))
+                            }
+                        }, confirmButton = {
+                            TextButton(onClick = {
+                                isCancelAlertOpen = false
+                                navController.navigateUp()
+                            }) {
+                                Text(stringResource(Res.string.discard))
+                            }
+                        })
                 }
+
+
 
                 LoadingComposable(isLoading = viewModel.createPostState.isLoading)
                 //LoadingComposable(isLoading = viewModel.mediaUploadState.isLoading)

@@ -62,7 +62,7 @@ class NewPostViewModel @Inject constructor(
     )
     var images = mutableStateListOf<ImageItem>()
     var caption by mutableStateOf(TextFieldValue())
-    private var locationId: String by mutableStateOf("")
+    var locationId: String by mutableStateOf("")
     var sensitive: Boolean by mutableStateOf(false)
     var sensitiveText: String by mutableStateOf("")
     var audience: Visibility by mutableStateOf(Visibility.PUBLIC)

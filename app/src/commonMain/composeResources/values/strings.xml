@@ -282,4 +282,7 @@
     <string name="delete_account">Delete Account</string>
     <string name="character_count">%1$d / %2$d characters</string>
     <string name="swipe_between_tabs">Swipe to Switch Tabs</string>
+    <string name="discard">Discard</string>
+    <string name="are_you_sure">Are you sure?</string>
+    <string name="cancel_post_warning">Do you want to discard this post?</string>
 </resources>

@@ -25,6 +25,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -35,6 +36,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
@@ -44,7 +46,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -57,6 +62,9 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import androidx.navigationevent.NavigationEventInfo
+import androidx.navigationevent.compose.NavigationBackHandler
+import androidx.navigationevent.compose.rememberNavigationEventState
 import coil3.compose.AsyncImage
 import com.attafitamim.krop.core.crop.CropResult
 import com.attafitamim.krop.core.crop.CropState
@@ -77,8 +85,13 @@ import io.github.vinceglb.filekit.readBytes
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import pixelix.app.generated.resources.Res
+import pixelix.app.generated.resources.are_you_sure
 import pixelix.app.generated.resources.bio
+import pixelix.app.generated.resources.cancel
+import pixelix.app.generated.resources.cancel_post_warning
+import pixelix.app.generated.resources.cancel_profile_edit
 import pixelix.app.generated.resources.caption
+import pixelix.app.generated.resources.discard
 import pixelix.app.generated.resources.displayname
 import pixelix.app.generated.resources.edit_profile
 import pixelix.app.generated.resources.private_profile
@@ -92,6 +105,14 @@ fun EditProfileComposable(
     viewModel: EditProfileViewModel = injectViewModel(key = "edit-profile-viewmodel-key") { editProfileViewModel }
 ) {
     val suggestionsState by viewModel.hashtagMentionsSuggestionsManager.suggestionsState.collectAsStateWithLifecycle()
+    var isCancelAlertOpen by remember { mutableStateOf(false) }
+
+    NavigationBackHandler(
+        state = rememberNavigationEventState(NavigationEventInfo.None),
+        isBackEnabled = viewModel.isEdited,
+        onBackCompleted = {
+            isCancelAlertOpen = true
+        })
 
     Scaffold(
         contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top)
@@ -259,9 +280,35 @@ fun EditProfileComposable(
             if (viewModel.hashtagMentionsSuggestionsManager.suggestionsOpen) {
                 SuggestionsBar(
                     state = suggestionsState, onSelected = { selected ->
-                        viewModel.note = viewModel.hashtagMentionsSuggestionsManager.selectSuggestion(
-                            selected, viewModel.note
-                        )
+                        viewModel.note =
+                            viewModel.hashtagMentionsSuggestionsManager.selectSuggestion(
+                                selected, viewModel.note
+                            )
+                    })
+            }
+
+            if (isCancelAlertOpen) {
+                AlertDialog(
+                    title = {
+                        Text(text = stringResource(Res.string.are_you_sure))
+                    },
+                    text = {
+                        Text(text = stringResource(Res.string.cancel_profile_edit))
+                    }, onDismissRequest = {
+                        isCancelAlertOpen = false
+                    }, dismissButton = {
+                        TextButton(onClick = {
+                            isCancelAlertOpen = false
+                        }) {
+                            Text(stringResource(Res.string.cancel))
+                        }
+                    }, confirmButton = {
+                        TextButton(onClick = {
+                            isCancelAlertOpen = false
+                            navController.popBackStack()
+                        }) {
+                            Text(stringResource(Res.string.discard))
+                        }
                     })
             }
         }
@@ -277,7 +324,11 @@ fun EditProfileComposable(
                 )
             }, navigationIcon = {
                 IconButton(onClick = {
-                    navController.popBackStack()
+                    if (viewModel.isEdited) {
+                        isCancelAlertOpen = true
+                    } else {
+                        navController.popBackStack()
+                    }
                 }) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = ""
@@ -285,11 +336,7 @@ fun EditProfileComposable(
                 }
             }, actions = {
                 if (viewModel.firstLoaded) {
-                    if (viewModel.displayName.text == (viewModel.accountState.account?.displayname
-                            ?: "") && viewModel.note.text == (viewModel.accountState.account?.note
-                            ?: "") && "https://" + viewModel.website == (viewModel.accountState.account?.website
-                            ?: "") && viewModel.newAvatar == null && viewModel.privateProfile == viewModel.accountState.account?.locked
-                    ) {
+                    if (!viewModel.isEdited) {
                         if (!viewModel.accountState.isLoading) {
                             Button(
                                 onClick = {},

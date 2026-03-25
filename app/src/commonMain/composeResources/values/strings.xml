@@ -285,4 +285,5 @@
     <string name="discard">Discard</string>
     <string name="are_you_sure">Are you sure?</string>
     <string name="cancel_post_warning">Do you want to discard this post?</string>
+    <string name="cancel_profile_edit">Do you want to discard the changes?</string>
 </resources>

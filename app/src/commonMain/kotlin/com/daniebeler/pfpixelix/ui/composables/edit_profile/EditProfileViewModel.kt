@@ -1,5 +1,6 @@
 package com.daniebeler.pfpixelix.ui.composables.edit_profile
 
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -30,6 +31,14 @@ class EditProfileViewModel @Inject constructor(
     var avatarUri by mutableStateOf(EmptyKmpUri)
     var newAvatar by mutableStateOf<ImageBitmap?>(null)
     var privateProfile by mutableStateOf(false)
+
+    val isEdited: Boolean by derivedStateOf {
+        !(displayName.text == (accountState.account?.displayname
+            ?: "") && note.text == (accountState.account?.note
+            ?: "") && "https://" + website == (accountState.account?.website
+            ?: "") && newAvatar == null && privateProfile == accountState.account?.locked)
+    }
+
     init {
         getAccount()
     }

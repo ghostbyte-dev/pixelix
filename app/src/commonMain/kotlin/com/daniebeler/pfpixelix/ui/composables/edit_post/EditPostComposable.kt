@@ -65,6 +65,9 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import androidx.navigationevent.NavigationEventInfo
+import androidx.navigationevent.compose.NavigationBackHandler
+import androidx.navigationevent.compose.rememberNavigationEventState
 import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.model.MediaAttachment
@@ -81,10 +84,13 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.alt_text
+import pixelix.app.generated.resources.are_you_sure
 import pixelix.app.generated.resources.cancel
+import pixelix.app.generated.resources.cancel_post_edit
 import pixelix.app.generated.resources.caption
 import pixelix.app.generated.resources.content_warning_or_spoiler_text
 import pixelix.app.generated.resources.delete
+import pixelix.app.generated.resources.discard
 import pixelix.app.generated.resources.edit_post
 import pixelix.app.generated.resources.location
 import pixelix.app.generated.resources.save
@@ -100,6 +106,7 @@ fun EditPostComposable(
     viewModel: EditPostViewModel = injectViewModel("editPostViewModel") { editPostViewModel }
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+    var isCancelAlertOpen by remember { mutableStateOf(false) }
 
     var showSaveAlert by remember {
         mutableStateOf(false)
@@ -113,10 +120,19 @@ fun EditPostComposable(
     }
     val suggestionsState by viewModel.hashtagMentionsSuggestionsManager.suggestionsState.collectAsStateWithLifecycle()
 
-    Scaffold(contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top),
+    NavigationBackHandler(
+        state = rememberNavigationEventState(NavigationEventInfo.None),
+        isBackEnabled = viewModel.isEdited,
+        onBackCompleted = {
+            isCancelAlertOpen = true
+        })
+
+    Scaffold(
+        contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top),
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            TopAppBar(scrollBehavior = scrollBehavior,
+            TopAppBar(
+                scrollBehavior = scrollBehavior,
                 title = {
                     Text(
                         text = stringResource(Res.string.edit_post), fontWeight = FontWeight.Bold
@@ -124,7 +140,11 @@ fun EditPostComposable(
                 },
                 navigationIcon = {
                     IconButton(onClick = {
-                        navController.popBackStack()
+                        if (viewModel.isEdited) {
+                            isCancelAlertOpen = true
+                        } else {
+                            navController.popBackStack()
+                        }
                     }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -134,10 +154,9 @@ fun EditPostComposable(
                 },
                 actions = {
                     if (viewModel.editPostState.post != null) {
-                        val mediaAttachmentsEditIds = viewModel.mediaAttachmentsEdit.map { it.id }
-                        val mediaAttachmentsBeforeIds =
-                            viewModel.mediaAttachmentsBefore.map { it.id }
-                        if ((viewModel.mediaDescriptionItems.any { it.changed } || viewModel.caption.text != viewModel.editPostState.post!!.content || viewModel.sensitive != viewModel.editPostState.post!!.sensitive || mediaAttachmentsBeforeIds != mediaAttachmentsEditIds || viewModel.editPostState.post!!.place != viewModel.location) && viewModel.caption.text.length <= (viewModel.instance?.configuration?.statusConfig?.maxCharacters ?: Int.MAX_VALUE)) {
+                        if (viewModel.isEdited && viewModel.caption.text.length <= (viewModel.instance?.configuration?.statusConfig?.maxCharacters
+                                ?: Int.MAX_VALUE)
+                        ) {
                             if (viewModel.editPostState.isLoading) {
                                 Button(
                                     onClick = { }, modifier = Modifier.width(120.dp)
@@ -176,7 +195,8 @@ fun EditPostComposable(
                         .verticalScroll(state = rememberScrollState()),
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    ImagesPagerEditPost(viewModel.mediaAttachmentsEdit,
+                    ImagesPagerEditPost(
+                        viewModel.mediaAttachmentsEdit,
                         viewModel.mediaDescriptionItems,
                         { mediaDescriptionIndex, altText ->
 
@@ -190,97 +210,16 @@ fun EditPostComposable(
                         { index -> viewModel.moveMediaAttachmentDown(index) },
                         { index -> viewModel.deleteMedia(index) },
                     )
-                    /* viewModel.mediaAttachmentsEdit.forEachIndexed { index, mediaAttachment ->
-                         Row(
-                             Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically
-                         ) {
-                             Box(contentAlignment = Alignment.Center) {
-
-                                 if (mediaAttachment.type == "image") {
-                                     AsyncImage(
-                                         model = mediaAttachment.url,
-                                         contentDescription = null,
-                                         modifier = Modifier.width(100.dp)
-                                     )
-                                 } else {
-                                     //todo KMP video
-                                     AsyncImage(
-                                         model = mediaAttachment.url,
-                                         contentDescription = "video thumbnail",
-                                         modifier = Modifier.width(100.dp)
-                                     )
-                                 }
-                             }
-
-                             Spacer(Modifier.width(10.dp))
-
-                             val mediaDescriptionItem =
-                                 viewModel.mediaDescriptionItems.find { mediaDescriptionItem -> mediaDescriptionItem.imageId == mediaAttachment.id }
-                                     ?: EditPostViewModel.MediaDescriptionItem(
-                                         mediaAttachment.id, "", false
-                                     )
-                             val indexOfDescriptionItem =
-                                 viewModel.mediaDescriptionItems.indexOf(mediaDescriptionItem)
-                             TextField(
-                                 value = mediaDescriptionItem.description,
-                                 onValueChange = {
-                                     val oldMediaAttachment =
-                                         viewModel.editPostState.post!!.mediaAttachments.find { it.id == mediaDescriptionItem.imageId }
-                                     val changed = it != (oldMediaAttachment!!.description ?: "")
-                                     viewModel.mediaDescriptionItems[indexOfDescriptionItem] =
-                                         viewModel.mediaDescriptionItems[indexOfDescriptionItem].copy(
-                                             description = it, changed = changed
-                                         )
-                                 },
-                                 modifier = Modifier.weight(1f),
-                                 singleLine = false,
-                                 placeholder = { Text(stringResource(Res.string.content_warning_or_spoiler_text)) },
-                                 shape = RoundedCornerShape(16.dp),
-                                 colors = TextFieldDefaults.colors(
-                                     unfocusedIndicatorColor = Color.Transparent,
-                                     focusedIndicatorColor = Color.Transparent,
-                                 ),
-                                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Default),
-                                 keyboardActions = KeyboardActions(onDone = {
-                                     keyboardController?.hide()
-                                     focusManager.clearFocus()
-                                 })
-                             )
-
-                             if (viewModel.mediaAttachmentsEdit.size > 1) {
-                                 Column {
-                                     IconButton(onClick = { viewModel.moveMediaAttachmentUp(index) }) {
-                                         Icon(
-                                             imageVector = Icons.Outlined.ArrowUpward,
-                                             contentDescription = "move Imageupwards"
-                                         )
-                                     }
-                                     IconButton(onClick = { viewModel.moveMediaAttachmentDown(index) }) {
-                                         Icon(
-                                             imageVector = Icons.Outlined.ArrowDownward,
-                                             contentDescription = "move Imageupwards"
-                                         )
-                                     }
-                                 }
-                                 IconButton(onClick = {
-                                     viewModel.deleteMediaDialog = mediaAttachment.id
-                                 }) {
-                                     Icon(
-                                         imageVector = Icons.Outlined.Delete,
-                                         contentDescription = "delete Image",
-                                         tint = MaterialTheme.colorScheme.error
-                                     )
-                                 }
-                             }
-                         }
-                     }*/
                     if (!viewModel.editPostState.isLoading && viewModel.editPostState.post != null) {
                         MaxLengthTextField(
                             value = viewModel.caption,
                             onValueChange = { viewModel.updateCaption(it) },
-                            textFieldModifier = Modifier.fillMaxWidth().onFocusChanged { focusState ->
-                                viewModel.hashtagMentionsSuggestionsManager.onFocusChanged(focusState.isFocused)
-                            },
+                            textFieldModifier = Modifier.fillMaxWidth()
+                                .onFocusChanged { focusState ->
+                                    viewModel.hashtagMentionsSuggestionsManager.onFocusChanged(
+                                        focusState.isFocused
+                                    )
+                                },
                             label = Res.string.caption,
                             maxLength = viewModel.instance?.configuration?.statusConfig?.maxCharacters,
                             submit = {}
@@ -292,7 +231,8 @@ fun EditPostComposable(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(text = stringResource(Res.string.sensitive_nsfw_media))
-                            Switch(checked = viewModel.sensitive,
+                            Switch(
+                                checked = viewModel.sensitive,
                                 onCheckedChange = { viewModel.sensitive = it })
                         }
                         if (viewModel.sensitive) {
@@ -306,8 +246,12 @@ fun EditPostComposable(
                                 colors = TextFieldDefaults.colors(
                                     unfocusedIndicatorColor = Color.Transparent,
                                     focusedIndicatorColor = Color.Transparent,
-                                    focusedContainerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(4.dp),
-                                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(4.dp)
+                                    focusedContainerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(
+                                        4.dp
+                                    ),
+                                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(
+                                        4.dp
+                                    )
                                 ),
                                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Default),
                                 keyboardActions = KeyboardActions(onDone = {
@@ -331,15 +275,18 @@ fun EditPostComposable(
                     LoadingComposable(isLoading = viewModel.editPostState.isLoading)
                     ErrorComposableDialog(
                         errorMessage = viewModel.editPostState.error,
-                        onDismiss = { viewModel.editPostState = viewModel.editPostState.copy(error = "") }
+                        onDismiss = {
+                            viewModel.editPostState = viewModel.editPostState.copy(error = "")
+                        }
                     )
                 }
                 if (viewModel.hashtagMentionsSuggestionsManager.suggestionsOpen) {
                     SuggestionsBar(
                         state = suggestionsState, onSelected = { selected ->
-                            viewModel.caption = viewModel.hashtagMentionsSuggestionsManager.selectSuggestion(
-                                selected, viewModel.caption
-                            )
+                            viewModel.caption =
+                                viewModel.hashtagMentionsSuggestionsManager.selectSuggestion(
+                                    selected, viewModel.caption
+                                )
                         })
                 }
             }
@@ -389,6 +336,31 @@ fun EditPostComposable(
                 Text(stringResource(Res.string.cancel))
             }
         })
+    }
+
+    if (isCancelAlertOpen) {
+        AlertDialog(
+            title = {
+                Text(text = stringResource(Res.string.are_you_sure))
+            },
+            text = {
+                Text(text = stringResource(Res.string.cancel_post_edit))
+            }, onDismissRequest = {
+                isCancelAlertOpen = false
+            }, dismissButton = {
+                TextButton(onClick = {
+                    isCancelAlertOpen = false
+                }) {
+                    Text(stringResource(Res.string.cancel))
+                }
+            }, confirmButton = {
+                TextButton(onClick = {
+                    isCancelAlertOpen = false
+                    navController.popBackStack()
+                }) {
+                    Text(stringResource(Res.string.discard))
+                }
+            })
     }
 }
 

@@ -1,5 +1,6 @@
 package com.daniebeler.pfpixelix.ui.composables.edit_post
 
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -45,6 +46,12 @@ class EditPostViewModel @Inject constructor(
     var mediaDescriptionItems = mutableStateListOf<MediaDescriptionItem>()
     var deleteMediaDialog by mutableStateOf<String?>(null)
     var instance: Instance? = null
+    val isEdited: Boolean by derivedStateOf {
+        if (editPostState.post == null) return@derivedStateOf false
+        val mediaAttachmentsEditIds = mediaAttachmentsEdit.map { it.id }
+        val mediaAttachmentsBeforeIds = mediaAttachmentsBefore.map { it.id }
+        mediaDescriptionItems.any { it.changed } || caption.text != editPostState.post!!.content || sensitive != editPostState.post!!.sensitive || mediaAttachmentsBeforeIds != mediaAttachmentsEditIds || editPostState.post!!.place != location
+    }
 
     fun loadData(postId: String) {
         loadPost(postId)
@@ -89,7 +96,7 @@ class EditPostViewModel @Inject constructor(
                 }
 
                 is Resource.Error -> {
-                    EditPostState(error = result.message ?: "An unexpected error occurred")
+                    EditPostState(error = result.message)
                 }
 
                 is Resource.Loading -> {
@@ -140,7 +147,7 @@ class EditPostViewModel @Inject constructor(
                     }
 
                     is Resource.Error -> {
-                        EditPostState(error = result.message ?: "An unexpected error occurred")
+                        EditPostState(error = result.message)
                     }
 
                     is Resource.Loading -> {
@@ -162,7 +169,7 @@ class EditPostViewModel @Inject constructor(
 
                 is Resource.Error -> {
                     editPostState =
-                        EditPostState(error = (result.message ?: "An unexpected error occurred"))
+                        EditPostState(error = (result.message))
                 }
 
                 is Resource.Loading -> {

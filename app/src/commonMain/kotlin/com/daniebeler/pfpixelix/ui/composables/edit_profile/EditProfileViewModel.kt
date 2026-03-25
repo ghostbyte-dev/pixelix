@@ -33,9 +33,10 @@ class EditProfileViewModel @Inject constructor(
     var privateProfile by mutableStateOf(false)
 
     val isEdited: Boolean by derivedStateOf {
+        if (accountState.account == null) return@derivedStateOf false
         !(displayName.text == (accountState.account?.displayname
             ?: "") && note.text == (accountState.account?.note
-            ?: "") && "https://" + website == (accountState.account?.website
+            ?: "") && "https://$website" == (accountState.account?.website
             ?: "") && newAvatar == null && privateProfile == accountState.account?.locked)
     }
 

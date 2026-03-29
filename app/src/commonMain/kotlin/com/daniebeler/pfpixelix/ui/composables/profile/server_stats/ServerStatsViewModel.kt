@@ -25,7 +25,8 @@ class ServerStatsViewModel @Inject constructor(
     }
 
     private fun getFediServer(domain: String) {
-        instanceService.getServerFromFedisea(domain).onEach { result ->
+        val formattedDomain = formatDomain(domain)
+        instanceService.getServerFromFedisea(formattedDomain).onEach { result ->
             when (result) {
                 is Resource.Success -> {
                     statsState = DomainSoftwareState(
@@ -53,6 +54,10 @@ class ServerStatsViewModel @Inject constructor(
                 }
             }
         }.launchIn(viewModelScope)
+    }
+
+    private fun formatDomain(domain: String): String {
+        return domain.removePrefix("https://").removeSuffix("/")
     }
 
     private fun getFediSoftware(softwareSlug: String) {

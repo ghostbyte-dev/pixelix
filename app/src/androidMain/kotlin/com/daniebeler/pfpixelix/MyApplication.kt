@@ -31,7 +31,7 @@ class MyApplication : Application(), Configuration.Provider {
         SingletonImageLoader.setSafe {
             appComponent.provideImageLoader()
         }
-        configureLogger(BuildConfig.DEBUG)
+        configureLogger(false) //debug
         super.onCreate()
     }
 

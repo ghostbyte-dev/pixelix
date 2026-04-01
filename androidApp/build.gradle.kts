@@ -62,5 +62,5 @@ kotlin {
 }
 
 dependencies {
-    implementation(project(":app"))
+    implementation(project(":sharedUI"))
 }

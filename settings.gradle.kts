@@ -28,6 +28,6 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "Pixelix"
-include(":app")
+include(":sharedUI")
 include(":androidApp")
 include(":desktopApp")

@@ -34,7 +34,7 @@ fun ToTopButton(listState: LazyListState, refresh: () -> Unit) {
     }
 
     AnimatedVisibility(visible = visible, enter = fadeIn(), exit = fadeOut()) {
-        Box(Modifier.fillMaxSize().padding(12.dp), contentAlignment = Alignment.BottomEnd) {
+        Box(Modifier.fillMaxSize().padding(12.dp).padding(bottom = 60.dp), contentAlignment = Alignment.BottomEnd) {
             FloatingActionButton(onClick = {
                 coroutineScope.launch {
                     listState.animateScrollToItem(0, 0)

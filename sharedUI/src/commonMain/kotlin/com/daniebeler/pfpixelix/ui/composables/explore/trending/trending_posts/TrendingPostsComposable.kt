@@ -39,7 +39,7 @@ fun TrendingPostsComposable(
             navController = navController,
             postGetsUpdated = {  },
             contentPaddingTop = 32.dp,
-            contentPaddingBottom = 20.dp
+            contentPaddingBottom = 80.dp
         )
     }
 }

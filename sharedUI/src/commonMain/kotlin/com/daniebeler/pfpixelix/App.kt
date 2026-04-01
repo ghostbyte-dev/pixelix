@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.SnackbarHost
@@ -204,7 +205,7 @@ fun App(
                                     if (activeUser == null) Destination.FirstLogin
                                     else Destination.HomeTabFeeds
                                 NavHost(
-                                    modifier = Modifier.fillMaxSize().padding(bottom = 60.dp)
+                                    modifier = Modifier.fillMaxSize()
                                         .navigationBarsPadding(),
                                     navController = navController,
                                     startDestination = startDestination,

@@ -150,10 +150,10 @@ fun NewPostComposable(
         ) {
             Box {
                 Column(
-                    Modifier.imeAwareInsets(60.dp).fillMaxSize()
+                    Modifier.imeAwareInsets(60.dp).fillMaxSize(),
                 ) {
                     Column(
-                        Modifier.weight(1f).verticalScroll(rememberScrollState()),
+                        Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(bottom = 60.dp),
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
                         Spacer(Modifier.height(24.dp))

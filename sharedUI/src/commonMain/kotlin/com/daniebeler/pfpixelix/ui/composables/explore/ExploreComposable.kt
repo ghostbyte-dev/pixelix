@@ -7,6 +7,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -164,7 +165,10 @@ fun ExploreComposable(
             }
 
             if (textFieldState.text.isBlank() && viewModel.savedSearches.isNotEmpty()) {
-                LazyColumn(modifier = Modifier.imeAwareInsets(60.dp)) {
+                LazyColumn(
+                    modifier = Modifier.imeAwareInsets(60.dp),
+                    contentPadding = PaddingValues(bottom = 60.dp),
+                ) {
                     items(viewModel.savedSearches.reversed()) {
                         if (it.savedSearchType == SavedSearchType.Account) {
                             Row {
@@ -184,7 +188,10 @@ fun ExploreComposable(
                 }
             }
             viewModel.searchState.searchResult?.let { searchResult ->
-                LazyColumn(modifier = Modifier.imeAwareInsets(60.dp), content = {
+                LazyColumn(
+                    modifier = Modifier.imeAwareInsets(60.dp),
+                    contentPadding = PaddingValues(bottom = 60.dp),
+                    content = {
                     items(searchResult.accounts) {
                         CustomAccount(
                             account = it,

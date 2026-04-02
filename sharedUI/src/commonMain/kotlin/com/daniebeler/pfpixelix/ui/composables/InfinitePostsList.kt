@@ -39,7 +39,7 @@ fun InfinitePostsList(
     isFirstItemLarge: Boolean = false,
     postsCount: Int? = null,
     contentPaddingTop: Dp = 0.dp,
-    contentPaddingBottom: Dp = 4.dp
+    contentPaddingBottom: Dp = 60.dp
 ) {
     val lazyListState = rememberLazyListState()
 

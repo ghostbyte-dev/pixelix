@@ -74,7 +74,7 @@ fun AboutPixelixComposable(
                 .fillMaxSize()
         ) {
             Column(
-                modifier = Modifier.fillMaxSize().verticalScroll(scrollState)
+                modifier = Modifier.fillMaxSize().verticalScroll(scrollState).padding(bottom = 60.dp)
             ) {
                 Column(
                     modifier = Modifier.fillMaxWidth().padding(top = 80.dp, bottom = 56.dp),

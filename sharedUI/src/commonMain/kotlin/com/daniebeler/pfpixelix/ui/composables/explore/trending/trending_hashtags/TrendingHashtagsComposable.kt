@@ -33,7 +33,7 @@ fun TrendingHashtagsComposable(
     ) {
         LazyColumn(
             modifier = Modifier.fillMaxSize().padding(horizontal = 4.dp),
-            contentPadding = PaddingValues(top = 32.dp, bottom = 12.dp),
+            contentPadding = PaddingValues(top = 32.dp, bottom = 72.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp),
             content = {
                 items(viewModel.trendingHashtagsState.trendingHashtags, key = {

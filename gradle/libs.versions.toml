@@ -1,8 +1,7 @@
 [versions]
-componentsResources = "1.10.3"
 kotlin = "2.3.20"
-ksp = "2.3.5"
-agp = "9.0.1"
+ksp = "2.3.6"
+agp = "9.0.0-alpha06"
 
 #https://github.com/JetBrains/compose-multiplatform/releases
 composeMultiplatform = "1.10.3"
@@ -48,7 +47,7 @@ slf4jSimple = "2.0.17"
 
 [libraries]
 
-components-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "componentsResources" }
+components-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "composeMultiplatform" }
 jetbrains-material = { module = "org.jetbrains.compose.material:material", version.ref = "materialVersion" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 kotlinx-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "kotlinxCollectionsImmutable" }
@@ -109,11 +108,14 @@ filekit-compose = { module = "io.github.vinceglb:filekit-dialogs-compose", versi
 krop = { module = "com.attafitamim.krop:ui", version.ref = "krop" }
 slf4j-simple = { module = "org.slf4j:slf4j-simple", version.ref = "slf4jSimple" }
 composemediaplayer = { module = "io.github.kdroidfilter:composemediaplayer", version.ref = "composemediaplayer" }
+runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "composeMultiplatform" }
 ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "composeMultiplatform" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
+androidLibrary = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+kotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "composeMultiplatform" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }

@@ -1,10 +1,8 @@
 import com.google.devtools.ksp.gradle.KspAATask
-import org.jetbrains.compose.desktop.application.dsl.TargetFormat.Deb
-import org.jetbrains.compose.desktop.application.dsl.TargetFormat.Dmg
-import org.jetbrains.compose.desktop.application.dsl.TargetFormat.Msi
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
-    alias(libs.plugins.androidApplication)
+    alias(libs.plugins.androidLibrary)
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.ksp)
@@ -18,11 +16,19 @@ ktorfit {
 }
 
 kotlin {
-    jvmToolchain(21)
-    androidTarget()
-    jvm()
+    android {
+        namespace = "com.daniebeler.pfpixelix"
+        compileSdk = 36
+
+        androidResources { enable = true }
+        compilerOptions { jvmTarget = JvmTarget.JVM_17 }
+    }
+
+    jvm {
+        compilerOptions { jvmTarget = JvmTarget.JVM_17 }
+    }
+
     listOf(
-        iosX64(),
         iosArm64(),
         iosSimulatorArm64()
     ).forEach {
@@ -35,6 +41,7 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             //compose
+            api(libs.runtime)
             implementation(libs.ui)
             implementation(libs.jetbrains.material)
             implementation(libs.material3)
@@ -107,9 +114,6 @@ kotlin {
         }
 
         androidMain.dependencies {
-            implementation(compose.preview)
-            implementation(compose.uiTooling)
-
             implementation(libs.kotlinx.coroutines.android)
             implementation(libs.ktor.client.okhttp)
 
@@ -149,104 +153,18 @@ kotlin {
     }
 }
 
-android {
-    namespace = "com.daniebeler.pfpixelix"
-    compileSdk = 36
-
-    defaultConfig {
-        applicationId = "com.daniebeler.pfpixelix"
-        minSdk = 26
-        targetSdk = 36
-        versionCode = 36
-        versionName = "4.3.2"
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        vectorDrawables {
-            useSupportLibrary = true
-        }
-    }
-
-    buildFeatures {
-        buildConfig = true
-    }
-
-    buildTypes {
-        release {
-            isMinifyEnabled = true
-            isShrinkResources = true
-            isDebuggable = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
-            )
-        }
-
-        create("demo") {
-            initWith(getByName("debug"))
-            isMinifyEnabled = true
-            isDebuggable = false
-            isProfileable = false
-            isShrinkResources = true
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
-            )
-        }
-    }
-    packaging.resources {
-        excludes += "/META-INF/{AL2.0,LGPL2.1}"
-    }
+compose.resources {
+    packageOfResClass = "pixelix.app.generated.resources"
 }
 
 dependencies {
     listOf(
         "kspAndroid",
         "kspJvm",
-        "kspIosX64",
         "kspIosArm64",
         "kspIosSimulatorArm64"
     ).forEach {
         add(it, libs.kotlin.inject.compiler.ksp)
-    }
-}
-
-compose.desktop {
-    application {
-        mainClass = "com.daniebeler.pfpixelix.MainKt"
-
-        nativeDistributions {
-            targetFormats(Dmg, Msi, Deb)
-            packageName = "Pixelix"
-            packageVersion = "1.0.0"
-
-            //data store https://issuetracker.google.com/280205600
-            modules("jdk.unsupported")
-            modules("jdk.unsupported.desktop")
-
-            linux {
-                iconFile.set(project.file("desktopAppIcons/LinuxIcon.png"))
-            }
-            windows {
-                iconFile.set(project.file("desktopAppIcons/WindowsIcon.ico"))
-            }
-            macOS {
-                iconFile.set(project.file("desktopAppIcons/MacosIcon.icns"))
-                bundleID = "com.daniebeler.pfpixelix"
-                infoPlist {
-                    extraKeysRawXml = """
-                      <key>CFBundleURLTypes</key>
-                      <array>
-                        <dict>
-                          <key>CFBundleURLName</key>
-                          <string>Pixelix auth redirect</string>
-                          <key>CFBundleURLSchemes</key>
-                          <array>
-                            <string>dev.ghostbyte.pixelix</string>
-                          </array>
-                        </dict>
-                      </array>
-                    """.trimIndent()
-                }
-            }
-        }
     }
 }
 

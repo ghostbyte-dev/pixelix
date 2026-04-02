@@ -16,7 +16,7 @@ import io.github.vinceglb.filekit.FileKit
 import java.awt.Desktop
 import java.awt.Dimension
 
-fun main() {
+fun desktopApp() {
     application {
         FileKit.init("com.daniebeler.pfpixelix")
         configureJavaLogger()

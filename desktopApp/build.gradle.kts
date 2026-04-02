@@ -1,11 +1,16 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat.Deb
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat.Dmg
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat.Msi
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.kotlinJvm)
+}
+
+kotlin {
+    jvmToolchain(21)
 }
 
 dependencies {

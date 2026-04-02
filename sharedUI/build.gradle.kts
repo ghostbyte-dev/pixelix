@@ -16,6 +16,7 @@ ktorfit {
 }
 
 kotlin {
+    jvmToolchain(21)
     android {
         namespace = "com.daniebeler.pfpixelix"
         compileSdk = 36
@@ -24,9 +25,7 @@ kotlin {
         compilerOptions { jvmTarget = JvmTarget.JVM_17 }
     }
 
-    jvm {
-        compilerOptions { jvmTarget = JvmTarget.JVM_17 }
-    }
+    jvm()
 
     listOf(
         iosArm64(),

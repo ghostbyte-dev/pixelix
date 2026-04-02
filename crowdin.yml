@@ -3,8 +3,8 @@ api_token_env: CROWDIN_PERSONAL_TOKEN
 base_path: .
 preserve_hierarchy: true
 files:
-  - source: /app/src/commonMain/composeResources/values/strings.xml
-    translation: /app/src/commonMain/composeResources/values-%android_code%/strings.xml
+  - source: /sharedUI/src/commonMain/composeResources/values/strings.xml
+    translation: /sharedUI/src/commonMain/composeResources/values-%android_code%/strings.xml
   - source: /metadata/en-US/full_description.txt
     translation: /metadata/%locale%/full_description.txt
   - source: /metadata/en-US/short_description.txt

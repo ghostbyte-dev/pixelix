@@ -30,10 +30,17 @@ fun desktopApp() {
             appComponent.provideImageLoader()
         }
 
-        Desktop.getDesktop().setOpenURIHandler { url ->
-            appComponent.systemUrlHandler.onRedirect(
-                url.uri.toString()
-            )
+        if (Desktop.isDesktopSupported()) {
+            val desktop = Desktop.getDesktop()
+            if (desktop.isSupported(Desktop.Action.APP_OPEN_URI)) {
+                desktop.setOpenURIHandler { url ->
+                    appComponent.systemUrlHandler.onRedirect(
+                        url.uri.toString()
+                    )
+                }
+            } else {
+                println("Deep linking (APP_OPEN_URI) is not supported on this platform.")
+            }
         }
 
         Window(

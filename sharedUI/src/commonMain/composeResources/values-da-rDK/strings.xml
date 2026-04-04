@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="notifications">Meddelelse</string>
-    <string name="settings">Indstilling</string>
-    <string name="liked_posts">Synes Godt Om Indlæg</string>
-    <string name="bookmarked_posts">Bogmærkede Indlæg</string>
-    <string name="followed_hashtags">Fulgte hashtags</string>
-    <string name="blocked_accounts">Blokerede Profiler</string>
-    <string name="muted_accounts">Lydløse Profiler</string>
-    <string name="logout">Log ud</string>
-    <string name="open_in_browser">Åbn i browser</string>
-    <string name="share_this_profile">Del denne profil</string>
-    <string name="block_this_profile">Blokér denne profil</string>
-    <string name="unblock_this_profile">Fjern blokering af denne profil</string>
-    <string name="mute_this_profile">Lydløs denne profil</string>
-    <string name="unmute_this_profile">Slå denne profil fra</string>
-    <string name="load_more">Indlæs flere</string>
-    <string name="follow">Følg</string>
-    <string name="unfollow">Følg ikke</string>
+    <string name="notifications">Notifications</string>
+    <string name="settings">Settings</string>
+    <string name="liked_posts">Liked Posts</string>
+    <string name="bookmarked_posts">Bookmarked Posts</string>
+    <string name="followed_hashtags">Followed Hashtags</string>
+    <string name="blocked_accounts">Blocked Profiles</string>
+    <string name="muted_accounts">Muted Profiles</string>
+    <string name="logout">Logout</string>
+    <string name="open_in_browser">Open in browser</string>
+    <string name="share_this_profile">Share this profile</string>
+    <string name="block_this_profile">Block this profile</string>
+    <string name="unblock_this_profile">Unblock this profile</string>
+    <string name="mute_this_profile">Mute this profile</string>
+    <string name="unmute_this_profile">Unmute this profile</string>
+    <string name="load_more">Load More</string>
+    <string name="follow">Follow</string>
+    <string name="unfollow">Unfollow</string>
     <string name="followers">Followers</string>
     <plurals name="follower">
         <item quantity="one">Follower</item>
@@ -280,4 +280,10 @@
     <string name="reported">Reported</string>
     <string name="delete_account">Delete Account</string>
     <string name="character_count">%1$d / %2$d characters</string>
+    <string name="swipe_between_tabs">Swipe to Switch Tabs</string>
+    <string name="discard">Discard</string>
+    <string name="are_you_sure">Are you sure?</string>
+    <string name="cancel_post_warning">Do you want to discard this post?</string>
+    <string name="cancel_profile_edit">Do you want to discard the changes?</string>
+    <string name="cancel_post_edit">Do you want to discard the changes?</string>
 </resources>

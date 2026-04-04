@@ -215,11 +215,11 @@
     <string name="license">License: %1$s</string>
     <string name="hide_alt_text_button">Hide Alt-text button</string>
     <string name="instances">Instances:</string>
-    <string name="total_posts">Total posturi:</string>
-    <string name="total_users">Total utilizatori:</string>
-    <string name="active_users">Utilizatori activi:</string>
-    <string name="server_version">%1$s Versiune %2$s</string>
-    <string name="visit_url">Vizitați %1$s</string>
+    <string name="total_posts">Total posts:</string>
+    <string name="total_users">Total users:</string>
+    <string name="active_users">Active users:</string>
+    <string name="server_version">%1$s version %2$s</string>
+    <string name="visit_url">Visit %1$s</string>
     <string name="displayname">Displayname</string>
     <string name="bio">Bio</string>
     <string name="website">Website</string>
@@ -290,4 +290,10 @@
     <string name="reported">Reported</string>
     <string name="delete_account">Delete Account</string>
     <string name="character_count">%1$d / %2$d characters</string>
+    <string name="swipe_between_tabs">Swipe to Switch Tabs</string>
+    <string name="discard">Discard</string>
+    <string name="are_you_sure">Are you sure?</string>
+    <string name="cancel_post_warning">Do you want to discard this post?</string>
+    <string name="cancel_profile_edit">Do you want to discard the changes?</string>
+    <string name="cancel_post_edit">Do you want to discard the changes?</string>
 </resources>

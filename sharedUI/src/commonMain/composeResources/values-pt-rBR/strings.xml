@@ -18,21 +18,8 @@
     <string name="follow">Seguir</string>
     <string name="unfollow">Deixar de seguir</string>
     <string name="followers">Seguidores</string>
-    <plurals name="follower">
-        <item quantity="one">Follower</item>
-        <item quantity="other">Followers</item>
-    </plurals>
     <string name="following">Seguindo</string>
-    <plurals name="following">
-        <item quantity="one">Following</item>
-        <item quantity="other">Following</item>
-    </plurals>
-    <plurals name="posts">
-        <item quantity="one">Post</item>
-        <item quantity="other">Posts</item>
-    </plurals>
     <string name="posts">Postagens</string>
-    <string name="hashtags">Hashtags</string>
     <string name="reblogged_your_post">compartilhou sua publicação</string>
     <string name="liked_your_post">curtiu sua postagem</string>
     <string name="followed_you">seguiu você</string>
@@ -75,8 +62,6 @@
     <string name="no_comments_yet">Não há comentários</string>
     <string name="no_likes_yet">Não há curtidas</string>
     <string name="no_liked_posts">não há postagens curtidas</string>
-    <string name="local">Local</string>
-    <string name="global">Global</string>
     <string name="home">Início</string>
     <string name="likes">%1$s curtidas</string>
     <string name="search">Buscar</string>
@@ -114,7 +99,6 @@
     <string name="explore_trending_profiles">Explorar perfis populares</string>
     <string name="nobody_follows_you_yet">Ninguém te segue ainda</string>
     <string name="empty">Vazio</string>
-    <string name="follow_accounts_or_hashtags_to_fill_your_home_timeline">Follow profiles or hashtags to fill your home timeline</string>
     <string name="no_posts">Não há mensagens</string>
     <string name="home_timeline_explained">A linha do tempo inicial mostra publicações de pessoas e hashtags que você segue</string>
     <string name="local_timeline_explained">A linha do tempo local mostra publicações de todos os usuários no seu servidor</string>
@@ -135,8 +119,6 @@
     <string name="more_information">Mais informações</string>
     <string name="what_makes_a_post_trend">O que é uma publicação ficar em alta?</string>
     <string name="trending_post_description">As publicações em alta são feitas durante o período de tempo selecionado e têm muitas curtidas.</string>
-    <string name="trending_account_description">The trending profiles section lists the profiles on your instance with the most followers. The profiles you already follow are hidden.</string>
-    <string name="what_makes_an_account_trend">What makes an profile trend?</string>
     <string name="what_makes_a_hashtag_trend">O que faz uma hasht?</string>
     <string name="trending_hashtag_description">Uma hashtag está em alta se muitas pessoas as têm utilizado recentemente.</string>
     <string name="private_profile">Perfil privado</string>
@@ -156,10 +138,7 @@
     <string name="block_consequence_9">• O usuário não vai vê-lo em timelines públicas</string>
     <string name="block_consequence_10">Se você e o usuário bloqueado estiverem no mesmo servidor, o usuário bloqueado não será capaz de ver suas postagens no seu perfil enquanto estiver conectado.</string>
     <string name="block">Bloquear</string>
-    <string name="block_account">Block profile?</string>
-    <string name="unmute_account">Unmute Profile?</string>
     <string name="mute">Silenciar</string>
-    <string name="mute_account">Mute Profile?</string>
     <string name="sent_a_dm">enviou uma dm</string>
     <string name="theme_system">sistema</string>
     <string name="theme_dark">escuro</string>
@@ -198,14 +177,9 @@
     <string name="mentioned_you">mencionou você</string>
     <string name="latest_image_widget_description">dê uma olhada na postagem mais recente no inicio de sua linha do tempo, direto na sua tela inicial</string>
     <string name="two_icons_info">Se um ícone diferente do ícone padrão for selecionado, dois ícones serão exibidos na sua gaveta de aplicativos.</string>
-    <string name="current_account">Current Profile:</string>
-    <string name="other_accounts">Other Profiles:</string>
-    <string name="add_pixelfed_account">Add Pixelfed profile</string>
     <string name="download_image">Baixar imagem</string>
     <string name="profile">Perfil</string>
     <string name="alerts">Caixa de entrada</string>
-    <string name="are_you_sure_you_want_to_remove_this_account">Are you sure you want to remove this Profile?</string>
-    <string name="remove_account">Remove Profile?</string>
     <string name="remove">Remover</string>
     <string name="sure_update_post">Tem certeza que deseja remover essa conta?</string>
     <string name="mutual_followers">Seguidores em comum</string>
@@ -224,60 +198,4 @@
     <string name="mentions">Menções</string>
     <string name="explore">Explorar</string>
     <string name="reblogged_by">repostado por %1$s</string>
-    <string name="focus_mode">Focus Mode</string>
-    <string name="focus_mode_description">Hides description, likes and buttons from posts.</string>
-    <string name="repost_settings">Repost settings</string>
-    <string name="amoled">AMOLED</string>
-    <string name="no_followers_yet">No followers yet</string>
-    <string name="not_following_anyone">Not following anyone</string>
-    <string name="read_more">Read More</string>
-    <string name="read_less">Read Less</string>
-    <string name="joined_date">Joined %1$s</string>
-    <string name="ago">ago</string>
-    <string name="delete_message">Delete message</string>
-    <string name="video_player_not_supported">Video player is not supported</string>
-    <plurals name="second">
-        <item quantity="one">second</item>
-        <item quantity="other">seconds</item>
-    </plurals>
-    <plurals name="minute">
-        <item quantity="one">minute</item>
-        <item quantity="other">minutes</item>
-    </plurals>
-    <plurals name="hour">
-        <item quantity="one">hour</item>
-        <item quantity="other">hours</item>
-    </plurals>
-    <plurals name="day">
-        <item quantity="one">day</item>
-        <item quantity="other">days</item>
-    </plurals>
-    <plurals name="week">
-        <item quantity="one">week</item>
-        <item quantity="other">weeks</item>
-    </plurals>
-    <plurals name="month">
-        <item quantity="one">month</item>
-        <item quantity="other">months</item>
-    </plurals>
-    <plurals name="year">
-        <item quantity="one">year</item>
-        <item quantity="other">years</item>
-    </plurals>
-    <string name="blur_sensitive_content">Blur sensitive content</string>
-    <string name="autoplay_videos">Autoplay Videos</string>
-    <string name="report_this_post">Report this post</string>
-    <string name="report">Report</string>
-    <string name="spam">Spam</string>
-    <string name="adult_or_sensitive_content">Adult or Sensitive Content</string>
-    <string name="abusive_or_harmful">Abusive or Harmful</string>
-    <string name="underage_account">Underage Account</string>
-    <string name="violence">Violence</string>
-    <string name="copyright_infringement">Copyright infringement</string>
-    <string name="impersonation">Impersonation</string>
-    <string name="scam">Scam</string>
-    <string name="terrorism">Terrorism</string>
-    <string name="reported">Reported</string>
-    <string name="delete_account">Delete Account</string>
-    <string name="character_count">%1$d / %2$d characters</string>
 </resources>

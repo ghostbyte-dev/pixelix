@@ -233,7 +233,6 @@
     <string name="read_more">Lire la suite</string>
     <string name="read_less">En voir moins</string>
     <string name="joined_date">Inscrit·e le %1$s</string>
-    <string name="ago"></string>
     <string name="delete_message">Supprimer le message</string>
     <string name="video_player_not_supported">Lecteur vidéo non pris en charge</string>
     <plurals name="second">

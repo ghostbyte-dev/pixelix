@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="notifications">알림</string>
+    <string name="settings">설정</string>
+    <string name="liked_posts">좋아요한 게시물</string>
+    <string name="bookmarked_posts">북마크한 게시물</string>
+    <string name="followed_hashtags">팔로우한 해시태그</string>
+    <string name="blocked_accounts">차단한 프로필</string>
+    <string name="muted_accounts">뮤트한 프로필</string>
+    <string name="logout">로그아웃</string>
+    <string name="open_in_browser">브라우저에서 열기</string>
+    <string name="share_this_profile">프로필 공유</string>
+    <string name="block_this_profile">프로필 차단</string>
+    <string name="unblock_this_profile">프로필 차단 해제</string>
+    <string name="mute_this_profile">프로필 뮤트</string>
+    <string name="unmute_this_profile">프로필 뮤트 해제</string>
+    <string name="follow">팔로우</string>
+    <string name="unfollow">팔로우 해제</string>
+    <string name="followers">팔로워</string>
+    <string name="hashtags">해시태그</string>
+    <string name="share_this_post">게시물 공유</string>
+    <string name="accounts">프로필</string>
+    <string name="rules">규칙</string>
+    <string name="instance_version">인스턴스 버전</string>
+    <string name="terms_of_use">이용약관</string>
+    <string name="privacy_policy">개인정보처리방침</string>
+    <string name="admin">관리자</string>
+    <string name="users">이용자</string>
+    <string name="cancel">취소</string>
+    <string name="delete_this_post">게시물 삭제</string>
+    <string name="delete_post">게시물을 삭제하시겠습니까?</string>
+    <string name="delete">삭제</string>
+</resources>

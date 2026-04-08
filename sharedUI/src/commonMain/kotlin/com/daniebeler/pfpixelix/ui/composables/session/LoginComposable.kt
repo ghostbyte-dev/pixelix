@@ -270,7 +270,7 @@ fun LoginComposable(
             }
             if (viewModel.serversSuggestionsManager.suggestionsOpen) {
                 SuggestionsBar(
-                    state = suggestionsState, onSelected = { selected ->
+                    state = suggestionsState, bottomBarPadding = false, onSelected = { selected ->
                         viewModel.selectSuggestion(
                             viewModel.serversSuggestionsManager.selectSuggestion(
                                 selected

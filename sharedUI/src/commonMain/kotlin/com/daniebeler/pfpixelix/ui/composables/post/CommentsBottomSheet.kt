@@ -92,9 +92,9 @@ fun CommentsBottomSheet(
     val suggestionsState by viewModel.hashtagMentionsSuggestionsManager.suggestionsState.collectAsStateWithLifecycle()
 
     Box {
-        Column(Modifier.fillMaxWidth().padding(horizontal = 12.dp).align(Alignment.TopStart)) {
+        Column(Modifier.fillMaxWidth().align(Alignment.TopStart)) {
             LazyColumn(
-                modifier = Modifier.weight(1f, fill = false)
+                modifier = Modifier.weight(1f, fill = false).padding(horizontal = 12.dp)
             ) {
                 item {
                     if (post.content.isNotEmpty()) {
@@ -280,7 +280,7 @@ fun CommentsBottomSheet(
             }
             if (viewModel.hashtagMentionsSuggestionsManager.suggestionsOpen) {
                 SuggestionsBar(
-                    state = suggestionsState, onSelected = { selected ->
+                    state = suggestionsState, bottomBarPadding = false, onSelected = { selected ->
                         viewModel.replyText = viewModel.hashtagMentionsSuggestionsManager.selectSuggestion(
                             selected, viewModel.replyText
                         )
@@ -553,7 +553,7 @@ fun AddReplyDialog(
                         .background(MaterialTheme.colorScheme.surfaceContainerHighest)
                 ) {
                     SuggestionsBar(
-                        state = suggestionsState, onSelected = { selected ->
+                        state = suggestionsState, bottomBarPadding = false, onSelected = { selected ->
                             viewModel.replyText = viewModel.hashtagMentionsSuggestionsManager.selectSuggestion(
                                 selected, viewModel.replyText
                             )

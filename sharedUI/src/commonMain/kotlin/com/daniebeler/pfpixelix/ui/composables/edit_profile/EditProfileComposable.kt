@@ -279,7 +279,7 @@ fun EditProfileComposable(
             }
             if (viewModel.hashtagMentionsSuggestionsManager.suggestionsOpen) {
                 SuggestionsBar(
-                    state = suggestionsState, onSelected = { selected ->
+                    state = suggestionsState, bottomBarPadding = true, onSelected = { selected ->
                         viewModel.note =
                             viewModel.hashtagMentionsSuggestionsManager.selectSuggestion(
                                 selected, viewModel.note

@@ -282,7 +282,7 @@ fun EditPostComposable(
                 }
                 if (viewModel.hashtagMentionsSuggestionsManager.suggestionsOpen) {
                     SuggestionsBar(
-                        state = suggestionsState, onSelected = { selected ->
+                        state = suggestionsState, bottomBarPadding = true, onSelected = { selected ->
                             viewModel.caption =
                                 viewModel.hashtagMentionsSuggestionsManager.selectSuggestion(
                                     selected, viewModel.caption

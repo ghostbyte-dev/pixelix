@@ -153,7 +153,8 @@ fun NewPostComposable(
                     Modifier.imeAwareInsets(60.dp).fillMaxSize(),
                 ) {
                     Column(
-                        Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(bottom = 60.dp),
+                        Modifier.weight(1f).verticalScroll(rememberScrollState())
+                            .padding(bottom = 60.dp),
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
                         Spacer(Modifier.height(24.dp))
@@ -290,12 +291,13 @@ fun NewPostComposable(
                     }
                     if (viewModel.hashtagMentionsSuggestionsManager.suggestionsOpen) {
                         SuggestionsBar(
-                            state = suggestionsState, onSelected = { selected ->
+                            state = suggestionsState, bottomBarPadding = true, onSelected = { selected ->
                                 viewModel.caption =
                                     viewModel.hashtagMentionsSuggestionsManager.selectSuggestion(
                                         selected, viewModel.caption
                                     )
                             })
+
                     }
                 }
 

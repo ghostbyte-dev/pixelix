@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="notifications">Notificaciones</string>
+    <string name="settings">Ajustes</string>
+    <string name="liked_posts">Publicaciones que me gustan</string>
+    <string name="bookmarked_posts">Publicaciones guardadas</string>
+    <string name="followed_hashtags">Hashtags seguidos</string>
+    <string name="blocked_accounts">Perfiles Bloqueados</string>
+    <string name="muted_accounts">Cuentas silenciadas</string>
+    <string name="logout">Cerrar sesión</string>
+    <string name="open_in_browser">Abrir en el navegador</string>
+    <string name="share_this_profile">Compartir este perfil</string>
+    <string name="block_this_profile">Bloquear este perfil</string>
+    <string name="unblock_this_profile">Desbloquear este perfil</string>
+    <string name="mute_this_profile">Silenciar este perfil</string>
+    <string name="unmute_this_profile">Desbloquear este perfil</string>
+    <string name="load_more">Cargar más</string>
+    <string name="follow">Seguir</string>
+    <string name="unfollow">No seguir</string>
+    <string name="followers">Seguidores</string>
+    <plurals name="follower">
+        <item quantity="one">Seguidor</item>
+        <item quantity="other">Seguidores</item>
+    </plurals>
+    <string name="following">Siguiendo</string>
+    <plurals name="following">
+        <item quantity="one">Siguiendo</item>
+        <item quantity="other">Siguiendo</item>
+    </plurals>
+    <plurals name="posts">
+        <item quantity="one">Tema</item>
+        <item quantity="other">Temas</item>
+    </plurals>
+    <string name="posts">Publicaciones</string>
+    <string name="hashtags">Hashtags</string>
+    <string name="reblogged_your_post">he compartido tu publicación</string>
+    <string name="liked_your_post">me gustó tu publicación</string>
+    <string name="followed_you">te siguió</string>
+    <string name="share_this_post">Compartir esta publicación</string>
+    <string name="trending">Tendencias</string>
+    <string name="accounts">Perfiles</string>
+    <string name="rules">Reglas</string>
+    <string name="instance_version">Versión de la instancia</string>
+    <string name="terms_of_use">Condiciones de uso</string>
+    <string name="privacy_policy">Política de privacidad</string>
+    <string name="admin">Administrador</string>
+    <string name="users">Usuarios</string>
+    <string name="stats">Estadísticas</string>
+    <string name="unblock">desbloquear</string>
+    <string name="unblock_caps">Desbloquear</string>
+    <string name="unblock_account">¿Desbloquear cuenta?</string>
+    <string name="confirm_to_unblock_this_account">Confirmar para desbloquear esta cuenta</string>
+    <string name="no_blocked_accounts">sin cuentas bloqueadas</string>
+    <string name="cancel">Cancelar</string>
+    <string name="post_by">Publicado por</string>
+    <string name="liked_by">Recomendado por</string>
+    <string name="delete_this_post">Eliminar esta publicación</string>
+    <string name="delete_post">¿Eliminar publicación?</string>
+    <string name="this_action_cannot_be_undone">Esta acción no puede deshacerse</string>
+    <string name="delete">Borrar</string>
+    <string name="this_is_the_end">¡Es el fin!</string>
+    <string name="upload_your_first_post">Publica tu primer tema</string>
+    <string name="the_profiles_you_follow_will_appear_here">Los perfiles que sigues aparecerán aquí</string>
+    <string name="explore_trending_profiles">Explora perfiles de moda</string>
+</resources>

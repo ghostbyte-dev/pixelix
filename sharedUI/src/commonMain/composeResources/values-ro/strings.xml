@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="total_posts">Total posturi:</string>
+    <string name="total_users">Total utilizatori:</string>
+    <string name="active_users">Utilizatori activi:</string>
+    <string name="server_version">%1$s Versiune %2$s</string>
+    <string name="visit_url">Vizitați %1$s</string>
+</resources>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="notifications">Meddelelse</string>
+    <string name="settings">Indstilling</string>
+    <string name="liked_posts">Synes Godt Om Indlæg</string>
+    <string name="bookmarked_posts">Bogmærkede Indlæg</string>
+    <string name="followed_hashtags">Fulgte hashtags</string>
+    <string name="blocked_accounts">Blokerede Profiler</string>
+    <string name="muted_accounts">Lydløse Profiler</string>
+    <string name="logout">Log ud</string>
+    <string name="open_in_browser">Åbn i browser</string>
+    <string name="share_this_profile">Del denne profil</string>
+    <string name="block_this_profile">Blokér denne profil</string>
+    <string name="unblock_this_profile">Fjern blokering af denne profil</string>
+    <string name="mute_this_profile">Lydløs denne profil</string>
+    <string name="unmute_this_profile">Slå denne profil fra</string>
+    <string name="load_more">Indlæs flere</string>
+    <string name="follow">Følg</string>
+    <string name="unfollow">Følg ikke</string>
+</resources>

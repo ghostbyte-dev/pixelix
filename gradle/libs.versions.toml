@@ -1,45 +1,45 @@
 [versions]
-componentsResources = "1.10.1"
-kotlin = "2.3.10"
-ksp = "2.3.5"
-agp = "9.0.1"
+kotlin = "2.3.20"
+ksp = "2.3.6"
+agp = "9.0.0-alpha06" #latest supported version in IDEA
 
 #https://github.com/JetBrains/compose-multiplatform/releases
-composeMultiplatform = "1.10.1"
-lifecycleMultiplatform = "2.9.6"
-material3 = "1.9.0"
+composeMultiplatform = "1.11.0-beta01"
+lifecycleMultiplatform = "2.11.0-alpha02"
+material3 = "1.11.0-alpha05"
 materialIconsExtended = "1.7.3"
-materialVersion = "1.10.1"
+materialVersion = "1.11.0-beta01"
 navigationMultiplatform = "2.9.2"
+composeNavigationEvent = "1.1.0-alpha01"
 
 #JetBrains
 kotlinx-coroutines = "1.10.2"
 kotlinxCollectionsImmutable = "0.4.0"
 kotlinxSerializationJson = "1.10.0"
-ktor = "3.4.0"
+ktor = "3.4.1"
 kotlinx-datetime = "0.7.1"
 
 #multiplatform
 ksoup = "0.2.6"
-kermit = "2.0.8"
+kermit = "2.1.0"
 ktorfit = "2.7.2"
 kotlinInject = "0.9.0"
 androidx-annotation = "1.9.1"
-coil = "3.3.0"
-datastorePreferences = "1.2.0"
+coil = "3.4.0"
+datastorePreferences = "1.2.1"
 multiplatformSettings = "1.3.0"
-filekitCompose = "0.12.0"
+filekitCompose = "0.13.0"
 krop = "0.2.0"
 composemediaplayer = "0.8.7"
 
 #android
 accompanistSystemuicontroller = "0.36.0"
-activityCompose = "1.12.4"
+activityCompose = "1.13.0"
 browser = "1.9.0"
-coreKtx = "1.17.0"
+coreKtx = "1.18.0"
 glance = "1.1.1"
 material = "1.13.0"
-okio = "3.16.4"
+okio = "3.17.0"
 workRuntimeKtx = "2.11.1"
 
 #desktop
@@ -47,7 +47,7 @@ slf4jSimple = "2.0.17"
 
 [libraries]
 
-components-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "componentsResources" }
+components-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "composeMultiplatform" }
 jetbrains-material = { module = "org.jetbrains.compose.material:material", version.ref = "materialVersion" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 kotlinx-collections-immutable = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "kotlinxCollectionsImmutable" }
@@ -56,6 +56,7 @@ kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutine
 kotlinx-coroutines-swing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-datetime" }
 compose-ui-graphics = { module = "org.jetbrains.compose.ui:ui-graphics", version.ref = "composeMultiplatform" }
+compose-navigationevent = { module = "org.jetbrains.androidx.navigationevent:navigationevent-compose", version.ref = "composeNavigationEvent" }
 
 androidx-lifecycle-runtime-compose = { module = "org.jetbrains.androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycleMultiplatform" }
 androidx-lifecycle-viewmodel = { module = "org.jetbrains.androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleMultiplatform" }
@@ -80,6 +81,7 @@ ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "kto
 
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
 coil-network = { module = "io.coil-kt.coil3:coil-network-ktor3", version.ref = "coil" }
+coil-svg = { module = "io.coil-kt.coil3:coil-svg", version.ref = "coil" } # Add this line
 coil-video = { module = "io.coil-kt.coil3:coil-video", version.ref = "coil" }
 coil-gif = { module = "io.coil-kt.coil3:coil-gif", version.ref = "coil" }
 
@@ -106,11 +108,14 @@ filekit-compose = { module = "io.github.vinceglb:filekit-dialogs-compose", versi
 krop = { module = "com.attafitamim.krop:ui", version.ref = "krop" }
 slf4j-simple = { module = "org.slf4j:slf4j-simple", version.ref = "slf4jSimple" }
 composemediaplayer = { module = "io.github.kdroidfilter:composemediaplayer", version.ref = "composemediaplayer" }
+runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "composeMultiplatform" }
 ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "composeMultiplatform" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
+androidLibrary = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+kotlinJvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "composeMultiplatform" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }

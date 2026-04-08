@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.Colors
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.VolumeOff
 import androidx.compose.material.icons.automirrored.outlined.VolumeUp
@@ -96,8 +97,7 @@ fun VideoAttachment(
                                 ) {
                                     Icon(
                                         imageVector = Icons.Default.Close,
-                                        contentDescription = "Exit Fullscreen",
-                                        tint = Color.White
+                                        contentDescription = "Exit Fullscreen"
                                     )
                                 }
                                 Row(
@@ -297,6 +297,7 @@ fun TimelineControls(
         }
         Text(
             text = remainingText,
+            color = Color.White,
             modifier = Modifier.padding(PaddingValues(4.dp, 0.dp, 0.dp, 0.dp))
         )
     }

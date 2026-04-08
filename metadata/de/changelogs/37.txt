@@ -1,0 +1,7 @@
+Neue Vorschlagsleiste
+Video:
+    Vollbildmodus
+    Video-Vor- und Rückspulen (Scrubbing)
+Warnmeldung beim Zurückgehen, während Beiträge oder das Profil bearbeitet oder erstellt werden
+Einstellung zum Deaktivieren des Wischtitels (Swiping) zwischen den Timelines
+Fehlerbehebungen (Bugfixes)

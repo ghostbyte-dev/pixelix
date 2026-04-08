@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -166,7 +167,7 @@ fun NotificationsComposable(
                     isRefreshing = viewModel.notificationsState.isRefreshing,
                     onRefresh = { viewModel.refresh() },
                 ) {
-                    LazyColumn(state = lazyListState, modifier = Modifier.fillMaxSize(), content = {
+                    LazyColumn(state = lazyListState, contentPadding = PaddingValues(bottom = 60.dp), modifier = Modifier.fillMaxSize(), content = {
                         if (viewModel.notificationsState.notifications.isNotEmpty()) {
                             items(viewModel.notificationsState.notifications, key = {
                                 it.id

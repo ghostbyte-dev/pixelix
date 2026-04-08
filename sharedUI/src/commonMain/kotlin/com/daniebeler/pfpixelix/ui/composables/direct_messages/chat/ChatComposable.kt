@@ -99,7 +99,7 @@ fun ChatComposable(
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(bottom = 16.dp, start = 8.dp, end = 8.dp)
+                        .padding(bottom = 76.dp, start = 8.dp, end = 8.dp)
                 ) {
                     LazyColumn(
                         state = lazyListState,

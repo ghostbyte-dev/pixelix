@@ -102,7 +102,7 @@ fun ConversationsComposable(
                 LazyColumn(
                     state = lazyListState,
                     modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(top = 28.dp),
+                    contentPadding = PaddingValues(top = 28.dp, bottom = 60.dp),
                     content = {
                         if (viewModel.conversationsState.conversations.isNotEmpty()) {
                             items(viewModel.conversationsState.conversations, key = {

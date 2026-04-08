@@ -154,7 +154,7 @@ fun OtherProfileComposable(
             ) {
 
                 LazyColumn(
-                    verticalArrangement = Arrangement.spacedBy(4.dp), state = lazyGridState
+                    verticalArrangement = Arrangement.spacedBy(4.dp), state = lazyGridState, contentPadding = PaddingValues(bottom = 60.dp)
                 ) {
                     item {
                         Column(

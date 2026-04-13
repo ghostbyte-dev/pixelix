@@ -26,9 +26,15 @@ It's designed to provide a seamless and high-performance user experience. With P
 * Showing fediverse software of user
 
 ## Contribution
-For translations use [Weblate](https://hosted.weblate.org/git/pixelix/application-strings/).
 
 If you are opening pull requests please use the dev branch as base.
+
+## Translations
+
+We use [Weblate](https://hosted.weblate.org/engage/pixelix/) for translations and are thankful for every contribution.
+
+[![Translation status](https://hosted.weblate.org/widget/pixelix/multi-auto.svg)](https://hosted.weblate.org/engage/pixelix/)
+
 
 ## 📊 Check Download Stats of Pixelix Releases
 Curious how many times Pixelix has been downloaded?

@@ -26,7 +26,7 @@ It's designed to provide a seamless and high-performance user experience. With P
 * Showing fediverse software of user
 
 ## Contribution
-For translations use the [Crowdin](https://crowdin.com/project/pixelix).
+For translations use the [Weblate](https://hosted.weblate.org/git/pixelix/application-strings/).
 
 If you are opening pull requests please use the dev branch as base.
 

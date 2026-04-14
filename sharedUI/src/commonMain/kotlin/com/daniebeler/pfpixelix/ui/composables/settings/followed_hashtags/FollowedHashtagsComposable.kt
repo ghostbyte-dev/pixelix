@@ -1,10 +1,12 @@
 package com.daniebeler.pfpixelix.ui.composables.settings.followed_hashtags
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
+import androidx.compose.foundation.lazy.staggeredgrid.items
+import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Tag
@@ -39,15 +41,16 @@ fun FollowedHashtagsComposable(
             onRefresh = { viewModel.getFollowedHashtags(true) },
             modifier = Modifier.fillMaxSize()
         ) {
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(4.dp),
+            LazyVerticalStaggeredGrid(
+                columns = StaggeredGridCells.Adaptive(300.dp),
+                verticalItemSpacing = 4.dp,
                 contentPadding = PaddingValues(top = 24.dp),
                 modifier = Modifier.fillMaxSize(),
-                content = {
+            ) {
                     items(viewModel.followedHashtagsState.followedHashtags) { tag ->
                         CustomHashtag(hashtag = tag, navController = navController)
                     }
-                })
+                }
 
             if (viewModel.followedHashtagsState.followedHashtags.isEmpty()) {
                 if (viewModel.followedHashtagsState.isLoading && !viewModel.followedHashtagsState.isRefreshing) {

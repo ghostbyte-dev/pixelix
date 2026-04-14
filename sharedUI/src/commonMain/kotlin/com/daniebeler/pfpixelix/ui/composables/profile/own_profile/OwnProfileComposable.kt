@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -13,8 +14,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
+import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.MoreVert
@@ -45,7 +48,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.service.platform.PlatformFeatures
-import com.daniebeler.pfpixelix.ui.composables.widgets.InfiniteListHandler
+import com.daniebeler.pfpixelix.ui.composables.widgets.InfiniteStaggeredGridHandler
 import com.daniebeler.pfpixelix.ui.composables.profile.CollectionsComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.PostsWrapperComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.ProfileTopSection
@@ -69,7 +72,7 @@ fun OwnProfileComposable(
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by remember { mutableStateOf(0) }
 
-    val lazyGridState = rememberLazyListState()
+    val lazyGridState = rememberLazyStaggeredGridState()
 
     Box(modifier = Modifier.fillMaxSize()) {
 
@@ -84,12 +87,21 @@ fun OwnProfileComposable(
                 onRefresh = { viewModel.loadData(true) },
                 modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)
             ) {
-                LazyColumn(
-                    verticalArrangement = Arrangement.spacedBy(4.dp),
+                BoxWithConstraints {
+                val gridContentWidth = maxWidth - 8.dp
+                val gridColumnCount = maxOf(3, (gridContentWidth / 120.dp).toInt())
+                LazyVerticalStaggeredGrid(
+                    columns = when (viewModel.view) {
+                        com.daniebeler.pfpixelix.ui.composables.profile.ViewEnum.Grid -> StaggeredGridCells.Fixed(gridColumnCount)
+                        com.daniebeler.pfpixelix.ui.composables.profile.ViewEnum.Timeline -> StaggeredGridCells.Adaptive(350.dp)
+                    },
+                    verticalItemSpacing = 4.dp,
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    modifier = Modifier.padding(horizontal = 4.dp),
                     state = lazyGridState,
                     contentPadding = PaddingValues(bottom = 60.dp)
                 ) {
-                    item {
+                    item(span = StaggeredGridItemSpan.FullLine) {
                         Column(
                             modifier = Modifier.fillMaxWidth().clip(
                                 RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)
@@ -139,7 +151,7 @@ fun OwnProfileComposable(
                         }
                     }
 
-                    item {
+                    item(span = StaggeredGridItemSpan.FullLine) {
                         SwitchViewComposable(
                             postsCount = viewModel.accountState.account?.postsCount ?: 0,
                             viewType = viewModel.view,
@@ -156,15 +168,18 @@ fun OwnProfileComposable(
                             icon = Icons.Outlined.Photo, heading = "No Posts"
                         ),
                         view = viewModel.view,
-                        isFirstImageLarge = true,
                         postGetsDeleted = { viewModel.postGetsDeleted(it) },
                         updatePost = { viewModel.updatePost(it) },
+                        isFirstImageLarge = true,
+                        gridColumnCount = gridColumnCount,
+                        gridContentWidth = gridContentWidth,
                         navController = navController
                     )
                 }
 
                 if (viewModel.postsState.posts.isEmpty() && viewModel.postsState.error.isNotBlank()) {
                     FullscreenErrorComposable(message = viewModel.postsState.error)
+                }
                 }
             }
         }
@@ -205,7 +220,7 @@ fun OwnProfileComposable(
         )
     }
 
-    InfiniteListHandler(lazyListState = lazyGridState) {
+    InfiniteStaggeredGridHandler(lazyStaggeredGridState = lazyGridState) {
         viewModel.getPostsPaginated()
     }
 

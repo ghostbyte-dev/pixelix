@@ -17,9 +17,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
+import androidx.compose.foundation.lazy.staggeredgrid.items
+import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -45,7 +47,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.service.platform.PlatformFeatures
-import com.daniebeler.pfpixelix.ui.composables.widgets.InfiniteListHandler
+import com.daniebeler.pfpixelix.ui.composables.widgets.InfiniteStaggeredGridHandler
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 import com.daniebeler.pfpixelix.ui.composables.states.EndOfListComposable
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
@@ -70,7 +72,7 @@ fun NotificationsComposable(
     viewModel: NotificationsViewModel = injectViewModel(key = "notifications-viewmodel-key") { notificationsViewModel }
 ) {
 
-    val lazyListState = rememberLazyListState()
+    val staggeredGridState = rememberLazyStaggeredGridState()
     val scrollState = rememberScrollState()
 
     Scaffold(contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top), topBar = {
@@ -167,7 +169,7 @@ fun NotificationsComposable(
                     isRefreshing = viewModel.notificationsState.isRefreshing,
                     onRefresh = { viewModel.refresh() },
                 ) {
-                    LazyColumn(state = lazyListState, contentPadding = PaddingValues(bottom = 60.dp), modifier = Modifier.fillMaxSize(), content = {
+                    LazyVerticalStaggeredGrid(columns = StaggeredGridCells.Adaptive(350.dp), state = staggeredGridState, contentPadding = PaddingValues(bottom = 60.dp), modifier = Modifier.fillMaxSize()) {
                         if (viewModel.notificationsState.notifications.isNotEmpty()) {
                             items(viewModel.notificationsState.notifications, key = {
                                 it.id
@@ -196,7 +198,7 @@ fun NotificationsComposable(
                             }
 
                             if (viewModel.notificationsState.isLoading && !viewModel.notificationsState.isRefreshing) {
-                                item {
+                                item(span = StaggeredGridItemSpan.FullLine) {
                                     CircularProgressIndicator(
                                         modifier = Modifier.fillMaxWidth().height(80.dp)
                                             .wrapContentSize(Alignment.Center)
@@ -205,12 +207,12 @@ fun NotificationsComposable(
                             }
 
                             if (viewModel.notificationsState.endReached && viewModel.notificationsState.notifications.size > 10) {
-                                item {
+                                item(span = StaggeredGridItemSpan.FullLine) {
                                     EndOfListComposable()
                                 }
                             }
                         }
-                    })
+                    }
 
                     if (!viewModel.notificationsState.isLoading && viewModel.notificationsState.error.isEmpty() && viewModel.notificationsState.notifications.isEmpty()) {
                         FullscreenEmptyStateComposable(
@@ -230,7 +232,7 @@ fun NotificationsComposable(
             }
         }
 
-        InfiniteListHandler(lazyListState = lazyListState) {
+        InfiniteStaggeredGridHandler(lazyStaggeredGridState = staggeredGridState) {
             viewModel.getNotificationsPaginated()
         }
     }

@@ -3,6 +3,7 @@ package com.daniebeler.pfpixelix.ui.composables.profile.other_profile
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -16,8 +17,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
+import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -58,7 +61,7 @@ import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.ui.composables.widgets.ButtonRowElement
-import com.daniebeler.pfpixelix.ui.composables.widgets.InfiniteListHandler
+import com.daniebeler.pfpixelix.ui.composables.widgets.InfiniteStaggeredGridHandler
 import com.daniebeler.pfpixelix.ui.composables.widgets.ToTopButton
 import com.daniebeler.pfpixelix.ui.composables.profile.CollectionsComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.MutualFollowersComposable
@@ -123,7 +126,7 @@ fun OtherProfileComposable(
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
-    val lazyGridState = rememberLazyListState()
+    val lazyGridState = rememberLazyStaggeredGridState()
 
     var showBottomSheet by remember { mutableStateOf(false) }
     var showMuteAlert by remember { mutableStateOf(false) }
@@ -153,10 +156,21 @@ fun OtherProfileComposable(
                 modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)
             ) {
 
-                LazyColumn(
-                    verticalArrangement = Arrangement.spacedBy(4.dp), state = lazyGridState, contentPadding = PaddingValues(bottom = 60.dp)
+                BoxWithConstraints {
+                val gridContentWidth = maxWidth - 8.dp
+                val gridColumnCount = maxOf(3, (gridContentWidth / 120.dp).toInt())
+                LazyVerticalStaggeredGrid(
+                    columns = when (viewModel.view) {
+                        com.daniebeler.pfpixelix.ui.composables.profile.ViewEnum.Grid -> StaggeredGridCells.Fixed(gridColumnCount)
+                        com.daniebeler.pfpixelix.ui.composables.profile.ViewEnum.Timeline -> StaggeredGridCells.Adaptive(350.dp)
+                    },
+                    verticalItemSpacing = 4.dp,
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    modifier = Modifier.padding(horizontal = 4.dp),
+                    state = lazyGridState,
+                    contentPadding = PaddingValues(bottom = 60.dp)
                 ) {
-                    item {
+                    item(span = StaggeredGridItemSpan.FullLine) {
                         Column(
                             modifier = Modifier.clip(
                                 RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)
@@ -262,7 +276,7 @@ fun OtherProfileComposable(
                         }
                     }
 
-                    item {
+                    item(span = StaggeredGridItemSpan.FullLine) {
                         SwitchViewComposable(
                             postsCount = viewModel.accountState.account?.postsCount ?: 0,
                             viewType = viewModel.view,
@@ -281,11 +295,14 @@ fun OtherProfileComposable(
                             icon = Icons.Outlined.Photo, heading = "No Posts"
                         ),
                         view = viewModel.view,
-                        isFirstImageLarge = true,
                         postGetsDeleted = { viewModel.postGetsDeleted(it) },
                         updatePost = { viewModel.updatePost(it) },
+                        isFirstImageLarge = true,
+                        gridColumnCount = gridColumnCount,
+                        gridContentWidth = gridContentWidth,
                         navController = navController
                     )
+                }
                 }
             }
 
@@ -338,9 +355,9 @@ fun OtherProfileComposable(
     }
 
     ToTopButton(
-        listState = lazyGridState, refresh = { viewModel.loadData(userId, true, navController) })
+        staggeredGridState = lazyGridState, refresh = { viewModel.loadData(userId, true, navController) })
 
-    InfiniteListHandler(lazyListState = lazyGridState) {
+    InfiniteStaggeredGridHandler(lazyStaggeredGridState = lazyGridState) {
         viewModel.getPostsPaginated(viewModel.userId)
     }
 

@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -25,19 +26,39 @@ import pixelix.app.generated.resources.chevron_up_outline
 
 @Composable
 fun ToTopButton(listState: LazyListState, refresh: () -> Unit) {
-    val coroutineScope = rememberCoroutineScope()
-
     val visible by remember {
         derivedStateOf {
             listState.firstVisibleItemIndex > 0
         }
     }
 
+    ToTopButtonContent(visible = visible, onScrollToTop = {
+        listState.animateScrollToItem(0, 0)
+    }, refresh = refresh)
+}
+
+@Composable
+fun ToTopButton(staggeredGridState: LazyStaggeredGridState, refresh: () -> Unit) {
+    val visible by remember {
+        derivedStateOf {
+            staggeredGridState.firstVisibleItemIndex > 0
+        }
+    }
+
+    ToTopButtonContent(visible = visible, onScrollToTop = {
+        staggeredGridState.animateScrollToItem(0, 0)
+    }, refresh = refresh)
+}
+
+@Composable
+private fun ToTopButtonContent(visible: Boolean, onScrollToTop: suspend () -> Unit, refresh: () -> Unit) {
+    val coroutineScope = rememberCoroutineScope()
+
     AnimatedVisibility(visible = visible, enter = fadeIn(), exit = fadeOut()) {
         Box(Modifier.fillMaxSize().padding(12.dp).padding(bottom = 60.dp), contentAlignment = Alignment.BottomEnd) {
             FloatingActionButton(onClick = {
                 coroutineScope.launch {
-                    listState.animateScrollToItem(0, 0)
+                    onScrollToTop()
                 }.invokeOnCompletion {
                     refresh()
                 }

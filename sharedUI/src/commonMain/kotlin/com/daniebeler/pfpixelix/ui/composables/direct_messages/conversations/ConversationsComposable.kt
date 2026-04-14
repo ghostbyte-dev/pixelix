@@ -12,9 +12,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
+import androidx.compose.foundation.lazy.staggeredgrid.items
+import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
@@ -41,7 +43,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.di.injectViewModel
-import com.daniebeler.pfpixelix.ui.composables.widgets.InfiniteListHandler
+import com.daniebeler.pfpixelix.ui.composables.widgets.InfiniteStaggeredGridHandler
 import com.daniebeler.pfpixelix.ui.composables.SheetItem
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 import com.daniebeler.pfpixelix.ui.composables.states.EndOfListComposable
@@ -76,7 +78,7 @@ fun ConversationsComposable(
     var showBottomSheet by remember { mutableStateOf(false) }
     val showNewChatDialog = remember { mutableStateOf(false) }
 
-    val lazyListState = rememberLazyListState()
+    val staggeredGridState = rememberLazyStaggeredGridState()
 
     ScreenScaffold(
         title = stringResource(Res.string.conversations),
@@ -105,11 +107,12 @@ fun ConversationsComposable(
             onRefresh = { viewModel.refresh() },
             modifier = Modifier.fillMaxSize()
         ) {
-            LazyColumn(
-                state = lazyListState,
+            LazyVerticalStaggeredGrid(
+                columns = StaggeredGridCells.Adaptive(350.dp),
+                state = staggeredGridState,
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(top = 28.dp, bottom = 60.dp),
-                content = {
+            ) {
                     if (viewModel.conversationsState.conversations.isNotEmpty()) {
                         items(viewModel.conversationsState.conversations, key = {
                             it.id
@@ -120,7 +123,7 @@ fun ConversationsComposable(
                         }
 
                         if (viewModel.conversationsState.isLoading && !viewModel.conversationsState.isRefreshing) {
-                            item {
+                            item(span = StaggeredGridItemSpan.FullLine) {
                                 CircularProgressIndicator(
                                     modifier = Modifier.fillMaxWidth().height(80.dp)
                                         .wrapContentSize(Alignment.Center)
@@ -129,12 +132,12 @@ fun ConversationsComposable(
                         }
 
                         if (viewModel.conversationsState.endReached && viewModel.conversationsState.conversations.size > 10) {
-                            item {
+                            item(span = StaggeredGridItemSpan.FullLine) {
                                 EndOfListComposable()
                             }
                         }
                     }
-                })
+                }
 
             if (!viewModel.conversationsState.isLoading && viewModel.conversationsState.error.isEmpty() && viewModel.conversationsState.conversations.isEmpty()) {
                 FullscreenEmptyStateComposable(
@@ -153,7 +156,7 @@ fun ConversationsComposable(
             ErrorComposable(message = viewModel.conversationsState.error)
         }
 
-        InfiniteListHandler(lazyListState = lazyListState) {
+        InfiniteStaggeredGridHandler(lazyStaggeredGridState = staggeredGridState) {
             //viewModel.getNotificationsPaginated()
         }
 

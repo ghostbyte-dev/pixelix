@@ -68,8 +68,8 @@ import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.model.Instance
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.model.Visibility
-import com.daniebeler.pfpixelix.ui.composables.MaxLengthTextField
-import com.daniebeler.pfpixelix.ui.composables.SuggestionsBar
+import com.daniebeler.pfpixelix.ui.composables.widgets.MaxLengthTextField
+import com.daniebeler.pfpixelix.ui.composables.widgets.SuggestionsBar
 import com.daniebeler.pfpixelix.ui.composables.hashtagMentionText.HashtagsMentionsTextView
 import com.daniebeler.pfpixelix.ui.composables.post.reply.ReplyElementViewModel
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable

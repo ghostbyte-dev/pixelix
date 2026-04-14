@@ -45,7 +45,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.service.platform.PlatformFeatures
-import com.daniebeler.pfpixelix.ui.composables.InfiniteListHandler
+import com.daniebeler.pfpixelix.ui.composables.widgets.InfiniteListHandler
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 import com.daniebeler.pfpixelix.ui.composables.states.EndOfListComposable
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable

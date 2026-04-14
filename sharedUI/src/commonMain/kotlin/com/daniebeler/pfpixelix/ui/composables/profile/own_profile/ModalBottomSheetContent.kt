@@ -10,8 +10,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.daniebeler.pfpixelix.ui.composables.ButtonRowElement
-import com.daniebeler.pfpixelix.ui.composables.ButtonRowElementWithRoundedImage
+import com.daniebeler.pfpixelix.ui.composables.widgets.ButtonRowElement
+import com.daniebeler.pfpixelix.ui.composables.widgets.ButtonRowElementWithRoundedImage
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.imageResource

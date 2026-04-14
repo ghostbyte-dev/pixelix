@@ -28,7 +28,7 @@ import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.model.Relationship
-import com.daniebeler.pfpixelix.ui.composables.FollowButton
+import com.daniebeler.pfpixelix.ui.composables.widgets.FollowButton
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import com.daniebeler.pfpixelix.utils.StringFormat
 import org.jetbrains.compose.resources.painterResource

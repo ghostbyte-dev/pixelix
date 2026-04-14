@@ -33,7 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
-import com.daniebeler.pfpixelix.ui.composables.InfiniteListHandler
+import com.daniebeler.pfpixelix.ui.composables.widgets.InfiniteListHandler
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource

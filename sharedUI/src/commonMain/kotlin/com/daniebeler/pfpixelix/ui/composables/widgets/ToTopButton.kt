@@ -1,4 +1,4 @@
-package com.daniebeler.pfpixelix.ui.composables
+package com.daniebeler.pfpixelix.ui.composables.widgets
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn

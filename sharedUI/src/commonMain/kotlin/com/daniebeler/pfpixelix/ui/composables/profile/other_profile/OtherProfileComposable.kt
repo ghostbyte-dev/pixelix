@@ -57,9 +57,9 @@ import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.model.Account
-import com.daniebeler.pfpixelix.ui.composables.ButtonRowElement
-import com.daniebeler.pfpixelix.ui.composables.InfiniteListHandler
-import com.daniebeler.pfpixelix.ui.composables.ToTopButton
+import com.daniebeler.pfpixelix.ui.composables.widgets.ButtonRowElement
+import com.daniebeler.pfpixelix.ui.composables.widgets.InfiniteListHandler
+import com.daniebeler.pfpixelix.ui.composables.widgets.ToTopButton
 import com.daniebeler.pfpixelix.ui.composables.profile.CollectionsComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.MutualFollowersComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.PostsWrapperComposable

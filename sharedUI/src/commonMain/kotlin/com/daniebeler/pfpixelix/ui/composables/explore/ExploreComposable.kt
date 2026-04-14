@@ -68,7 +68,7 @@ import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.model.SavedSearchItem
 import com.daniebeler.pfpixelix.domain.model.SavedSearchType
-import com.daniebeler.pfpixelix.ui.composables.CustomHashtag
+import com.daniebeler.pfpixelix.ui.composables.widgets.CustomHashtag
 import com.daniebeler.pfpixelix.ui.composables.custom_account.CustomAccount
 import com.daniebeler.pfpixelix.ui.composables.explore.trending.TrendingComposable
 import com.daniebeler.pfpixelix.ui.composables.states.FullscreenLoadingComposable

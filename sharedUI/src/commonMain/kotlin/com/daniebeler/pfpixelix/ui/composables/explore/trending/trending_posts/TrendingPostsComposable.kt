@@ -8,7 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.di.injectViewModel
-import com.daniebeler.pfpixelix.ui.composables.InfinitePostsList
+import com.daniebeler.pfpixelix.ui.composables.widgets.InfinitePostsList
 import com.daniebeler.pfpixelix.ui.composables.profile.ViewEnum
 
 @Composable

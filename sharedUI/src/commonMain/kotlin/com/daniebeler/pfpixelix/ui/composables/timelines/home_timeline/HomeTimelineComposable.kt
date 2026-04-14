@@ -9,7 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.di.injectViewModel
-import com.daniebeler.pfpixelix.ui.composables.InfinitePostsList
+import com.daniebeler.pfpixelix.ui.composables.widgets.InfinitePostsList
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import org.jetbrains.compose.resources.stringResource
@@ -24,11 +24,11 @@ fun HomeTimelineComposable(
     viewModel: HomeTimelineViewModel = injectViewModel(key = "home-timeline-key") { homeTimelineViewModel }
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
-        InfinitePostsList(items = viewModel.homeTimelineState.homeTimeline,
+        InfinitePostsList(items = viewModel.timelineState.posts,
             contentPaddingTop = 32.dp,
-            isLoading = viewModel.homeTimelineState.isLoading,
-            isRefreshing = viewModel.homeTimelineState.refreshing,
-            error = viewModel.homeTimelineState.error,
+            isLoading = viewModel.timelineState.isLoading,
+            isRefreshing = viewModel.timelineState.isRefreshing,
+            error = viewModel.timelineState.error,
             endReached = false,
             navController = navController,
             emptyMessage = EmptyState(icon = Icons.Outlined.PhotoLibrary,

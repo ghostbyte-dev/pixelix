@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.domain.model.Post
-import com.daniebeler.pfpixelix.ui.composables.CustomPost
+import com.daniebeler.pfpixelix.ui.composables.widgets.CustomPost
 import com.daniebeler.pfpixelix.ui.composables.post.PostComposable
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 import com.daniebeler.pfpixelix.ui.composables.states.EndOfListComposable

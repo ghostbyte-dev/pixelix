@@ -8,7 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.daniebeler.pfpixelix.ui.composables.CustomLoader
+import com.daniebeler.pfpixelix.ui.composables.widgets.CustomLoader
 
 @Composable
 fun LoadingComposable(isLoading: Boolean) {

@@ -45,7 +45,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.service.platform.PlatformFeatures
-import com.daniebeler.pfpixelix.ui.composables.InfiniteListHandler
+import com.daniebeler.pfpixelix.ui.composables.widgets.InfiniteListHandler
 import com.daniebeler.pfpixelix.ui.composables.profile.CollectionsComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.PostsWrapperComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.ProfileTopSection

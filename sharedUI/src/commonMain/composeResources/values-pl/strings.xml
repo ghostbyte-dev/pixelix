@@ -76,7 +76,7 @@
     <string name="others">inne</string>
     <string name="yearly">rocznie</string>
     <string name="monthly">miesięcznie</string>
-    <string name="daily">codziennie</string>
+    <string name="daily">dziennie</string>
     <string name="i_don_t_have_an_account">Nie mam profilu</string>
     <string name="server_url">Adres URL serwera</string>
     <string name="are_you_sure_you_want_to_log_out">Czy na pewno chcesz się wylogować?</string>

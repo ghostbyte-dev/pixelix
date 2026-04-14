@@ -1,3 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="notifications">Teavitused</string>
+    <string name="settings">Seadistused</string>
+    <string name="liked_posts">Meeldivaks märgitud postitused</string>
+    <string name="follow">Jälgi</string>
+    <string name="unfollow">Lõpeta jälgimine</string>
+    <string name="followers">Jälgijad</string>
+    <plurals name="follower">
+        <item quantity="one">Jälgija</item>
+        <item quantity="other">Jälgijad</item>
+    </plurals>
+    <plurals name="following">
+        <item quantity="one">Sinu jälgitavad</item>
+    </plurals>
+    <plurals name="posts">
+        <item quantity="one">Postitus</item>
+        <item quantity="other">Postitust</item>
+    </plurals>
+    <string name="hashtags">Teemaviited</string>
+    <string name="reblogged_your_post">kordas sinu postitust</string>
+    <string name="liked_your_post">märkis sinu postituse meeldivaks</string>
+    <string name="followed_you">hakkas sind jälgima</string>
+    <string name="share_this_post">Jaga seda postitust</string>
+    <string name="trending">Hetkel populaarne</string>
+    <string name="accounts">Profiilid</string>
+    <string name="rules">Reeglid</string>
+    <string name="instance_version">Serveri versioon</string>
+    <string name="terms_of_use">Kasutustingimused</string>
+    <string name="privacy_policy">Andmekaitsepõhimõtted</string>
+    <string name="admin">Peakasutaja</string>
+    <string name="users">Kasutajad</string>
+    <string name="stats">Statistika</string>
+    <string name="unblock">lõpeta blokeerimine</string>
+    <string name="unblock_caps">Lõpeta blokeerimine</string>
+    <string name="unblock_account">Kas lõpetad profiili blokeerimise?</string>
+    <string name="confirm_to_unblock_this_account">Kinnita selle profiili blokeerimise lõpetamine</string>
+    <string name="no_blocked_accounts">blokeeritud profiile pole</string>
+    <string name="cancel">Katkesta</string>
+    <string name="post_by">Postitus kasutajalt</string>
+    <string name="followed_hashtags">Jälgitavad teemaviited</string>
+    <string name="blocked_accounts">Blokeeritud profiilid</string>
+    <string name="muted_accounts">Summutatud profiilid</string>
+    <string name="logout">Logi välja</string>
+    <string name="open_in_browser">Ava veebibrauseris</string>
+    <string name="share_this_profile">Jaga seda profiili</string>
+    <string name="block_this_profile">Blokeeri see profiil</string>
+    <string name="unblock_this_profile">Lõpeta selle profiili blokeerimine</string>
+    <string name="mute_this_profile">Summuta see profiil</string>
+    <string name="unmute_this_profile">Lõpeta selle profiili summutamine</string>
+    <string name="load_more">Laadi veel</string>
+    <string name="liked_by">Selle märkis meeldivaks</string>
+    <string name="delete_this_post">Kustuta see postitus</string>
+    <string name="delete_post">Kas kustutame postituse?</string>
+    <string name="this_action_cannot_be_undone">Seda tegevust ei saa tagasi pöörata</string>
+    <string name="delete">Kustuta</string>
+    <string name="this_is_the_end">See ongi Lõpp!</string>
+    <string name="and">ja</string>
 </resources>

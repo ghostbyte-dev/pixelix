@@ -99,7 +99,7 @@ fun InfinitePostsList(
         ToTopButton(staggeredGridState) { onRefresh() }
     }
 
-    InfiniteStaggeredGridHandler(lazyStaggeredGridState = staggeredGridState) {
+    InfiniteStaggeredGridHandler(lazyStaggeredGridState = staggeredGridState, itemCount = items.size) {
         getItemsPaginated()
     }
 }

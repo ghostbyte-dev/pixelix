@@ -232,7 +232,7 @@ fun NotificationsComposable(
             }
         }
 
-        InfiniteStaggeredGridHandler(lazyStaggeredGridState = staggeredGridState) {
+        InfiniteStaggeredGridHandler(lazyStaggeredGridState = staggeredGridState, itemCount = viewModel.notificationsState.notifications.size) {
             viewModel.getNotificationsPaginated()
         }
     }

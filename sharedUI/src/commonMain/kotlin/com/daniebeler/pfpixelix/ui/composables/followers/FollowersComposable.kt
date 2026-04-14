@@ -77,7 +77,7 @@ fun FollowersComposable(
         )
     }
 
-    InfiniteStaggeredGridHandler(lazyStaggeredGridState = staggeredGridState) {
+    InfiniteStaggeredGridHandler(lazyStaggeredGridState = staggeredGridState, itemCount = viewModel.followersState.followers.size) {
         viewModel.getFollowersPaginated()
     }
 

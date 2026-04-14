@@ -177,7 +177,7 @@ fun privateInfinitePostsGrid(
 
     }
 
-    InfiniteStaggeredGridHandler(lazyStaggeredGridState = lazyStaggeredGridState) {
+    InfiniteStaggeredGridHandler(lazyStaggeredGridState = lazyStaggeredGridState, itemCount = items.size) {
         getItemsPaginated()
     }
 }

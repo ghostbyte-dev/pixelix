@@ -1,14 +1,12 @@
 package com.daniebeler.pfpixelix.ui.composables.widgets
 
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.snapshotFlow
-import kotlinx.coroutines.flow.distinctUntilChanged
 
 @Composable
 fun InfiniteListHandler(
@@ -16,82 +14,43 @@ fun InfiniteListHandler(
     buffer: Int = 2,
     onLoadMore: () -> Unit
 ) {
-    val loadMore = remember {
+    val shouldLoad by remember {
         derivedStateOf {
             val layoutInfo = lazyListState.layoutInfo
             val totalItems = layoutInfo.totalItemsCount
             val lastVisibleItemIndex = (layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0) + 1
-            if (totalItems != 0) {
-                lastVisibleItemIndex > (totalItems - buffer)
-            } else {
-                false
-            }
+            totalItems != 0 && lastVisibleItemIndex > (totalItems - buffer)
         }
     }
 
-    LaunchedEffect(loadMore) {
-        snapshotFlow { loadMore.value }
-            .distinctUntilChanged()
-            .collect {
-                onLoadMore()
-            }
-    }
-}
-
-@Composable
-fun InfiniteGridHandler(
-    lazyGridState: LazyGridState,
-    buffer: Int = 2,
-    onLoadMore: () -> Unit
-) {
-    val loadMore = remember {
-        derivedStateOf {
-            val layoutInfo = lazyGridState.layoutInfo
-            val totalItems = layoutInfo.totalItemsCount
-            val lastVisibleItemIndex = (layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0) + 1
-
-            if (totalItems != 0) {
-                lastVisibleItemIndex > (totalItems - buffer)
-            } else {
-                false
-            }
+    if (shouldLoad) {
+        val totalItems = lazyListState.layoutInfo.totalItemsCount
+        LaunchedEffect(totalItems) {
+            onLoadMore()
         }
-    }
-
-    LaunchedEffect(loadMore) {
-        snapshotFlow { loadMore.value }
-            .distinctUntilChanged()
-            .collect {
-                onLoadMore()
-            }
     }
 }
 
 @Composable
 fun InfiniteStaggeredGridHandler(
     lazyStaggeredGridState: LazyStaggeredGridState,
+    itemCount: Int,
     buffer: Int = 2,
     onLoadMore: () -> Unit
 ) {
-    val loadMore = remember {
+    val shouldLoad by remember {
         derivedStateOf {
             val layoutInfo = lazyStaggeredGridState.layoutInfo
             val totalItems = layoutInfo.totalItemsCount
             val lastVisibleItemIndex = (layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0) + 1
-
-            if (totalItems != 0) {
-                lastVisibleItemIndex > (totalItems - buffer)
-            } else {
-                false
-            }
+            totalItems != 0 && lastVisibleItemIndex > (totalItems - buffer)
         }
     }
 
-    LaunchedEffect(loadMore) {
-        snapshotFlow { loadMore.value }
-            .distinctUntilChanged()
-            .collect {
-                onLoadMore()
-            }
+    if (shouldLoad) {
+        val totalItems = lazyStaggeredGridState.layoutInfo.totalItemsCount
+        LaunchedEffect(totalItems, itemCount) {
+            onLoadMore()
+        }
     }
 }

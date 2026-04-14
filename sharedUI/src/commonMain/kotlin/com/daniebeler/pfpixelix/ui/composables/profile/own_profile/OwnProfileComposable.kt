@@ -220,7 +220,7 @@ fun OwnProfileComposable(
         )
     }
 
-    InfiniteStaggeredGridHandler(lazyStaggeredGridState = lazyGridState) {
+    InfiniteStaggeredGridHandler(lazyStaggeredGridState = lazyGridState, itemCount = viewModel.postsState.posts.size) {
         viewModel.getPostsPaginated()
     }
 

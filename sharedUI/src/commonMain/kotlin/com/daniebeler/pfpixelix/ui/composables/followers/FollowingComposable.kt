@@ -80,7 +80,7 @@ fun FollowingComposable(
         )
     }
 
-    InfiniteStaggeredGridHandler(lazyStaggeredGridState = staggeredGridState) {
+    InfiniteStaggeredGridHandler(lazyStaggeredGridState = staggeredGridState, itemCount = viewModel.followingState.following.size) {
         viewModel.getFollowingPaginated()
     }
 

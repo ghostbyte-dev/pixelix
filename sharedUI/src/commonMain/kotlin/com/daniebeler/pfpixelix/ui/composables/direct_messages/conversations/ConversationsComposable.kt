@@ -156,7 +156,7 @@ fun ConversationsComposable(
             ErrorComposable(message = viewModel.conversationsState.error)
         }
 
-        InfiniteStaggeredGridHandler(lazyStaggeredGridState = staggeredGridState) {
+        InfiniteStaggeredGridHandler(lazyStaggeredGridState = staggeredGridState, itemCount = viewModel.conversationsState.conversations.size) {
             //viewModel.getNotificationsPaginated()
         }
 

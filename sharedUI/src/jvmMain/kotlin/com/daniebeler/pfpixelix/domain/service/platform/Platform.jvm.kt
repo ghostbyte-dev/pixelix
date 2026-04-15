@@ -15,7 +15,28 @@ actual class Platform actual constructor(
     private val prefs: UserPreferences
 ) {
     actual fun openUrl(url: String) {
-        Desktop.getDesktop().browse(URI(url))
+        val os = System.getProperty("os.name").lowercase()
+
+        if (os.contains("linux")) {
+            try {
+                ProcessBuilder("xdg-open", url).start()
+            } catch (e: Exception) {
+                println("Flatpak: Failed to open URL via xdg-open: ${e.message}")
+                runCatching {
+                    if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+                        Desktop.getDesktop().browse(URI(url))
+                    }
+                }
+            }
+        } else {
+            try {
+                if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
+                    Desktop.getDesktop().browse(URI(url))
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
     }
 
     actual fun dismissBrowser() {}

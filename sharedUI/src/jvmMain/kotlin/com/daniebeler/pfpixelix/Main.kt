@@ -39,7 +39,7 @@ fun desktopApp() {
                     )
                 }
             } else {
-                println("Deep linking (APP_OPEN_URI) is not supported on this platform.")
+                println("APP_OPEN_URI is not supported on this platform.")
             }
         }
 

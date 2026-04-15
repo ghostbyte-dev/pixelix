@@ -1,7 +1,7 @@
-import org.jetbrains.compose.desktop.application.dsl.TargetFormat.Deb
+
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat.Dmg
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat.Msi
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.compose.desktop.application.dsl.TargetFormat.Rpm
 
 plugins {
     alias(libs.plugins.compose.compiler)
@@ -22,7 +22,7 @@ compose.desktop {
         mainClass = "MainKt"
 
         nativeDistributions {
-            targetFormats(Dmg, Msi, Deb)
+            targetFormats(Dmg, Msi, Rpm)
             packageName = "Pixelix"
             packageVersion = "1.0.0"
 

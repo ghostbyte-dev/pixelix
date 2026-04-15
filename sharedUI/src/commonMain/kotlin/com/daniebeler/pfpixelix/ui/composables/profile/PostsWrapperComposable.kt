@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -23,12 +24,10 @@ import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.ui.composables.widgets.CustomPost
 import com.daniebeler.pfpixelix.ui.composables.post.PostComposable
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
+import com.daniebeler.pfpixelix.ui.composables.states.EmptyStateComposable
 import com.daniebeler.pfpixelix.ui.composables.states.EndOfListComposable
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
-import com.daniebeler.pfpixelix.ui.composables.states.FixedHeightEmptyStateComposable
-import com.daniebeler.pfpixelix.ui.composables.states.FixedHeightLoadingComposable
-import com.daniebeler.pfpixelix.ui.composables.states.FullscreenEmptyStateComposable
-import com.daniebeler.pfpixelix.ui.composables.states.FullscreenLoadingComposable
+import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 
 fun LazyStaggeredGridScope.PostsWrapperComposable(
     posts: List<Post>,
@@ -106,7 +105,7 @@ private fun LazyStaggeredGridScope.PostsGridInScope(
                         post = posts[0],
                         navController = navController,
                         isFullQuality = true,
-                        customModifier = Modifier.fillMaxSize()
+                        modifier = Modifier.fillMaxSize()
                     )
                 }
                 for (col in 0 until smallColumnsCount) {
@@ -154,14 +153,14 @@ private fun LazyStaggeredGridScope.PostsGridInScope(
 
     if (!isRefreshing && isLoading) {
         item(span = StaggeredGridItemSpan.FullLine) {
-            FixedHeightLoadingComposable()
+            LoadingComposable(Modifier.fillMaxWidth().padding(vertical = 50.dp))
         }
     }
 
     if (posts.isEmpty()) {
         if (!isLoading && error.isEmpty()) {
             item(span = StaggeredGridItemSpan.FullLine) {
-                FixedHeightEmptyStateComposable(emptyMessage)
+                EmptyStateComposable(emptyMessage, Modifier.fillMaxWidth().padding(vertical = 50.dp))
             }
         }
     }
@@ -207,7 +206,7 @@ private fun LazyStaggeredGridScope.PostsListInScope(
 
         if (isLoading && !isRefreshing) {
             item(span = StaggeredGridItemSpan.FullLine) {
-                FixedHeightLoadingComposable()
+                LoadingComposable(Modifier.fillMaxWidth().padding(vertical = 50.dp))
             }
         }
 
@@ -220,13 +219,13 @@ private fun LazyStaggeredGridScope.PostsListInScope(
 
     if (posts.isEmpty() && !isLoading && error.isEmpty()) {
         item(span = StaggeredGridItemSpan.FullLine) {
-            FullscreenEmptyStateComposable(emptyMessage)
+            EmptyStateComposable(emptyMessage)
         }
     }
 
     if (!isRefreshing && posts.isEmpty() && isLoading) {
         item(span = StaggeredGridItemSpan.FullLine) {
-            FullscreenLoadingComposable()
+            LoadingComposable()
         }
     }
 

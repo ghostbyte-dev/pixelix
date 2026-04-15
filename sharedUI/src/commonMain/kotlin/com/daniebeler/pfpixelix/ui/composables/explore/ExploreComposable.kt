@@ -71,7 +71,7 @@ import com.daniebeler.pfpixelix.domain.model.SavedSearchType
 import com.daniebeler.pfpixelix.ui.composables.widgets.CustomHashtag
 import com.daniebeler.pfpixelix.ui.composables.custom_account.CustomAccount
 import com.daniebeler.pfpixelix.ui.composables.explore.trending.TrendingComposable
-import com.daniebeler.pfpixelix.ui.composables.states.FullscreenLoadingComposable
+import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import com.daniebeler.pfpixelix.utils.imeAwareInsets
 import kotlinx.coroutines.launch
@@ -172,10 +172,12 @@ fun ExploreComposable(
                     items(viewModel.savedSearches.reversed()) {
                         if (it.savedSearchType == SavedSearchType.Account) {
                             Row {
-                                CustomAccount(account = it.account!!,
+                                CustomAccount(
+                                    account = it.account!!,
                                     relationship = null,
                                     navController = navController,
-                                    { viewModel.deleteSavedSearch(it) })
+                                    removeSavedSearch = { viewModel.deleteSavedSearch(it) }
+                                )
                             }
                         } else {
                             PastSearchItem(item = it, navController, { text ->
@@ -212,7 +214,7 @@ fun ExploreComposable(
             }
 
             if (viewModel.searchState.isLoading) {
-                FullscreenLoadingComposable()
+                LoadingComposable()
             }
         }
         Box(

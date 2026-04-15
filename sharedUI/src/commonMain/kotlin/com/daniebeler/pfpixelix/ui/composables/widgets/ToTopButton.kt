@@ -64,7 +64,7 @@ private fun ToTopButtonContent(visible: Boolean, onScrollToTop: suspend () -> Un
                 }
             },
                 containerColor = MaterialTheme.colorScheme.surfaceContainer) {
-                Icon(vectorResource(Res.drawable.chevron_up_outline), contentDescription = "")
+                Icon(vectorResource(Res.drawable.chevron_up_outline), contentDescription = null)
             }
         }
     }

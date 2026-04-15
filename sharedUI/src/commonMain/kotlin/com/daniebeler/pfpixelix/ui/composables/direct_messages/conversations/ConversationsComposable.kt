@@ -48,7 +48,7 @@ import com.daniebeler.pfpixelix.ui.composables.SheetItem
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 import com.daniebeler.pfpixelix.ui.composables.states.EndOfListComposable
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
-import com.daniebeler.pfpixelix.ui.composables.states.FullscreenEmptyStateComposable
+import com.daniebeler.pfpixelix.ui.composables.states.EmptyStateComposable
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pfpixelix.ui.composables.widgets.ScreenScaffold
 import com.daniebeler.pfpixelix.ui.navigation.Destination
@@ -140,7 +140,7 @@ fun ConversationsComposable(
                 }
 
             if (!viewModel.conversationsState.isLoading && viewModel.conversationsState.error.isEmpty() && viewModel.conversationsState.conversations.isEmpty()) {
-                FullscreenEmptyStateComposable(
+                EmptyStateComposable(
                     EmptyState(
                         icon = vectorResource(Res.drawable.mail_outline),
                         heading = stringResource(

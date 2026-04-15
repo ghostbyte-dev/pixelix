@@ -55,7 +55,7 @@ import com.daniebeler.pfpixelix.ui.composables.profile.ProfileTopSection
 import com.daniebeler.pfpixelix.ui.composables.profile.SwitchViewComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.server_stats.DomainSoftwareComposable
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
-import com.daniebeler.pfpixelix.ui.composables.states.FullscreenErrorComposable
+import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import com.daniebeler.pfpixelix.utils.DomainFormat
 import org.jetbrains.compose.resources.stringResource
@@ -178,7 +178,7 @@ fun OwnProfileComposable(
                 }
 
                 if (viewModel.postsState.posts.isEmpty() && viewModel.postsState.error.isNotBlank()) {
-                    FullscreenErrorComposable(message = viewModel.postsState.error)
+                    ErrorComposable(message = viewModel.postsState.error, modifier = Modifier.fillMaxSize().padding(36.dp, 20.dp))
                 }
                 }
             }

@@ -2,6 +2,7 @@ package com.daniebeler.pfpixelix.ui.composables.settings.followed_hashtags
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
@@ -19,9 +20,9 @@ import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.ui.composables.widgets.CustomHashtag
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
-import com.daniebeler.pfpixelix.ui.composables.states.FullscreenEmptyStateComposable
-import com.daniebeler.pfpixelix.ui.composables.states.FullscreenErrorComposable
-import com.daniebeler.pfpixelix.ui.composables.states.FullscreenLoadingComposable
+import com.daniebeler.pfpixelix.ui.composables.states.EmptyStateComposable
+import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
+import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pfpixelix.ui.composables.widgets.ScreenScaffold
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import org.jetbrains.compose.resources.stringResource
@@ -54,15 +55,15 @@ fun FollowedHashtagsComposable(
 
             if (viewModel.followedHashtagsState.followedHashtags.isEmpty()) {
                 if (viewModel.followedHashtagsState.isLoading && !viewModel.followedHashtagsState.isRefreshing) {
-                    FullscreenLoadingComposable()
+                    LoadingComposable()
                 }
 
                 if (viewModel.followedHashtagsState.error.isNotEmpty()) {
-                    FullscreenErrorComposable(message = viewModel.followedHashtagsState.error)
+                    ErrorComposable(message = viewModel.followedHashtagsState.error, modifier = Modifier.fillMaxSize().padding(36.dp, 20.dp))
                 }
 
                 if (!viewModel.followedHashtagsState.isLoading && viewModel.followedHashtagsState.error.isEmpty()) {
-                    FullscreenEmptyStateComposable(
+                    EmptyStateComposable(
                         EmptyState(
                             icon = Icons.Outlined.Tag,
                             heading = stringResource(Res.string.no_followed_hashtags),

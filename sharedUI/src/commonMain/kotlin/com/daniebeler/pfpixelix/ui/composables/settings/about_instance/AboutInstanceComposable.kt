@@ -29,8 +29,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.di.injectViewModel
-import com.daniebeler.pfpixelix.ui.composables.states.FullscreenErrorComposable
-import com.daniebeler.pfpixelix.ui.composables.states.FullscreenLoadingComposable
+import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
+import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pfpixelix.ui.composables.widgets.ScreenScaffold
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import com.daniebeler.pfpixelix.utils.StringFormat
@@ -228,11 +228,11 @@ fun AboutInstanceComposable(
         }
 
         if (viewModel.instanceState.isLoading) {
-            FullscreenLoadingComposable()
+            LoadingComposable()
         }
 
         if (viewModel.instanceState.error.isNotBlank()) {
-            FullscreenErrorComposable(message = viewModel.instanceState.error)
+            ErrorComposable(message = viewModel.instanceState.error, modifier = Modifier.fillMaxSize().padding(36.dp, 20.dp))
         }
     }
 }

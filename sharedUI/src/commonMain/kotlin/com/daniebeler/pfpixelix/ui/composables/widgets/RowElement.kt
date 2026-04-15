@@ -21,7 +21,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -31,64 +30,18 @@ import org.jetbrains.compose.resources.vectorResource
 
 @Composable
 fun ButtonRowElement(
-    icon: DrawableResource,
     text: String,
-    smallText: String = "",
     onClick: () -> Unit,
-    color: Color = MaterialTheme.colorScheme.onBackground
-) {
-    Row(verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable {
-                onClick()
-            }) {
-        Icon(
-            imageVector = vectorResource(icon),
-            contentDescription = "",
-            Modifier.padding(start = 18.dp, top = 12.dp, bottom = 12.dp),
-            tint = color
-        )
-
-        Spacer(modifier = Modifier.width(12.dp))
-
-        Column(verticalArrangement = Arrangement.Center) {
-            Text(text = text, color = color)
-            if (smallText.isNotBlank()) {
-                Text(text = smallText, fontSize = 12.sp, lineHeight = 6.sp, color = color)
-            }
-        }
-    }
-}
-
-@Composable
-fun ButtonRowElementWithRoundedImage(
-    icon: DrawableResource,
-    text: String,
     smallText: String = "",
-    onClick: () -> Unit,
-    color: Color = MaterialTheme.colorScheme.onBackground
+    color: Color = MaterialTheme.colorScheme.onBackground,
+    icon: @Composable () -> Unit
 ) {
-    Row(verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable {
-                onClick()
-            }) {
-        Image(
-            painter = painterResource(icon),
-            contentDescription = "",
-            Modifier
-                .padding(start = 18.dp, top = 12.dp, bottom = 12.dp)
-                .height(24.dp)
-                .width(24.dp)
-                .clip(
-                    CircleShape
-                )
-        )
-
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.fillMaxWidth().clickable(onClick = onClick)
+    ) {
+        icon()
         Spacer(modifier = Modifier.width(12.dp))
-
         Column(verticalArrangement = Arrangement.Center) {
             Text(text = text, color = color)
             if (smallText.isNotBlank()) {
@@ -100,52 +53,74 @@ fun ButtonRowElementWithRoundedImage(
 
 @Composable
 fun ButtonRowElement(
-    image: ImageBitmap,
+    icon: DrawableResource,
     text: String,
-    smallText: String = "",
     onClick: () -> Unit,
+    smallText: String = "",
     color: Color = MaterialTheme.colorScheme.onBackground
 ) {
-    Row(verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable {
-                onClick()
-            }) {
+    ButtonRowElement(text = text, onClick = onClick, smallText = smallText, color = color) {
+        Icon(
+            imageVector = vectorResource(icon),
+            contentDescription = null,
+            modifier = Modifier.padding(start = 18.dp, top = 12.dp, bottom = 12.dp),
+            tint = color
+        )
+    }
+}
+
+@Composable
+fun ButtonRowElementWithRoundedImage(
+    icon: DrawableResource,
+    text: String,
+    onClick: () -> Unit,
+    smallText: String = "",
+    color: Color = MaterialTheme.colorScheme.onBackground
+) {
+    ButtonRowElement(text = text, onClick = onClick, smallText = smallText, color = color) {
         Image(
-            image,
-            contentDescription = "",
-            Modifier
+            painter = painterResource(icon),
+            contentDescription = null,
+            modifier = Modifier
                 .padding(start = 18.dp, top = 12.dp, bottom = 12.dp)
                 .height(24.dp)
                 .width(24.dp)
-                .clip(
-                    CircleShape
-                )
+                .clip(CircleShape)
         )
-
-        Spacer(modifier = Modifier.width(12.dp))
-
-        Column(verticalArrangement = Arrangement.Center) {
-            Text(text = text, color = color)
-            if (smallText.isNotBlank()) {
-                Text(text = smallText, fontSize = 12.sp, lineHeight = 6.sp, color = color)
-            }
-        }
     }
 }
+
+@Composable
+fun ButtonRowElement(
+    image: ImageBitmap,
+    text: String,
+    onClick: () -> Unit,
+    smallText: String = "",
+    color: Color = MaterialTheme.colorScheme.onBackground
+) {
+    ButtonRowElement(text = text, onClick = onClick, smallText = smallText, color = color) {
+        Image(
+            image,
+            contentDescription = null,
+            modifier = Modifier
+                .padding(start = 18.dp, top = 12.dp, bottom = 12.dp)
+                .height(24.dp)
+                .width(24.dp)
+                .clip(CircleShape)
+        )
+    }
+}
+
 @Composable
 fun SwitchRowItem(
     icon: DrawableResource,
     text: String,
-    smallText: String = "",
     isChecked: Boolean,
-    onCheckedChange: (checked: Boolean) -> Unit
+    onCheckedChange: (checked: Boolean) -> Unit,
+    smallText: String = ""
 ) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 18.dp),
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 18.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -171,6 +146,6 @@ fun SwitchRowItem(
                 }
             }
         }
-        Switch(checked = isChecked, onCheckedChange = { onCheckedChange(it) })
+        Switch(checked = isChecked, onCheckedChange = onCheckedChange)
     }
 }

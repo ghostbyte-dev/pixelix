@@ -22,7 +22,7 @@ import com.daniebeler.pfpixelix.ui.composables.widgets.InfiniteStaggeredGridHand
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 import com.daniebeler.pfpixelix.ui.composables.states.EndOfListComposable
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
-import com.daniebeler.pfpixelix.ui.composables.states.FullscreenEmptyStateComposable
+import com.daniebeler.pfpixelix.ui.composables.states.EmptyStateComposable
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import org.jetbrains.compose.resources.stringResource
 import pixelix.app.generated.resources.Res
@@ -68,7 +68,7 @@ fun FollowersComposable(
         else
             stringResource(Res.string.no_followers_yet)
 
-        FullscreenEmptyStateComposable(
+        EmptyStateComposable(
             emptyState = EmptyState(
                 icon = Icons.Outlined.Groups,
                 heading = stringResource(Res.string.empty),

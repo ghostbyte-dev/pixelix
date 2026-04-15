@@ -118,7 +118,7 @@ fun TrendingHashtagElement(
                         .width(140.dp)
                         .height(140.dp)
                 ) {
-                    CustomPost(post = post, navController = navController, customModifier = customModifier)
+                    CustomPost(post = post, navController = navController, modifier = customModifier)
                 }
             }
         }

@@ -8,6 +8,9 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 
+private fun shouldLoadMore(totalItems: Int, lastVisibleIndex: Int, buffer: Int): Boolean =
+    totalItems != 0 && lastVisibleIndex + 1 > totalItems - buffer
+
 @Composable
 fun InfiniteListHandler(
     lazyListState: LazyListState,
@@ -17,15 +20,16 @@ fun InfiniteListHandler(
     val shouldLoad by remember {
         derivedStateOf {
             val layoutInfo = lazyListState.layoutInfo
-            val totalItems = layoutInfo.totalItemsCount
-            val lastVisibleItemIndex = (layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0) + 1
-            totalItems != 0 && lastVisibleItemIndex > (totalItems - buffer)
+            shouldLoadMore(
+                totalItems = layoutInfo.totalItemsCount,
+                lastVisibleIndex = layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0,
+                buffer = buffer
+            )
         }
     }
 
     if (shouldLoad) {
-        val totalItems = lazyListState.layoutInfo.totalItemsCount
-        LaunchedEffect(totalItems) {
+        LaunchedEffect(lazyListState.layoutInfo.totalItemsCount) {
             onLoadMore()
         }
     }
@@ -41,15 +45,16 @@ fun InfiniteStaggeredGridHandler(
     val shouldLoad by remember {
         derivedStateOf {
             val layoutInfo = lazyStaggeredGridState.layoutInfo
-            val totalItems = layoutInfo.totalItemsCount
-            val lastVisibleItemIndex = (layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0) + 1
-            totalItems != 0 && lastVisibleItemIndex > (totalItems - buffer)
+            shouldLoadMore(
+                totalItems = layoutInfo.totalItemsCount,
+                lastVisibleIndex = layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0,
+                buffer = buffer
+            )
         }
     }
 
     if (shouldLoad) {
-        val totalItems = lazyStaggeredGridState.layoutInfo.totalItemsCount
-        LaunchedEffect(totalItems, itemCount) {
+        LaunchedEffect(lazyStaggeredGridState.layoutInfo.totalItemsCount, itemCount) {
             onLoadMore()
         }
     }

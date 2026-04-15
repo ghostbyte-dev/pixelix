@@ -26,25 +26,20 @@ import com.daniebeler.pfpixelix.domain.model.Tag
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 
 @Composable
-fun CustomHashtag(hashtag: Tag, navController: NavController) {
-    CustomHashtagPrivate(hashtag = hashtag, onClick = {}, navController = navController)
-}
-
-@Composable
-fun CustomHashtag(hashtag: Tag, onClick: () -> Unit, navController: NavController) {
-    CustomHashtagPrivate(hashtag = hashtag, onClick = onClick, navController = navController)
-}
-
-@Composable
-private fun CustomHashtagPrivate(hashtag: Tag, onClick: () -> Unit, navController: NavController) {
+fun CustomHashtag(
+    hashtag: Tag,
+    navController: NavController,
+    onClick: () -> Unit = {}
+) {
     Row(
-        Modifier
+        modifier = Modifier
             .padding(horizontal = 12.dp, vertical = 8.dp)
             .fillMaxWidth()
             .clickable {
                 onClick()
                 navController.navigate(Destination.HashtagTimeline(hashtag.name))
-            }, verticalAlignment = Alignment.CenterVertically
+            },
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Box(
             modifier = Modifier
@@ -55,7 +50,7 @@ private fun CustomHashtagPrivate(hashtag: Tag, onClick: () -> Unit, navControlle
         ) {
             Icon(
                 imageVector = Icons.Outlined.Tag,
-                contentDescription = "",
+                contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary
             )
         }
@@ -63,9 +58,9 @@ private fun CustomHashtagPrivate(hashtag: Tag, onClick: () -> Unit, navControlle
         Spacer(modifier = Modifier.width(10.dp))
 
         Column {
-            Text(text = "#" + hashtag.name)
+            Text(text = "#${hashtag.name}")
             Text(
-                text = hashtag.count.toString() + " posts",
+                text = "${hashtag.count} posts",
                 fontSize = 14.sp,
                 color = MaterialTheme.colorScheme.primary
             )

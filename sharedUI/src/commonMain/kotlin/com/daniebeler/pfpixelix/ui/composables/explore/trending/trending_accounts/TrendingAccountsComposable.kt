@@ -14,9 +14,9 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
-import com.daniebeler.pfpixelix.ui.composables.states.FullscreenEmptyStateComposable
-import com.daniebeler.pfpixelix.ui.composables.states.FullscreenErrorComposable
-import com.daniebeler.pfpixelix.ui.composables.states.FullscreenLoadingComposable
+import com.daniebeler.pfpixelix.ui.composables.states.EmptyStateComposable
+import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
+import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import org.jetbrains.compose.resources.stringResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.no_trending_profiles
@@ -47,15 +47,15 @@ fun TrendingAccountsComposable(
 
     if (viewModel.trendingAccountsState.trendingAccounts.isEmpty()) {
         if (viewModel.trendingAccountsState.isLoading && !viewModel.trendingAccountsState.isRefreshing) {
-            FullscreenLoadingComposable()
+            LoadingComposable()
         }
 
         if (viewModel.trendingAccountsState.error.isNotEmpty()) {
-            FullscreenErrorComposable(message = viewModel.trendingAccountsState.error)
+            ErrorComposable(message = viewModel.trendingAccountsState.error, modifier = Modifier.fillMaxSize().padding(36.dp, 20.dp))
         }
 
         if (!viewModel.trendingAccountsState.isLoading && viewModel.trendingAccountsState.error.isEmpty()) {
-            FullscreenEmptyStateComposable(EmptyState(heading = stringResource(Res.string.no_trending_profiles)))
+            EmptyStateComposable(EmptyState(heading = stringResource(Res.string.no_trending_profiles)))
         }
     }
 }

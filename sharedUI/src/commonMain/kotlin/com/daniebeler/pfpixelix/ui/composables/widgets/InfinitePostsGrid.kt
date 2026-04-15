@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
@@ -24,12 +25,10 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
+import com.daniebeler.pfpixelix.ui.composables.states.EmptyStateComposable
 import com.daniebeler.pfpixelix.ui.composables.states.EndOfListComposable
-import com.daniebeler.pfpixelix.ui.composables.states.FixedHeightEmptyStateComposable
-import com.daniebeler.pfpixelix.ui.composables.states.FixedHeightLoadingComposable
-import com.daniebeler.pfpixelix.ui.composables.states.FullscreenEmptyStateComposable
-import com.daniebeler.pfpixelix.ui.composables.states.FullscreenErrorComposable
-import com.daniebeler.pfpixelix.ui.composables.states.FullscreenLoadingComposable
+import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
+import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -117,7 +116,7 @@ fun privateInfinitePostsGrid(
             CustomPost(
                 post = photo,
                 navController = navController,
-                customModifier = Modifier,
+                modifier = Modifier,
                 edit = edit,
                 editRemove = { id -> editRemove(id) },
                 onClick = onClick
@@ -142,7 +141,7 @@ fun privateInfinitePostsGrid(
         if (before != null) {
             if (isLoading) {
                 item(span = StaggeredGridItemSpan.FullLine) {
-                    FixedHeightLoadingComposable()
+                    LoadingComposable(Modifier.fillMaxWidth().padding(vertical = 50.dp))
                 }
             }
 
@@ -150,7 +149,7 @@ fun privateInfinitePostsGrid(
             if (items.isEmpty()) {
                 if (!isLoading && error.isEmpty()) {
                     item(span = StaggeredGridItemSpan.FullLine) {
-                        FixedHeightEmptyStateComposable(emptyMessage)
+                        EmptyStateComposable(emptyMessage, Modifier.fillMaxWidth().padding(vertical = 50.dp))
                     }
                 }
             }
@@ -162,16 +161,16 @@ fun privateInfinitePostsGrid(
     }
 
     if (items.isEmpty() && error.isNotBlank()) {
-        FullscreenErrorComposable(message = error)
+        ErrorComposable(message = error, modifier = Modifier.fillMaxSize().padding(36.dp, 20.dp))
     }
 
     if (before == null && items.isEmpty()) {
         if (isLoading && !isRefreshing) {
-            FullscreenLoadingComposable()
+            LoadingComposable()
         }
 
         if (!isLoading && error.isEmpty()) {
-            FullscreenEmptyStateComposable(emptyMessage)
+            EmptyStateComposable(emptyMessage)
         }
     }
 

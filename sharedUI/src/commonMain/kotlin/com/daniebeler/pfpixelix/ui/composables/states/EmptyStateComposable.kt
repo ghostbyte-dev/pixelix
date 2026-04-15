@@ -22,24 +22,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun FullscreenEmptyStateComposable(emptyState: EmptyState) {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+fun EmptyStateComposable(emptyState: EmptyState, modifier: Modifier = Modifier.fillMaxSize()) {
+    Box(modifier = modifier, contentAlignment = Alignment.Center) {
         InnerEmptyState(emptyState)
     }
 }
-
-@Composable
-fun FixedHeightEmptyStateComposable(emptyState: EmptyState) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 50.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        InnerEmptyState(emptyState)
-    }
-}
-
 
 @Composable
 private fun InnerEmptyState(emptyState: EmptyState) {
@@ -52,7 +39,7 @@ private fun InnerEmptyState(emptyState: EmptyState) {
         if (emptyState.icon != null) {
             Icon(
                 imageVector = emptyState.icon,
-                contentDescription = "",
+                contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(64.dp)
             )
@@ -70,9 +57,10 @@ private fun InnerEmptyState(emptyState: EmptyState) {
         if (emptyState.message.isNotBlank()) {
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = emptyState.message, Modifier.wrapContentSize(
-                    Alignment.Center
-                ), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.onSurface
+                text = emptyState.message,
+                modifier = Modifier.wrapContentSize(Alignment.Center),
+                textAlign = TextAlign.Center,
+                color = MaterialTheme.colorScheme.onSurface
             )
         }
 

@@ -51,7 +51,7 @@ import com.daniebeler.pfpixelix.ui.composables.widgets.InfiniteStaggeredGridHand
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 import com.daniebeler.pfpixelix.ui.composables.states.EndOfListComposable
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
-import com.daniebeler.pfpixelix.ui.composables.states.FullscreenEmptyStateComposable
+import com.daniebeler.pfpixelix.ui.composables.states.EmptyStateComposable
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
@@ -215,7 +215,7 @@ fun NotificationsComposable(
                     }
 
                     if (!viewModel.notificationsState.isLoading && viewModel.notificationsState.error.isEmpty() && viewModel.notificationsState.notifications.isEmpty()) {
-                        FullscreenEmptyStateComposable(
+                        EmptyStateComposable(
                             EmptyState(
                                 icon = Icons.Outlined.Email, heading = stringResource(
                                     Res.string.you_don_t_have_any_notifications

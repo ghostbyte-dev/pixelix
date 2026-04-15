@@ -14,9 +14,9 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
-import com.daniebeler.pfpixelix.ui.composables.states.FullscreenEmptyStateComposable
-import com.daniebeler.pfpixelix.ui.composables.states.FullscreenErrorComposable
-import com.daniebeler.pfpixelix.ui.composables.states.FullscreenLoadingComposable
+import com.daniebeler.pfpixelix.ui.composables.states.EmptyStateComposable
+import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
+import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import org.jetbrains.compose.resources.stringResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.no_trending_hashtags
@@ -45,15 +45,15 @@ fun TrendingHashtagsComposable(
 
         if (viewModel.trendingHashtagsState.trendingHashtags.isEmpty()) {
             if (viewModel.trendingHashtagsState.isLoading && !viewModel.trendingHashtagsState.isRefreshing) {
-                FullscreenLoadingComposable()
+                LoadingComposable()
             }
 
             if (viewModel.trendingHashtagsState.error.isNotEmpty()) {
-                FullscreenErrorComposable(message = viewModel.trendingHashtagsState.error)
+                ErrorComposable(message = viewModel.trendingHashtagsState.error, modifier = Modifier.fillMaxSize().padding(36.dp, 20.dp))
             }
 
             if (!viewModel.trendingHashtagsState.isLoading && viewModel.trendingHashtagsState.error.isEmpty()) {
-                FullscreenEmptyStateComposable(EmptyState(heading = stringResource(Res.string.no_trending_hashtags)))
+                EmptyStateComposable(EmptyState(heading = stringResource(Res.string.no_trending_hashtags)))
             }
         }
     }

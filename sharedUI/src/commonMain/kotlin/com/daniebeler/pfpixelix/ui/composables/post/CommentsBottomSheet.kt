@@ -73,7 +73,7 @@ import com.daniebeler.pfpixelix.ui.composables.widgets.SuggestionsBar
 import com.daniebeler.pfpixelix.ui.composables.hashtagMentionText.HashtagsMentionsTextView
 import com.daniebeler.pfpixelix.ui.composables.post.reply.ReplyElementViewModel
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
-import com.daniebeler.pfpixelix.ui.composables.states.FixedHeightLoadingComposable
+import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import com.daniebeler.pfpixelix.utils.TimeAgo
 import org.jetbrains.compose.resources.stringResource
@@ -409,7 +409,7 @@ private fun ReplyElement(
             }
             if (viewModel.repliesState.isLoading) {
                 Box(modifier = Modifier.padding(54.dp, 0.dp, 0.dp, 0.dp)) {
-                    FixedHeightLoadingComposable()
+                    LoadingComposable(Modifier.fillMaxWidth().padding(vertical = 50.dp))
                 }
             } else if (viewModel.repliesState.error != "") {
                 Box(modifier = Modifier.padding(54.dp, 0.dp, 0.dp, 0.dp)) {

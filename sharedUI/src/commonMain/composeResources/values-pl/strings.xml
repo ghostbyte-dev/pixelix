@@ -14,7 +14,7 @@
     <string name="unblock_this_profile">Odblokuj ten profil</string>
     <string name="mute_this_profile">Wycisz ten profil</string>
     <string name="unmute_this_profile">Cofnij wyciszenie tego profilu</string>
-    <string name="load_more">Załaduj więcej</string>
+    <string name="load_more">Wczytaj więcej</string>
     <string name="follow">Obserwuj</string>
     <string name="unfollow">Przestań obserwować</string>
     <string name="followers">Obserwujące</string>
@@ -37,20 +37,25 @@
         <item quantity="many">Wpisów</item>
         <item quantity="other">Wpisów</item>
     </plurals>
-    <string name="posts">Wpisy</string>
+    <plurals name="posts">
+        <item quantity="one">Wpis</item>
+        <item quantity="few">Wpisy</item>
+        <item quantity="many">Wpisów</item>
+        <item quantity="other">Wpisów</item>
+    </plurals>
     <string name="hashtags">Hasztagi</string>
     <string name="reblogged_your_post">podbił(a) twój wpis</string>
-    <string name="liked_your_post">polubił(a) twój post</string>
+    <string name="liked_your_post">polubił(a) twój wpis</string>
     <string name="followed_you">obserwuje cię</string>
-    <string name="share_this_post">Udostępnij ten post</string>
+    <string name="share_this_post">Udostępnij ten wpis</string>
     <string name="trending">Popularne</string>
     <string name="accounts">Profile</string>
     <string name="rules">Zasady</string>
     <string name="instance_version">Wersja serwera</string>
     <string name="terms_of_use">Warunki użytkowania</string>
-    <string name="privacy_policy">Polityka Prywatności</string>
+    <string name="privacy_policy">Polityka prywatności</string>
     <string name="admin">Administracja</string>
-    <string name="users">Użytkownicy</string>
+    <string name="users">Konta</string>
     <string name="stats">Statystyki</string>
     <string name="unblock">odblokuj</string>
     <string name="unblock_caps">Odblokuj</string>
@@ -58,12 +63,12 @@
     <string name="confirm_to_unblock_this_account">Potwierdź odblokowanie tego profilu</string>
     <string name="no_blocked_accounts">Brak zablokowanych profili</string>
     <string name="cancel">Anuluj</string>
-    <string name="post_by">Post autorstwa</string>
+    <string name="post_by">Wpis autorstwa</string>
     <string name="liked_by">Lubiany przez</string>
-    <string name="delete_this_post">Usuń ten post</string>
-    <string name="delete_post">Usunąć post?</string>
+    <string name="delete_this_post">Usuń ten wpis</string>
+    <string name="delete_post">Usunąć wpis?</string>
     <string name="this_action_cannot_be_undone">Tej akcji nie można cofnąć</string>
-    <string name="delete">Usunąć</string>
+    <string name="delete">Usuń</string>
     <string name="this_is_the_end">To już koniec!</string>
     <string name="and">oraz</string>
     <string name="followed_by">Obserwują:</string>
@@ -71,7 +76,7 @@
     <string name="others">inne</string>
     <string name="yearly">rocznie</string>
     <string name="monthly">miesięcznie</string>
-    <string name="daily">codziennie</string>
+    <string name="daily">dziennie</string>
     <string name="i_don_t_have_an_account">Nie mam profilu</string>
     <string name="server_url">Adres URL serwera</string>
     <string name="are_you_sure_you_want_to_log_out">Czy na pewno chcesz się wylogować?</string>
@@ -96,7 +101,7 @@
     <string name="new_post">Nowy wpis</string>
     <string name="release">Publikuj</string>
     <string name="alt_text">Tekst alternatywny</string>
-    <string name="caption">podpis</string>
+    <string name="caption">Podpis</string>
     <string name="sensitive_nsfw_media">Media drażliwe/NSFW</string>
     <string name="content_warning_or_spoiler_text">ostrzeżenie o treści lub spoilerze</string>
     <string name="audience">Widoczność</string>

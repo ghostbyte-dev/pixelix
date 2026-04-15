@@ -1,4 +1,4 @@
-package com.daniebeler.pfpixelix.ui.composables
+package com.daniebeler.pfpixelix.ui.composables.widgets
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.heightIn

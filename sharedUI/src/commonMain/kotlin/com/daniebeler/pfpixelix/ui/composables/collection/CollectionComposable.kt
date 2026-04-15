@@ -45,8 +45,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.di.injectViewModel
-import com.daniebeler.pfpixelix.ui.composables.ButtonRowElement
-import com.daniebeler.pfpixelix.ui.composables.InfinitePostsGrid
+import com.daniebeler.pfpixelix.ui.composables.widgets.ButtonRowElement
+import com.daniebeler.pfpixelix.ui.composables.widgets.InfinitePostsGrid
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 import org.jetbrains.compose.resources.stringResource
 import pixelix.app.generated.resources.Res

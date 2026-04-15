@@ -37,12 +37,6 @@
         <item quantity="many">Wpisów</item>
         <item quantity="other">Wpisów</item>
     </plurals>
-    <plurals name="posts">
-        <item quantity="one">Wpis</item>
-        <item quantity="few">Wpisy</item>
-        <item quantity="many">Wpisów</item>
-        <item quantity="other">Wpisów</item>
-    </plurals>
     <string name="hashtags">Hasztagi</string>
     <string name="reblogged_your_post">podbił(a) twój wpis</string>
     <string name="liked_your_post">polubił(a) twój wpis</string>

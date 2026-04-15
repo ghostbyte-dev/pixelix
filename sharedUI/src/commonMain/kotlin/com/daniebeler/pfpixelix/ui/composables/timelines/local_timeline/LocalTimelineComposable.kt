@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.di.injectViewModel
-import com.daniebeler.pfpixelix.ui.composables.InfinitePostsList
+import com.daniebeler.pfpixelix.ui.composables.widgets.InfinitePostsList
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 
 @Composable
@@ -12,11 +12,11 @@ fun LocalTimelineComposable(
     navController: NavController,
     viewModel: LocalTimelineViewModel = injectViewModel(key = "local-timeline-key") { localTimelineViewModel }
 ) {
-    InfinitePostsList(items = viewModel.localTimelineState.localTimeline,
+    InfinitePostsList(items = viewModel.timelineState.posts,
         contentPaddingTop = 30.dp,
-        isLoading = viewModel.localTimelineState.isLoading,
-        isRefreshing = viewModel.localTimelineState.refreshing,
-        error = viewModel.localTimelineState.error,
+        isLoading = viewModel.timelineState.isLoading,
+        isRefreshing = viewModel.timelineState.isRefreshing,
+        error = viewModel.timelineState.error,
         endReached = false,
         navController = navController,
         emptyMessage = EmptyState(heading = "No posts"),

@@ -1,4 +1,4 @@
-package com.daniebeler.pfpixelix.ui.composables
+package com.daniebeler.pfpixelix.ui.composables.widgets
 
 import androidx.compose.material3.DrawerDefaults
 import androidx.compose.material3.DrawerState

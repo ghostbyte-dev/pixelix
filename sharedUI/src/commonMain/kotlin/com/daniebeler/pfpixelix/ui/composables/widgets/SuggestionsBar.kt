@@ -1,9 +1,8 @@
-package com.daniebeler.pfpixelix.ui.composables
+package com.daniebeler.pfpixelix.ui.composables.widgets
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -28,12 +27,11 @@ fun SuggestionsBar(
     modifier: Modifier = Modifier
 ) {
     if (state.suggestions.isNotEmpty()) {
-        Box(Modifier                .background(MaterialTheme.colorScheme.surfaceContainerHighest).padding(horizontal = 4.dp, vertical = 4.dp),
-        ) {
         LazyRow(
             modifier = modifier
                 .padding(bottom = if (bottomBarPadding) 60.dp else 0.dp)
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .background(MaterialTheme.colorScheme.surfaceContainerHighest).padding(horizontal = 4.dp, vertical = 4.dp),
             contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically
@@ -56,4 +54,4 @@ fun SuggestionsBar(
             }
         }
     }
-}}
+}

@@ -25,7 +25,7 @@ import com.daniebeler.pfpixelix.domain.model.MediaAttachment
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.model.Visibility
 import com.daniebeler.pfpixelix.domain.service.platform.PlatformFeatures
-import com.daniebeler.pfpixelix.ui.composables.ButtonRowElement
+import com.daniebeler.pfpixelix.ui.composables.widgets.ButtonRowElement
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource

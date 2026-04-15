@@ -5,33 +5,31 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridScope
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
+import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.domain.model.Post
-import com.daniebeler.pfpixelix.ui.composables.CustomPost
+import com.daniebeler.pfpixelix.ui.composables.widgets.CustomPost
 import com.daniebeler.pfpixelix.ui.composables.post.PostComposable
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
+import com.daniebeler.pfpixelix.ui.composables.states.EmptyStateComposable
 import com.daniebeler.pfpixelix.ui.composables.states.EndOfListComposable
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
-import com.daniebeler.pfpixelix.ui.composables.states.FixedHeightEmptyStateComposable
-import com.daniebeler.pfpixelix.ui.composables.states.FixedHeightLoadingComposable
-import com.daniebeler.pfpixelix.ui.composables.states.FullscreenEmptyStateComposable
-import com.daniebeler.pfpixelix.ui.composables.states.FullscreenLoadingComposable
+import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 
-fun LazyListScope.PostsWrapperComposable(
+fun LazyStaggeredGridScope.PostsWrapperComposable(
     posts: List<Post>,
     isLoading: Boolean,
     isRefreshing: Boolean,
@@ -42,6 +40,8 @@ fun LazyListScope.PostsWrapperComposable(
     postGetsDeleted: (postId: String) -> Unit,
     updatePost: (post: Post) -> Unit,
     isFirstImageLarge: Boolean = false,
+    gridColumnCount: Int = 3,
+    gridContentWidth: Dp = 0.dp,
     navController: NavController
 ) {
 
@@ -54,6 +54,8 @@ fun LazyListScope.PostsWrapperComposable(
             endReached = endReached,
             emptyMessage = emptyMessage,
             isFirstImageLarge = isFirstImageLarge,
+            columnCount = gridColumnCount,
+            contentWidth = gridContentWidth,
             navController = navController
         )
     }
@@ -73,7 +75,7 @@ fun LazyListScope.PostsWrapperComposable(
     }
 }
 
-private fun LazyListScope.PostsGridInScope(
+private fun LazyStaggeredGridScope.PostsGridInScope(
     posts: List<Post>,
     isLoading: Boolean,
     isRefreshing: Boolean,
@@ -81,183 +83,97 @@ private fun LazyListScope.PostsGridInScope(
     endReached: Boolean,
     emptyMessage: EmptyState,
     isFirstImageLarge: Boolean = false,
+    columnCount: Int = 3,
+    contentWidth: Dp = 0.dp,
     navController: NavController
 ) {
-    if (isFirstImageLarge && posts.size >= 3) {
-        var largePostRoundedCorners = Modifier.clip(RoundedCornerShape(topStart = 16.dp))
-        var thirdPostRoundedCorners: Modifier = Modifier
-        if (posts.size == 3) {
-            largePostRoundedCorners =
-                largePostRoundedCorners.clip(RoundedCornerShape(bottomStart = 16.dp))
-            thirdPostRoundedCorners =
-                thirdPostRoundedCorners.clip(RoundedCornerShape(bottomEnd = 16.dp))
+    val spacing = 4.dp
+    val featuredCount = if (isFirstImageLarge && posts.size >= 3) {
+        val smallColumnsCount = columnCount - 2
+        minOf(1 + smallColumnsCount * 2, posts.size)
+    } else 0
 
-        }
-        item {
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(4.dp),
-                modifier = Modifier.padding(horizontal = 4.dp)
-            ) {
-                Box(modifier = Modifier.fillMaxWidth(1.99f / 3f)) {
+    if (featuredCount >= 3 && contentWidth > 0.dp) {
+        item(span = StaggeredGridItemSpan.FullLine) {
+            val columnWidth = (contentWidth - spacing * (columnCount - 1)) / columnCount
+            val bigSize = columnWidth * 2 + spacing
+            val smallColumnsCount = columnCount - 2
+
+            Row(horizontalArrangement = Arrangement.spacedBy(spacing)) {
+                Box(modifier = Modifier.size(bigSize)) {
                     CustomPost(
-                        post = posts.first(),
+                        post = posts[0],
                         navController = navController,
                         isFullQuality = true,
-                        customModifier = largePostRoundedCorners
+                        modifier = Modifier.fillMaxSize()
                     )
                 }
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(4.dp),
-                ) {
-                    CustomPost(
-                        post = posts[1],
-                        navController = navController,
-                        customModifier = Modifier.clip(
-                            RoundedCornerShape(
-                                topEnd = 16.dp
-                            )
-                        )
-                    )
-                    CustomPost(
-                        post = posts[2],
-                        navController = navController,
-                        customModifier = thirdPostRoundedCorners
-                    )
-
+                for (col in 0 until smallColumnsCount) {
+                    Column(verticalArrangement = Arrangement.spacedBy(spacing)) {
+                        val topIdx = 1 + col * 2
+                        val bottomIdx = topIdx + 1
+                        if (topIdx < featuredCount) {
+                            Box(Modifier.size(columnWidth)) {
+                                CustomPost(
+                                    post = posts[topIdx],
+                                    navController = navController
+                                )
+                            }
+                        }
+                        if (bottomIdx < featuredCount) {
+                            Box(Modifier.size(columnWidth)) {
+                                CustomPost(
+                                    post = posts[bottomIdx],
+                                    navController = navController
+                                )
+                            }
+                        }
+                    }
                 }
             }
         }
 
-
-        val rows = posts.takeLast(posts.size - 3).chunked(3)
-        itemsIndexed(rows) { rowIndex, rowItems ->
-            Row(
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 2.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                // Fill the row with 3 items (or fewer for the last row)
-                rowItems.forEachIndexed { index, post ->
-
-                    var roundedCorners: Modifier = Modifier
-                    val isBottomLeft = rowItems == rows.last() && index == 0
-                    val isBottomRight =
-                        (rowItems == rows.last() && (index == 2 || index == rowItems.size - 1)) || (index == 2 && posts.size - (rowIndex + 2) * 3 < 3)
-
-                    if (isBottomLeft) {
-                        roundedCorners =
-                            roundedCorners.clip(RoundedCornerShape(bottomStart = 16.dp))
-                    }
-                    if (isBottomRight) {
-                        roundedCorners = roundedCorners.clip(RoundedCornerShape(bottomEnd = 16.dp))
-                    }
-
-                    Box(
-                        Modifier.padding(horizontal = 2.dp).weight(1f)
-                    ) {
-
-                        CustomPost(
-                            post = post,
-                            navController = navController,
-                            customModifier = roundedCorners
-                        )
-                    }
-                }
-
-                repeat(3 - rowItems.size) {
-                    Spacer(
-                        modifier = Modifier.weight(1f).padding(horizontal = 2.dp)
-                    )
-                }
+        if (featuredCount < posts.size) {
+            val remaining = posts.subList(featuredCount, posts.size)
+            items(remaining.size, key = { remaining[it].id }) { index ->
+                CustomPost(post = remaining[index], navController = navController)
             }
         }
-
-
     } else {
-        val rows = posts.chunked(3)
-        items(rows) { rowItems ->
-            Row(
-                modifier = Modifier.fillMaxWidth().padding(vertical = 2.dp, horizontal = 10.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-
-                rowItems.forEachIndexed { index, post ->
-
-                    val isTopLeft = rowItems == rows.first() && index == 0
-                    val isTopRight =
-                        rowItems == rows.first() && index == 2 || index == rowItems.size - 1
-                    val isBottomLeft = rowItems == rows.last() && index == 0
-                    val isBottomRight =
-                        rowItems == rows.last() && index == 2 || index == rowItems.size - 1
-
-                    var roundedCorners: Modifier = Modifier
-
-                    if (isTopLeft) {
-                        roundedCorners = roundedCorners.clip(RoundedCornerShape(topStart = 16.dp))
-                    }
-                    if (isBottomLeft) {
-                        roundedCorners =
-                            roundedCorners.clip(RoundedCornerShape(bottomStart = 16.dp))
-                    }
-                    if (isTopRight) {
-                        roundedCorners = roundedCorners.clip(RoundedCornerShape(topEnd = 16.dp))
-                    }
-                    if (isBottomRight) {
-                        roundedCorners = roundedCorners.clip(RoundedCornerShape(bottomEnd = 16.dp))
-                    }
-
-                    Box(
-                        Modifier.padding(horizontal = 2.dp).weight(1f)
-                    ) {
-
-                        CustomPost(
-                            post = post,
-                            navController = navController,
-                            customModifier = roundedCorners
-                        )
-                    }
-                }
-
-                // Add empty Composables for spacing if the last row has fewer than 3 items
-                repeat(3 - rowItems.size) {
-                    Spacer(
-                        modifier = Modifier.weight(1f).padding(horizontal = 2.dp)
-                    )
-                }
-            }
+        items(posts.size, key = { posts[it].id }) { index ->
+            CustomPost(post = posts[index], navController = navController)
         }
     }
 
-
     if (endReached && posts.size > 10) {
-        item {
+        item(span = StaggeredGridItemSpan.FullLine) {
             EndOfListComposable()
         }
     }
 
     if (!isRefreshing && isLoading) {
-        item {
-            FixedHeightLoadingComposable()
+        item(span = StaggeredGridItemSpan.FullLine) {
+            LoadingComposable(Modifier.fillMaxWidth().padding(vertical = 50.dp))
         }
     }
 
     if (posts.isEmpty()) {
         if (!isLoading && error.isEmpty()) {
-            item {
-                FixedHeightEmptyStateComposable(emptyMessage)
+            item(span = StaggeredGridItemSpan.FullLine) {
+                EmptyStateComposable(emptyMessage, Modifier.fillMaxWidth().padding(vertical = 50.dp))
             }
         }
     }
 
     if (error.isNotEmpty() && posts.isEmpty()) {
-        item {
+        item(span = StaggeredGridItemSpan.FullLine) {
             ErrorComposable(error)
         }
     }
 }
 
 
-private fun LazyListScope.PostsListInScope(
+private fun LazyStaggeredGridScope.PostsListInScope(
     posts: List<Post>,
     isLoading: Boolean,
     isRefreshing: Boolean,
@@ -272,14 +188,12 @@ private fun LazyListScope.PostsListInScope(
 
     if (posts.isNotEmpty()) {
 
-        items(posts, key = {
-            it.id
-        }) { item ->
+        items(posts.size, key = { posts[it].id }) { index ->
             val zIndex = remember {
                 mutableFloatStateOf(1f)
             }
             Box(modifier = Modifier.zIndex(zIndex.floatValue).padding(horizontal = 8.dp)) {
-                PostComposable(post = item,
+                PostComposable(post = posts[index],
                     postGetsDeleted = postGetsDeleted,
                     navController = navController,
                     updatePost = updatePost,
@@ -291,32 +205,32 @@ private fun LazyListScope.PostsListInScope(
         }
 
         if (isLoading && !isRefreshing) {
-            item {
-                FixedHeightLoadingComposable()
+            item(span = StaggeredGridItemSpan.FullLine) {
+                LoadingComposable(Modifier.fillMaxWidth().padding(vertical = 50.dp))
             }
         }
 
         if (endReached && posts.size > 3) {
-            item {
+            item(span = StaggeredGridItemSpan.FullLine) {
                 EndOfListComposable()
             }
         }
     }
 
     if (posts.isEmpty() && !isLoading && error.isEmpty()) {
-        item {
-            FullscreenEmptyStateComposable(emptyMessage)
+        item(span = StaggeredGridItemSpan.FullLine) {
+            EmptyStateComposable(emptyMessage)
         }
     }
 
     if (!isRefreshing && posts.isEmpty() && isLoading) {
-        item {
-            FullscreenLoadingComposable()
+        item(span = StaggeredGridItemSpan.FullLine) {
+            LoadingComposable()
         }
     }
 
     if (error.isNotEmpty() && posts.isEmpty()) {
-        item {
+        item(span = StaggeredGridItemSpan.FullLine) {
             ErrorComposable(error)
         }
     }

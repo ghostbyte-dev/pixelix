@@ -65,7 +65,7 @@ import androidx.navigation.compose.rememberNavController
 import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.di.AppComponent
 import com.daniebeler.pfpixelix.di.LocalAppComponent
-import com.daniebeler.pfpixelix.ui.composables.ReverseModalNavigationDrawer
+import com.daniebeler.pfpixelix.ui.composables.widgets.ReverseModalNavigationDrawer
 import com.daniebeler.pfpixelix.ui.composables.profile.own_profile.AccountSwitchBottomSheet
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.PreferencesComposable
 import com.daniebeler.pfpixelix.ui.navigation.Destination

@@ -51,7 +51,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.di.injectViewModel
-import com.daniebeler.pfpixelix.ui.composables.InfiniteListHandler
+import com.daniebeler.pfpixelix.ui.composables.widgets.InfiniteListHandler
 import com.daniebeler.pfpixelix.ui.composables.states.EndOfListComposable
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
 import com.daniebeler.pfpixelix.ui.navigation.Destination

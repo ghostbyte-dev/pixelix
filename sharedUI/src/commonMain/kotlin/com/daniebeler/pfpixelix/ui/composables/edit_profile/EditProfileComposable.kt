@@ -76,7 +76,7 @@ import com.attafitamim.krop.ui.CropperPreview
 import com.attafitamim.krop.ui.DefaultControls
 import com.daniebeler.pfpixelix.EdgeToEdgeDialogProperties
 import com.daniebeler.pfpixelix.di.injectViewModel
-import com.daniebeler.pfpixelix.ui.composables.SuggestionsBar
+import com.daniebeler.pfpixelix.ui.composables.widgets.SuggestionsBar
 import com.daniebeler.pfpixelix.utils.imeAwareInsets
 import io.github.vinceglb.filekit.dialogs.FileKitMode
 import io.github.vinceglb.filekit.dialogs.FileKitType

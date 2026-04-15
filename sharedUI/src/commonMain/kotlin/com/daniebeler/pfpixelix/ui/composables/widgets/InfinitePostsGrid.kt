@@ -1,17 +1,19 @@
-package com.daniebeler.pfpixelix.ui.composables
+package com.daniebeler.pfpixelix.ui.composables.widgets
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.GridItemSpan
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.itemsIndexed
-import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
+import androidx.compose.foundation.lazy.staggeredgrid.items
+import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
@@ -23,12 +25,10 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
+import com.daniebeler.pfpixelix.ui.composables.states.EmptyStateComposable
 import com.daniebeler.pfpixelix.ui.composables.states.EndOfListComposable
-import com.daniebeler.pfpixelix.ui.composables.states.FixedHeightEmptyStateComposable
-import com.daniebeler.pfpixelix.ui.composables.states.FixedHeightLoadingComposable
-import com.daniebeler.pfpixelix.ui.composables.states.FullscreenEmptyStateComposable
-import com.daniebeler.pfpixelix.ui.composables.states.FullscreenErrorComposable
-import com.daniebeler.pfpixelix.ui.composables.states.FullscreenLoadingComposable
+import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
+import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -83,56 +83,40 @@ fun privateInfinitePostsGrid(
     editRemove: (postId: String) -> Unit = { },
     onClick: ((id: String) -> Unit)? = null
 ) {
-    val lazyGridState = rememberLazyGridState()
+    val lazyStaggeredGridState = rememberLazyStaggeredGridState()
 
-    LazyVerticalGrid(
+    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+        val gridColumns = StaggeredGridCells.Fixed(maxOf(3, (maxWidth / 120.dp).toInt()))
+
+    LazyVerticalStaggeredGrid(
         horizontalArrangement = Arrangement.spacedBy(4.dp),
-        verticalArrangement = Arrangement.spacedBy(4.dp),
+        verticalItemSpacing = 4.dp,
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 4.dp),
-        state = lazyGridState,
-        columns = GridCells.Fixed(3),
+            .padding(horizontal = 4.dp)
+            .clip(RoundedCornerShape(16.dp)),
+        state = lazyStaggeredGridState,
+        columns = gridColumns,
         contentPadding = PaddingValues(top = contentPaddingTop)
     ) {
 
         if (before != null) {
-            item(span = { GridItemSpan(3) }) {
+            item(span = StaggeredGridItemSpan.FullLine) {
                 before()
             }
         }
 
-        item(span = { GridItemSpan(3) }) {
+        item(span = StaggeredGridItemSpan.FullLine) {
             Spacer(Modifier.height(4.dp))
         }
 
-        itemsIndexed(items) { index, photo ->
-
-            val isTopLeft = index == 0
-            val isTopRight = index == 2
-            val isBottomLeft = index >= items.size - 3 && index % 3 == 0
-            val isBottomRight =
-                (index == items.size - 1) || (index % 3 == 2 && items.size - index < 3)
-
-            var roundedCorners: Modifier = Modifier
-
-            if (isTopLeft) {
-                roundedCorners = roundedCorners.clip(RoundedCornerShape(topStart = 16.dp))
-            }
-            if (isBottomLeft) {
-                roundedCorners = roundedCorners.clip(RoundedCornerShape(bottomStart = 16.dp))
-            }
-            if (isTopRight) {
-                roundedCorners = roundedCorners.clip(RoundedCornerShape(topEnd = 16.dp))
-            }
-            if (isBottomRight) {
-                roundedCorners = roundedCorners.clip(RoundedCornerShape(bottomEnd = 16.dp))
-            }
+        items(items.size, key = { items[it].id }) {
+            val photo = items[it]
 
             CustomPost(
                 post = photo,
                 navController = navController,
-                customModifier = roundedCorners,
+                modifier = Modifier,
                 edit = edit,
                 editRemove = { id -> editRemove(id) },
                 onClick = onClick
@@ -140,7 +124,7 @@ fun privateInfinitePostsGrid(
         }
 
         if (after != null) {
-            item(span = { GridItemSpan(3) }) {
+            item(span = StaggeredGridItemSpan.FullLine) {
                 after()
             }
         }
@@ -149,48 +133,50 @@ fun privateInfinitePostsGrid(
 
 
         if (endReached && items.size > 10) {
-            item(span = { GridItemSpan(3) }) {
+            item(span = StaggeredGridItemSpan.FullLine) {
                 EndOfListComposable()
             }
         }
 
         if (before != null) {
             if (isLoading) {
-                item(span = { GridItemSpan(3) }) {
-                    FixedHeightLoadingComposable()
+                item(span = StaggeredGridItemSpan.FullLine) {
+                    LoadingComposable(Modifier.fillMaxWidth().padding(vertical = 50.dp))
                 }
             }
 
 
             if (items.isEmpty()) {
                 if (!isLoading && error.isEmpty()) {
-                    item(span = { GridItemSpan(3) }) {
-                        FixedHeightEmptyStateComposable(emptyMessage)
+                    item(span = StaggeredGridItemSpan.FullLine) {
+                        EmptyStateComposable(emptyMessage, Modifier.fillMaxWidth().padding(vertical = 50.dp))
                     }
                 }
             }
         }
 
-        item(span = { GridItemSpan(3) }) {
+        item(span = StaggeredGridItemSpan.FullLine) {
             Spacer(Modifier.height(12.dp))
         }
     }
 
     if (items.isEmpty() && error.isNotBlank()) {
-        FullscreenErrorComposable(message = error)
+        ErrorComposable(message = error, modifier = Modifier.fillMaxSize().padding(36.dp, 20.dp))
     }
 
     if (before == null && items.isEmpty()) {
         if (isLoading && !isRefreshing) {
-            FullscreenLoadingComposable()
+            LoadingComposable()
         }
 
         if (!isLoading && error.isEmpty()) {
-            FullscreenEmptyStateComposable(emptyMessage)
+            EmptyStateComposable(emptyMessage)
         }
     }
 
-    InfiniteGridHandler(lazyGridState = lazyGridState) {
+    }
+
+    InfiniteStaggeredGridHandler(lazyStaggeredGridState = lazyStaggeredGridState, itemCount = items.size) {
         getItemsPaginated()
     }
 }

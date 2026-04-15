@@ -71,8 +71,8 @@ import androidx.navigationevent.compose.rememberNavigationEventState
 import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.model.MediaAttachment
-import com.daniebeler.pfpixelix.ui.composables.MaxLengthTextField
-import com.daniebeler.pfpixelix.ui.composables.SuggestionsBar
+import com.daniebeler.pfpixelix.ui.composables.widgets.MaxLengthTextField
+import com.daniebeler.pfpixelix.ui.composables.widgets.SuggestionsBar
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposableDialog
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pfpixelix.ui.composables.textfield_location.TextFieldLocationsComposable

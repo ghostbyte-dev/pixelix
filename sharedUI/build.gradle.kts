@@ -20,6 +20,7 @@ kotlin {
     android {
         namespace = "com.daniebeler.pfpixelix"
         compileSdk = 36
+        minSdk = 26
 
         androidResources { enable = true }
         compilerOptions { jvmTarget = JvmTarget.JVM_17 }

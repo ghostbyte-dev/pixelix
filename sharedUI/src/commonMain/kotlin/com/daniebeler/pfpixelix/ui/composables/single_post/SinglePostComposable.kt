@@ -2,6 +2,7 @@ package com.daniebeler.pfpixelix.ui.composables.single_post
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
@@ -66,7 +67,7 @@ fun SinglePostComposable(
     Scaffold(contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top)) { paddingValues ->
         Box(
             modifier = Modifier.padding(paddingValues)
-                .padding(top = TopAppBarDefaults.TopAppBarExpandedHeight - 24.dp)
+                .padding(top = TopAppBarDefaults.TopAppBarExpandedHeight - 24.dp, bottom = 60.dp)
                 .fillMaxSize()
         ) {
             PullToRefreshBox(

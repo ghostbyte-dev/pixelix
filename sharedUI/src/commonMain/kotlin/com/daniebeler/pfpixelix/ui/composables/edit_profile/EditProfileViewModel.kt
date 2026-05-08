@@ -44,7 +44,8 @@ class EditProfileViewModel @Inject constructor(
         getAccount()
     }
 
-    private fun getAccount() {
+    fun getAccount() {
+        accountState = EditProfileState(isLoading = true)
         accountService.getOwnAccount().onEach { result ->
             when (result) {
                 is Resource.Success -> {

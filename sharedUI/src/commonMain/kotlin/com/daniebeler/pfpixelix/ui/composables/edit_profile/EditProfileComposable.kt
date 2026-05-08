@@ -76,6 +76,7 @@ import com.attafitamim.krop.ui.CropperPreview
 import com.attafitamim.krop.ui.DefaultControls
 import com.daniebeler.pfpixelix.EdgeToEdgeDialogProperties
 import com.daniebeler.pfpixelix.di.injectViewModel
+import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposableDialog
 import com.daniebeler.pfpixelix.ui.composables.widgets.SuggestionsBar
 import com.daniebeler.pfpixelix.utils.imeAwareInsets
 import io.github.vinceglb.filekit.dialogs.FileKitMode
@@ -288,95 +289,97 @@ fun EditProfileComposable(
             }
 
             if (isCancelAlertOpen) {
-                AlertDialog(
-                    title = {
-                        Text(text = stringResource(Res.string.are_you_sure))
-                    },
-                    text = {
-                        Text(text = stringResource(Res.string.cancel_profile_edit))
-                    }, onDismissRequest = {
+                AlertDialog(title = {
+                    Text(text = stringResource(Res.string.are_you_sure))
+                }, text = {
+                    Text(text = stringResource(Res.string.cancel_profile_edit))
+                }, onDismissRequest = {
+                    isCancelAlertOpen = false
+                }, dismissButton = {
+                    TextButton(onClick = {
                         isCancelAlertOpen = false
-                    }, dismissButton = {
-                        TextButton(onClick = {
-                            isCancelAlertOpen = false
-                        }) {
-                            Text(stringResource(Res.string.cancel))
-                        }
-                    }, confirmButton = {
-                        TextButton(onClick = {
-                            isCancelAlertOpen = false
-                            navController.popBackStack()
-                        }) {
-                            Text(stringResource(Res.string.discard))
-                        }
-                    })
+                    }) {
+                        Text(stringResource(Res.string.cancel))
+                    }
+                }, confirmButton = {
+                    TextButton(onClick = {
+                        isCancelAlertOpen = false
+                        navController.popBackStack()
+                    }) {
+                        Text(stringResource(Res.string.discard))
+                    }
+                })
             }
+            ErrorComposableDialog(
+                errorMessage = viewModel.accountState.error, onDismiss = {
+                    viewModel.getAccount();
+                })
         }
 
         TopAppBar(
             modifier = Modifier.clip(
-                RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)
-            ), title = {
-                Text(
-                    text = stringResource(Res.string.edit_profile),
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp
-                )
-            }, navigationIcon = {
-                IconButton(onClick = {
-                    if (viewModel.isEdited) {
-                        isCancelAlertOpen = true
-                    } else {
-                        navController.popBackStack()
-                    }
-                }) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = ""
-                    )
-                }
-            }, actions = {
-                if (viewModel.firstLoaded) {
-                    if (!viewModel.isEdited) {
-                        if (!viewModel.accountState.isLoading) {
-                            Button(
-                                onClick = {},
-                                modifier = Modifier.width(120.dp),
-                                shape = RoundedCornerShape(12.dp),
-                                enabled = false,
-                                colors = ButtonDefaults.buttonColors(
-                                    disabledContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-                                    disabledContentColor = MaterialTheme.colorScheme.onSurface
-                                )
-                            ) {
-                                Text(text = stringResource(Res.string.save))
-                            }
-                        }
-                    } else {
-                        if (viewModel.accountState.isLoading) {
-                            Button(
-                                onClick = {},
-                                modifier = Modifier.width(120.dp),
-                                shape = RoundedCornerShape(12.dp)
-                            ) {
-                                CircularProgressIndicator(
-                                    modifier = Modifier.size(20.dp),
-                                    color = MaterialTheme.colorScheme.onPrimary
-                                )
-                            }
-                        } else {
-                            Button(
-                                onClick = { viewModel.save() },
-                                modifier = Modifier.width(120.dp),
-                                shape = RoundedCornerShape(12.dp)
-                            ) {
-                                Text(text = stringResource(Res.string.save))
-                            }
-                        }
-                    }
-                }
-            }, colors = TopAppBarDefaults.mediumTopAppBarColors(
-                containerColor = MaterialTheme.colorScheme.surfaceContainer
+            RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)
+        ), title = {
+            Text(
+                text = stringResource(Res.string.edit_profile),
+                fontWeight = FontWeight.Bold,
+                fontSize = 18.sp
             )
+        }, navigationIcon = {
+            IconButton(onClick = {
+                if (viewModel.isEdited) {
+                    isCancelAlertOpen = true
+                } else {
+                    navController.popBackStack()
+                }
+            }) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = ""
+                )
+            }
+        }, actions = {
+            if (viewModel.firstLoaded) {
+                if (!viewModel.isEdited) {
+                    if (!viewModel.accountState.isLoading) {
+                        Button(
+                            onClick = {},
+                            modifier = Modifier.width(120.dp),
+                            shape = RoundedCornerShape(12.dp),
+                            enabled = false,
+                            colors = ButtonDefaults.buttonColors(
+                                disabledContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                                disabledContentColor = MaterialTheme.colorScheme.onSurface
+                            )
+                        ) {
+                            Text(text = stringResource(Res.string.save))
+                        }
+                    }
+                } else {
+                    if (viewModel.accountState.isLoading) {
+                        Button(
+                            onClick = {},
+                            modifier = Modifier.width(120.dp),
+                            shape = RoundedCornerShape(12.dp)
+                        ) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(20.dp),
+                                color = MaterialTheme.colorScheme.onPrimary
+                            )
+                        }
+                    } else {
+                        Button(
+                            onClick = { viewModel.save() },
+                            modifier = Modifier.width(120.dp),
+                            shape = RoundedCornerShape(12.dp)
+                        ) {
+                            Text(text = stringResource(Res.string.save))
+                        }
+                    }
+                }
+            }
+        }, colors = TopAppBarDefaults.mediumTopAppBarColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainer
+        )
         )
 
     }
@@ -403,21 +406,21 @@ private fun ImageCropperFullscreenDialog(
                 topBar = {
                     TopAppBar(
                         title = {}, navigationIcon = {
-                            androidx.compose.material.IconButton(onClick = { state.done(accept = false) }) {
-                                Icon(Icons.AutoMirrored.Filled.ArrowBack, null)
-                            }
-                        }, actions = {
-                            IconButton(onClick = { state.reset() }) {
-                                Icon(Icons.Default.Refresh, null)
-                            }
-                            IconButton(
-                                onClick = { state.done(accept = true) }, enabled = !state.accepted
-                            ) {
-                                Icon(Icons.Default.Done, null)
-                            }
-                        }, colors = TopAppBarDefaults.mediumTopAppBarColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceContainer
-                        )
+                        androidx.compose.material.IconButton(onClick = { state.done(accept = false) }) {
+                            Icon(Icons.AutoMirrored.Filled.ArrowBack, null)
+                        }
+                    }, actions = {
+                        IconButton(onClick = { state.reset() }) {
+                            Icon(Icons.Default.Refresh, null)
+                        }
+                        IconButton(
+                            onClick = { state.done(accept = true) }, enabled = !state.accepted
+                        ) {
+                            Icon(Icons.Default.Done, null)
+                        }
+                    }, colors = TopAppBarDefaults.mediumTopAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceContainer
+                    )
                     )
                 }) { paddingValues ->
                 Box(

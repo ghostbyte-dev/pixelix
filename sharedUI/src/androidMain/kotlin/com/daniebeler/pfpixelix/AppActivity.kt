@@ -2,14 +2,19 @@ package com.daniebeler.pfpixelix
 
 import android.content.ContentResolver
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.Color.TRANSPARENT
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.RequiresApi
 import androidx.compose.ui.window.DialogProperties
 import androidx.core.content.FileProvider
+import androidx.core.view.WindowCompat
 import io.github.vinceglb.filekit.FileKit
 import io.github.vinceglb.filekit.dialogs.init
 import io.ktor.util.logging.Logger
@@ -23,8 +28,8 @@ class AppActivity : ComponentActivity() {
         FileKit.init(this)
         MyApplication.currentActivity = WeakReference(this)
         super.onCreate(savedInstanceState)
-
         enableEdgeToEdge()
+
         setContent {
             App(MyApplication.appComponent) { finish() }
         }

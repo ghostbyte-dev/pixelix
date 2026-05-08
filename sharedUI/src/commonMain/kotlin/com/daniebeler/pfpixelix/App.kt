@@ -40,6 +40,8 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -126,8 +128,6 @@ fun App(
 
     val lifecycleOwner = LocalLifecycleOwner.current
     val coroutineScope = rememberCoroutineScope()
-    val scrollBehavior =
-        FloatingToolbarDefaults.exitAlwaysScrollBehavior(exitDirection = FloatingToolbarExitDirection.Bottom);
 
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
@@ -208,10 +208,12 @@ fun App(
                                 })
                             }
                         }) {
+                        val scrollBehaviorBottom =
+                            FloatingToolbarDefaults.exitAlwaysScrollBehavior(exitDirection = FloatingToolbarExitDirection.Bottom);
                         Scaffold(
                             contentWindowInsets = WindowInsets(0),
                             snackbarHost = { SnackbarHost(snackbarHostState) },
-                            modifier = Modifier.nestedScroll(scrollBehavior)
+                            modifier = Modifier.nestedScroll(scrollBehaviorBottom)
                         ) { paddingValues ->
                             Box(Modifier.fillMaxSize().padding(paddingValues)) {
                                 val startDestination =
@@ -249,7 +251,7 @@ fun App(
                                         openAccountSwitchBottomSheet = {
                                             showAccountSwitchBottomSheet = true
                                         },
-                                        scrollBehavior
+                                        scrollBehaviorBottom
                                     )
 
                                 }
@@ -352,7 +354,7 @@ private fun BottomBarFloating(
     HorizontalFloatingToolbar(
         expanded = true,
         scrollBehavior = scrollBehavior,
-        modifier = Modifier.padding(bottom = systemNavigationBarHeight + 16.dp),
+        modifier = Modifier.padding(bottom = systemNavigationBarHeight),
         colors = FloatingToolbarColors(
             toolbarContentColor = MaterialTheme.colorScheme.onSurface,
             toolbarContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest,

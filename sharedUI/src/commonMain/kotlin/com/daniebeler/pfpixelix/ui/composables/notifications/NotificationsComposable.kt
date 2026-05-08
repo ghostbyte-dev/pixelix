@@ -41,6 +41,7 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -74,31 +75,36 @@ fun NotificationsComposable(
 
     val staggeredGridState = rememberLazyStaggeredGridState()
     val scrollState = rememberScrollState()
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
-    Scaffold(contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top), topBar = {
-        TopAppBar(
-            title = {
-                Text(
-                    stringResource(Res.string.notifications),
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp
-                )
-            }, actions = {
-                if (PlatformFeatures.notificationWidgets) {
-                    IconButton(onClick = {
-                        viewModel.pinWidget()
-                    }) {
-                        Icon(
-                            imageVector = vectorResource(Res.drawable.extension_puzzle_outline),
-                            contentDescription = "add widget"
-                        )
+    Scaffold(
+        contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top),
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        topBar = {
+            TopAppBar(
+                scrollBehavior = scrollBehavior,
+                title = {
+                    Text(
+                        stringResource(Res.string.notifications),
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp
+                    )
+                }, actions = {
+                    if (PlatformFeatures.notificationWidgets) {
+                        IconButton(onClick = {
+                            viewModel.pinWidget()
+                        }) {
+                            Icon(
+                                imageVector = vectorResource(Res.drawable.extension_puzzle_outline),
+                                contentDescription = "add widget"
+                            )
+                        }
                     }
-                }
-            }, colors = TopAppBarDefaults.mediumTopAppBarColors(
-                containerColor = MaterialTheme.colorScheme.surfaceContainer
+                }, colors = TopAppBarDefaults.mediumTopAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceContainer
+                )
             )
-        )
-    }) { paddingValues ->
+        }) { paddingValues ->
         Box(
             modifier = Modifier.fillMaxSize().padding(paddingValues)
         ) {
@@ -169,7 +175,12 @@ fun NotificationsComposable(
                     isRefreshing = viewModel.notificationsState.isRefreshing,
                     onRefresh = { viewModel.refresh() },
                 ) {
-                    LazyVerticalStaggeredGrid(columns = StaggeredGridCells.Adaptive(350.dp), state = staggeredGridState, contentPadding = PaddingValues(bottom = 60.dp), modifier = Modifier.fillMaxSize()) {
+                    LazyVerticalStaggeredGrid(
+                        columns = StaggeredGridCells.Adaptive(350.dp),
+                        state = staggeredGridState,
+                        contentPadding = PaddingValues(bottom = 60.dp),
+                        modifier = Modifier.fillMaxSize()
+                    ) {
                         if (viewModel.notificationsState.notifications.isNotEmpty()) {
                             items(viewModel.notificationsState.notifications, key = {
                                 it.id
@@ -232,7 +243,10 @@ fun NotificationsComposable(
             }
         }
 
-        InfiniteStaggeredGridHandler(lazyStaggeredGridState = staggeredGridState, itemCount = viewModel.notificationsState.notifications.size) {
+        InfiniteStaggeredGridHandler(
+            lazyStaggeredGridState = staggeredGridState,
+            itemCount = viewModel.notificationsState.notifications.size
+        ) {
             viewModel.getNotificationsPaginated()
         }
     }

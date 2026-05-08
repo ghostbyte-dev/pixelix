@@ -35,6 +35,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -62,125 +63,130 @@ import pixelix.app.generated.resources.settings_outline
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeComposable(navController: NavController, openPreferencesDrawer: () -> Unit, viewModel: HomeViewModel = injectViewModel("homeViewModel") { homeViewModel },
+fun HomeComposable(
+    navController: NavController,
+    openPreferencesDrawer: () -> Unit,
+    viewModel: HomeViewModel = injectViewModel("homeViewModel") { homeViewModel },
 ) {
     val pagerState = rememberPagerState { 3 }
     val scope = rememberCoroutineScope()
 
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
-
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     Scaffold(
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top), topBar = {
             TopAppBar(
+                scrollBehavior = scrollBehavior,
                 title = {
-                Text(
-                    stringResource(Res.string.app_name),
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp
-                )
-            }, navigationIcon = {
-                IconButton(onClick = { showBottomSheet = true }) {
-                    Icon(
-                        imageVector = vectorResource(Res.drawable.help_outline),
-                        contentDescription = "Help"
+                    Text(
+                        stringResource(Res.string.app_name),
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp
                     )
-                }
-            }, actions = {
-                Row {
+                }, navigationIcon = {
+                    IconButton(onClick = { showBottomSheet = true }) {
+                        Icon(
+                            imageVector = vectorResource(Res.drawable.help_outline),
+                            contentDescription = "Help"
+                        )
+                    }
+                }, actions = {
+                    Row {
 
-                    IconButton(onClick = {
-                        navController.navigate(Destination.Conversations)
-                    }) {
-                        Icon(
-                            imageVector = vectorResource(Res.drawable.mail_outline),
-                            contentDescription = "Conversations"
-                        )
+                        IconButton(onClick = {
+                            navController.navigate(Destination.Conversations)
+                        }) {
+                            Icon(
+                                imageVector = vectorResource(Res.drawable.mail_outline),
+                                contentDescription = "Conversations"
+                            )
+                        }
+                        IconButton(onClick = {
+                            openPreferencesDrawer()
+                        }) {
+                            Icon(
+                                imageVector = vectorResource(Res.drawable.settings_outline),
+                                contentDescription = "Settings"
+                            )
+                        }
                     }
-                    IconButton(onClick = {
-                        openPreferencesDrawer()
-                    }) {
-                        Icon(
-                            imageVector = vectorResource(Res.drawable.settings_outline),
-                            contentDescription = "Settings"
-                        )
-                    }
-                }
-            }, colors = TopAppBarDefaults.mediumTopAppBarColors(
-                containerColor = MaterialTheme.colorScheme.surfaceContainer
-            )
+                }, colors = TopAppBarDefaults.mediumTopAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceContainer
+                )
             )
         }) { paddingValues ->
-            Box(
-                Modifier.fillMaxSize().padding(paddingValues)
-                    .background(MaterialTheme.colorScheme.background)
+        Box(
+            Modifier.fillMaxSize().padding(paddingValues)
+                .background(MaterialTheme.colorScheme.background)
+        ) {
+            PrimaryTabRow(
+                selectedTabIndex = pagerState.currentPage,
+                divider = {},
+                containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                modifier = Modifier.clip(
+                    RoundedCornerShape(
+                        bottomStart = 24.dp, bottomEnd = 24.dp
+                    )
+                ).zIndex(1f)
             ) {
-                PrimaryTabRow(
-                    selectedTabIndex = pagerState.currentPage,
-                    divider = {},
-                    containerColor = MaterialTheme.colorScheme.surfaceContainer,
-                    modifier = Modifier.clip(
-                        RoundedCornerShape(
-                            bottomStart = 24.dp, bottomEnd = 24.dp
-                        )
-                    ).zIndex(1f)
-                ) {
-                    Tab(
-                        text = { Text(stringResource(Res.string.home)) },
-                        selected = pagerState.currentPage == 0,
-                        selectedContentColor = MaterialTheme.colorScheme.primary,
-                        unselectedContentColor = MaterialTheme.colorScheme.onBackground,
-                        onClick = {
-                            scope.launch {
-                                pagerState.animateScrollToPage(0)
-                            }
-                        })
-
-                    Tab(
-                        text = { Text(stringResource(Res.string.local)) },
-                        selected = pagerState.currentPage == 1,
-                        selectedContentColor = MaterialTheme.colorScheme.primary,
-                        unselectedContentColor = MaterialTheme.colorScheme.onBackground,
-                        onClick = {
-                            scope.launch {
-                                pagerState.animateScrollToPage(1)
-                            }
-                        })
-
-                    Tab(
-                        text = { Text(stringResource(Res.string.global)) },
-                        selected = pagerState.currentPage == 2,
-                        selectedContentColor = MaterialTheme.colorScheme.primary,
-                        unselectedContentColor = MaterialTheme.colorScheme.onBackground,
-                        onClick = {
-                            scope.launch {
-                                pagerState.animateScrollToPage(2)
-                            }
-                        })
-                }
-
-                HorizontalPager(
-                    state = pagerState,
-                    beyondViewportPageCount = 3,
-                    userScrollEnabled = viewModel.isSwipeBetweenTabsEnabled,
-                    modifier = Modifier.padding(top = 24.dp)
-                        .background(MaterialTheme.colorScheme.background).zIndex(0f)
-                ) { tabIndex ->
-                    when (tabIndex) {
-                        0 -> Box(modifier = Modifier.fillMaxSize()) {
-                            HomeTimelineComposable(navController)
+                Tab(
+                    text = { Text(stringResource(Res.string.home)) },
+                    selected = pagerState.currentPage == 0,
+                    selectedContentColor = MaterialTheme.colorScheme.primary,
+                    unselectedContentColor = MaterialTheme.colorScheme.onBackground,
+                    onClick = {
+                        scope.launch {
+                            pagerState.animateScrollToPage(0)
                         }
+                    })
 
-                        1 -> Box(modifier = Modifier.fillMaxSize()) {
-                            LocalTimelineComposable(navController)
+                Tab(
+                    text = { Text(stringResource(Res.string.local)) },
+                    selected = pagerState.currentPage == 1,
+                    selectedContentColor = MaterialTheme.colorScheme.primary,
+                    unselectedContentColor = MaterialTheme.colorScheme.onBackground,
+                    onClick = {
+                        scope.launch {
+                            pagerState.animateScrollToPage(1)
                         }
+                    })
 
-                        2 -> Box(modifier = Modifier.fillMaxSize()) {
-                            GlobalTimelineComposable(navController)
+                Tab(
+                    text = { Text(stringResource(Res.string.global)) },
+                    selected = pagerState.currentPage == 2,
+                    selectedContentColor = MaterialTheme.colorScheme.primary,
+                    unselectedContentColor = MaterialTheme.colorScheme.onBackground,
+                    onClick = {
+                        scope.launch {
+                            pagerState.animateScrollToPage(2)
                         }
+                    })
+            }
+
+            HorizontalPager(
+                state = pagerState,
+                beyondViewportPageCount = 3,
+                userScrollEnabled = viewModel.isSwipeBetweenTabsEnabled,
+                modifier = Modifier.padding(top = 24.dp)
+                    .background(MaterialTheme.colorScheme.background).zIndex(0f)
+            ) { tabIndex ->
+                when (tabIndex) {
+                    0 -> Box(modifier = Modifier.fillMaxSize()) {
+                        HomeTimelineComposable(navController)
+                    }
+
+                    1 -> Box(modifier = Modifier.fillMaxSize()) {
+                        LocalTimelineComposable(navController)
+                    }
+
+                    2 -> Box(modifier = Modifier.fillMaxSize()) {
+                        GlobalTimelineComposable(navController)
                     }
                 }
             }
+        }
     }
     if (showBottomSheet) {
         ModalBottomSheet(

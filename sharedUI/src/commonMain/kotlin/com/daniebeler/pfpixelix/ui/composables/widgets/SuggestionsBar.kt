@@ -4,8 +4,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.ime
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -16,6 +20,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import com.daniebeler.pfpixelix.ui.composables.post.SuggestionsState
 
@@ -26,10 +31,15 @@ fun SuggestionsBar(
     bottomBarPadding: Boolean,
     modifier: Modifier = Modifier
 ) {
-    if (state.suggestions.isNotEmpty()) {
+    val navigationBarPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+    val imeInsets = WindowInsets.ime
+    val density = LocalDensity.current
+    val keyboardHeight = with(density) { imeInsets.getBottom(this).toDp() }
+
+    if (state.suggestions.isNotEmpty() && keyboardHeight > 10.dp) {
         LazyRow(
             modifier = modifier
-                .padding(bottom = if (bottomBarPadding) 60.dp else 0.dp)
+                .padding(bottom = if (bottomBarPadding) 60.dp + navigationBarPadding else 0.dp)
                 .fillMaxWidth()
                 .background(MaterialTheme.colorScheme.surfaceContainerHighest).padding(horizontal = 4.dp, vertical = 4.dp),
             contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),

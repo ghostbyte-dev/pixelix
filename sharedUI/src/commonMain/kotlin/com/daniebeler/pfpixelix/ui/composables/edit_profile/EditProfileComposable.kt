@@ -8,9 +8,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -121,6 +124,8 @@ fun EditProfileComposable(
         Column(
             Modifier.imeAwareInsets(60.dp).fillMaxSize()
         ) {
+            val navigationBarPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+
             Column(
                 Modifier.padding(paddingValues)
                     .padding(top = TopAppBarDefaults.TopAppBarExpandedHeight - 24.dp).weight(1f)
@@ -274,7 +279,7 @@ fun EditProfileComposable(
                             onCheckedChange = { viewModel.privateProfile = it })
                     }
 
-                    Spacer(Modifier.height(24.dp))
+                    Spacer(Modifier.height(80.dp + navigationBarPadding))
                 }
 
             }

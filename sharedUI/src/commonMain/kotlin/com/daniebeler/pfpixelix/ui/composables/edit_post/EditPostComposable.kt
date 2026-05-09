@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -186,7 +187,7 @@ fun EditPostComposable(
         }) { paddingValues ->
         Box(Modifier.padding(paddingValues)) {
             Column(
-                Modifier.imeAwareInsets(60.dp).fillMaxSize()
+                Modifier.imePadding().fillMaxSize()
             ) {
                 Column(
                     Modifier

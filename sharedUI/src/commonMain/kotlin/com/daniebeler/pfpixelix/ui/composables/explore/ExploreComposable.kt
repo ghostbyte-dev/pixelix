@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
@@ -166,7 +167,7 @@ fun ExploreComposable(
 
             if (textFieldState.text.isBlank() && viewModel.savedSearches.isNotEmpty()) {
                 LazyColumn(
-                    modifier = Modifier.imeAwareInsets(60.dp),
+                    modifier = Modifier.imePadding(),
                     contentPadding = PaddingValues(bottom = 60.dp),
                 ) {
                     items(viewModel.savedSearches.reversed()) {
@@ -191,7 +192,7 @@ fun ExploreComposable(
             }
             viewModel.searchState.searchResult?.let { searchResult ->
                 LazyColumn(
-                    modifier = Modifier.imeAwareInsets(60.dp),
+                    modifier = Modifier.imePadding(),
                     contentPadding = PaddingValues(bottom = 60.dp),
                     content = {
                     items(searchResult.accounts) {

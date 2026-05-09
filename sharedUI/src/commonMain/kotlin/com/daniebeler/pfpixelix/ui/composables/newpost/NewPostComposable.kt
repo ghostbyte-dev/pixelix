@@ -20,6 +20,8 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
@@ -143,6 +145,7 @@ fun NewPostComposable(
     Box(modifier = Modifier.fillMaxSize()) {
 
         val statusBarPadding = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
+        val navigationBarPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
 
         Box(
             modifier = Modifier.padding(top = TopAppBarDefaults.TopAppBarExpandedHeight + statusBarPadding - 24.dp)
@@ -154,10 +157,10 @@ fun NewPostComposable(
                 ) {
                     Column(
                         Modifier.weight(1f).verticalScroll(rememberScrollState())
-                            .padding(bottom = 60.dp),
+                            .padding(bottom = 60.dp + navigationBarPadding),
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        Spacer(Modifier.height(24.dp))
+                        Spacer(Modifier.height(0.dp))
 
                         ImagesPager(
                             viewModel.images,

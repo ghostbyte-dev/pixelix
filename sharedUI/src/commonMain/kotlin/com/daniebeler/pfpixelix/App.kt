@@ -349,12 +349,17 @@ private fun BottomBarFloating(
             avatar = it?.avatar
         }
     }
+
+    val navBackStackEntry = navController.currentBackStackEntryAsState().value
+    val currentDestination = navBackStackEntry?.destination ?: return
+    val tabContainer = currentDestination.parent ?: return
+
     val systemNavigationBarHeight =
         WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
     HorizontalFloatingToolbar(
         expanded = true,
-        scrollBehavior = scrollBehavior,
-        modifier = Modifier.padding(bottom = systemNavigationBarHeight),
+        scrollBehavior = if (currentDestination.hasRoute<Destination.NewPost>()) null else scrollBehavior,
+        modifier = Modifier.padding(bottom = systemNavigationBarHeight + 4.dp),
         colors = FloatingToolbarColors(
             toolbarContentColor = MaterialTheme.colorScheme.onSurface,
             toolbarContainerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
@@ -362,9 +367,6 @@ private fun BottomBarFloating(
             fabContainerColor = MaterialTheme.colorScheme.error
         )
     ) {
-        val navBackStackEntry = navController.currentBackStackEntryAsState().value
-        val currentDestination = navBackStackEntry?.destination ?: return@HorizontalFloatingToolbar
-        val tabContainer = currentDestination.parent ?: return@HorizontalFloatingToolbar
         HomeTab.entries.forEachIndexed { index, tab ->
             val isSelected = currentDestination.hierarchy.any {
                 it.hasRoute(tab.destination::class)

@@ -129,55 +129,6 @@ fun CommentsBottomSheet(
                             instance = viewModel.instance
                         )
                     }
-//                Column {
-//                    TextFieldMentionsComposable(
-//                        submit = { text ->
-//                            viewModel.replyText = TextFieldValue()
-//                            viewModel.createReply(
-//                                post.id, text
-//                            )
-//                        },
-//                        viewModel.replyText,
-//                        changeText = { newText -> viewModel.replyText = newText },
-//                        labelStringId = Res.string.reply,
-//                        modifier = null,
-//                        imeAction = ImeAction.Send,
-//                        suggestionsBoxColor = MaterialTheme.colorScheme.surface,
-//                        submitButton = { enabled ->
-//                            Button(
-//                                onClick = {
-//                                    if (!viewModel.ownReplyState.isLoading) {
-//                                        viewModel.createReply(post.id, viewModel.replyText.text)
-//                                        viewModel.replyText = viewModel.replyText.copy(text = "")
-//                                    }
-//                                },
-//                                Modifier
-//                                    .height(56.dp)
-//                                    .width(56.dp)
-//                                    .padding(0.dp, 0.dp),
-//                                shape = RoundedCornerShape(16.dp),
-//                                contentPadding = PaddingValues(12.dp),
-//                                enabled = enabled
-//                            ) {
-//                                if (viewModel.ownReplyState.isLoading) {
-//                                    CircularProgressIndicator(
-//                                        modifier = Modifier.size(24.dp),
-//                                        color = MaterialTheme.colorScheme.onPrimary
-//                                    )
-//                                } else {
-//                                    Icon(
-//                                        imageVector = Icons.AutoMirrored.Filled.Send,
-//                                        contentDescription = "submit",
-//                                        Modifier
-//                                            .fillMaxSize()
-//                                            .fillMaxWidth()
-//                                    )
-//                                }
-//
-//                            }
-//                        },
-//                        maxLength = viewModel.instance?.configuration?.statusConfig?.maxCharacters)
-//                }
 
                     Row(verticalAlignment = Alignment.Bottom, modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                         MaxLengthTextField(
@@ -345,7 +296,6 @@ private fun ReplyElement(
                         maxLines = 1
                     )
                 }
-
 
                 HashtagsMentionsTextView(
                     text = reply.content,

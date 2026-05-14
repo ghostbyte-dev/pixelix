@@ -4,6 +4,7 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.text.ClickableText
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -11,14 +12,18 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLayoutResult
+import androidx.compose.ui.text.TextLinkStyles
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withLink
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.TextUnit
 import androidx.navigation.NavController
@@ -102,67 +107,84 @@ fun HashtagsMentionsTextView(
         }
         annotatedStringList
     }
+    val scope = rememberCoroutineScope()
 
-    // Build an annotated string
     val annotatedString = buildAnnotatedString {
-        annotatedStringList.forEach {
-            if (it.tag == "tag" || it.tag == "account" || it.tag == "link") {
-                pushStringAnnotation(tag = it.tag, annotation = it.item)
-                withStyle(style = primaryStyle) { append(it.item) }
-                pop()
-            } else {
-                withStyle(style = textStyle) { append(it.item) }
+        annotatedStringList.forEach { element ->
+            when (element.tag) {
+                "tag", "account", "link" -> {
+                    val link = LinkAnnotation.Clickable(
+                        tag = element.tag,
+                        styles = TextLinkStyles(style = primaryStyle),
+                        linkInteractionListener = {
+                            val value = element.item.drop(1)
+                            when (element.tag) {
+                                "tag" -> navController.navigate(Destination.HashtagTimeline(value))
+                                "account" -> {
+                                    if (mentions == null) {
+                                        navController.navigate(Destination.ProfileByUsername(value))
+                                    } else {
+                                        val account = mentions.find { it.acct == value }
+                                            ?: mentions.find { it.username == value }
+
+                                        if (account != null) {
+                                            scope.launch {
+                                                val myAccountId = viewModel.getMyAccountId()
+                                                if (account.id == myAccountId) {
+                                                    navController.navigate(Destination.OwnProfile)
+                                                } else {
+                                                    navController.navigate(
+                                                        Destination.Profile(
+                                                            account.id
+                                                        )
+                                                    )
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+                                "link" -> {
+                                    openUrl(element.item)
+                                }
+                            }
+                        }
+                    )
+
+                    withLink(link) {
+                        append(element.item)
+                    }
+                }
+
+                else -> {
+                    withStyle(style = textStyle) {
+                        append(element.item)
+                    }
+                }
             }
         }
     }
 
     Column(modifier = Modifier.animateContentSize()) {
-        ClickableText(text = annotatedString, style = if (textSize != null) {
-            MaterialTheme.typography.bodyMedium.copy(fontSize = textSize)
-        } else {
-            MaterialTheme.typography.bodyMedium
-        },
-            overflow = TextOverflow.Ellipsis,
-            maxLines = maxLines,
-            onTextLayout = { textLayoutResult: TextLayoutResult ->
-                if (textLayoutResult.lineCount > maxLines -1) {
-                    if (textLayoutResult.isLineEllipsized(maxLines-1)) showReadMoreButtonState = true
-                }
-            },
-            modifier = modifier, onClick = { position ->
-                CoroutineScope(Dispatchers.Main).launch {
-                    val annotatedStringRange =
-                        annotatedStringList.firstOrNull { it.start <= position && position < it.end }
-                    if (annotatedStringRange != null) {
-                        if (annotatedStringRange.tag == "tag" || annotatedStringRange.tag == "account") {
-                            val newItem = annotatedStringRange.item.drop(1)
-                            if (annotatedStringRange.tag == "tag") {
-                                navController.navigate(Destination.HashtagTimeline(newItem))
-                            } else {
-                                if (mentions == null) {
-                                    navController.navigate(Destination.ProfileByUsername(annotatedStringRange.item.drop(1)))
-                                } else {
-                                    var account = mentions.find { account: Account -> account.acct == newItem }
-                                    if (account == null) {
-                                        account = mentions.find { account: Account -> account.username == newItem }
-                                    }
-                                    if (account != null) {
-                                        //get my account id and check if it is mine account
-                                        val myAccountId = viewModel.getMyAccountId()
-                                        if (account.id == myAccountId) {
-                                            navController.navigate(Destination.OwnProfile)
-                                        } else {
-                                            navController.navigate(Destination.Profile(account.id))
-                                        }
-                                    }
-                                }
-                            }
-                        } else if (annotatedStringRange.tag == "link") {
-                            openUrl(annotatedStringRange.item)
-                        }
+        SelectionContainer {
+            Text(
+                text = annotatedString,
+                style = if (textSize != null) {
+                    MaterialTheme.typography.bodyMedium.copy(fontSize = textSize)
+                } else {
+                    MaterialTheme.typography.bodyMedium
+                },
+                overflow = TextOverflow.Ellipsis,
+                maxLines = maxLines,
+                onTextLayout = { textLayoutResult: TextLayoutResult ->
+                    if (textLayoutResult.lineCount > maxLines - 1) {
+                        if (textLayoutResult.isLineEllipsized(maxLines - 1)) showReadMoreButtonState =
+                            true
                     }
-                }
-            })
+                },
+                modifier = modifier
+            )
+        }
         if (showReadMoreButtonState) {
             Text(
                 text = if (expanded) stringResource(Res.string.read_less) else stringResource(Res.string.read_more),

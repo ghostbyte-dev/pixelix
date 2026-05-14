@@ -259,7 +259,10 @@ private fun PostHeader(
         ) {
             Icon(Icons.Outlined.Cached, contentDescription = null, modifier = Modifier.size(20.dp))
             Text(
-                stringResource(Res.string.reblogged_by, reblogAccount.displayname ?: reblogAccount.username),
+                stringResource(
+                    Res.string.reblogged_by,
+                    reblogAccount.displayname ?: reblogAccount.username
+                ),
                 fontSize = 11.sp
             )
         }
@@ -450,7 +453,9 @@ private fun PostMediaContent(
                 } else {
                     MaterialTheme.colorScheme.onBackground
                 }
-                Box(modifier = Modifier.padding(2.dp).clip(CircleShape).background(color).size(8.dp))
+                Box(
+                    modifier = Modifier.padding(2.dp).clip(CircleShape).background(color).size(8.dp)
+                )
             }
         }
     } else if (post.mediaAttachments.isNotEmpty()) {
@@ -590,7 +595,12 @@ private fun PostActionBar(
         }
 
         // "Liked by" row
-        PostLikedByRow(post = post, viewModel = viewModel, navController = navController, onLikesClick = onLikesClick)
+        PostLikedByRow(
+            post = post,
+            viewModel = viewModel,
+            navController = navController,
+            onLikesClick = onLikesClick
+        )
 
         Spacer(modifier = Modifier.height(12.dp))
 
@@ -655,11 +665,19 @@ private fun PostBottomSheet(
         when (activeSheet) {
             BottomSheetType.Comments -> CommentsBottomSheet(post, navController, viewModel)
             BottomSheetType.Menu -> {
-                val isMyPost = viewModel.myAccountId != null && post.account.id == viewModel.myAccountId
+                val isMyPost =
+                    viewModel.myAccountId != null && post.account.id == viewModel.myAccountId
                 ShareBottomSheet(
-                    post.url, isMyPost, viewModel, post, pagerState.currentPage, navController, onDismiss
+                    post.url,
+                    isMyPost,
+                    viewModel,
+                    post,
+                    pagerState.currentPage,
+                    navController,
+                    onDismiss
                 )
             }
+
             BottomSheetType.Likes -> LikesBottomSheet(viewModel, navController)
             BottomSheetType.None -> {}
         }

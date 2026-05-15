@@ -45,7 +45,7 @@ interface PixelfedApi {
         const val LIKED_POSTS_LIMIT = 40
         const val PROFILE_POSTS_LIMIT = 18
         const val LIKED_BY_LIMIT = 40
-        const val FOLLOWERS_LIMIT = 40
+        const val FOLLOWERS_LIMIT = 10
         const val BOOKMARKED_LIMIT = 12
     }
 
@@ -175,16 +175,16 @@ interface PixelfedApi {
     @GET("api/v1/accounts/{id}/followers")
     suspend fun getAccountsFollowers(
         @Path("id") userId: String,
-        @Query("max_id") maxId: String? = null,
+        @Query("cursor") cursor: String? = null,
         @Query("limit") limit: Int = FOLLOWERS_LIMIT
-    ): List<Account>
+    ): Call<List<Account>>
 
     @GET("api/v1/accounts/{id}/following")
     suspend fun getAccountsFollowing(
         @Path("id") userId: String,
-        @Query("max_id") maxId: String? = null,
+        @Query("cursor") cursor: String? = null,
         @Query("limit") limit: Int = FOLLOWERS_LIMIT
-    ): List<Account>
+    ): Call<List<Account>>
 
     // Statuses
     @GET("api/v1/statuses/{postid}?_pe=1")

@@ -1,18 +1,18 @@
 package com.daniebeler.pfpixelix.domain.service.account
 
 import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.toPixelMap
 import co.touchlab.kermit.Logger
 import com.daniebeler.pfpixelix.di.AppSingleton
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.domain.repository.PixelfedApi
 import com.daniebeler.pfpixelix.domain.model.Account
-import com.daniebeler.pfpixelix.domain.service.platform.Platform
+import com.daniebeler.pfpixelix.domain.model.AccountsWithCursor
+import com.daniebeler.pfpixelix.domain.model.LikedPostsWithNext
 import com.daniebeler.pfpixelix.domain.service.session.AuthService
 import com.daniebeler.pfpixelix.domain.service.utils.loadListResources
 import com.daniebeler.pfpixelix.domain.service.utils.loadResource
-import com.daniebeler.pfpixelix.utils.KmpUri
 import com.daniebeler.pfpixelix.utils.encodeToPngBytes
+import com.daniebeler.pfpixelix.utils.executeWithResponse
 import io.ktor.client.request.forms.MultiPartFormDataContent
 import io.ktor.client.request.forms.formData
 import io.ktor.http.Headers
@@ -22,6 +22,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
@@ -99,11 +100,47 @@ class AccountService(
     fun getBlockedAccounts() = loadListResources { api.getBlockedAccounts() }
     fun getLikedBy(postId: String) = loadListResources { api.getAccountsWhoLikedPost(postId) }
 
+    /*
     fun getAccountsFollowers(accountId: String, maxId: String? = null) = loadListResources {
         api.getAccountsFollowers(accountId, maxId)
+    }*/
+
+    fun getAccountsFollowers(accountId: String, cursor: String? = null) = flow {
+        emit(Resource.Loading())
+
+        try {
+            val (response, data) = api.getAccountsFollowers(accountId, cursor).executeWithResponse()
+            val linkHeader = response.headers["link"] ?: ""
+            val links = linkHeader.split(",")
+            val nextLink = links.find { it.contains("rel=\"prev\"", ignoreCase = true) } ?: ""
+            val regex = "cursor=([^&>\\s\"']+)".toRegex()
+            val matchResult = regex.find(nextLink)
+            val nextCursor = matchResult?.groupValues?.get(1)
+
+
+            val result = AccountsWithCursor(data, nextCursor ?: "")
+            emit(Resource.Success(result))
+        } catch (e: Exception) {
+            emit(Resource.Error(e.message ?: "Unknown error"))
+        }
     }
 
-    fun getAccountsFollowing(accountId: String, maxId: String? = null) = loadListResources {
-        api.getAccountsFollowing(accountId, maxId)
+    fun getAccountsFollowing(accountId: String, cursor: String? = null) = flow {
+        emit(Resource.Loading())
+
+        try {
+            val (response, data) = api.getAccountsFollowing(accountId, cursor).executeWithResponse()
+            val linkHeader = response.headers["link"] ?: ""
+            val links = linkHeader.split(",")
+            val nextLink = links.find { it.contains("rel=\"prev\"", ignoreCase = true) } ?: ""
+            val regex = "cursor=([^&>\\s\"']+)".toRegex()
+            val matchResult = regex.find(nextLink)
+            val nextCursor = matchResult?.groupValues?.get(1)
+
+            val result = AccountsWithCursor(data, nextCursor ?: "")
+            emit(Resource.Success(result))
+        } catch (e: Exception) {
+            emit(Resource.Error(e.message ?: "Unknown error"))
+        }
     }
 }

@@ -11,18 +11,13 @@ import com.daniebeler.pfpixelix.domain.service.session.AuthService
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.domain.service.utils.loadListResources
 import com.daniebeler.pfpixelix.domain.service.utils.loadResource
-import de.jensklingenberg.ktorfit.Call
-import de.jensklingenberg.ktorfit.Callback
-import io.ktor.client.statement.HttpResponse
+import com.daniebeler.pfpixelix.utils.executeWithResponse
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.json.Json
 import me.tatarka.inject.annotations.Inject
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
-import kotlin.coroutines.suspendCoroutine
 
 @Inject
 class PostService(
@@ -62,8 +57,10 @@ class PostService(
         try {
             val (response, data) = api.getLikedPosts(maxId).executeWithResponse()
             val linkHeader = response.headers["link"] ?: ""
+            val links = linkHeader.split(",")
+            val nextLink = links.find { it.contains("rel=\"next\"", ignoreCase = true) } ?: ""
             val regex = "max_id=([^&>\\s\"']+)".toRegex()
-            val matchResult = regex.find(linkHeader)
+            val matchResult = regex.find(nextLink)
             val nextMaxId = matchResult?.groupValues?.get(1)
 
             val posts = data.filter { it.mediaAttachments.isNotEmpty() }
@@ -119,8 +116,10 @@ class PostService(
         try {
             val (response, data) = api.getBookmarkedPosts(cursor = cursor).executeWithResponse()
             val linkHeader = response.headers["link"] ?: ""
+            val links = linkHeader.split(",")
+            val nextLink = links.find { it.contains("rel=\"next\"", ignoreCase = true) } ?: ""
             val regex = "cursor=([^&>\\s\"']+)".toRegex()
-            val matchResult = regex.find(linkHeader)
+            val matchResult = regex.find(nextLink)
             val nextCursor = matchResult?.groupValues?.get(1)
 
             val posts = data.filter { it.mediaAttachments.isNotEmpty() }
@@ -150,15 +149,4 @@ class PostService(
         }
     }
 
-    private suspend fun <T> Call<T>.executeWithResponse() = suspendCoroutine { cont ->
-        onExecute(object : Callback<T> {
-            override fun onResponse(call: T, response: HttpResponse) {
-                cont.resume(response to call)
-            }
-
-            override fun onError(exception: Throwable) {
-                cont.resumeWithException(exception)
-            }
-        })
-    }
 }

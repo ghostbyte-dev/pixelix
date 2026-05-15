@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.daniebeler.pfpixelix.domain.repository.PixelfedApi
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.domain.service.account.AccountService
 import com.daniebeler.pfpixelix.domain.service.session.AuthService
@@ -55,12 +56,16 @@ class FollowersViewModel @Inject constructor(
         accountService.getAccountsFollowers(accountId).onEach { result ->
             followersState = when (result) {
                 is Resource.Success -> {
-                    val endReached = (result.data?.size ?: 0) < 40
-                    FollowersState(followers = result.data ?: emptyList(), endReached = endReached)
+                    val endReached = (result.data.accounts.size ?: 0) < PixelfedApi.FOLLOWERS_LIMIT
+                    FollowersState(
+                        followers = result.data.accounts,
+                        endReached = endReached,
+                        cursor = result.data.cursor
+                    )
                 }
 
                 is Resource.Error -> {
-                    FollowersState(error = result.message ?: "An unexpected error occurred")
+                    FollowersState(error = result.message)
                 }
 
                 is Resource.Loading -> {
@@ -75,28 +80,30 @@ class FollowersViewModel @Inject constructor(
     }
 
     fun getFollowersPaginated() {
-        if (followersState.followers.isNotEmpty() && !followersState.isLoading && !followersState.endReached) {
+        if (followersState.followers.isNotEmpty() && !followersState.isLoading && followersState.cursor.isNotEmpty()) {
             accountService.getAccountsFollowers(
-                accountId, followersState.followers.last().id
+                accountId, followersState.cursor
             ).onEach { result ->
                 followersState = when (result) {
                     is Resource.Success -> {
-                        val endReached = (result.data?.size ?: 0) < 40
+                        val endReached = (result.data.accounts.size) < PixelfedApi.FOLLOWERS_LIMIT
                         FollowersState(
-                            followers = followersState.followers + (result.data ?: emptyList()),
-                            endReached = endReached
+                            followers = followersState.followers + (result.data.accounts),
+                            endReached = endReached,
+                            cursor = result.data.cursor
                         )
                     }
 
                     is Resource.Error -> {
-                        FollowersState(error = result.message ?: "An unexpected error occurred")
+                        FollowersState(error = result.message)
                     }
 
                     is Resource.Loading -> {
                         FollowersState(
                             isLoading = true,
                             isRefreshing = false,
-                            followers = followersState.followers
+                            followers = followersState.followers,
+                            cursor = followersState.cursor
                         )
                     }
                 }
@@ -108,12 +115,16 @@ class FollowersViewModel @Inject constructor(
         accountService.getAccountsFollowing(accountId).onEach { result ->
             followingState = when (result) {
                 is Resource.Success -> {
-                    val endReached = (result.data?.size ?: 0) < 40
-                    FollowingState(following = result.data ?: emptyList(), endReached = endReached)
+                    val endReached = (result.data.accounts.size ?: 0) < PixelfedApi.FOLLOWERS_LIMIT
+                    FollowingState(
+                        following = result.data.accounts,
+                        endReached = endReached,
+                        cursor = result.data.cursor
+                    )
                 }
 
                 is Resource.Error -> {
-                    FollowingState(error = result.message ?: "An unexpected error occurred")
+                    FollowingState(error = result.message)
                 }
 
                 is Resource.Loading -> {
@@ -128,16 +139,17 @@ class FollowersViewModel @Inject constructor(
     }
 
     fun getFollowingPaginated() {
-        if (followingState.following.isNotEmpty() && !followingState.isLoading && !followingState.endReached) {
+        if (followingState.following.isNotEmpty() && !followingState.isLoading && followingState.cursor.isNotEmpty()) {
             accountService.getAccountsFollowing(
-                accountId, followingState.following.last().id
+                accountId, followingState.cursor
             ).onEach { result ->
                 followingState = when (result) {
                     is Resource.Success -> {
-                        val endReached = (result.data?.size ?: 0) < 40
+                        val endReached = (result.data.accounts.size) < PixelfedApi.FOLLOWERS_LIMIT
                         FollowingState(
-                            following = followingState.following + (result.data ?: emptyList()),
-                            endReached = endReached
+                            following = followingState.following + (result.data.accounts),
+                            endReached = endReached,
+                            cursor = result.data.cursor
                         )
                     }
 
@@ -149,7 +161,8 @@ class FollowersViewModel @Inject constructor(
                         FollowingState(
                             isLoading = true,
                             isRefreshing = false,
-                            following = followingState.following
+                            following = followingState.following,
+                            cursor = followingState.cursor
                         )
                     }
                 }

@@ -44,7 +44,12 @@ fun InfinitePostsList(
     isFirstItemLarge: Boolean = false,
     postsCount: Int? = null,
     contentPaddingTop: Dp = 0.dp,
-    contentPaddingBottom: Dp = 60.dp
+    contentPaddingBottom: Dp = 60.dp,
+    before: @Composable (() -> Unit)? = null,
+    after: @Composable (() -> Unit)? = null,
+    edit: Boolean = false,
+    editRemove: (postId: String) -> Unit = { },
+    onClick: ((id: String) -> Unit)? = null
 ) {
     val staggeredGridState = rememberLazyStaggeredGridState()
 
@@ -79,6 +84,11 @@ fun InfinitePostsList(
                         )
                     }
                 }
+                if (before != null) {
+                    item(span = StaggeredGridItemSpan.FullLine) {
+                        before()
+                    }
+                }
                 PostsWrapperComposable(
                     posts = items,
                     isLoading = isLoading,
@@ -92,14 +102,26 @@ fun InfinitePostsList(
                     isFirstImageLarge = isFirstItemLarge,
                     gridColumnCount = gridColumnCount,
                     gridContentWidth = gridContentWidth,
-                    navController = navController
+                    navController = navController,
+                    edit = edit,
+                    editRemove = editRemove,
+                    onClick = onClick
                 )
+                if (after != null) {
+                    item(span = StaggeredGridItemSpan.FullLine) {
+                        after()
+                    }
+                }
+
             }
         }
         ToTopButton(staggeredGridState) { onRefresh() }
     }
 
-    InfiniteStaggeredGridHandler(lazyStaggeredGridState = staggeredGridState, itemCount = items.size) {
+    InfiniteStaggeredGridHandler(
+        lazyStaggeredGridState = staggeredGridState,
+        itemCount = items.size
+    ) {
         getItemsPaginated()
     }
 }

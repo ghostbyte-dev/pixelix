@@ -45,9 +45,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.di.injectViewModel
+import com.daniebeler.pfpixelix.ui.composables.profile.ViewEnum
 import com.daniebeler.pfpixelix.ui.composables.widgets.ButtonRowElement
 import com.daniebeler.pfpixelix.ui.composables.widgets.InfinitePostsGrid
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
+import com.daniebeler.pfpixelix.ui.composables.widgets.InfinitePostsList
 import org.jetbrains.compose.resources.stringResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.by
@@ -81,23 +83,30 @@ fun CollectionComposable(
                 .padding(top = TopAppBarDefaults.TopAppBarExpandedHeight - 24.dp)
                 .padding(paddingValues)
         ) {
-            InfinitePostsGrid(
+            InfinitePostsList(
                 contentPaddingTop = 24.dp,
                 items = if (viewModel.editState.editMode) {
                     viewModel.editState.editPosts
                 } else {
                     viewModel.collectionPostsState.posts
                 },
+                postsCount = viewModel.collectionPostsState.posts.count(),
+                view = if (viewModel.editState.editMode) ViewEnum.Grid else viewModel.view,
+                changeView = { viewModel.changeView(it) },
                 isLoading = viewModel.collectionPostsState.isLoading,
                 isRefreshing = viewModel.collectionPostsState.isRefreshing,
                 error = viewModel.collectionPostsState.error,
                 emptyMessage = EmptyState(
                     icon = Icons.Outlined.FavoriteBorder, heading = "Empty Collection"
                 ),
+                endReached = viewModel.collectionPostsState.endReached,
+                itemGetsDeleted = {},
+                postGetsUpdated = {},
                 navController = navController,
                 getItemsPaginated = {
                     viewModel.getPostsPaginated(false)
                 },
+                isFirstItemLarge = true,
                 after = {
                     if (viewModel.editState.editMode) {
                         Spacer(Modifier.height(22.dp))
@@ -112,7 +121,6 @@ fun CollectionComposable(
                             )
                         }
                     }
-
                 },
                 onRefresh = {
                     viewModel.refresh()

@@ -102,8 +102,8 @@ class OwnProfileViewModel @Inject constructor(
         postService.getOwnPosts().onEach { result ->
             postsState = when (result) {
                 is Resource.Success -> {
-                    val endReached = (result.data?.size ?: 0) < PixelfedApi.PROFILE_POSTS_LIMIT
-                    PostsState(posts = result.data ?: emptyList(), endReached = endReached)
+                    val endReached = (result.data.size) < PixelfedApi.PROFILE_POSTS_LIMIT
+                    PostsState(posts = result.data, endReached = endReached)
                 }
 
                 is Resource.Error -> {

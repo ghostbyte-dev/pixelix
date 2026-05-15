@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridScope
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
 import androidx.compose.foundation.lazy.staggeredgrid.items
@@ -42,7 +43,10 @@ fun LazyStaggeredGridScope.PostsWrapperComposable(
     isFirstImageLarge: Boolean = false,
     gridColumnCount: Int = 3,
     gridContentWidth: Dp = 0.dp,
-    navController: NavController
+    navController: NavController,
+    edit: Boolean = false,
+    editRemove: (postId: String) -> Unit = { },
+    onClick: ((id: String) -> Unit)? = null
 ) {
 
     if (view == ViewEnum.Grid) {
@@ -56,7 +60,10 @@ fun LazyStaggeredGridScope.PostsWrapperComposable(
             isFirstImageLarge = isFirstImageLarge,
             columnCount = gridColumnCount,
             contentWidth = gridContentWidth,
-            navController = navController
+            navController = navController,
+            edit = edit,
+            editRemove = editRemove,
+            onClick = onClick
         )
     }
 
@@ -85,7 +92,10 @@ private fun LazyStaggeredGridScope.PostsGridInScope(
     isFirstImageLarge: Boolean = false,
     columnCount: Int = 3,
     contentWidth: Dp = 0.dp,
-    navController: NavController
+    navController: NavController,
+    edit: Boolean = false,
+    editRemove: (postId: String) -> Unit = { },
+    onClick: ((id: String) -> Unit)? = null
 ) {
     val spacing = 4.dp
     val featuredCount = if (isFirstImageLarge && posts.size >= 3) {
@@ -105,7 +115,10 @@ private fun LazyStaggeredGridScope.PostsGridInScope(
                         post = posts[0],
                         navController = navController,
                         isFullQuality = true,
-                        modifier = Modifier.fillMaxSize()
+                        modifier = Modifier.fillMaxSize(),
+                        edit = edit,
+                        editRemove = editRemove,
+                        onClick = onClick
                     )
                 }
                 for (col in 0 until smallColumnsCount) {
@@ -116,7 +129,10 @@ private fun LazyStaggeredGridScope.PostsGridInScope(
                             Box(Modifier.size(columnWidth)) {
                                 CustomPost(
                                     post = posts[topIdx],
-                                    navController = navController
+                                    navController = navController,
+                                    edit = edit,
+                                    editRemove = editRemove,
+                                    onClick = onClick
                                 )
                             }
                         }
@@ -124,7 +140,10 @@ private fun LazyStaggeredGridScope.PostsGridInScope(
                             Box(Modifier.size(columnWidth)) {
                                 CustomPost(
                                     post = posts[bottomIdx],
-                                    navController = navController
+                                    navController = navController,
+                                    edit = edit,
+                                    editRemove = editRemove,
+                                    onClick = onClick
                                 )
                             }
                         }
@@ -136,12 +155,24 @@ private fun LazyStaggeredGridScope.PostsGridInScope(
         if (featuredCount < posts.size) {
             val remaining = posts.subList(featuredCount, posts.size)
             items(remaining.size, key = { remaining[it].id }) { index ->
-                CustomPost(post = remaining[index], navController = navController)
+                val columnWidth = (contentWidth - spacing * (columnCount - 1)) / columnCount
+
+                CustomPost(
+                    post = remaining[index], navController = navController,
+                    edit = edit,
+                    editRemove = editRemove,
+                    onClick = onClick, modifier = Modifier.size(columnWidth),
+                )
             }
         }
     } else {
         items(posts.size, key = { posts[it].id }) { index ->
-            CustomPost(post = posts[index], navController = navController)
+            CustomPost(
+                post = posts[index], navController = navController,
+                edit = edit,
+                editRemove = editRemove,
+                onClick = onClick
+            )
         }
     }
 
@@ -160,7 +191,10 @@ private fun LazyStaggeredGridScope.PostsGridInScope(
     if (posts.isEmpty()) {
         if (!isLoading && error.isEmpty()) {
             item(span = StaggeredGridItemSpan.FullLine) {
-                EmptyStateComposable(emptyMessage, Modifier.fillMaxWidth().padding(vertical = 50.dp))
+                EmptyStateComposable(
+                    emptyMessage,
+                    Modifier.fillMaxWidth().padding(vertical = 50.dp)
+                )
             }
         }
     }
@@ -182,7 +216,7 @@ private fun LazyStaggeredGridScope.PostsListInScope(
     emptyMessage: EmptyState,
     postGetsDeleted: (postId: String) -> Unit,
     updatePost: (post: Post) -> Unit,
-    navController: NavController
+    navController: NavController,
 ) {
     val spacedBy: Dp = 24.dp
 
@@ -193,7 +227,8 @@ private fun LazyStaggeredGridScope.PostsListInScope(
                 mutableFloatStateOf(1f)
             }
             Box(modifier = Modifier.zIndex(zIndex.floatValue).padding(horizontal = 8.dp)) {
-                PostComposable(post = posts[index],
+                PostComposable(
+                    post = posts[index],
                     postGetsDeleted = postGetsDeleted,
                     navController = navController,
                     updatePost = updatePost,

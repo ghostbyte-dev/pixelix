@@ -205,9 +205,9 @@ class OtherProfileViewModel(
             when (result) {
                 is Resource.Success -> {
                     collectionsState = if (!paginated) {
-                        CollectionsState(collections = result.data ?: emptyList())
+                        CollectionsState(collections = result.data)
                     } else {
-                        val endReached = result.data!!.isEmpty()
+                        val endReached = result.data.isEmpty()
                         CollectionsState(
                             collections = collectionsState.collections + result.data,
                             endReached = endReached

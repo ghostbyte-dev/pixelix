@@ -47,6 +47,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -144,11 +145,21 @@ fun OwnProfileComposable(
                         verticalItemSpacing = 4.dp,
                         horizontalArrangement = Arrangement.spacedBy(4.dp),
                         state = lazyGridState,
-                        contentPadding = PaddingValues(bottom = 60.dp)
+                        contentPadding = PaddingValues(bottom = 60.dp, start = 4.dp, end = 4.dp)
                     ) {
                         item(span = StaggeredGridItemSpan.FullLine) {
                             Column(
-                                modifier = Modifier.fillMaxWidth().clip(
+                                modifier = Modifier.layout { measurable, constraints ->
+                                    val horizontalPadding = 4.dp.roundToPx()
+
+                                    val expandedWidth = constraints.maxWidth + (horizontalPadding * 2)
+                                    val placeable = measurable.measure(
+                                        constraints.copy(maxWidth = expandedWidth, minWidth = expandedWidth)
+                                    )
+                                    layout(constraints.maxWidth, placeable.height) {
+                                        placeable.placeRelative(-horizontalPadding, 0)
+                                    }
+                                }.fillMaxWidth().clip(
                                     RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)
                                 ).background(MaterialTheme.colorScheme.surfaceContainer)
                                     .padding(top = 24.dp, bottom = 12.dp)

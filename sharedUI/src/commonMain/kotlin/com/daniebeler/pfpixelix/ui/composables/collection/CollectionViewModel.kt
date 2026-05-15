@@ -10,24 +10,37 @@ import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.service.collection.CollectionService
 import com.daniebeler.pfpixelix.domain.service.platform.Platform
 import com.daniebeler.pfpixelix.domain.service.post.PostService
+import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
 import com.daniebeler.pfpixelix.domain.service.session.AuthService
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
+import com.daniebeler.pfpixelix.ui.composables.profile.ViewEnum
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 
 class CollectionViewModel @Inject constructor(
     private val platform: Platform,
     private val collectionService: CollectionService,
     private val postService: PostService,
-    private val authService: AuthService
-) : ViewModel() {
+    private val authService: AuthService,
+    private val prefs: UserPreferences,
+    ) : ViewModel() {
 
     var collectionState by mutableStateOf(CollectionState())
     var collectionPostsState by mutableStateOf(CollectionPostsState())
     var editState by mutableStateOf(EditCollectionState())
     var myUsername: String? = null
     var page: Int = 1
+    var view by mutableStateOf(ViewEnum.Grid)
+
+    init {
+        viewModelScope.launch {
+            prefs.showUserGridTimelineFlow.collect { res ->
+                view = if (res) ViewEnum.Grid else ViewEnum.Timeline
+            }
+        }
+    }
 
     fun loadData(collectionId: String) {
         if (collectionState.id == null) {
@@ -36,6 +49,11 @@ class CollectionViewModel @Inject constructor(
             getCollection()
             getPostsFirstLoad(false)
         }
+    }
+
+    fun changeView(newView: ViewEnum) {
+        view = newView
+        prefs.showUserGridTimeline = newView == ViewEnum.Grid
     }
 
     private fun getCollection() {
@@ -73,9 +91,9 @@ class CollectionViewModel @Inject constructor(
             collectionService.getPostsOfCollection(collectionState.id!!, 1).onEach { result ->
                 when (result) {
                     is Resource.Success -> {
-                        val endReached = (result.data?.size ?: 0) == 0
+                        val endReached = (result.data.size) < 10
                         collectionPostsState = CollectionPostsState(
-                            posts = result.data ?: emptyList(), endReached = endReached
+                            posts = result.data, endReached = endReached
                         )
                         getPostsPaginated(false)
                     }
@@ -99,6 +117,7 @@ class CollectionViewModel @Inject constructor(
     }
 
     fun getPostsPaginated(refreshing: Boolean) {
+        if (collectionPostsState.endReached) return
         if (collectionState.id != null) {
             if (collectionPostsState.posts.isEmpty()) {
                 return
@@ -111,7 +130,7 @@ class CollectionViewModel @Inject constructor(
             ).onEach { result ->
                 collectionPostsState = when (result) {
                     is Resource.Success -> {
-                        val endReached = (result.data?.size ?: 0) == 0
+                        val endReached = (result.data.size) < 10
                         var newPosts: List<Post> = result.data
                         newPosts = newPosts.drop(1);
                         CollectionPostsState(

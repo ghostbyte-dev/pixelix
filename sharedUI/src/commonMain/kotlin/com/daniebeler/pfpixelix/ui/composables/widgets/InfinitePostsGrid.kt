@@ -55,19 +55,19 @@ fun InfinitePostsGrid(
         PullToRefreshBox(
             isRefreshing = isRefreshing, onRefresh = { onRefresh() }, modifier = Modifier.fillMaxSize()
         ) {
-            privateInfinitePostsGrid(items, isLoading, isRefreshing, error, endReached, emptyMessage, navController, getItemsPaginated, contentPaddingTop, before, after, edit, editRemove, onClick)
+            PrivateInfinitePostsGrid(items, isLoading, isRefreshing, error, endReached, emptyMessage, navController, getItemsPaginated, contentPaddingTop, before, after, edit, editRemove, onClick)
         }
     } else {
         Box(
           modifier = Modifier.fillMaxSize()
         ) {
-            privateInfinitePostsGrid(items, isLoading, isRefreshing, error, endReached, emptyMessage, navController, getItemsPaginated, contentPaddingTop, before, after, edit, editRemove, onClick)
+            PrivateInfinitePostsGrid(items, isLoading, isRefreshing, error, endReached, emptyMessage, navController, getItemsPaginated, contentPaddingTop, before, after, edit, editRemove, onClick)
         }
     }
 }
 
 @Composable
-fun privateInfinitePostsGrid(
+fun PrivateInfinitePostsGrid(
     items: List<Post>,
     isLoading: Boolean,
     isRefreshing: Boolean,

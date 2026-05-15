@@ -7,18 +7,33 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.domain.service.post.PostService
+import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
+import com.daniebeler.pfpixelix.ui.composables.profile.ViewEnum
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 
 class LikedPostsViewModel @Inject constructor(
-    private val postService: PostService
-) : ViewModel() {
+    private val postService: PostService,
+    private val prefs: UserPreferences,
+    ) : ViewModel() {
 
     var likedPostsState by mutableStateOf(LikedPostsState())
+    var view by mutableStateOf(ViewEnum.Grid)
 
     init {
         getItemsFirstLoad()
+        viewModelScope.launch {
+            prefs.showUserGridTimelineFlow.collect { res ->
+                view = if (res) ViewEnum.Grid else ViewEnum.Timeline
+            }
+        }
+    }
+
+    fun changeView(newView: ViewEnum) {
+        view = newView
+        prefs.showUserGridTimeline = newView == ViewEnum.Grid
     }
 
     fun getItemsFirstLoad(refreshing: Boolean = false) {

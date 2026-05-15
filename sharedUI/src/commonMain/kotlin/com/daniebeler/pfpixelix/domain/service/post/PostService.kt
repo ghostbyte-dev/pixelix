@@ -1,5 +1,6 @@
 package com.daniebeler.pfpixelix.domain.service.post
 
+import com.daniebeler.pfpixelix.domain.model.BookmarkedPostsWithNextCursor
 import com.daniebeler.pfpixelix.domain.model.LikedPostsWithNext
 import com.daniebeler.pfpixelix.domain.model.NewReply
 import com.daniebeler.pfpixelix.domain.model.NewReport
@@ -61,12 +62,13 @@ class PostService(
         try {
             val (response, data) = api.getLikedPosts(maxId).executeWithResponse()
             val linkHeader = response.headers["link"] ?: ""
-            val onlyLink = linkHeader.substringAfter("rel=\"next\",<", "").substringBefore(">", "")
-            val nextMinId = onlyLink.substringAfter("min_id=", "")
+            val regex = "max_id=([^&>\\s\"']+)".toRegex()
+            val matchResult = regex.find(linkHeader)
+            val nextMaxId = matchResult?.groupValues?.get(1)
 
             val posts = data.filter { it.mediaAttachments.isNotEmpty() }
 
-            val result = LikedPostsWithNext(posts, nextMinId)
+            val result = LikedPostsWithNext(posts, nextMaxId ?: "")
             emit(Resource.Success(result))
         } catch (e: Exception) {
             emit(Resource.Error(e.message ?: "Unknown error"))
@@ -106,8 +108,28 @@ class PostService(
         api.unbookmarkPost(postId)
     }
 
-    fun getBookmarkedPosts() = loadListResources {
+    /*fun getBookmarkedPosts() = loadListResources {
         api.getBookmarkedPosts()
+    }*/
+
+
+    fun getBookmarkedPosts(cursor: String? = null) = flow {
+        emit(Resource.Loading())
+
+        try {
+            val (response, data) = api.getBookmarkedPosts(cursor = cursor).executeWithResponse()
+            val linkHeader = response.headers["link"] ?: ""
+            val regex = "cursor=([^&>\\s\"']+)".toRegex()
+            val matchResult = regex.find(linkHeader)
+            val nextCursor = matchResult?.groupValues?.get(1)
+
+            val posts = data.filter { it.mediaAttachments.isNotEmpty() }
+
+            val result = BookmarkedPostsWithNextCursor(posts, nextCursor ?: "")
+            emit(Resource.Success(result))
+        } catch (e: Exception) {
+            emit(Resource.Error(e.message ?: "Unknown error"))
+        }
     }
 
     fun reportPost(reportBody: NewReport) = loadResource {

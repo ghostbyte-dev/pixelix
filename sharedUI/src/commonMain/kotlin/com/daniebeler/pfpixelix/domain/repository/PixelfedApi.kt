@@ -294,10 +294,11 @@ interface PixelfedApi {
     suspend fun deleteMessage(@Query("id") id: String): List<Int>
     // Other
 
-    @GET("api/v1/bookmarks")
+    @GET("api/v1/bookmarks?_pe=1")
     suspend fun getBookmarkedPosts(
-        @Query("limit") limit: Int = BOOKMARKED_LIMIT
-    ): List<Post>
+        @Query("limit") limit: Int = BOOKMARKED_LIMIT,
+        @Query("cursor") cursor: String?
+    ): Call<List<Post>>
 
     @GET("api/v1/statuses/{postid}/context?_pe=1")
     suspend fun getReplies(

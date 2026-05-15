@@ -6,13 +6,11 @@ import com.daniebeler.pfpixelix.di.AppSingleton
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.domain.repository.PixelfedApi
 import com.daniebeler.pfpixelix.domain.model.Account
-import com.daniebeler.pfpixelix.domain.model.AccountsWithCursor
-import com.daniebeler.pfpixelix.domain.model.LikedPostsWithNext
 import com.daniebeler.pfpixelix.domain.service.session.AuthService
 import com.daniebeler.pfpixelix.domain.service.utils.loadListResources
 import com.daniebeler.pfpixelix.domain.service.utils.loadResource
 import com.daniebeler.pfpixelix.utils.encodeToPngBytes
-import com.daniebeler.pfpixelix.utils.executeWithResponse
+import com.daniebeler.pfpixelix.utils.executeAndParsePagination
 import io.ktor.client.request.forms.MultiPartFormDataContent
 import io.ktor.client.request.forms.formData
 import io.ktor.http.Headers
@@ -36,6 +34,7 @@ class AccountService(
     private val api: PixelfedApi,
 ) {
     private val refreshSignal = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
+
     @OptIn(ExperimentalCoroutinesApi::class)
     fun getOwnAccount(): Flow<Resource<Account>> {
         val current =
@@ -109,17 +108,9 @@ class AccountService(
         emit(Resource.Loading())
 
         try {
-            val (response, data) = api.getAccountsFollowers(accountId, cursor).executeWithResponse()
-            val linkHeader = response.headers["link"] ?: ""
-            val links = linkHeader.split(",")
-            val nextLink = links.find { it.contains("rel=\"prev\"", ignoreCase = true) } ?: ""
-            val regex = "cursor=([^&>\\s\"']+)".toRegex()
-            val matchResult = regex.find(nextLink)
-            val nextCursor = matchResult?.groupValues?.get(1)
-
-
-            val result = AccountsWithCursor(data, nextCursor ?: "")
-            emit(Resource.Success(result))
+            val response = api.getAccountsFollowers(accountId, cursor)
+                .executeAndParsePagination(false, "cursor")
+            emit(Resource.Success(response))
         } catch (e: Exception) {
             emit(Resource.Error(e.message ?: "Unknown error"))
         }
@@ -129,16 +120,10 @@ class AccountService(
         emit(Resource.Loading())
 
         try {
-            val (response, data) = api.getAccountsFollowing(accountId, cursor).executeWithResponse()
-            val linkHeader = response.headers["link"] ?: ""
-            val links = linkHeader.split(",")
-            val nextLink = links.find { it.contains("rel=\"prev\"", ignoreCase = true) } ?: ""
-            val regex = "cursor=([^&>\\s\"']+)".toRegex()
-            val matchResult = regex.find(nextLink)
-            val nextCursor = matchResult?.groupValues?.get(1)
+            val response = api.getAccountsFollowing(accountId, cursor)
+                .executeAndParsePagination(false, "cursor")
 
-            val result = AccountsWithCursor(data, nextCursor ?: "")
-            emit(Resource.Success(result))
+            emit(Resource.Success(response))
         } catch (e: Exception) {
             emit(Resource.Error(e.message ?: "Unknown error"))
         }

@@ -45,8 +45,8 @@ interface PixelfedApi {
         const val LIKED_POSTS_LIMIT = 40
         const val PROFILE_POSTS_LIMIT = 18
         const val LIKED_BY_LIMIT = 40
-        const val FOLLOWERS_LIMIT = 10
-        const val BOOKMARKED_LIMIT = 12
+        const val FOLLOWERS_LIMIT = 40
+        const val BOOKMARKED_LIMIT = 18
     }
 
     // Discover

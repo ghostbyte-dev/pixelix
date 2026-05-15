@@ -34,7 +34,7 @@ class FollowersViewModel @Inject constructor(
                 }
 
                 is Resource.Error -> {
-                    AccountState(error = result.message ?: "An unexpected error occurred")
+                    AccountState(error = result.message)
                 }
 
                 is Resource.Loading -> {
@@ -48,7 +48,7 @@ class FollowersViewModel @Inject constructor(
         accountId = id
     }
 
-    suspend fun setLoggedInAccountIdValue() {
+    fun setLoggedInAccountIdValue() {
         loggedInAccountId = authService.getCurrentSession()?.accountId ?: ""
     }
 
@@ -56,11 +56,11 @@ class FollowersViewModel @Inject constructor(
         accountService.getAccountsFollowers(accountId).onEach { result ->
             followersState = when (result) {
                 is Resource.Success -> {
-                    val endReached = (result.data.accounts.size ?: 0) < PixelfedApi.FOLLOWERS_LIMIT
+                    val endReached = (result.data.data.size) < PixelfedApi.FOLLOWERS_LIMIT
                     FollowersState(
-                        followers = result.data.accounts,
+                        followers = result.data.data,
                         endReached = endReached,
-                        cursor = result.data.cursor
+                        cursor = result.data.next ?: ""
                     )
                 }
 
@@ -86,11 +86,11 @@ class FollowersViewModel @Inject constructor(
             ).onEach { result ->
                 followersState = when (result) {
                     is Resource.Success -> {
-                        val endReached = (result.data.accounts.size) < PixelfedApi.FOLLOWERS_LIMIT
+                        val endReached = (result.data.data.size) < PixelfedApi.FOLLOWERS_LIMIT
                         FollowersState(
-                            followers = followersState.followers + (result.data.accounts),
+                            followers = followersState.followers + (result.data.data),
                             endReached = endReached,
-                            cursor = result.data.cursor
+                            cursor = result.data.next ?: ""
                         )
                     }
 
@@ -115,11 +115,11 @@ class FollowersViewModel @Inject constructor(
         accountService.getAccountsFollowing(accountId).onEach { result ->
             followingState = when (result) {
                 is Resource.Success -> {
-                    val endReached = (result.data.accounts.size ?: 0) < PixelfedApi.FOLLOWERS_LIMIT
+                    val endReached = (result.data.data.size) < PixelfedApi.FOLLOWERS_LIMIT
                     FollowingState(
-                        following = result.data.accounts,
+                        following = result.data.data,
                         endReached = endReached,
-                        cursor = result.data.cursor
+                        cursor = result.data.next ?: ""
                     )
                 }
 
@@ -145,16 +145,16 @@ class FollowersViewModel @Inject constructor(
             ).onEach { result ->
                 followingState = when (result) {
                     is Resource.Success -> {
-                        val endReached = (result.data.accounts.size) < PixelfedApi.FOLLOWERS_LIMIT
+                        val endReached = (result.data.data.size) < PixelfedApi.FOLLOWERS_LIMIT
                         FollowingState(
-                            following = followingState.following + (result.data.accounts),
+                            following = followingState.following + (result.data.data),
                             endReached = endReached,
-                            cursor = result.data.cursor
+                            cursor = result.data.next ?: ""
                         )
                     }
 
                     is Resource.Error -> {
-                        FollowingState(error = result.message ?: "An unexpected error occurred")
+                        FollowingState(error = result.message)
                     }
 
                     is Resource.Loading -> {

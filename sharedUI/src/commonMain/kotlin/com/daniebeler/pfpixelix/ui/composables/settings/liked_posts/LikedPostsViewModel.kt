@@ -41,15 +41,15 @@ class LikedPostsViewModel @Inject constructor(
             likedPostsState = when (result) {
                 is Resource.Success -> {
                     LikedPostsState(
-                        likedPosts = result.data?.posts ?: emptyList(),
-                        nextMaxId = result.data?.nextId ?: ""
+                        likedPosts = result.data.data,
+                        nextMaxId = result.data.next ?: ""
                     )
                 }
 
                 is Resource.Error -> {
                     LikedPostsState(
                         likedPosts = likedPostsState.likedPosts,
-                        error = result.message ?: "An unexpected error occurred"
+                        error = result.message
                     )
                 }
 
@@ -71,9 +71,8 @@ class LikedPostsViewModel @Inject constructor(
                 likedPostsState = when (result) {
                     is Resource.Success -> {
                         LikedPostsState(
-                            likedPosts = likedPostsState.likedPosts + (result.data?.posts
-                                ?: emptyList()),
-                            nextMaxId = result.data?.nextId ?: "",
+                            likedPosts = likedPostsState.likedPosts + (result.data.data),
+                            nextMaxId = result.data.next ?: "",
                             error = "",
                             isLoading = false,
                             isRefreshing = false
@@ -83,7 +82,7 @@ class LikedPostsViewModel @Inject constructor(
                     is Resource.Error -> {
                         LikedPostsState(
                             likedPosts = likedPostsState.likedPosts,
-                            error = result.message ?: "An unexpected error occurred",
+                            error = result.message,
                             isLoading = false,
                             isRefreshing = false
                         )

@@ -9,7 +9,6 @@ import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.domain.service.post.PostService
 import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
 import com.daniebeler.pfpixelix.ui.composables.profile.ViewEnum
-import com.daniebeler.pfpixelix.ui.composables.settings.liked_posts.LikedPostsState
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -38,8 +37,8 @@ class BookmarkedPostsViewModel @Inject constructor(
             bookmarkedPostsState = when (result) {
                 is Resource.Success -> {
                     BookmarkedPostsState(
-                        bookmarkedPosts = result.data.posts,
-                        nextCursor = result.data.cursor
+                        bookmarkedPosts = result.data.data,
+                        nextCursor = result.data.next ?: ""
                     )
                 }
 
@@ -67,8 +66,8 @@ class BookmarkedPostsViewModel @Inject constructor(
                 bookmarkedPostsState = when (result) {
                     is Resource.Success -> {
                         BookmarkedPostsState(
-                            bookmarkedPosts = bookmarkedPostsState.bookmarkedPosts + (result.data.posts),
-                            nextCursor = result.data.cursor,
+                            bookmarkedPosts = bookmarkedPostsState.bookmarkedPosts + (result.data.data),
+                            nextCursor = result.data.next ?: "",
                             error = "",
                             isLoading = false,
                             isRefreshing = false

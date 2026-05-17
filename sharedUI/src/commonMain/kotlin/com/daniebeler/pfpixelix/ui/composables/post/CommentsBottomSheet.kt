@@ -117,7 +117,8 @@ fun CommentsBottomSheet(
                             visibility = Visibility.PUBLIC,
                             spoilerText = "",
                             place = null,
-                            inReplyToId = null
+                            inReplyToId = null,
+                            emojis = emptyList()
                         )
                         ReplyElement(
                             reply = ownDescription,

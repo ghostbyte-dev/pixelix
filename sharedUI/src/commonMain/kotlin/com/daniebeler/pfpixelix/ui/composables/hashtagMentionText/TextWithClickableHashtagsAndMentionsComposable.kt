@@ -3,7 +3,10 @@ package com.daniebeler.pfpixelix.ui.composables.hashtagMentionText
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.text.ClickableText
+import androidx.compose.foundation.text.InlineTextContent
+import androidx.compose.foundation.text.appendInlineContent
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -18,6 +21,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.LinkAnnotation
+import androidx.compose.ui.text.Placeholder
+import androidx.compose.ui.text.PlaceholderVerticalAlign
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextLinkStyles
@@ -26,9 +31,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withLink
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.model.Account
+import com.daniebeler.pfpixelix.domain.model.Emoji
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -47,6 +55,7 @@ fun HashtagsMentionsTextView(
     openUrl: (url: String) -> Unit,
     textSize: TextUnit? = null,
     maximumLines: Int = Int.MAX_VALUE,
+    emojis: List<Emoji> = emptyList(),
     viewModel: TextWithClickableHashtagsAndMentionsViewModel = injectViewModel(key = "hashtags-mentions-tv$text") { textWithClickableHashtagsAndMentionsViewModel }
 ) {
     var expanded by remember { mutableStateOf(false) }
@@ -57,8 +66,15 @@ fun HashtagsMentionsTextView(
     val textStyle = SpanStyle(color = colorScheme.onBackground)
     val primaryStyle = SpanStyle(color = colorScheme.primary)
 
+    var regexString =
+        "(?=[^\\w!])[@#][\\u4e00-\\u9fa5\\w']+(?:@[\\w']+)?(?:\\.\\w+)*(?:\\/\\w+)*|https?:\\/\\/\\S+"
+
+    if (emojis.isNotEmpty()) {
+        regexString += "|:[\\w-]+:"
+    }
     val hashtags =
-        Regex("(?=[^\\w!])[@#][\\u4e00-\\u9fa5\\w']+(?:@[\\w']+)?(?:\\.\\w+)*(?:\\/\\w+)*|https?:\\/\\/\\S+")
+        Regex(regexString)
+
 
     val annotatedStringList = remember(text) {
 
@@ -88,6 +104,18 @@ fun HashtagsMentionsTextView(
                 annotatedStringList.add(
                     AnnotatedString.Range(string, start, end, "account")
                 )
+            } else if (string.startsWith(":")) {
+                if (emojis.find { it.shortcode == string.drop(1).dropLast(1) } != null) {
+                    annotatedStringList.add(
+                        AnnotatedString.Range(string, start, end, "emoji")
+                    )
+                } else {
+                    annotatedStringList.add(
+                        AnnotatedString.Range(
+                            text.substring(lastIndex, start), lastIndex, start, "text"
+                        )
+                    )
+                }
             } else {
                 annotatedStringList.add(
                     AnnotatedString.Range(string, start, end, "link")
@@ -156,6 +184,10 @@ fun HashtagsMentionsTextView(
                     }
                 }
 
+                "emoji" -> {
+                    appendInlineContent(element.item, element.item)
+                }
+
                 else -> {
                     withStyle(style = textStyle) {
                         append(element.item)
@@ -164,6 +196,28 @@ fun HashtagsMentionsTextView(
             }
         }
     }
+
+    val inlineContentMap = annotatedStringList
+        .filter { it.tag == "emoji" }
+        .associate { element ->
+            val emoji: Emoji? = emojis.find { it.shortcode == element.item.drop(1).dropLast(1) }
+
+            element.item to InlineTextContent(
+                Placeholder(
+                    width = textSize ?: MaterialTheme.typography.bodyMedium.fontSize,
+                    height = textSize ?: MaterialTheme.typography.bodyMedium.fontSize,
+                    placeholderVerticalAlign = PlaceholderVerticalAlign.Center
+                )
+            ) {
+                if (emoji != null) {
+                    AsyncImage(
+                        model = emoji.staticUrl,
+                        contentDescription = "emoji",
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
+            }
+        }
 
     Column(modifier = Modifier.animateContentSize()) {
         SelectionContainer {
@@ -182,7 +236,8 @@ fun HashtagsMentionsTextView(
                             true
                     }
                 },
-                modifier = modifier
+                modifier = modifier,
+                inlineContent = inlineContentMap
             )
         }
         if (showReadMoreButtonState) {

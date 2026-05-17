@@ -356,7 +356,8 @@ private fun PostMediaSection(
                 navController = navController,
                 textSize = 18.sp,
                 openUrl = { url -> viewModel.openUrl(url) },
-                modifier = Modifier.padding(top = 16.dp, bottom = 16.dp)
+                modifier = Modifier.padding(top = 16.dp, bottom = 16.dp),
+                emojis = post.emojis
             )
             HorizontalDivider()
         }
@@ -611,7 +612,8 @@ private fun PostActionBar(
                 mentions = post.mentions,
                 navController = navController,
                 openUrl = { url -> viewModel.openUrl(url) },
-                maximumLines = 4
+                maximumLines = 4,
+                emojis = post.emojis
             )
         }
     }

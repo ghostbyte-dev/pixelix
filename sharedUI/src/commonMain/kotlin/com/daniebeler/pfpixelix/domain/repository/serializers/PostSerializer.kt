@@ -1,6 +1,7 @@
 package com.daniebeler.pfpixelix.domain.repository.serializers
 
 import com.daniebeler.pfpixelix.domain.model.Account
+import com.daniebeler.pfpixelix.domain.model.Emoji
 import com.daniebeler.pfpixelix.domain.model.LikedBy
 import com.daniebeler.pfpixelix.domain.model.MediaAttachment
 import com.daniebeler.pfpixelix.domain.model.Place
@@ -52,7 +53,8 @@ internal object PostSerializer : KSerializer<Post> {
                 place = reblog.place,
                 likedBy = reblog.likedBy,
                 visibility = reblog.visibility,
-                inReplyToId = reblog.inReplyToId
+                inReplyToId = reblog.inReplyToId,
+                emojis = reblog.emojis
             )
         } else {
             return Post(
@@ -74,7 +76,8 @@ internal object PostSerializer : KSerializer<Post> {
                 place = p.place,
                 likedBy = p.likedBy,
                 visibility = p.visibility,
-                inReplyToId = p.inReplyToId
+                inReplyToId = p.inReplyToId,
+                emojis = p.emojis
             )
         }
     }
@@ -104,4 +107,5 @@ private data class PostDto(
     @SerialName("url") val url: String = "",
     @SerialName("visibility") val visibility: Visibility,
     @SerialName("bookmarked") val bookmarked: Boolean = false,
+    @SerialName("emojis") val emojis: List<Emoji> = emptyList()
 )

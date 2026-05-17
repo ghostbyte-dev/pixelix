@@ -25,5 +25,6 @@ data class Post(
     val visibility: Visibility,
     val inReplyToId: String?,
     val rebloggedBy: Account? = null,
-    val reblogId: String? = null
+    val reblogId: String? = null,
+    val emojis: List<Emoji>
 )

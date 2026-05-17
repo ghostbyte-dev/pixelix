@@ -45,7 +45,7 @@ fun desktopApp(args: Array<String>) {
             appComponent.provideImageLoader()
         }
 
-        if (Desktop.isDesktopSupported()) {
+       /* if (Desktop.isDesktopSupported()) {
             val desktop = Desktop.getDesktop()
             if (desktop.isSupported(Desktop.Action.APP_OPEN_URI)) {
                 desktop.setOpenURIHandler { url ->
@@ -56,7 +56,8 @@ fun desktopApp(args: Array<String>) {
             } else {
                 println("APP_OPEN_URI is not supported on this platform")
             }
-        }
+        }*/
+
 
         Window(
             title = "Pixelix",

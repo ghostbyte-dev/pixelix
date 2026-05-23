@@ -21,14 +21,6 @@ If you want to support what we do, you can sponsor us on GitHub:
 
 [Github Sponsors](https://github.com/sponsors/ghostbyte-dev)
 
-
-## Features
-* Direct Messages
-* Material Theme support
-* Widgets
-* Customizable app icon
-* Showing fediverse software of user
-
 ## Availability
 
 Pixelix is available on multiple platforms and distribution channels.

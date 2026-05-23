@@ -1,6 +1,6 @@
 # Pixelix - A Pixelfed Client
 
-![Preview of App](https://github.com/daniebeler/pixelix/blob/59fa74d084bb78aea16d5a7ef5321b10bd8ff352/github-image.png)
+![Preview of App](https://github.com/ghostbyte-dev/pixelix/blob/c42cbda6ac92b80e3d4d6e8f726ac211c1b02de6/assets/pixelix_screenshots.png)
 
 Pixelix is an Android client for [Pixelfed](https://pixelfed.org/), the federated image-sharing social network.
 It's designed to provide a seamless and high-performance user experience. With Pixelix, you can easily browse, post, and interact with your Pixelfed network on the go.
@@ -36,7 +36,7 @@ We use [Weblate](https://hosted.weblate.org/engage/pixelix/) for translations an
 [![Translation status](https://hosted.weblate.org/widget/pixelix/multi-auto.svg)](https://hosted.weblate.org/engage/pixelix/)
 
 
-## 📊 Check Download Stats of Pixelix Releases
+## Check Download Stats of Pixelix Releases
 Curious how many times Pixelix has been downloaded?
 
 You can view the release download statistics here on [GitHub Release Stats](https://github-release-stats.ghostbyte.dev/ghostbyte-dev/pixelix). It’s a simple tool we also maintain to track GitHub release download counts.
@@ -51,9 +51,9 @@ See the [LICENSE](./LICENSE) file for details.
 
 <br>
 
-## 👻 A Ghostbyte Production
+## A Ghostbyte Production
 
-![Ghostbyte banner](https://github.com/ghostbyte-dev/ghostbyte-website/blob/53ed21675d8306f4c6885ae0653b2805ee5b2e06/assets/ghostbyte_banner.png)
+![Ghostbyte banner](https://github.com/ghostbyte-dev/pixelix/blob/c42cbda6ac92b80e3d4d6e8f726ac211c1b02de6/assets/ghostbyte-banner.png)
 
 Have questions, feedback, or just want to say hi? Reach out to us and we’ll get back to you!
 

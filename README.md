@@ -55,7 +55,11 @@ See the [LICENSE](./LICENSE) file for details.
 
 ![Ghostbyte banner](https://github.com/ghostbyte-dev/pixelix/blob/c42cbda6ac92b80e3d4d6e8f726ac211c1b02de6/assets/ghostbyte-banner.png)
 
-Have questions, feedback, or just want to say hi? Reach out to us and we’ll get back to you!
+Pixelix is developed by Ghostbyte, an independent software studio based in Austria.
+
+We’re Daniel and Emanuel, and we build open-source software that we use ourselves.
+
+If you want to reach out, you can find us here:
 
 Website: [ghostbyte.dev](https://ghostbyte.dev)  
 Email: [hey@ghostbyte.dev](mailto:hey@ghostbyte.dev)

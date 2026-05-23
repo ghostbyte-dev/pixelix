@@ -5,6 +5,7 @@
 Pixelix is an Android client for [Pixelfed](https://pixelfed.org/), the federated image-sharing social network.
 It's designed to provide a seamless and high-performance user experience. With Pixelix, you can easily browse, post, and interact with your Pixelfed network on the go.
 
+You can download Pixelix from the following sources:
 
 <a href="https://apps.apple.com/app/pixelix-a-pixelfed-client/id6743839819"><img alt="Get it on Google Play" src="appstorebadge.svg" height="42" align="middle"></a>
 <a href="https://play.google.com/store/apps/details?id=com.daniebeler.pfpixelix"><img alt="Get it on Google Play" src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" height="60" align="middle"></a>
@@ -12,11 +13,14 @@ It's designed to provide a seamless and high-performance user experience. With P
 <a href="https://github.com/ImranR98/Obtainium/releases"><img alt="Get it on Obtainium banner" src="https://github.com/user-attachments/assets/58fd5f7e-8136-4e92-a462-c7977e119602" height="40" align="middle"/></a>
 <a href="https://apt.izzysoft.de/fdroid/index/apk/com.daniebeler.pfpixelix"><img src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png" alt="Get it from IzzyOnDroid" height="60" align="middle"></a>
 
-## Please donate
+## Support
 
-<a href="https://www.buymeacoffee.com/daniebeler" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
+We work on Pixelix in our free time, alongside university and other projects.
 
-<a href="https://en.liberapay.com/pixelix/" target="_blank"><img src="https://github.com/liberapay/liberapay.com/blob/master/www/assets/liberapay/logo-v2_black-on-yellow.svg" alt="Liberapay" style="height: 60px !important;"></a>
+If you want to support what we do, you can sponsor us on GitHub:
+
+[Github Sponsors](https://github.com/sponsors/daniebeler)
+
 
 ## Features
 * Direct Messages
@@ -25,9 +29,19 @@ It's designed to provide a seamless and high-performance user experience. With P
 * Customizable app icon
 * Showing fediverse software of user
 
-## Contribution
+## Availability
 
-If you are opening pull requests please use the dev branch as base.
+Pixelix is available on multiple platforms and distribution channels.
+
+The App Store and Google Play versions are paid to help support ongoing development:
+
+- App Store (€4)
+- Google Play (€2)
+
+Free builds are also available through:
+
+- F-Droid
+- GitHub Releases
 
 ## Translations
 
@@ -37,7 +51,7 @@ We use [Weblate](https://hosted.weblate.org/engage/pixelix/) for translations an
 
 
 ## Check Download Stats of Pixelix Releases
-Curious how many times Pixelix has been downloaded?
+Curious how many times Pixelix has been downloaded from the Github Releases?
 
 You can view the release download statistics here on [GitHub Release Stats](https://github-release-stats.ghostbyte.dev/ghostbyte-dev/pixelix). It’s a simple tool we also maintain to track GitHub release download counts.
 

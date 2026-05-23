@@ -38,10 +38,11 @@ object SessionStorageDataSerializer : OkioSerializer<SessionStorage> {
         get() = SessionStorage(emptyMap(), null)
 
     override suspend fun readFrom(source: BufferedSource): SessionStorage {
+        val rawJson = source.readUtf8();
         return try {
             Json.decodeFromString(
                 deserializer = SessionStorage.serializer(),
-                string = source.readUtf8()
+                string = rawJson
             )
         } catch (e: SerializationException) {
             try {
@@ -52,7 +53,7 @@ object SessionStorageDataSerializer : OkioSerializer<SessionStorage> {
                     val activeUserId: String?
                 )
 
-                val oldData = Json.decodeFromString(OldSessionStorage.serializer(), source.readUtf8())
+                val oldData = Json.decodeFromString(OldSessionStorage.serializer(), rawJson)
 
                 val migratedMap = oldData.sessions.associateBy { it.key() }
                 val migratedActiveKey = oldData.sessions

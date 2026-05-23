@@ -33,6 +33,7 @@ import androidx.navigation.NavController
 import co.touchlab.kermit.Logger
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.model.credentialsToAccount
+import com.daniebeler.pfpixelix.domain.service.session.Credentials
 import com.daniebeler.pfpixelix.ui.composables.custom_account.CustomAccount
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import kotlinx.coroutines.CoroutineScope
@@ -55,7 +56,7 @@ fun AccountSwitchBottomSheet(
     ownProfileViewModel: OwnProfileViewModel?,
     viewModel: AccountSwitchViewModel = injectViewModel(key = "account_switcher_viewmodel") { accountSwitchViewModel }
 ) {
-    val showRemoveLoginDataAlert = remember { mutableStateOf("") }
+    val showRemoveLoginDataAlert = remember { mutableStateOf<Credentials?>(null) }
     LaunchedEffect(Unit) {
         viewModel.loadData()
     }
@@ -68,10 +69,15 @@ fun AccountSwitchBottomSheet(
                 fontSize = 18.sp,
                 modifier = Modifier.padding(start = 12.dp)
             )
-            CustomAccount(account = credentialsToAccount(viewModel.currentCredentials!!), showFollowers = false)
+            CustomAccount(
+                account = credentialsToAccount(viewModel.currentCredentials!!),
+                showFollowers = false
+            )
         }
         val otherAccounts = remember(sessionStorage) {
-            viewModel.sessionStorage?.sessions?.filter { it.accountId != (viewModel.currentCredentials?.accountId ?: "") }.orEmpty()
+            viewModel.sessionStorage?.sessions?.filter {
+                it.value.accountId != (viewModel.currentCredentials?.accountId ?: "")
+            }.orEmpty()
         }
         if (otherAccounts.isNotEmpty()) {
             Text(
@@ -82,7 +88,7 @@ fun AccountSwitchBottomSheet(
             )
             otherAccounts.map { otherAccount ->
                 Box(Modifier.clickable {
-                    viewModel.switchAccount(otherAccount) {
+                    viewModel.switchAccount(otherAccount.value.key()) {
                         ownProfileViewModel?.let {
                             ownProfileViewModel.updateAccountSwitch()
                         }
@@ -90,10 +96,10 @@ fun AccountSwitchBottomSheet(
                     }
                 }) {
                     CustomAccount(
-                        account = credentialsToAccount(otherAccount),
+                        account = credentialsToAccount(otherAccount.value),
                         logoutButton = true,
                         showFollowers = false,
-                        logout = { showRemoveLoginDataAlert.value = otherAccount.accountId })
+                        logout = { showRemoveLoginDataAlert.value = otherAccount.value })
                 }
             }
         }
@@ -132,25 +138,25 @@ fun AccountSwitchBottomSheet(
         }
     }
 
-    if (showRemoveLoginDataAlert.value.isNotBlank()) {
+    if (showRemoveLoginDataAlert.value != null) {
         AlertDialog(title = {
             Text(text = stringResource(Res.string.remove_account))
         }, text = {
             Text(text = stringResource(Res.string.are_you_sure_you_want_to_remove_this_account))
         }, onDismissRequest = {
-            showRemoveLoginDataAlert.value = ""
+            showRemoveLoginDataAlert.value = null
         }, confirmButton = {
             TextButton(onClick = {
                 CoroutineScope(Dispatchers.Default).launch {
-                    viewModel.removeAccount(showRemoveLoginDataAlert.value)
-                    showRemoveLoginDataAlert.value = ""
+                    viewModel.removeAccount(showRemoveLoginDataAlert.value!!.key())
+                    showRemoveLoginDataAlert.value = null
                 }
             }) {
                 Text(stringResource(Res.string.remove))
             }
         }, dismissButton = {
             TextButton(onClick = {
-                showRemoveLoginDataAlert.value = ""
+                showRemoveLoginDataAlert.value = null
             }) {
                 Text(stringResource(Res.string.cancel))
             }

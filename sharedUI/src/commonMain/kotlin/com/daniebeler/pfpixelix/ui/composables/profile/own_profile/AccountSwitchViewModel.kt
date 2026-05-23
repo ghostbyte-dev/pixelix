@@ -39,9 +39,9 @@ class AccountSwitchViewModel @Inject constructor(
         }
     }
 
-    fun switchAccount(newAccount: Credentials, changedAccount: () -> Unit) {
+    fun switchAccount(newAccount: String, changedAccount: () -> Unit) {
         val coroutine = viewModelScope.launch {
-            authService.openSessionIfExist(userId = newAccount.accountId)
+            authService.openSessionIfExist(key = newAccount)
         }
 
         coroutine.invokeOnCompletion {
@@ -50,9 +50,9 @@ class AccountSwitchViewModel @Inject constructor(
         }
     }
 
-    fun removeAccount(accountId: String) {
+    fun removeAccount(key: String) {
         val coroutine = viewModelScope.launch {
-            authService.deleteSession(accountId)
+            authService.deleteSession(key)
         }
         coroutine.invokeOnCompletion {
             loadAccounts()

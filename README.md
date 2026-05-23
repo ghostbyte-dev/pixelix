@@ -19,7 +19,7 @@ We work on Pixelix in our free time, alongside university and other projects.
 
 If you want to support what we do, you can sponsor us on GitHub:
 
-[Github Sponsors](https://github.com/sponsors/daniebeler)
+[Github Sponsors](https://github.com/sponsors/ghostbyte-dev)
 
 
 ## Features

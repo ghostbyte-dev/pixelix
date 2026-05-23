@@ -10,12 +10,10 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
@@ -44,6 +42,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -65,8 +64,10 @@ import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import com.daniebeler.pfpixelix.utils.DomainFormat
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.edit_profile
+import pixelix.app.generated.resources.arrow_down
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -88,7 +89,7 @@ fun OwnProfileComposable(
             TopAppBar(
                 scrollBehavior = scrollBehavior,
                 title = {
-                    Row(Modifier.clickable { showBottomSheet = 2 }) {
+                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp) ,modifier = Modifier.clickable { showBottomSheet = 2 }) {
                         Column {
                             Text(
                                 text = viewModel.accountState.account?.username ?: "",
@@ -101,6 +102,10 @@ fun OwnProfileComposable(
                                 lineHeight = 6.sp
                             )
                         }
+                        Icon(
+                            imageVector = vectorResource(Res.drawable.arrow_down),
+                            contentDescription = "Switch account"
+                        )
                     }
                 }, actions = {
                     if (viewModel.ownDomain.isNotEmpty()) {

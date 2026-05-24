@@ -44,6 +44,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.di.injectViewModel
+import com.daniebeler.pfpixelix.ui.composables.contribute.ContributeBottomSheet
 import com.daniebeler.pfpixelix.ui.composables.timelines.global_timeline.GlobalTimelineComposable
 import com.daniebeler.pfpixelix.ui.composables.timelines.home_timeline.HomeTimelineComposable
 import com.daniebeler.pfpixelix.ui.composables.timelines.local_timeline.LocalTimelineComposable
@@ -239,82 +240,11 @@ fun HomeComposable(
                 showDonationBottomSheet = false
             }, sheetState = donationSheetState
         ) {
-            Box(
-                modifier = Modifier.padding(horizontal = 12.dp)
-            ) {
-                Column {
-                    Text(
-                        text = "Help improve Pixelix",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.SemiBold,
-                        modifier = Modifier
-                            .padding(start = 16.dp, bottom = 12.dp)
-                    )
-                    Column(
-                        modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(16.dp))
-                            .background(MaterialTheme.colorScheme.surfaceContainerHigh)
-                            .padding(16.dp)
-                    ) {
-                        Text(text = "Financial Support", fontSize = 18.sp, fontWeight = FontWeight.Bold)
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(text = "Pixelix is built and maintained in our free time. If you enjoy using it, you can help support ongoing development and infrastructure costs.")
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                        Button(
-                            onClick = { viewModel.openUrl("https://github.com/sponsors/ghostbyte-dev") },
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Text("Sponsor on GitHub")
-                        }
-
-                    }
-                    Spacer(modifier = Modifier.height(18.dp))
-
-                    Column(
-                        modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(16.dp))
-                            .background(MaterialTheme.colorScheme.surfaceContainerHigh)
-                            .padding(16.dp)
-                    ) {
-                        Text(text = "Report a bug", fontSize = 18.sp, fontWeight = FontWeight.Bold)
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(text = "Found something that isn’t working correctly? Let us know so we can fix it. Every report helps improve Pixelix for everyone.")
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                        Button(
-                            onClick = {viewModel.openUrl("https://github.com/ghostbyte-dev/pixelix/issues") },
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Text("Open GitHub Issues")
-                        }
-
-                    }
-                    Spacer(modifier = Modifier.height(18.dp))
-
-                    Column(
-                        modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(16.dp))
-                            .background(MaterialTheme.colorScheme.surfaceContainerHigh)
-                            .padding(16.dp)
-                    ) {
-                        Text(text = "Share feedback", fontSize = 18.sp, fontWeight = FontWeight.Bold)
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(text = "Have an idea for a feature or improvement? We’d love to hear it. Suggestions help shape the future of Pixelix.")
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                        Button(
-                            onClick = { /* TODO: open support link */ },
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Text("Send feedback")
-                        }
-
-                    }
-                    Spacer(modifier = Modifier.height(18.dp))
-
-                }
-            }
+            ContributeBottomSheet { url -> viewModel.openUrl(url) }
         }
     }
 }
+
 
 @Composable
 fun SheetItem(header: String, description: String) {

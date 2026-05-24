@@ -1,4 +1,7 @@
+@file:OptIn(ExperimentalKotlinGradlePluginApi::class)
+
 import com.google.devtools.ksp.gradle.KspAATask
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -49,6 +52,7 @@ kotlin {
             implementation(libs.components.resources)
             implementation(libs.compose.ui.graphics)
             implementation(libs.compose.navigationevent)
+            implementation(libs.compose.preview)
             //logger
             implementation(libs.kermit)
 
@@ -166,7 +170,7 @@ dependencies {
     ).forEach {
         add(it, libs.kotlin.inject.compiler.ksp)
     }
-}
+    androidRuntimeClasspath(libs.ui.tooling)}
 
 tasks.configureEach {
     if (this is KspAATask && name != "kspCommonMainKotlinMetadata")

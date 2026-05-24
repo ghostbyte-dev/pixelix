@@ -14,8 +14,6 @@ import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -40,7 +38,9 @@ import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.di.injectViewModel
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
+import pixelix.app.generated.resources.arrow_left
 import pixelix.app.generated.resources.followers
 import pixelix.app.generated.resources.following
 
@@ -90,7 +90,7 @@ fun FollowersMainComposable(
                     navController.popBackStack()
                 }) {
                     Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        imageVector = vectorResource(Res.drawable.arrow_left),
                         contentDescription = ""
                     )
                 }

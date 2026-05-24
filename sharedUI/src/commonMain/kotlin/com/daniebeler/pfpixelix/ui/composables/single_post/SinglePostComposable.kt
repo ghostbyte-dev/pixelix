@@ -2,7 +2,6 @@ package com.daniebeler.pfpixelix.ui.composables.single_post
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,8 +11,6 @@ import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -31,15 +28,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import co.touchlab.kermit.Logger
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.ui.composables.post.PostComposable
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
+import pixelix.app.generated.resources.arrow_left
 import pixelix.app.generated.resources.by
+import pixelix.app.generated.resources.hash
 import pixelix.app.generated.resources.post
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -116,7 +115,7 @@ fun SinglePostComposable(
                     navController.popBackStack()
                 }) {
                     Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = ""
+                        imageVector = vectorResource(Res.drawable.arrow_left), contentDescription = ""
                     )
                 }
             }, colors = TopAppBarDefaults.mediumTopAppBarColors(

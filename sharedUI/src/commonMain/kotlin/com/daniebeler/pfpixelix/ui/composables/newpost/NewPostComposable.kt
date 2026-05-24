@@ -20,7 +20,6 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
@@ -31,10 +30,6 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.ArrowLeft
-import androidx.compose.material.icons.automirrored.outlined.ArrowRight
-import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -112,7 +107,10 @@ import pixelix.app.generated.resources.sensitive_nsfw_media
 import pixelix.app.generated.resources.trash_outline
 import pixelix.app.generated.resources.unlisted
 import pixelix.app.generated.resources.are_you_sure
+import pixelix.app.generated.resources.arrow_left
+import pixelix.app.generated.resources.arrow_right
 import pixelix.app.generated.resources.cancel_post_warning
+import pixelix.app.generated.resources.confirm
 import pixelix.app.generated.resources.ok
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -240,7 +238,7 @@ fun NewPostComposable(
                                                     trailingIcon = {
                                                         if (viewModel.audience == Visibility.PUBLIC) {
                                                             Icon(
-                                                                imageVector = Icons.Outlined.Check,
+                                                                imageVector = vectorResource(Res.drawable.confirm),
                                                                 contentDescription = null,
                                                                 tint = MaterialTheme.colorScheme.primary
                                                             )
@@ -254,7 +252,7 @@ fun NewPostComposable(
                                                     trailingIcon = {
                                                         if (viewModel.audience == Visibility.UNLISTED) {
                                                             Icon(
-                                                                imageVector = Icons.Outlined.Check,
+                                                                imageVector = vectorResource(Res.drawable.confirm),
                                                                 contentDescription = null,
                                                                 tint = MaterialTheme.colorScheme.primary
                                                             )
@@ -269,7 +267,7 @@ fun NewPostComposable(
                                                 trailingIcon = {
                                                     if (viewModel.audience == Visibility.PRIVATE) {
                                                         Icon(
-                                                            imageVector = Icons.Outlined.Check,
+                                                            imageVector = vectorResource(Res.drawable.confirm),
                                                             contentDescription = null,
                                                             tint = MaterialTheme.colorScheme.primary
                                                         )
@@ -502,7 +500,7 @@ fun ImagesPager(
                             }
                         }) {
                             Icon(
-                                imageVector = Icons.AutoMirrored.Outlined.ArrowLeft,
+                                imageVector = vectorResource(Res.drawable.arrow_left),
                                 contentDescription = "move Image upwards"
                             )
                         }
@@ -528,7 +526,7 @@ fun ImagesPager(
                             }
                         }) {
                             Icon(
-                                imageVector = Icons.AutoMirrored.Outlined.ArrowRight,
+                                imageVector = vectorResource(Res.drawable.arrow_right),
                                 contentDescription = "move Image downwards"
                             )
                         }

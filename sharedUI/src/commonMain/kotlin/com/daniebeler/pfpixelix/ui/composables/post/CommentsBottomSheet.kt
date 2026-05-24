@@ -24,12 +24,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Send
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.material.icons.outlined.Edit
-import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
@@ -77,13 +71,19 @@ import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import com.daniebeler.pfpixelix.utils.TimeAgo
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.cancel
 import pixelix.app.generated.resources.delete
 import pixelix.app.generated.resources.delete_reply
+import pixelix.app.generated.resources.heart
+import pixelix.app.generated.resources.heart_outline
 import pixelix.app.generated.resources.no_comments_yet
+import pixelix.app.generated.resources.pencil_outline
 import pixelix.app.generated.resources.reply
+import pixelix.app.generated.resources.send
 import pixelix.app.generated.resources.this_action_cannot_be_undone
+import pixelix.app.generated.resources.trash_outline
 
 @Composable
 fun CommentsBottomSheet(
@@ -170,7 +170,7 @@ fun CommentsBottomSheet(
                                 )
                             } else {
                                 Icon(
-                                    imageVector = Icons.AutoMirrored.Filled.Send,
+                                    imageVector = vectorResource(Res.drawable.send),
                                     contentDescription = "submit",
                                     Modifier.fillMaxSize().fillMaxWidth()
                                 )
@@ -315,7 +315,7 @@ private fun ReplyElement(
                 if (reply.account.id == myAccountId) {
                     IconButton(onClick = { showDeleteReplyDialog.value = true }) {
                         Icon(
-                            imageVector = Icons.Outlined.Delete,
+                            imageVector = vectorResource(Res.drawable.trash_outline),
                             contentDescription = "",
                             tint = MaterialTheme.colorScheme.error
                         )
@@ -333,7 +333,7 @@ private fun ReplyElement(
                         viewModel.unlikeReply(reply.id)
                     }) {
                         Icon(
-                            imageVector = Icons.Filled.Favorite,
+                            imageVector = vectorResource(Res.drawable.heart),
                             contentDescription = "",
                             tint = MaterialTheme.colorScheme.primary
                         )
@@ -343,7 +343,7 @@ private fun ReplyElement(
                         viewModel.likeReply(reply.id)
                     }) {
                         Icon(
-                            imageVector = Icons.Outlined.FavoriteBorder, contentDescription = ""
+                            imageVector = vectorResource(Res.drawable.heart_outline), contentDescription = ""
                         )
                     }
                 }
@@ -399,7 +399,7 @@ private fun ReplyElement(
     if (showDeleteReplyDialog.value) {
         AlertDialog(icon = {
             Icon(
-                imageVector = Icons.Outlined.Delete,
+                imageVector = vectorResource(Res.drawable.trash_outline),
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.error
             )
@@ -454,7 +454,7 @@ fun AddReplyDialog(
                     modifier = Modifier.padding(24.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Icon(Icons.Outlined.Edit, contentDescription = null)
+                    Icon(vectorResource(Res.drawable.pencil_outline), contentDescription = null)
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
                         text = stringResource(Res.string.reply),

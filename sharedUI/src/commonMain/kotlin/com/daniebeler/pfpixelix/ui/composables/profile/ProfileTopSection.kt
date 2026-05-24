@@ -15,8 +15,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -41,6 +39,7 @@ import kotlinx.datetime.format.char
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.admin
 import pixelix.app.generated.resources.blocked
@@ -48,7 +47,9 @@ import pixelix.app.generated.resources.default_avatar
 import pixelix.app.generated.resources.follower
 import pixelix.app.generated.resources.following
 import pixelix.app.generated.resources.follows_you
+import pixelix.app.generated.resources.hash
 import pixelix.app.generated.resources.joined_date
+import pixelix.app.generated.resources.lock
 import pixelix.app.generated.resources.muted
 import pixelix.app.generated.resources.posts
 
@@ -130,7 +131,7 @@ fun ProfileTopSection(
                 if (account.locked) {
                     Spacer(modifier = Modifier.width(8.dp))
                     Icon(
-                        imageVector = Icons.Outlined.Lock,
+                        imageVector = vectorResource(Res.drawable.lock),
                         contentDescription = null,
                         Modifier.size(16.dp)
                     )

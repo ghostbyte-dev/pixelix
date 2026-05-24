@@ -7,9 +7,6 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.RemoveCircle
-import androidx.compose.material.icons.outlined.VisibilityOff
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -30,6 +27,8 @@ import com.daniebeler.pfpixelix.ui.navigation.Destination
 import com.daniebeler.pfpixelix.utils.BlurHashDecoder
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
+import pixelix.app.generated.resources.eye_off_outline
+import pixelix.app.generated.resources.remove_circle_outline
 import pixelix.app.generated.resources.stack
 
 private const val DEFAULT_BLUR_HASH = "LEHLk~WB2yk8pyo0adR*.7kCMdnj"
@@ -77,7 +76,7 @@ fun CustomPost(
                 modifier = Modifier.aspectRatio(1f).clickable(onClick = handleClick)
             ) {
                 Icon(
-                    imageVector = Icons.Outlined.VisibilityOff,
+                    imageVector = vectorResource(Res.drawable.eye_off_outline),
                     contentDescription = null,
                     modifier = Modifier.size(50.dp)
                 )
@@ -115,7 +114,7 @@ fun CustomPost(
                     modifier = Modifier.align(Alignment.TopEnd).clickable { editRemove(post.id) }
                 ) {
                     Icon(
-                        imageVector = Icons.Filled.RemoveCircle,
+                        imageVector = vectorResource(Res.drawable.remove_circle_outline),
                         tint = MaterialTheme.colorScheme.error,
                         contentDescription = null
                     )

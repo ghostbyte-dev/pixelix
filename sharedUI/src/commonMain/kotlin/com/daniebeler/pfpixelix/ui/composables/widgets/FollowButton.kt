@@ -4,9 +4,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Add
-import androidx.compose.material.icons.outlined.Remove
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -19,7 +16,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
+import pixelix.app.generated.resources.add_outline
+import pixelix.app.generated.resources.remove
 import pixelix.app.generated.resources.follow
 import pixelix.app.generated.resources.unfollow
 
@@ -81,9 +81,9 @@ private fun IconFollowButton(
             if (isLoading) {
                 CircularProgressIndicator(modifier = Modifier.size(20.dp), color = contentColor)
             } else if (isFollowing) {
-                Icon(imageVector = Icons.Outlined.Remove, contentDescription = null)
+                Icon(imageVector = vectorResource(Res.drawable.remove), contentDescription = null)
             } else {
-                Icon(imageVector = Icons.Outlined.Add, contentDescription = null)
+                Icon(imageVector = vectorResource(Res.drawable.add_outline), contentDescription = null)
             }
         }
     }

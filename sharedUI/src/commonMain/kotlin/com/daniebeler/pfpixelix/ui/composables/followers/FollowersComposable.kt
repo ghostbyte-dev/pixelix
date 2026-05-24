@@ -9,8 +9,6 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Groups
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -25,10 +23,12 @@ import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyStateComposable
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.empty
 import pixelix.app.generated.resources.no_followers_yet
 import pixelix.app.generated.resources.nobody_follows_you_yet
+import pixelix.app.generated.resources.user_group
 
 @Composable
 fun FollowersComposable(
@@ -70,7 +70,7 @@ fun FollowersComposable(
 
         EmptyStateComposable(
             emptyState = EmptyState(
-                icon = Icons.Outlined.Groups,
+                icon = vectorResource(Res.drawable.user_group),
                 heading = stringResource(Res.string.empty),
                 message = message
             )

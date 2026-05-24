@@ -1,6 +1,5 @@
 package com.daniebeler.pfpixelix.ui.composables.profile.server_stats
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,12 +11,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Check
-import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -34,7 +29,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -45,9 +39,11 @@ import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.utils.StringFormat
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.active_users
-import pixelix.app.generated.resources.default_avatar
+import pixelix.app.generated.resources.close_outline
+import pixelix.app.generated.resources.confirm
 import pixelix.app.generated.resources.fediverse_logo
 import pixelix.app.generated.resources.instances
 import pixelix.app.generated.resources.server_version
@@ -242,13 +238,13 @@ fun DomainSoftwareComposable(
 
                         if (viewModel.statsState.fediServer!!.openRegistration) {
                             Icon(
-                                imageVector = Icons.Rounded.Check,
+                                imageVector = vectorResource(Res.drawable.confirm),
                                 tint = Color.Green,
                                 contentDescription = "true",
                             )
                         } else {
                             Icon(
-                                imageVector = Icons.Rounded.Close,
+                                imageVector = vectorResource(Res.drawable.close_outline),
                                 tint = Color.Red,
                                 contentDescription = "false",
                             )

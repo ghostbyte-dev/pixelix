@@ -11,8 +11,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Tag
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -24,6 +22,9 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.domain.model.Tag
 import com.daniebeler.pfpixelix.ui.navigation.Destination
+import org.jetbrains.compose.resources.vectorResource
+import pixelix.app.generated.resources.Res
+import pixelix.app.generated.resources.hash
 
 @Composable
 fun CustomHashtag(
@@ -49,7 +50,7 @@ fun CustomHashtag(
             contentAlignment = Alignment.Center
         ) {
             Icon(
-                imageVector = Icons.Outlined.Tag,
+                imageVector = vectorResource(Res.drawable.hash),
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary
             )

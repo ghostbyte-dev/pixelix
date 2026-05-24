@@ -7,8 +7,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.WarningAmber
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -21,6 +19,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.jetbrains.compose.resources.vectorResource
+import pixelix.app.generated.resources.Res
+import pixelix.app.generated.resources.hash
+import pixelix.app.generated.resources.warning
 
 @Composable
 fun ErrorComposable(message: String, modifier: Modifier = Modifier.fillMaxWidth()) {
@@ -54,7 +56,7 @@ private fun InnerErrorComposable(message: String) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Icon(
-            imageVector = Icons.Outlined.WarningAmber,
+            imageVector = vectorResource(Res.drawable.warning),
             contentDescription = null,
             tint = MaterialTheme.colorScheme.primary,
             modifier = Modifier.size(64.dp)

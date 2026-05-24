@@ -24,11 +24,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.outlined.ArrowLeft
-import androidx.compose.material.icons.automirrored.outlined.ArrowRight
-import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -86,6 +81,8 @@ import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.alt_text
 import pixelix.app.generated.resources.are_you_sure
+import pixelix.app.generated.resources.arrow_left
+import pixelix.app.generated.resources.arrow_right
 import pixelix.app.generated.resources.cancel
 import pixelix.app.generated.resources.cancel_post_edit
 import pixelix.app.generated.resources.caption
@@ -148,7 +145,7 @@ fun EditPostComposable(
                         }
                     }) {
                         Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            imageVector = vectorResource(Res.drawable.arrow_left),
                             contentDescription = ""
                         )
                     }
@@ -317,7 +314,7 @@ fun EditPostComposable(
 
     if (viewModel.deleteMediaDialog != null) {
         AlertDialog(icon = {
-            Icon(imageVector = Icons.Outlined.Delete, contentDescription = null)
+            Icon(imageVector = vectorResource(Res.drawable.trash_outline), contentDescription = null)
         }, title = {
             Text(text = "Remove Media")
         }, text = {
@@ -403,7 +400,7 @@ fun ImagesPagerEditPost(
                         }
                     }) {
                         Icon(
-                            imageVector = Icons.AutoMirrored.Outlined.ArrowLeft,
+                            imageVector = vectorResource(Res.drawable.arrow_left),
                             contentDescription = "move Image upwards"
                         )
                     }
@@ -429,7 +426,7 @@ fun ImagesPagerEditPost(
                         }
                     }) {
                         Icon(
-                            imageVector = Icons.AutoMirrored.Outlined.ArrowRight,
+                            imageVector = vectorResource(Res.drawable.arrow_right),
                             contentDescription = "move Image downwards"
                         )
                     }

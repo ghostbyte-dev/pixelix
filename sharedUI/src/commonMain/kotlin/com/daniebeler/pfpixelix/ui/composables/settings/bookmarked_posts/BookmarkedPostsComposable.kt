@@ -7,9 +7,6 @@ import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -30,8 +27,10 @@ import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 import com.daniebeler.pfpixelix.ui.composables.widgets.InfinitePostsList
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
-import pixelix.app.generated.resources.bookmarked_posts
+import pixelix.app.generated.resources.arrow_left
+import pixelix.app.generated.resources.bookmark_outline
 import pixelix.app.generated.resources.liked_posts
 import pixelix.app.generated.resources.no_bookmarked_posts
 
@@ -53,7 +52,7 @@ fun BookmarkedPostsComposable(
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            imageVector = vectorResource(Res.drawable.arrow_left),
                             contentDescription = ""
                         )
                     }
@@ -74,7 +73,7 @@ fun BookmarkedPostsComposable(
                 isRefreshing = viewModel.bookmarkedPostsState.isRefreshing,
                 error = viewModel.bookmarkedPostsState.error,
                 emptyMessage = EmptyState(
-                    icon = Icons.Outlined.FavoriteBorder, heading = stringResource(Res.string.no_bookmarked_posts)
+                    icon = vectorResource(Res.drawable.bookmark_outline), heading = stringResource(Res.string.no_bookmarked_posts)
                 ),
                 endReached = false,
                 itemGetsDeleted = {},

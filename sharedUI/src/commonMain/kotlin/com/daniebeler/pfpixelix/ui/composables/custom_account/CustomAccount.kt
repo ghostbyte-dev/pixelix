@@ -9,8 +9,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -35,6 +33,7 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
+import pixelix.app.generated.resources.close_outline
 import pixelix.app.generated.resources.default_avatar
 import pixelix.app.generated.resources.follower
 import pixelix.app.generated.resources.trash
@@ -76,7 +75,7 @@ fun CustomAccount(
         if (removeSavedSearch != null) {
             IconButton(onClick = removeSavedSearch, modifier = Modifier.height(22.dp).width(22.dp)) {
                 Icon(
-                    imageVector = Icons.Outlined.Close,
+                    imageVector = vectorResource(Res.drawable.close_outline),
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.primary
                 )

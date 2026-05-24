@@ -27,11 +27,9 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.Cached
 import androidx.compose.material.icons.outlined.Close
 import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.material.icons.outlined.Description
 import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -47,7 +45,6 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
@@ -100,6 +97,7 @@ import pixelix.app.generated.resources.bookmark
 import pixelix.app.generated.resources.bookmark_outline
 import pixelix.app.generated.resources.cancel
 import pixelix.app.generated.resources.chatbubble_outline
+import pixelix.app.generated.resources.confirm
 import pixelix.app.generated.resources.default_avatar
 import pixelix.app.generated.resources.delete
 import pixelix.app.generated.resources.delete_post
@@ -790,7 +788,7 @@ fun PostImage(
         }
 
         Icon(
-            imageVector = Icons.Filled.Favorite,
+            imageVector = vectorResource(Res.drawable.heart),
             contentDescription = null,
             tint = HeartRedColor,
             modifier = Modifier.size(80.dp).align(Alignment.Center).scale(scale.value).zIndex(100f)

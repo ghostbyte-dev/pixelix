@@ -24,8 +24,6 @@ import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -61,6 +59,7 @@ import pixelix.app.generated.resources.all
 import pixelix.app.generated.resources.extension_puzzle_outline
 import pixelix.app.generated.resources.followers
 import pixelix.app.generated.resources.likes_
+import pixelix.app.generated.resources.mail_outline
 import pixelix.app.generated.resources.mentions
 import pixelix.app.generated.resources.notifications
 import pixelix.app.generated.resources.reposts
@@ -228,7 +227,7 @@ fun NotificationsComposable(
                     if (!viewModel.notificationsState.isLoading && viewModel.notificationsState.error.isEmpty() && viewModel.notificationsState.notifications.isEmpty()) {
                         EmptyStateComposable(
                             EmptyState(
-                                icon = Icons.Outlined.Email, heading = stringResource(
+                                icon = vectorResource(Res.drawable.mail_outline), heading = stringResource(
                                     Res.string.you_don_t_have_any_notifications
                                 )
                             )

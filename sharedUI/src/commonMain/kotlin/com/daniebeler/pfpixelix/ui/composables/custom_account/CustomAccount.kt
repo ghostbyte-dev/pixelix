@@ -20,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -141,7 +142,10 @@ private fun AccountRow(
                     Text(
                         text = account.displayname,
                         lineHeight = 8.sp,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.weight(1f),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
                     if (showFollowers) {
                         Text(
@@ -157,7 +161,7 @@ private fun AccountRow(
             }
 
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(text = account.username, fontSize = 12.sp)
+                Text(text = account.username, fontSize = 12.sp, modifier = Modifier.weight(1f), maxLines = 1, overflow = TextOverflow.Ellipsis)
                 val domain = account.url.substringAfter("https://").substringBefore("/")
                 Text(
                     text = " \u2022 $domain",

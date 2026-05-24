@@ -67,6 +67,7 @@ import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -280,12 +281,14 @@ private fun PostHeader(
             contentDescription = null,
             modifier = Modifier.height(40.dp).width(40.dp).clip(CircleShape)
         )
-        Column(modifier = Modifier.padding(start = 8.dp)) {
+        Column(modifier = Modifier.padding(start = 8.dp).weight(1f)) {
             Text(
                 text = post.account.acct,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
-                lineHeight = 8.sp
+                lineHeight = 8.sp,
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 1
             )
             Text(
                 text = timeAgoText,
@@ -310,7 +313,6 @@ private fun PostHeader(
             }
         }
 
-        Spacer(modifier = Modifier.weight(1f))
 
         IconButton(onClick = onMenuClick) {
             Icon(

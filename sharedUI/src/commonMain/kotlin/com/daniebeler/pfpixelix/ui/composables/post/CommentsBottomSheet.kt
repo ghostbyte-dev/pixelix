@@ -286,6 +286,8 @@ private fun ReplyElement(
                         text = reply.account.acct,
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
                         modifier = Modifier.clickable {
                             navController.navigate(Destination.Profile(reply.account.id))
                         })

@@ -2,8 +2,9 @@
 
 ![Preview of App](https://github.com/ghostbyte-dev/pixelix/blob/c42cbda6ac92b80e3d4d6e8f726ac211c1b02de6/assets/pixelix_screenshots.png)
 
-Pixelix is an Android client for [Pixelfed](https://pixelfed.org/), the federated image-sharing social network.
-It's designed to provide a seamless and high-performance user experience. With Pixelix, you can easily browse, post, and interact with your Pixelfed network on the go.
+Pixelix is an Android and iOS client for [Pixelfed](https://pixelfed.org/), the federated photo-sharing platform.
+
+Built with Compose Multiplatform, Pixelix provides a modern and native experience across Android and iOS for browsing, posting, and interacting on the Fediverse.
 
 You can download Pixelix from the following sources:
 
@@ -20,6 +21,9 @@ We work on Pixelix in our free time, alongside university and other projects.
 If you want to support what we do, you can sponsor us on GitHub:
 
 [Github Sponsors](https://github.com/sponsors/ghostbyte-dev)
+
+Bug reports, feature ideas, and feedback are also always welcome.  
+If something does not work properly, or if there is a feature you would like to see in Pixelix, feel free to open an issue on GitHub.
 
 ## Availability
 

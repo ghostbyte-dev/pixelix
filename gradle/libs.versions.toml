@@ -1,21 +1,21 @@
 [versions]
-kotlin = "2.3.20"
+kotlin = "2.3.21"
 ksp = "2.3.6"
 agp = "9.0.1" #latest supported version in IDEA
 
 #https://github.com/JetBrains/compose-multiplatform/releases
-composeMultiplatform = "1.11.0-beta01"
-lifecycleMultiplatform = "2.11.0-alpha02"
-material3 = "1.11.0-alpha05"
+composeMultiplatform = "1.11.0"
+lifecycleMultiplatform = "2.11.0-beta01"
+material3 = "1.11.0-alpha07"
 materialIconsExtended = "1.7.3"
-materialVersion = "1.11.0-beta01"
+materialVersion = "1.11.0"
 navigationMultiplatform = "2.9.2"
-composeNavigationEvent = "1.1.0-alpha01"
+composeNavigationEvent = "1.1.0"
 
 #JetBrains
-kotlinx-coroutines = "1.10.2"
+kotlinx-coroutines = "1.11.0"
 kotlinxCollectionsImmutable = "0.4.0"
-kotlinxSerializationJson = "1.10.0"
+kotlinxSerializationJson = "1.11.0"
 ktor = "3.4.1"
 kotlinx-datetime = "0.7.1"
 

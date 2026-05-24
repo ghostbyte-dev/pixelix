@@ -161,12 +161,14 @@ private fun AccountRow(
             }
 
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(text = account.username, fontSize = 12.sp, modifier = Modifier.weight(1f), maxLines = 1, overflow = TextOverflow.Ellipsis)
+                Text(text = account.username, fontSize = 12.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
                 val domain = account.url.substringAfter("https://").substringBefore("/")
                 Text(
                     text = " \u2022 $domain",
                     color = MaterialTheme.colorScheme.secondary,
-                    fontSize = 12.sp
+                    fontSize = 12.sp,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
         }

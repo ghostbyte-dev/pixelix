@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -54,6 +56,7 @@ import pixelix.app.generated.resources.app_name
 import pixelix.app.generated.resources.global
 import pixelix.app.generated.resources.global_timeline_explained
 import pixelix.app.generated.resources.help_outline
+import pixelix.app.generated.resources.coffee
 import pixelix.app.generated.resources.home
 import pixelix.app.generated.resources.home_timeline_explained
 import pixelix.app.generated.resources.local
@@ -71,50 +74,61 @@ fun HomeComposable(
     val pagerState = rememberPagerState { 3 }
     val scope = rememberCoroutineScope()
 
-    val sheetState = rememberModalBottomSheetState()
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by remember { mutableStateOf(false) }
+
+    val donationSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    var showDonationBottomSheet by remember { mutableStateOf(false) }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top), topBar = {
+        contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top),
+        topBar = {
             TopAppBar(
-                scrollBehavior = scrollBehavior,
-                title = {
-                    Text(
-                        stringResource(Res.string.app_name),
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp
+                scrollBehavior = scrollBehavior, title = {
+                Text(
+                    stringResource(Res.string.app_name),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp
+                )
+            }, navigationIcon = {
+                IconButton(onClick = { showBottomSheet = true }) {
+                    Icon(
+                        imageVector = vectorResource(Res.drawable.help_outline),
+                        contentDescription = "Help"
                     )
-                }, navigationIcon = {
-                    IconButton(onClick = { showBottomSheet = true }) {
+                }
+            }, actions = {
+                Row {
+                    IconButton(onClick = {
+                        showDonationBottomSheet = true
+                    }) {
                         Icon(
-                            imageVector = vectorResource(Res.drawable.help_outline),
-                            contentDescription = "Help"
+                            imageVector = vectorResource(Res.drawable.coffee),
+                            contentDescription = "Conversations"
                         )
                     }
-                }, actions = {
-                    Row {
 
-                        IconButton(onClick = {
-                            navController.navigate(Destination.Conversations)
-                        }) {
-                            Icon(
-                                imageVector = vectorResource(Res.drawable.mail_outline),
-                                contentDescription = "Conversations"
-                            )
-                        }
-                        IconButton(onClick = {
-                            openPreferencesDrawer()
-                        }) {
-                            Icon(
-                                imageVector = vectorResource(Res.drawable.settings_outline),
-                                contentDescription = "Settings"
-                            )
-                        }
+                    IconButton(onClick = {
+                        navController.navigate(Destination.Conversations)
+                    }) {
+                        Icon(
+                            imageVector = vectorResource(Res.drawable.mail_outline),
+                            contentDescription = "Conversations"
+                        )
                     }
-                }, colors = TopAppBarDefaults.mediumTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceContainer
-                )
+                    IconButton(onClick = {
+                        openPreferencesDrawer()
+                    }) {
+                        Icon(
+                            imageVector = vectorResource(Res.drawable.settings_outline),
+                            contentDescription = "Settings"
+                        )
+                    }
+                }
+            }, colors = TopAppBarDefaults.mediumTopAppBarColors(
+                containerColor = MaterialTheme.colorScheme.surfaceContainer
+            )
             )
         }) { paddingValues ->
         Box(
@@ -195,7 +209,7 @@ fun HomeComposable(
             }, sheetState = sheetState
         ) {
             Box(
-                modifier = Modifier.fillMaxSize().padding(horizontal = 12.dp)
+                modifier = Modifier.padding(horizontal = 12.dp)
             ) {
                 Column {
                     Spacer(modifier = Modifier.height(18.dp))
@@ -214,6 +228,88 @@ fun HomeComposable(
                         header = stringResource(Res.string.global),
                         description = stringResource(Res.string.global_timeline_explained)
                     )
+                }
+            }
+        }
+    }
+
+    if (showDonationBottomSheet) {
+        ModalBottomSheet(
+            onDismissRequest = {
+                showDonationBottomSheet = false
+            }, sheetState = donationSheetState
+        ) {
+            Box(
+                modifier = Modifier.padding(horizontal = 12.dp)
+            ) {
+                Column {
+                    Text(
+                        text = "Help improve Pixelix",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.SemiBold,
+                        modifier = Modifier
+                            .padding(start = 16.dp, bottom = 12.dp)
+                    )
+                    Column(
+                        modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(16.dp))
+                            .background(MaterialTheme.colorScheme.surfaceContainerHigh)
+                            .padding(16.dp)
+                    ) {
+                        Text(text = "Financial Support", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(text = "Pixelix is built and maintained in our free time. If you enjoy using it, you can help support ongoing development and infrastructure costs.")
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        Button(
+                            onClick = { viewModel.openUrl("https://github.com/sponsors/ghostbyte-dev") },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text("Sponsor on GitHub")
+                        }
+
+                    }
+                    Spacer(modifier = Modifier.height(18.dp))
+
+                    Column(
+                        modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(16.dp))
+                            .background(MaterialTheme.colorScheme.surfaceContainerHigh)
+                            .padding(16.dp)
+                    ) {
+                        Text(text = "Report a bug", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(text = "Found something that isn’t working correctly? Let us know so we can fix it. Every report helps improve Pixelix for everyone.")
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        Button(
+                            onClick = {viewModel.openUrl("https://github.com/ghostbyte-dev/pixelix/issues") },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text("Open GitHub Issues")
+                        }
+
+                    }
+                    Spacer(modifier = Modifier.height(18.dp))
+
+                    Column(
+                        modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(16.dp))
+                            .background(MaterialTheme.colorScheme.surfaceContainerHigh)
+                            .padding(16.dp)
+                    ) {
+                        Text(text = "Share feedback", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(text = "Have an idea for a feature or improvement? We’d love to hear it. Suggestions help shape the future of Pixelix.")
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        Button(
+                            onClick = { /* TODO: open support link */ },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text("Send feedback")
+                        }
+
+                    }
+                    Spacer(modifier = Modifier.height(18.dp))
+
                 }
             }
         }

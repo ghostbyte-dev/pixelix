@@ -211,6 +211,7 @@
     <string name="sure_update_post">Are you sure, you want to update this post?</string>
     <string name="mutual_followers">Mutual followers</string>
     <string name="license">License: %1$s</string>
+    <string name="license_label">License</string>
     <string name="hide_alt_text_button">Hide Alt-text button</string>
     <string name="instances">Instances:</string>
     <string name="total_posts">Total posts:</string>
@@ -287,4 +288,7 @@
     <string name="cancel_post_warning">Do you want to discard this post?</string>
     <string name="cancel_profile_edit">Do you want to discard the changes?</string>
     <string name="cancel_post_edit">Do you want to discard the changes?</string>
+    <string name="registration">Registration</string>
+    <string name="open">open</string>
+    <string name="closed">closed</string>
 </resources>

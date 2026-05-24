@@ -25,9 +25,9 @@ import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.grid
 import pixelix.app.generated.resources.grid_outline
+import pixelix.app.generated.resources.list_filled
+import pixelix.app.generated.resources.list_outline
 import pixelix.app.generated.resources.posts
-import pixelix.app.generated.resources.reorder_four
-import pixelix.app.generated.resources.reorder_four_outline
 
 @Composable
 fun SwitchViewComposable(
@@ -90,9 +90,9 @@ fun SwitchViewComposable(
                     )) {
                     Icon(
                         imageVector = if (viewType == ViewEnum.Grid) {
-                            vectorResource(Res.drawable.reorder_four_outline)
+                            vectorResource(Res.drawable.list_outline)
                         } else {
-                            vectorResource(Res.drawable.reorder_four)
+                            vectorResource(Res.drawable.list_filled)
                         },
                         contentDescription = "timeline view"
                     )

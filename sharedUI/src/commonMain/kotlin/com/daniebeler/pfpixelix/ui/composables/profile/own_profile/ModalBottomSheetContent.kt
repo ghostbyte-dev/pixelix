@@ -20,8 +20,8 @@ import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.about_pixelix
 import pixelix.app.generated.resources.about_x
 import pixelix.app.generated.resources.blocked_accounts
+import pixelix.app.generated.resources.bookmark_outline
 import pixelix.app.generated.resources.bookmarked_posts
-import pixelix.app.generated.resources.bookmarks_outline
 import pixelix.app.generated.resources.followed_hashtags
 import pixelix.app.generated.resources.hash
 import pixelix.app.generated.resources.heart_outline
@@ -66,7 +66,7 @@ fun ModalBottomSheetContent(
             })
 
         ButtonRowElement(
-            icon = Res.drawable.bookmarks_outline,
+            icon = Res.drawable.bookmark_outline,
             text = stringResource(Res.string.bookmarked_posts),
             onClick = {
                 closeBottomSheet()

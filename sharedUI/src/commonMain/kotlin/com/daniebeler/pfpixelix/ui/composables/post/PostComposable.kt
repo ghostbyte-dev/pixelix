@@ -103,6 +103,7 @@ import pixelix.app.generated.resources.chatbubble_outline
 import pixelix.app.generated.resources.default_avatar
 import pixelix.app.generated.resources.delete
 import pixelix.app.generated.resources.delete_post
+import pixelix.app.generated.resources.document_text_outline
 import pixelix.app.generated.resources.ellipsis_vertical
 import pixelix.app.generated.resources.heart
 import pixelix.app.generated.resources.heart_outline
@@ -793,7 +794,7 @@ fun PostImage(
                     .clickable { altText = mediaAttachment.description }
                     .padding(10.dp)
             ) {
-                Icon(Icons.Outlined.Description, contentDescription = null, Modifier.size(22.dp))
+                Icon(vectorResource(Res.drawable.document_text_outline), contentDescription = null, Modifier.size(22.dp))
             }
         }
 

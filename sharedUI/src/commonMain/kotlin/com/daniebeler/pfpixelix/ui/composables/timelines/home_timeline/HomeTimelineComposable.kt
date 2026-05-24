@@ -1,7 +1,5 @@
 package com.daniebeler.pfpixelix.ui.composables.timelines.home_timeline
 
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.PhotoLibrary
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -10,10 +8,12 @@ import com.daniebeler.pfpixelix.ui.composables.widgets.InfinitePostsList
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.explore_trending_profiles
 import pixelix.app.generated.resources.follow_accounts_or_hashtags_to_fill_your_home_timeline
 import pixelix.app.generated.resources.no_posts
+import pixelix.app.generated.resources.photo
 
 @Composable
 fun HomeTimelineComposable(
@@ -29,7 +29,7 @@ fun HomeTimelineComposable(
         endReached = false,
         navController = navController,
         emptyMessage = EmptyState(
-            icon = Icons.Outlined.PhotoLibrary,
+            icon = vectorResource(Res.drawable.photo),
             heading = stringResource(Res.string.no_posts),
             message = stringResource(Res.string.follow_accounts_or_hashtags_to_fill_your_home_timeline),
             buttonText = stringResource(Res.string.explore_trending_profiles),

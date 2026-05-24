@@ -15,8 +15,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Language
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -38,6 +36,7 @@ import com.daniebeler.pfpixelix.ui.composables.widgets.ScreenScaffold
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.about_pixelix
 import pixelix.app.generated.resources.browsers_outline
@@ -47,6 +46,7 @@ import pixelix.app.generated.resources.mastodon_logo
 import pixelix.app.generated.resources.pixelfed_logo
 import pixelix.app.generated.resources.shield_outline
 import pixelix.app.generated.resources.star_outline
+import pixelix.app.generated.resources.website
 
 @Composable
 fun AboutPixelixComposable(
@@ -149,7 +149,7 @@ fun AboutPixelixComposable(
                     Spacer(modifier = Modifier.width(16.dp))
 
                     Icon(
-                        imageVector = Icons.Outlined.Language,
+                        imageVector = vectorResource(Res.drawable.website),
                         contentDescription = "",
                         Modifier.size(32.dp).clickable {
                             viewModel.openUrl("https://emanuelhiebeler.me")
@@ -186,7 +186,7 @@ fun AboutPixelixComposable(
                     Spacer(modifier = Modifier.width(16.dp))
 
                     Icon(
-                        imageVector = Icons.Outlined.Language,
+                        imageVector = vectorResource(Res.drawable.website),
                         contentDescription = "",
                         Modifier.size(32.dp).clickable {
                             viewModel.openUrl("https://daniebeler.com")
@@ -223,7 +223,7 @@ fun AboutPixelixComposable(
                     Spacer(modifier = Modifier.width(16.dp))
 
                     Icon(
-                        imageVector = Icons.Outlined.Language,
+                        imageVector = vectorResource(Res.drawable.website),
                         contentDescription = "",
                         Modifier.size(32.dp).clickable {
                             viewModel.openUrl("https://github.com/terrakok")

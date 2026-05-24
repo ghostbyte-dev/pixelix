@@ -26,11 +26,6 @@ import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Cached
-import androidx.compose.material.icons.outlined.Close
-import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -97,7 +92,7 @@ import pixelix.app.generated.resources.bookmark
 import pixelix.app.generated.resources.bookmark_outline
 import pixelix.app.generated.resources.cancel
 import pixelix.app.generated.resources.chatbubble_outline
-import pixelix.app.generated.resources.confirm
+import pixelix.app.generated.resources.close_outline
 import pixelix.app.generated.resources.default_avatar
 import pixelix.app.generated.resources.delete
 import pixelix.app.generated.resources.delete_post
@@ -106,13 +101,16 @@ import pixelix.app.generated.resources.ellipsis_vertical
 import pixelix.app.generated.resources.heart
 import pixelix.app.generated.resources.heart_outline
 import pixelix.app.generated.resources.liked_by
+import pixelix.app.generated.resources.location
 import pixelix.app.generated.resources.media_description
 import pixelix.app.generated.resources.ok
 import pixelix.app.generated.resources.others
 import pixelix.app.generated.resources.reblogged_by
+import pixelix.app.generated.resources.save_outline
 import pixelix.app.generated.resources.sync_outline
 import pixelix.app.generated.resources.sync_outline_bold
 import pixelix.app.generated.resources.this_action_cannot_be_undone
+import pixelix.app.generated.resources.trash_outline
 
 private val HeartRedColor = Color(0xFFDD2E44)
 
@@ -249,7 +247,7 @@ private fun PostHeader(
             modifier = Modifier.padding(start = 16.dp, end = 12.dp).clickable {
                 navController.navigate(Destination.Profile(reblogAccount.id))
             }) {
-            Icon(Icons.Outlined.Cached, contentDescription = null, modifier = Modifier.size(20.dp))
+            Icon(vectorResource(Res.drawable.save_outline), contentDescription = null, modifier = Modifier.size(20.dp))
             Text(
                 stringResource(
                     Res.string.reblogged_by, reblogAccount.displayname ?: reblogAccount.username
@@ -287,7 +285,7 @@ private fun PostHeader(
             if (post.place != null) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
-                        imageVector = Icons.Outlined.LocationOn,
+                        imageVector = vectorResource(Res.drawable.location),
                         contentDescription = null,
                         modifier = Modifier.height(20.dp)
                     )
@@ -689,7 +687,7 @@ private fun PostDeleteDialog(viewModel: PostViewModel) {
     val postIdToDelete = viewModel.deleteDialog ?: return
 
     AlertDialog(
-        icon = { Icon(imageVector = Icons.Outlined.Delete, contentDescription = null) },
+        icon = { Icon(imageVector = vectorResource(Res.drawable.trash_outline), contentDescription = null) },
         title = { Text(text = stringResource(Res.string.delete_post)) },
         text = { Text(text = stringResource(Res.string.this_action_cannot_be_undone)) },
         onDismissRequest = { viewModel.deleteDialog = null },
@@ -875,7 +873,7 @@ fun MediaDialog(
             }
             Box(Modifier.align(Alignment.TopEnd).padding(20.dp).zIndex(2f)) {
                 IconButton(onClick = closeDialog) {
-                    Icon(Icons.Outlined.Close, contentDescription = null, tint = Color.White)
+                    Icon(vectorResource(Res.drawable.close_outline), contentDescription = null, tint = Color.White)
                 }
             }
         }

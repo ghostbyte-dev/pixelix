@@ -168,21 +168,19 @@ fun PostComposable(
     val boostRotation by animateFloatAsState(
         label = "BoostRotation",
         targetValue = if (animateBoost) 720f else 0f,
-        animationSpec = tween(durationMillis = 800, easing = EaseInOut)
+        animationSpec = tween(durationMillis = 800, easing = EaseInOut),
     )
 
     var animateHeart by remember { mutableStateOf(false) }
     val heartScale by animateFloatAsState(
         targetValue = if (animateHeart) 1.3f else 1f,
         animationSpec = tween(durationMillis = 200, easing = LinearEasing),
-        finishedListener = { animateHeart = false }
-    )
+        finishedListener = { animateHeart = false })
 
     val currentPost = viewModel.post ?: return
 
     Column(
-        modifier = modifier
-            .clip(RoundedCornerShape(16.dp))
+        modifier = modifier.clip(RoundedCornerShape(16.dp))
             .background(MaterialTheme.colorScheme.surfaceContainerLow)
             .padding(top = 12.dp, bottom = 12.dp)
     ) {
@@ -190,8 +188,7 @@ fun PostComposable(
             post = currentPost,
             timeAgoText = timeAgoText.value,
             navController = navController,
-            onMenuClick = { activeSheet = BottomSheetType.Menu }
-        )
+            onMenuClick = { activeSheet = BottomSheetType.Menu })
 
         Spacer(modifier = Modifier.height(6.dp))
 
@@ -214,7 +211,7 @@ fun PostComposable(
                 heartScale = heartScale,
                 boostRotation = boostRotation,
                 animateHeart = { animateHeart = true },
-                animateBoost = { animateBoost = true },
+                animateBoost = { animateBoost = !animateBoost },
                 onCommentsClick = {
                     viewModel.loadReplies(postId)
                     activeSheet = BottomSheetType.Comments
@@ -236,8 +233,7 @@ fun PostComposable(
         viewModel = viewModel,
         pagerState = pagerState,
         navController = navController,
-        onDismiss = { activeSheet = BottomSheetType.None }
-    )
+        onDismiss = { activeSheet = BottomSheetType.None })
 
     PostDeleteDialog(viewModel = viewModel)
 
@@ -246,10 +242,7 @@ fun PostComposable(
 
 @Composable
 private fun PostHeader(
-    post: Post,
-    timeAgoText: String,
-    navController: NavController,
-    onMenuClick: () -> Unit
+    post: Post, timeAgoText: String, navController: NavController, onMenuClick: () -> Unit
 ) {
     post.rebloggedBy?.let { reblogAccount ->
         Row(
@@ -257,15 +250,12 @@ private fun PostHeader(
             horizontalArrangement = Arrangement.spacedBy(6.dp),
             modifier = Modifier.padding(start = 16.dp, end = 12.dp).clickable {
                 navController.navigate(Destination.Profile(reblogAccount.id))
-            }
-        ) {
+            }) {
             Icon(Icons.Outlined.Cached, contentDescription = null, modifier = Modifier.size(20.dp))
             Text(
                 stringResource(
-                    Res.string.reblogged_by,
-                    reblogAccount.displayname ?: reblogAccount.username
-                ),
-                fontSize = 11.sp
+                    Res.string.reblogged_by, reblogAccount.displayname ?: reblogAccount.username
+                ), fontSize = 11.sp
             )
         }
     }
@@ -274,8 +264,7 @@ private fun PostHeader(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.padding(start = 16.dp, end = 12.dp).clickable {
             navController.navigate(Destination.Profile(post.account.id))
-        }
-    ) {
+        }) {
         AsyncImage(
             model = post.account.avatar,
             error = painterResource(Res.drawable.default_avatar),
@@ -390,8 +379,7 @@ private fun PostSensitiveOverlay(post: Post, viewModel: PostViewModel) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = post.spoilerText.ifEmpty { "This post may contain sensitive content." }
-            )
+                text = post.spoilerText.ifEmpty { "This post may contain sensitive content." })
             Button(onClick = { viewModel.toggleShowPost() }) {
                 Text(text = "Show post")
             }
@@ -415,8 +403,7 @@ private fun PostMediaContent(
         }
         Box {
             HorizontalPager(
-                state = pagerState,
-                modifier = Modifier.zIndex(50f).aspectRatio(
+                state = pagerState, modifier = Modifier.zIndex(50f).aspectRatio(
                     smallestAspectRatio?.meta?.original?.aspect?.toFloat() ?: 1f
                 )
             ) { page ->
@@ -448,8 +435,7 @@ private fun PostMediaContent(
         Spacer(modifier = Modifier.height(5.dp))
 
         Row(
-            Modifier.wrapContentHeight().fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center
+            Modifier.wrapContentHeight().fillMaxWidth(), horizontalArrangement = Arrangement.Center
         ) {
             repeat(pagerState.pageCount) { iteration ->
                 val color = if (pagerState.currentPage == iteration) {
@@ -502,25 +488,28 @@ private fun PostActionBar(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.clip(RoundedCornerShape(percent = 50))
                         .background(MaterialTheme.colorScheme.surfaceContainerHigh)
-                        .padding(horizontal = 10.dp, vertical = 4.dp)
+                        .clickable {
+                            if (post.favourited) {
+                                viewModel.unlikePost(postId, updatePost)
+                            } else {
+                                animateHeart()
+                                viewModel.likePost(postId, updatePost)
+                            }
+                        }
+                        .padding(horizontal = 10.dp, vertical = 4.dp),
                 ) {
                     if (post.favourited) {
                         Icon(
                             imageVector = vectorResource(Res.drawable.heart),
-                            modifier = Modifier.size(22.dp)
-                                .clickable { viewModel.unlikePost(postId, updatePost) }
-                                .scale(heartScale),
-                            contentDescription = null,
+                            modifier = Modifier.size(22.dp).scale(heartScale),
+                            contentDescription = "unlike post",
                             tint = HeartRedColor
                         )
                     } else {
                         Icon(
                             imageVector = vectorResource(Res.drawable.heart_outline),
-                            modifier = Modifier.size(22.dp).clickable {
-                                animateHeart()
-                                viewModel.likePost(postId, updatePost)
-                            },
-                            contentDescription = null
+                            modifier = Modifier.size(22.dp),
+                            contentDescription = "like post"
                         )
                     }
                     Spacer(Modifier.width(4.dp))
@@ -538,12 +527,14 @@ private fun PostActionBar(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.clip(RoundedCornerShape(percent = 50))
                         .background(MaterialTheme.colorScheme.surfaceContainerHigh)
+                        .clickable(onClick = onCommentsClick)
                         .padding(horizontal = 10.dp, vertical = 4.dp)
+
                 ) {
                     Icon(
                         imageVector = vectorResource(Res.drawable.chatbubble_outline),
-                        modifier = Modifier.size(22.dp).clickable(onClick = onCommentsClick),
-                        contentDescription = null
+                        modifier = Modifier.size(22.dp),
+                        contentDescription = "open comments"
                     )
                     Spacer(Modifier.width(4.dp))
                     Text(
@@ -554,28 +545,38 @@ private fun PostActionBar(
                 }
             }
 
-            Row {
-                // Reblog button
-                if (post.reblogged) {
-                    IconButton(onClick = { viewModel.unreblogPost(postId, updatePost) }) {
-                        Icon(
-                            imageVector = vectorResource(Res.drawable.sync_outline_bold),
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.rotate(boostRotation)
-                        )
-                    }
-                } else {
-                    IconButton(onClick = {
-                        animateBoost()
-                        viewModel.reblogPost(postId, updatePost)
-                    }) {
-                        Icon(
-                            imageVector = vectorResource(Res.drawable.sync_outline),
-                            contentDescription = null
-                        )
-                    }
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.clip(RoundedCornerShape(percent = 50))
+                        .background(MaterialTheme.colorScheme.surfaceContainerHigh).clickable {
+                            animateBoost()
+                            if (post.reblogged) {
+                                viewModel.unreblogPost(postId, updatePost)
+                            } else {
+                                viewModel.reblogPost(postId, updatePost)
+                            }
+                        }.padding(horizontal = 10.dp, vertical = 4.dp)
+                ) {
+                    Icon(
+                        imageVector = if (post.reblogged) {
+                            vectorResource(Res.drawable.sync_outline_bold)
+                        } else {
+                            vectorResource(Res.drawable.sync_outline)
+                        }, contentDescription = "reblog", tint = if (post.reblogged) {
+                            MaterialTheme.colorScheme.primary
+                        } else {
+                            MaterialTheme.colorScheme.onSurface
+                        }, modifier = Modifier.rotate(boostRotation).size(22.dp)
+                    )
+                    Spacer(Modifier.width(4.dp))
+                    Text(
+                        text = post.reblogCount.toString(),
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold
+                    )
                 }
+
 
                 Spacer(Modifier.width(14.dp))
 
@@ -584,14 +585,14 @@ private fun PostActionBar(
                     IconButton(onClick = { viewModel.unBookmarkPost(postId, updatePost) }) {
                         Icon(
                             imageVector = vectorResource(Res.drawable.bookmark),
-                            contentDescription = null
+                            contentDescription = "unbookmark post"
                         )
                     }
                 } else {
                     IconButton(onClick = { viewModel.bookmarkPost(postId, updatePost) }) {
                         Icon(
                             imageVector = vectorResource(Res.drawable.bookmark_outline),
-                            contentDescription = null
+                            contentDescription = "bookmark post"
                         )
                     }
                 }
@@ -624,10 +625,7 @@ private fun PostActionBar(
 
 @Composable
 private fun PostLikedByRow(
-    post: Post,
-    viewModel: PostViewModel,
-    navController: NavController,
-    onLikesClick: () -> Unit
+    post: Post, viewModel: PostViewModel, navController: NavController, onLikesClick: () -> Unit
 ) {
     if (post.likedBy?.username?.isNotBlank() != true) return
 
@@ -639,8 +637,7 @@ private fun PostLikedByRow(
             fontWeight = FontWeight.Bold,
             modifier = Modifier.clickable {
                 navController.navigate(Destination.Profile(post.likedBy!!.id!!))
-            }
-        )
+            })
         if (post.favouritesCount > 1) {
             Text(text = " ${stringResource(Res.string.and)} ", fontSize = 14.sp)
             Text(
@@ -707,8 +704,7 @@ private fun PostDeleteDialog(viewModel: PostViewModel) {
             TextButton(onClick = { viewModel.deleteDialog = null }) {
                 Text(stringResource(Res.string.cancel))
             }
-        }
-    )
+        })
 }
 
 // --- Post Image and Media Components ---
@@ -760,27 +756,23 @@ fun PostImage(
         }
 
         Box(modifier = Modifier.zIndex(2f).snapBackZoomable(zoomState).pointerInput(Unit) {
-            detectTapGestures(
-                onDoubleTap = {
-                    CoroutineScope(Dispatchers.Default).launch {
-                        viewModel.likePost(postId, updatePost)
-                        like()
-                        showHeart = true
-                    }
-                },
-                onTap = {
-                    if (mediaAttachment.type != "video") {
-                        showMediaDialog = mediaAttachment
-                    }
+            detectTapGestures(onDoubleTap = {
+                CoroutineScope(Dispatchers.Default).launch {
+                    viewModel.likePost(postId, updatePost)
+                    like()
+                    showHeart = true
                 }
-            )
+            }, onTap = {
+                if (mediaAttachment.type != "video") {
+                    showMediaDialog = mediaAttachment
+                }
+            })
         }) {
             if (mediaAttachment.type != "video") {
                 ImageWrapper(
                     mediaAttachment,
                     { zoomState.setContentSize(it.painter.intrinsicSize) },
-                    { imageLoaded = true }
-                )
+                    { imageLoaded = true })
             } else {
                 VideoAttachment(mediaAttachment, viewModel, { imageLoaded = true })
             }
@@ -791,8 +783,7 @@ fun PostImage(
                 modifier = Modifier.align(Alignment.BottomStart).zIndex(3f).padding(10.dp)
                     .clip(RoundedCornerShape(10.dp))
                     .background(MaterialTheme.colorScheme.background.copy(alpha = 0.5f))
-                    .clickable { altText = mediaAttachment.description }
-                    .padding(10.dp)
+                    .clickable { altText = mediaAttachment.description }.padding(10.dp)
             ) {
                 Icon(vectorResource(Res.drawable.document_text_outline), contentDescription = null, Modifier.size(22.dp))
             }
@@ -814,8 +805,7 @@ fun PostImage(
                     TextButton(onClick = { altText = "" }) {
                         Text(stringResource(Res.string.ok))
                     }
-                }
-            )
+                })
         }
     }
 
@@ -838,13 +828,11 @@ private fun ImageWrapper(
         onSuccess = { state ->
             setContentSize(state)
             onSuccess()
-        }
-    )
+        })
 }
 
 fun Modifier.isVisible(
-    threshold: Int,
-    onVisibilityChange: (Boolean) -> Unit
+    threshold: Int, onVisibilityChange: (Boolean) -> Unit
 ) = composed {
     Modifier.onGloballyPositioned { layoutCoordinates: LayoutCoordinates ->
         val layoutHeight = layoutCoordinates.size.height
@@ -856,8 +844,8 @@ fun Modifier.isVisible(
         parent?.boundsInRoot()?.let { rect: Rect ->
             val parentTop = rect.top
             val parentBottom = rect.bottom
-            val isVisible = parentBottom - layoutTop > thresholdHeight &&
-                    parentTop < layoutBottom - thresholdHeight
+            val isVisible =
+                parentBottom - layoutTop > thresholdHeight && parentTop < layoutBottom - thresholdHeight
             onVisibilityChange(isVisible)
         }
     }
@@ -865,9 +853,7 @@ fun Modifier.isVisible(
 
 @Composable
 fun MediaDialog(
-    mediaAttachment: MediaAttachment,
-    closeDialog: () -> Unit,
-    postViewModel: PostViewModel
+    mediaAttachment: MediaAttachment, closeDialog: () -> Unit, postViewModel: PostViewModel
 ) {
     val zoomState = rememberZoomState()
 
@@ -876,18 +862,15 @@ fun MediaDialog(
         properties = DialogProperties(usePlatformDefaultWidth = false)
     ) {
         Box(
-            modifier = Modifier.fillMaxSize()
-                .background(Color.Black.copy(alpha = 0.8f))
-                .clickable { closeDialog() },
-            contentAlignment = Alignment.Center
+            modifier = Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.8f))
+                .clickable { closeDialog() }, contentAlignment = Alignment.Center
         ) {
             Box(modifier = Modifier.zIndex(2f).zoomable(zoomState).clickable { }) {
                 if (mediaAttachment.type != "video") {
                     ImageWrapper(
                         mediaAttachment,
                         { zoomState.setContentSize(it.painter.intrinsicSize) },
-                        {}
-                    )
+                        {})
                 } else {
                     VideoAttachment(mediaAttachment, postViewModel, {})
                 }

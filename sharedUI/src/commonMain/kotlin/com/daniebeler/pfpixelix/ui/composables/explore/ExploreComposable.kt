@@ -29,12 +29,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.input.clearText
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.ArrowBackIosNew
-import androidx.compose.material.icons.outlined.Clear
-import androidx.compose.material.icons.outlined.Close
-import androidx.compose.material.icons.outlined.Search
-import androidx.compose.material.icons.outlined.Tag
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -74,17 +68,20 @@ import com.daniebeler.pfpixelix.ui.composables.custom_account.CustomAccount
 import com.daniebeler.pfpixelix.ui.composables.explore.trending.TrendingComposable
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pfpixelix.ui.navigation.Destination
-import com.daniebeler.pfpixelix.utils.imeAwareInsets
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.accounts
+import pixelix.app.generated.resources.chevron_back_outline
+import pixelix.app.generated.resources.close_outline
 import pixelix.app.generated.resources.default_avatar
 import pixelix.app.generated.resources.explore
+import pixelix.app.generated.resources.hash
 import pixelix.app.generated.resources.hashtags
 import pixelix.app.generated.resources.search_outline
+import pixelix.app.generated.resources.trash_outline
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -133,7 +130,7 @@ fun ExploreComposable(
                         if (!expanded) {
                             Icon(vectorResource(Res.drawable.search_outline), contentDescription = null)
                         } else {
-                            Icon(Icons.Outlined.ArrowBackIosNew,
+                            Icon(vectorResource(Res.drawable.chevron_back_outline),
                                 contentDescription = null,
                                 modifier = Modifier.clickable {
                                     expanded = false
@@ -148,7 +145,7 @@ fun ExploreComposable(
                             enter = fadeIn(),
                             exit = fadeOut()
                         ) {
-                            Icon(Icons.Outlined.Clear,
+                            Icon(vectorResource(Res.drawable.trash_outline),
                                 contentDescription = "clear search query",
                                 modifier = Modifier.clickable {
                                     textFieldState.clearText()
@@ -349,9 +346,9 @@ private fun PastSearchItem(
             ) {
                 Icon(
                     imageVector = if (item.savedSearchType == SavedSearchType.Hashtag) {
-                        Icons.Outlined.Tag
+                        vectorResource(Res.drawable.hash)
                     } else {
-                        Icons.Outlined.Search
+                        vectorResource(Res.drawable.search_outline)
                     }, contentDescription = null, tint = MaterialTheme.colorScheme.primary
                 )
             }
@@ -380,7 +377,7 @@ private fun PastSearchItem(
             contentAlignment = Alignment.Center
         ) {
             Icon(
-                imageVector = Icons.Outlined.Close,
+                imageVector = vectorResource(Res.drawable.close_outline),
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary
             )

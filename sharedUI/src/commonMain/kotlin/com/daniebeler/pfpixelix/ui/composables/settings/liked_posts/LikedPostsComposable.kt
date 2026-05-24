@@ -7,9 +7,6 @@ import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -33,9 +30,8 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.arrow_left
-import pixelix.app.generated.resources.chevron_back_outline
+import pixelix.app.generated.resources.heart_outline
 import pixelix.app.generated.resources.liked_posts
-import pixelix.app.generated.resources.no_liked_posts
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -76,7 +72,7 @@ fun LikedPostsComposable(
                 isRefreshing = viewModel.likedPostsState.isRefreshing,
                 error = viewModel.likedPostsState.error,
                 emptyMessage = EmptyState(
-                    icon = Icons.Outlined.FavoriteBorder, heading = "Empty Collection"
+                    icon = vectorResource(Res.drawable.heart_outline), heading = "Empty Collection"
                 ),
                 endReached = viewModel.likedPostsState.endReached,
                 itemGetsDeleted = {},

@@ -24,10 +24,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Done
-import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -88,18 +84,22 @@ import io.github.vinceglb.filekit.dialogs.compose.rememberFilePickerLauncher
 import io.github.vinceglb.filekit.readBytes
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.are_you_sure
+import pixelix.app.generated.resources.arrow_left
 import pixelix.app.generated.resources.bio
 import pixelix.app.generated.resources.cancel
 import pixelix.app.generated.resources.cancel_post_warning
 import pixelix.app.generated.resources.cancel_profile_edit
 import pixelix.app.generated.resources.caption
+import pixelix.app.generated.resources.confirm
 import pixelix.app.generated.resources.discard
 import pixelix.app.generated.resources.displayname
 import pixelix.app.generated.resources.edit_profile
 import pixelix.app.generated.resources.private_profile
 import pixelix.app.generated.resources.save
+import pixelix.app.generated.resources.undo
 import pixelix.app.generated.resources.website
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -339,7 +339,7 @@ fun EditProfileComposable(
                 }
             }) {
                 Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = ""
+                    imageVector = vectorResource(Res.drawable.arrow_left), contentDescription = ""
                 )
             }
         }, actions = {
@@ -412,16 +412,16 @@ private fun ImageCropperFullscreenDialog(
                     TopAppBar(
                         title = {}, navigationIcon = {
                         androidx.compose.material.IconButton(onClick = { state.done(accept = false) }) {
-                            Icon(Icons.AutoMirrored.Filled.ArrowBack, null)
+                            Icon(vectorResource(Res.drawable.arrow_left), null)
                         }
                     }, actions = {
                         IconButton(onClick = { state.reset() }) {
-                            Icon(Icons.Default.Refresh, null)
+                            Icon(vectorResource(Res.drawable.undo), null)
                         }
                         IconButton(
                             onClick = { state.done(accept = true) }, enabled = !state.accepted
                         ) {
-                            Icon(Icons.Default.Done, null)
+                            Icon(vectorResource(Res.drawable.confirm), null)
                         }
                     }, colors = TopAppBarDefaults.mediumTopAppBarColors(
                         containerColor = MaterialTheme.colorScheme.surfaceContainer

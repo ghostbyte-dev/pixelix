@@ -27,8 +27,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.ArrowForwardIos
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -70,6 +68,7 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
+import pixelix.app.generated.resources.chevron_forward_outline
 import pixelix.app.generated.resources.close_outline
 import pixelix.app.generated.resources.i_don_t_have_an_account
 import pixelix.app.generated.resources.login_wave_dark
@@ -242,7 +241,7 @@ fun LoginComposable(
                                 )
                             ) {
                                 Icon(
-                                    imageVector = Icons.AutoMirrored.Rounded.ArrowForwardIos,
+                                    imageVector = vectorResource(Res.drawable.chevron_forward_outline),
                                     contentDescription = "submit",
                                     Modifier.fillMaxSize().fillMaxWidth()
                                 )

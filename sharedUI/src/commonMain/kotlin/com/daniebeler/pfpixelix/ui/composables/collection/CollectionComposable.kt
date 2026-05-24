@@ -12,12 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.outlined.AddCircle
-import androidx.compose.material.icons.outlined.Edit
-import androidx.compose.material.icons.outlined.FavoriteBorder
-import androidx.compose.material.icons.outlined.MoreVert
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -51,12 +45,19 @@ import com.daniebeler.pfpixelix.ui.composables.widgets.InfinitePostsGrid
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 import com.daniebeler.pfpixelix.ui.composables.widgets.InfinitePostsList
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
+import pixelix.app.generated.resources.add_circle_outline
+import pixelix.app.generated.resources.arrow_left
 import pixelix.app.generated.resources.by
 import pixelix.app.generated.resources.cancel
 import pixelix.app.generated.resources.confirm
+import pixelix.app.generated.resources.ellipsis_vertical
+import pixelix.app.generated.resources.eye_off_outline
+import pixelix.app.generated.resources.heart_outline
 import pixelix.app.generated.resources.open_in_browser
 import pixelix.app.generated.resources.open_outline
+import pixelix.app.generated.resources.pencil_outline
 import pixelix.app.generated.resources.share_social_outline
 import pixelix.app.generated.resources.share_this_collection
 
@@ -97,7 +98,7 @@ fun CollectionComposable(
                 isRefreshing = viewModel.collectionPostsState.isRefreshing,
                 error = viewModel.collectionPostsState.error,
                 emptyMessage = EmptyState(
-                    icon = Icons.Outlined.FavoriteBorder, heading = "Empty Collection"
+                    icon = vectorResource(Res.drawable.heart_outline), heading = "Empty Collection"
                 ),
                 endReached = viewModel.collectionPostsState.endReached,
                 itemGetsDeleted = {},
@@ -115,7 +116,7 @@ fun CollectionComposable(
                             viewModel.getPostsExceptCollection()
                         }) {
                             Icon(
-                                Icons.Outlined.AddCircle,
+                                vectorResource(Res.drawable.add_circle_outline),
                                 contentDescription = "",
                                 Modifier.height(200.dp).width(200.dp)
                             )
@@ -172,7 +173,7 @@ fun CollectionComposable(
                         isRefreshing = false,
                         error = viewModel.editState.error,
                         emptyMessage = EmptyState(
-                            icon = Icons.Outlined.FavoriteBorder, heading = "Empty Collection"
+                            icon = vectorResource(Res.drawable.heart_outline), heading = "Empty Collection"
                         ),
                         navController = navController,
                         getItemsPaginated = {
@@ -229,7 +230,7 @@ fun CollectionComposable(
                     navController.popBackStack()
                 }) {
                     Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = ""
+                        imageVector = vectorResource(Res.drawable.arrow_left), contentDescription = ""
                     )
                 }
             }, actions = {
@@ -252,7 +253,7 @@ fun CollectionComposable(
                                 viewModel.toggleEditMode()
                             }) {
                                 Icon(
-                                    imageVector = Icons.Outlined.Edit, contentDescription = ""
+                                    imageVector = vectorResource(Res.drawable.pencil_outline), contentDescription = ""
                                 )
                             }
                         }
@@ -263,7 +264,7 @@ fun CollectionComposable(
                         showBottomSheet = true
                     }) {
                         Icon(
-                            imageVector = Icons.Outlined.MoreVert, contentDescription = ""
+                            imageVector = vectorResource(Res.drawable.ellipsis_vertical), contentDescription = ""
                         )
                     }
                 }

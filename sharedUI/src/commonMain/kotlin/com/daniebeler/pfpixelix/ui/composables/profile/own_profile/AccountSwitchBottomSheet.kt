@@ -12,8 +12,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -30,7 +28,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import co.touchlab.kermit.Logger
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.model.credentialsToAccount
 import com.daniebeler.pfpixelix.domain.service.session.Credentials
@@ -40,7 +37,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
+import pixelix.app.generated.resources.add_outline
 import pixelix.app.generated.resources.add_pixelfed_account
 import pixelix.app.generated.resources.are_you_sure_you_want_to_remove_this_account
 import pixelix.app.generated.resources.cancel
@@ -122,7 +121,7 @@ fun AccountSwitchBottomSheet(
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
-                    imageVector = Icons.Outlined.Add,
+                    imageVector = vectorResource(Res.drawable.add_outline),
                     contentDescription = "add account",
                     Modifier
                         .height(32.dp)

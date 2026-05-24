@@ -8,8 +8,6 @@ import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Photo
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
@@ -22,6 +20,9 @@ import com.daniebeler.pfpixelix.ui.composables.profile.PostsWrapperComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.SwitchViewComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.ViewEnum
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
+import org.jetbrains.compose.resources.vectorResource
+import pixelix.app.generated.resources.Res
+import pixelix.app.generated.resources.photo
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -34,7 +35,7 @@ fun InfinitePostsList(
     navController: NavController,
     getItemsPaginated: () -> Unit,
     emptyMessage: EmptyState = EmptyState(
-        icon = Icons.Outlined.Photo, heading = "No Posts"
+        icon = vectorResource(Res.drawable.photo), heading = "No Posts"
     ),
     onRefresh: () -> Unit,
     itemGetsDeleted: (postId: String) -> Unit,

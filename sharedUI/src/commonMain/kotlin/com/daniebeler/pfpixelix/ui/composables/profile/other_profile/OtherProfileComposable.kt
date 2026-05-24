@@ -10,14 +10,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
@@ -26,10 +24,6 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.outlined.MoreVert
-import androidx.compose.material.icons.outlined.Photo
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -66,9 +60,6 @@ import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.model.Account
-import com.daniebeler.pfpixelix.ui.composables.widgets.ButtonRowElement
-import com.daniebeler.pfpixelix.ui.composables.widgets.InfiniteStaggeredGridHandler
-import com.daniebeler.pfpixelix.ui.composables.widgets.ToTopButton
 import com.daniebeler.pfpixelix.ui.composables.profile.CollectionsComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.MutualFollowersComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.PostsWrapperComposable
@@ -77,11 +68,16 @@ import com.daniebeler.pfpixelix.ui.composables.profile.SwitchViewComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.server_stats.DomainSoftwareComposable
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposableDialog
+import com.daniebeler.pfpixelix.ui.composables.widgets.ButtonRowElement
+import com.daniebeler.pfpixelix.ui.composables.widgets.InfiniteStaggeredGridHandler
+import com.daniebeler.pfpixelix.ui.composables.widgets.ToTopButton
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import com.daniebeler.pfpixelix.utils.DomainFormat
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
+import pixelix.app.generated.resources.arrow_left
 import pixelix.app.generated.resources.block
 import pixelix.app.generated.resources.block_account
 import pixelix.app.generated.resources.block_consequence_1
@@ -98,6 +94,7 @@ import pixelix.app.generated.resources.block_this_profile
 import pixelix.app.generated.resources.browsers_outline
 import pixelix.app.generated.resources.cancel
 import pixelix.app.generated.resources.default_avatar
+import pixelix.app.generated.resources.ellipsis_vertical
 import pixelix.app.generated.resources.follow
 import pixelix.app.generated.resources.message
 import pixelix.app.generated.resources.mute
@@ -109,6 +106,7 @@ import pixelix.app.generated.resources.mute_consequence_4
 import pixelix.app.generated.resources.mute_consequence_5
 import pixelix.app.generated.resources.mute_this_profile
 import pixelix.app.generated.resources.open_in_browser
+import pixelix.app.generated.resources.photo
 import pixelix.app.generated.resources.remove_circle_outline
 import pixelix.app.generated.resources.share_social_outline
 import pixelix.app.generated.resources.share_this_profile
@@ -134,6 +132,8 @@ fun OtherProfileComposable(
 
     val lazyGridState = rememberLazyStaggeredGridState()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+
+    val photoIcon = vectorResource(Res.drawable.photo)
 
     var showBottomSheet by remember { mutableStateOf(false) }
     var showMuteAlert by remember { mutableStateOf(false) }
@@ -176,7 +176,7 @@ fun OtherProfileComposable(
                         navController.popBackStack()
                     }) {
                         Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            imageVector = vectorResource(Res.drawable.arrow_left),
                             contentDescription = ""
                         )
                     }
@@ -192,7 +192,7 @@ fun OtherProfileComposable(
                         showBottomSheet = true
                     }) {
                         Icon(
-                            imageVector = Icons.Outlined.MoreVert, contentDescription = ""
+                            imageVector = vectorResource(Res.drawable.ellipsis_vertical), contentDescription = ""
                         )
                     }
                 }, colors = TopAppBarDefaults.mediumTopAppBarColors(
@@ -363,7 +363,7 @@ fun OtherProfileComposable(
                             error = viewModel.postsState.error,
                             endReached = viewModel.postsState.endReached,
                             emptyMessage = EmptyState(
-                                icon = Icons.Outlined.Photo, heading = "No Posts"
+                                icon = photoIcon, heading = "No Posts"
                             ),
                             view = viewModel.view,
                             postGetsDeleted = { viewModel.postGetsDeleted(it) },

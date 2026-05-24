@@ -20,9 +20,6 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.MoreVert
-import androidx.compose.material.icons.outlined.Photo
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -68,6 +65,8 @@ import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.edit_profile
 import pixelix.app.generated.resources.arrow_down
+import pixelix.app.generated.resources.ellipsis_vertical
+import pixelix.app.generated.resources.photo
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -78,6 +77,8 @@ fun OwnProfileComposable(
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by remember { mutableStateOf(0) }
+
+    val photoIcon = vectorResource(Res.drawable.photo)
 
     val lazyGridState = rememberLazyStaggeredGridState()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -118,7 +119,7 @@ fun OwnProfileComposable(
                         showBottomSheet = 1
                     }) {
                         Icon(
-                            imageVector = Icons.Outlined.MoreVert,
+                            imageVector = vectorResource(Res.drawable.ellipsis_vertical),
                             contentDescription = "preferences"
                         )
                     }
@@ -226,7 +227,7 @@ fun OwnProfileComposable(
                             error = viewModel.postsState.error,
                             endReached = viewModel.postsState.endReached,
                             emptyMessage = EmptyState(
-                                icon = Icons.Outlined.Photo, heading = "No Posts"
+                                icon = photoIcon, heading = "No Posts"
                             ),
                             view = viewModel.view,
                             postGetsDeleted = { viewModel.postGetsDeleted(it) },

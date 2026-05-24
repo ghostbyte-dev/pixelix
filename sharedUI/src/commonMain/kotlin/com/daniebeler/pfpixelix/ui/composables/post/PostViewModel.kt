@@ -319,18 +319,24 @@ class PostViewModel @Inject constructor(
 
     fun reblogPost(postId: String, updatePost: (Post) -> Unit) {
         if (post?.reblogged == false) {
-            post = post?.copy(reblogged = true)
+            post = post?.copy(
+                reblogged = true,
+                reblogCount = post?.reblogCount?.plus(1) ?: 0
+            )
             post?.let { updatePost(it) }
             CoroutineScope(Dispatchers.Default).launch {
                 postService.reblogPost(postId).onEach { result ->
                     when (result) {
                         is Resource.Success -> {
-                            post = post?.copy(reblogged = result.data.reblogged)
+                            post = post?.copy(reblogged = result.data.reblogged, reblogCount = result.data.reblogCount)
                             post?.let { updatePost(it) }
                         }
 
                         is Resource.Error -> {
-                            post = post?.copy(reblogged = false)
+                            post = post?.copy(
+                                reblogged = false,
+                                reblogCount = post?.reblogCount?.minus(1) ?: 0
+                            )
                             post?.let { updatePost(it) }
                         }
 
@@ -344,18 +350,24 @@ class PostViewModel @Inject constructor(
 
     fun unreblogPost(postId: String, updatePost: (Post) -> Unit) {
         if (post?.reblogged == true) {
-            post = post?.copy(reblogged = false)
+            post = post?.copy(reblogged = false, reblogCount = post?.reblogCount?.minus(1) ?: 0)
             post?.let { updatePost(it) }
             CoroutineScope(Dispatchers.Default).launch {
                 postService.unreblogPost(postId).onEach { result ->
                     when (result) {
                         is Resource.Success -> {
-                            post = post?.copy(reblogged = result.data.reblogged)
+                            post = post?.copy(
+                                reblogged = result.data.reblogged,
+                                reblogCount = result.data.reblogCount
+                            )
                             post?.let { updatePost(it) }
                         }
 
                         is Resource.Error -> {
-                            post = post?.copy(reblogged = true)
+                            post = post?.copy(
+                                reblogged = true,
+                                reblogCount = post?.reblogCount?.plus(1) ?: 0
+                            )
                             post?.let { updatePost(it) }
                         }
 
@@ -420,7 +432,11 @@ class PostViewModel @Inject constructor(
     fun reportPost(category: String) {
         reportState = ReportState(isLoading = true, reported = false)
         if (post == null) {
-            reportState = ReportState(isLoading = false, reported = false, error = "an unexpected error occurred")
+            reportState = ReportState(
+                isLoading = false,
+                reported = false,
+                error = "an unexpected error occurred"
+            )
             return
         }
         val newReport = NewReport(

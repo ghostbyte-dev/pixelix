@@ -118,7 +118,8 @@ fun CommentsBottomSheet(
                             spoilerText = "",
                             place = null,
                             inReplyToId = null,
-                            emojis = emptyList()
+                            emojis = emptyList(),
+                            reblogCount = 0
                         )
                         ReplyElement(
                             reply = ownDescription,
@@ -303,6 +304,7 @@ private fun ReplyElement(
                 HashtagsMentionsTextView(
                     text = reply.content,
                     mentions = reply.mentions,
+                    emojis = reply.emojis,
                     navController = navController,
                     openUrl = { url -> openUrl(url) })
             }

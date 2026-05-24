@@ -167,7 +167,7 @@ fun PostComposable(
     val boostRotation by animateFloatAsState(
         label = "BoostRotation",
         targetValue = if (animateBoost) 720f else 0f,
-        animationSpec = tween(durationMillis = 800, easing = EaseInOut)
+        animationSpec = tween(durationMillis = 800, easing = EaseInOut),
     )
 
     var animateHeart by remember { mutableStateOf(false) }
@@ -213,7 +213,7 @@ fun PostComposable(
                 heartScale = heartScale,
                 boostRotation = boostRotation,
                 animateHeart = { animateHeart = true },
-                animateBoost = { animateBoost = true },
+                animateBoost = { animateBoost = !animateBoost },
                 onCommentsClick = {
                     viewModel.loadReplies(postId)
                     activeSheet = BottomSheetType.Comments
@@ -501,25 +501,28 @@ private fun PostActionBar(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.clip(RoundedCornerShape(percent = 50))
                         .background(MaterialTheme.colorScheme.surfaceContainerHigh)
-                        .padding(horizontal = 10.dp, vertical = 4.dp)
+                        .padding(horizontal = 10.dp, vertical = 4.dp).clickable {
+                            if (post.favourited) {
+                                viewModel.unlikePost(postId, updatePost)
+                            } else {
+                                animateHeart()
+                                viewModel.likePost(postId, updatePost)
+                            }
+                        },
                 ) {
                     if (post.favourited) {
                         Icon(
                             imageVector = vectorResource(Res.drawable.heart),
                             modifier = Modifier.size(22.dp)
-                                .clickable { viewModel.unlikePost(postId, updatePost) }
                                 .scale(heartScale),
-                            contentDescription = null,
+                            contentDescription = "unlike post",
                             tint = HeartRedColor
                         )
                     } else {
                         Icon(
                             imageVector = vectorResource(Res.drawable.heart_outline),
-                            modifier = Modifier.size(22.dp).clickable {
-                                animateHeart()
-                                viewModel.likePost(postId, updatePost)
-                            },
-                            contentDescription = null
+                            modifier = Modifier.size(22.dp),
+                            contentDescription = "like post"
                         )
                     }
                     Spacer(Modifier.width(4.dp))
@@ -538,11 +541,12 @@ private fun PostActionBar(
                     modifier = Modifier.clip(RoundedCornerShape(percent = 50))
                         .background(MaterialTheme.colorScheme.surfaceContainerHigh)
                         .padding(horizontal = 10.dp, vertical = 4.dp)
+                        .clickable(onClick = onCommentsClick)
                 ) {
                     Icon(
                         imageVector = vectorResource(Res.drawable.chatbubble_outline),
-                        modifier = Modifier.size(22.dp).clickable(onClick = onCommentsClick),
-                        contentDescription = null
+                        modifier = Modifier.size(22.dp),
+                        contentDescription = "open comments"
                     )
                     Spacer(Modifier.width(4.dp))
                     Text(
@@ -553,28 +557,42 @@ private fun PostActionBar(
                 }
             }
 
-            Row {
-                // Reblog button
-                if (post.reblogged) {
-                    IconButton(onClick = { viewModel.unreblogPost(postId, updatePost) }) {
-                        Icon(
-                            imageVector = vectorResource(Res.drawable.sync_outline_bold),
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.rotate(boostRotation)
-                        )
-                    }
-                } else {
-                    IconButton(onClick = {
-                        animateBoost()
-                        viewModel.reblogPost(postId, updatePost)
-                    }) {
-                        Icon(
-                            imageVector = vectorResource(Res.drawable.sync_outline),
-                            contentDescription = null
-                        )
-                    }
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.clip(RoundedCornerShape(percent = 50))
+                        .background(MaterialTheme.colorScheme.surfaceContainerHigh)
+                        .padding(horizontal = 10.dp, vertical = 4.dp).clickable {
+                            animateBoost();
+                            if (post.reblogged) {
+                                viewModel.unreblogPost(postId, updatePost)
+                            } else {
+                                viewModel.reblogPost(postId, updatePost)
+                            }
+                        }
+                ) {
+                    Icon(
+                        imageVector = if (post.reblogged) {
+                            vectorResource(Res.drawable.sync_outline_bold)
+                        } else {
+                            vectorResource(Res.drawable.sync_outline)
+                        },
+                        contentDescription = "reblog",
+                        tint = if (post.reblogged) {
+                            MaterialTheme.colorScheme.primary
+                        } else {
+                            MaterialTheme.colorScheme.onSurface
+                        },
+                        modifier = Modifier.rotate(boostRotation).size(22.dp)
+                    )
+                    Spacer(Modifier.width(4.dp))
+                    Text(
+                        text = post.reblogCount.toString(),
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold
+                    )
                 }
+
 
                 Spacer(Modifier.width(14.dp))
 
@@ -583,14 +601,14 @@ private fun PostActionBar(
                     IconButton(onClick = { viewModel.unBookmarkPost(postId, updatePost) }) {
                         Icon(
                             imageVector = vectorResource(Res.drawable.bookmark),
-                            contentDescription = null
+                            contentDescription = "unbookmark post"
                         )
                     }
                 } else {
                     IconButton(onClick = { viewModel.bookmarkPost(postId, updatePost) }) {
                         Icon(
                             imageVector = vectorResource(Res.drawable.bookmark_outline),
-                            contentDescription = null
+                            contentDescription = "bookmark post"
                         )
                     }
                 }

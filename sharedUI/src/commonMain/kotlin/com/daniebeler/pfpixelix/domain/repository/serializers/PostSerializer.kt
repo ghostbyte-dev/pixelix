@@ -14,10 +14,13 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonTransformingSerializer
 
 
 internal object PostSerializer : KSerializer<Post> {
-    private val dtoSerializer = PostDto.serializer()
+    private val dtoSerializer = PostDtoTransformingSerializer
 
     override val descriptor: SerialDescriptor = dtoSerializer.descriptor
 
@@ -54,7 +57,8 @@ internal object PostSerializer : KSerializer<Post> {
                 likedBy = reblog.likedBy,
                 visibility = reblog.visibility,
                 inReplyToId = reblog.inReplyToId,
-                emojis = reblog.emojis
+                emojis = reblog.emojis,
+                reblogCount = reblog.reblogCount
             )
         } else {
             return Post(
@@ -77,7 +81,8 @@ internal object PostSerializer : KSerializer<Post> {
                 likedBy = p.likedBy,
                 visibility = p.visibility,
                 inReplyToId = p.inReplyToId,
-                emojis = p.emojis
+                emojis = p.emojis,
+                reblogCount = p.reblogCount
             )
         }
     }
@@ -98,9 +103,10 @@ private data class PostDto(
     @SerialName("media_attachments") val mediaAttachments: List<MediaAttachment> = emptyList(),
     @SerialName("mentions") val mentions: List<Account> = emptyList(),
     @SerialName("place") val place: Place?,
-    @SerialName("reblog") val reblog: PostDto?,
+    @Serializable(with = PostDtoTransformingSerializer::class) @SerialName("reblog") val reblog: PostDto?,
     @SerialName("reblogged") val reblogged: Boolean = false,
-    @SerialName("reply_count") val replyCount: Int = 0,
+    @SerialName("reblogs_count") val reblogCount: Int = 0,
+    @SerialName("replies_count") val replyCount: Int = 0,
     @SerialName("sensitive") val sensitive: Boolean = false,
     @SerialName("spoiler_text") val spoilerText: String = "",
     @SerialName("tags") val tags: List<Tag> = emptyList(),
@@ -109,3 +115,17 @@ private data class PostDto(
     @SerialName("bookmarked") val bookmarked: Boolean = false,
     @SerialName("emojis") val emojis: List<Emoji> = emptyList()
 )
+
+private object PostDtoTransformingSerializer : JsonTransformingSerializer<PostDto>(PostDto.serializer()) {
+    override fun transformDeserialize(element: JsonElement): JsonElement {
+        if (element !is JsonObject) return element
+
+        if (element.containsKey("reply_count") && !element.containsKey("replies_count")) {
+            val mutableJson = element.toMutableMap()
+            mutableJson["replies_count"] = element["reply_count"]!!
+            return JsonObject(mutableJson)
+        }
+
+        return element
+    }
+}

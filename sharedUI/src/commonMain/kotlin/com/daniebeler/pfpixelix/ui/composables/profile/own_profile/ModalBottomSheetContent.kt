@@ -27,9 +27,9 @@ import pixelix.app.generated.resources.hash
 import pixelix.app.generated.resources.heart
 import pixelix.app.generated.resources.liked_posts
 import pixelix.app.generated.resources.muted_accounts
-import pixelix.app.generated.resources.pixelfed_logo
 import pixelix.app.generated.resources.blocked
 import pixelix.app.generated.resources.muted
+import pixelix.app.generated.resources.pixelfed_logo
 import pixelix.app.generated.resources.settings
 
 @Composable

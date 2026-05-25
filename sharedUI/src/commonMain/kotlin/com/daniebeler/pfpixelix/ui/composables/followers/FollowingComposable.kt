@@ -48,10 +48,7 @@ fun FollowingComposable(
 
         if (viewModel.followingState.following.isNotEmpty() && viewModel.followingState.isLoading && !viewModel.followingState.isRefreshing) {
             item(span = StaggeredGridItemSpan.FullLine) {
-                CircularProgressIndicator(
-                    modifier = Modifier.fillMaxWidth().height(80.dp)
-                        .wrapContentSize(Alignment.Center)
-                )
+                LoadingComposable()
             }
         }
 

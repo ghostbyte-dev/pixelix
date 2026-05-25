@@ -43,6 +43,7 @@ import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.model.FediseaInstance
 import com.daniebeler.pfpixelix.domain.model.FediseaSoftware
+import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pfpixelix.ui.composables.widgets.CardButton
 import com.daniebeler.pfpixelix.utils.StringFormat
 import org.jetbrains.compose.resources.painterResource
@@ -80,7 +81,7 @@ fun DomainSoftwareComposable(
             contentDescription = "",
             modifier = Modifier.height(24.dp).clickable { showBottomSheet = true })
     } else {
-        CircularProgressIndicator(Modifier.size(18.dp))
+        LoadingComposable(Modifier.size(24.dp))
     }
 
 

@@ -71,8 +71,8 @@ fun SinglePostComposable(
                 .fillMaxSize()
         ) {
             CustomPullToRefreshBox(
-                isRefreshing = viewModel.postState.isLoading,
-                onRefresh = { viewModel.getPost(postId) },
+                isRefreshing = viewModel.postState.isRefreshing,
+                onRefresh = { viewModel.getPost(postId, true) },
                 modifier = Modifier.fillMaxSize(),
                 animatedBox = true
             ) {
@@ -92,7 +92,9 @@ fun SinglePostComposable(
                 }
             }
 
-            LoadingComposable(isLoading = viewModel.postState.isLoading)
+            if (!viewModel.postState.isRefreshing) {
+                LoadingComposable(isLoading = viewModel.postState.isLoading)
+            }
             ErrorComposable(message = viewModel.postState.error)
         }
 

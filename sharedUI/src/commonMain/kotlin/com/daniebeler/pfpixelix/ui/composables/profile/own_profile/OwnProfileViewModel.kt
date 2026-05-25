@@ -54,6 +54,10 @@ class OwnProfileViewModel @Inject constructor(
         ownDomain = authService.getCurrentSession()?.serverUrl.orEmpty()
     }
 
+    fun dismissError() {
+        accountState = accountState.copy(error = "")
+    }
+
     fun updateAccountSwitch() {
         loadData(false)
         ownDomain = authService.getCurrentSession()?.serverUrl.orEmpty()

@@ -92,16 +92,6 @@ fun CollectionsComposable(
                         Text(text = it.title, fontSize = 14.sp)
                     }
                 }
-                if (collectionsState.isLoading) {
-                    item {
-                        CircularProgressIndicator(
-                            modifier = Modifier
-                                .fillMaxHeight()
-                                .height(96.dp)
-                                .wrapContentSize(Alignment.Center)
-                        )
-                    }
-                }
                 if (addNewButton) {
                     item {
                         Column(

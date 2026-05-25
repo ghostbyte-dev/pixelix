@@ -16,6 +16,7 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -182,26 +183,9 @@ private fun LazyStaggeredGridScope.PostsGridInScope(
         }
     }
 
-    if (!isRefreshing && isLoading) {
+    if (!isRefreshing && isLoading && posts.isNotEmpty()) {
         item(span = StaggeredGridItemSpan.FullLine) {
             LoadingComposable(Modifier.fillMaxWidth().padding(vertical = 50.dp))
-        }
-    }
-
-    if (posts.isEmpty()) {
-        if (!isLoading && error.isEmpty()) {
-            item(span = StaggeredGridItemSpan.FullLine) {
-                EmptyStateComposable(
-                    emptyMessage,
-                    Modifier.fillMaxWidth().padding(vertical = 50.dp)
-                )
-            }
-        }
-    }
-
-    if (error.isNotEmpty() && posts.isEmpty()) {
-        item(span = StaggeredGridItemSpan.FullLine) {
-            ErrorComposable(error)
         }
     }
 }
@@ -249,24 +233,6 @@ private fun LazyStaggeredGridScope.PostsListInScope(
             item(span = StaggeredGridItemSpan.FullLine) {
                 EndOfListComposable()
             }
-        }
-    }
-
-    if (posts.isEmpty() && !isLoading && error.isEmpty()) {
-        item(span = StaggeredGridItemSpan.FullLine) {
-            EmptyStateComposable(emptyMessage)
-        }
-    }
-
-    if (!isRefreshing && posts.isEmpty() && isLoading) {
-        item(span = StaggeredGridItemSpan.FullLine) {
-            LoadingComposable()
-        }
-    }
-
-    if (error.isNotEmpty() && posts.isEmpty()) {
-        item(span = StaggeredGridItemSpan.FullLine) {
-            ErrorComposable(error)
         }
     }
 }

@@ -15,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
@@ -79,7 +80,7 @@ private fun IconFollowButton(
             )
         ) {
             if (isLoading) {
-                CircularProgressIndicator(modifier = Modifier.size(20.dp), color = contentColor)
+                LoadingComposable(modifier = Modifier.size(20.dp), color = contentColor)
             } else if (isFollowing) {
                 Icon(imageVector = vectorResource(Res.drawable.remove), contentDescription = null)
             } else {
@@ -114,7 +115,7 @@ private fun TextFollowButton(
             colors = buttonColors
         ) {
             if (isLoading) {
-                CircularProgressIndicator(
+                LoadingComposable(
                     modifier = Modifier.size(20.dp),
                     color = if (isFollowing) MaterialTheme.colorScheme.onSecondaryContainer
                     else MaterialTheme.colorScheme.onPrimary

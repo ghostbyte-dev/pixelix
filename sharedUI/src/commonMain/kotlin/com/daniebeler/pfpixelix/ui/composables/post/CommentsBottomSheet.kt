@@ -164,7 +164,7 @@ fun CommentsBottomSheet(
                                 ?: Int.MAX_VALUE)
                         ) {
                             if (viewModel.ownReplyState.isLoading) {
-                                CircularProgressIndicator(
+                                LoadingComposable(
                                     modifier = Modifier.size(24.dp),
                                     color = MaterialTheme.colorScheme.onPrimary
                                 )
@@ -199,10 +199,7 @@ fun CommentsBottomSheet(
 
                 if (viewModel.repliesState.isLoading) {
                     item {
-                        CircularProgressIndicator(
-                            modifier = Modifier.fillMaxWidth().height(80.dp)
-                                .wrapContentSize(Alignment.Center)
-                        )
+                        LoadingComposable()
                     }
                 }
 

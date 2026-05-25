@@ -68,6 +68,7 @@ import com.daniebeler.pfpixelix.ui.composables.profile.SwitchViewComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.server_stats.DomainSoftwareComposable
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposableDialog
+import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pfpixelix.ui.composables.widgets.ButtonRowElement
 import com.daniebeler.pfpixelix.ui.composables.widgets.CustomPullToRefreshBox
 import com.daniebeler.pfpixelix.ui.composables.widgets.InfiniteStaggeredGridHandler
@@ -194,7 +195,8 @@ fun OtherProfileComposable(
                         showBottomSheet = true
                     }) {
                         Icon(
-                            imageVector = vectorResource(Res.drawable.more_menu), contentDescription = ""
+                            imageVector = vectorResource(Res.drawable.more_menu),
+                            contentDescription = ""
                         )
                     }
                 }, colors = TopAppBarDefaults.mediumTopAppBarColors(
@@ -233,9 +235,13 @@ fun OtherProfileComposable(
                                 modifier = Modifier.layout { measurable, constraints ->
                                     val horizontalPadding = 4.dp.roundToPx()
 
-                                    val expandedWidth = constraints.maxWidth + (horizontalPadding * 2)
+                                    val expandedWidth =
+                                        constraints.maxWidth + (horizontalPadding * 2)
                                     val placeable = measurable.measure(
-                                        constraints.copy(maxWidth = expandedWidth, minWidth = expandedWidth)
+                                        constraints.copy(
+                                            maxWidth = expandedWidth,
+                                            minWidth = expandedWidth
+                                        )
                                     )
                                     layout(constraints.maxWidth, placeable.height) {
                                         placeable.placeRelative(-horizontalPadding, 0)
@@ -301,7 +307,7 @@ fun OtherProfileComposable(
                                         )
                                     ) {
                                         if (viewModel.relationshipState.isLoading) {
-                                            CircularProgressIndicator(
+                                            LoadingComposable(
                                                 modifier = Modifier.size(20.dp),
                                                 color = contentColor
                                             )
@@ -503,6 +509,12 @@ fun OtherProfileComposable(
                     viewModel.relationshipState = viewModel.relationshipState.copy(error = "")
                     viewModel.getRelationship(userId)
                     showBottomSheet = false
+                }
+            )
+            ErrorComposableDialog(
+                viewModel.accountState.error,
+                onDismiss = {
+                    viewModel.accountState = viewModel.accountState.copy(error = "")
                 }
             )
         }

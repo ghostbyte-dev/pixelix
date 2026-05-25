@@ -45,19 +45,20 @@ fun TrendingAccountsComposable(
                     )
                 }
             })
+        if (viewModel.trendingAccountsState.trendingAccounts.isEmpty()) {
+            if (viewModel.trendingAccountsState.isLoading && !viewModel.trendingAccountsState.isRefreshing) {
+                LoadingComposable()
+            }
+
+            if (viewModel.trendingAccountsState.error.isNotEmpty()) {
+                ErrorComposable(message = viewModel.trendingAccountsState.error, modifier = Modifier.fillMaxSize().padding(36.dp, 20.dp))
+            }
+
+            if (!viewModel.trendingAccountsState.isLoading && viewModel.trendingAccountsState.error.isEmpty()) {
+                EmptyStateComposable(EmptyState(heading = stringResource(Res.string.no_trending_profiles)))
+            }
+        }
     }
 
-    if (viewModel.trendingAccountsState.trendingAccounts.isEmpty()) {
-        if (viewModel.trendingAccountsState.isLoading && !viewModel.trendingAccountsState.isRefreshing) {
-            LoadingComposable()
-        }
 
-        if (viewModel.trendingAccountsState.error.isNotEmpty()) {
-            ErrorComposable(message = viewModel.trendingAccountsState.error, modifier = Modifier.fillMaxSize().padding(36.dp, 20.dp))
-        }
-
-        if (!viewModel.trendingAccountsState.isLoading && viewModel.trendingAccountsState.error.isEmpty()) {
-            EmptyStateComposable(EmptyState(heading = stringResource(Res.string.no_trending_profiles)))
-        }
-    }
 }

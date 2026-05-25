@@ -211,10 +211,7 @@ fun NotificationsComposable(
 
                             if (viewModel.notificationsState.isLoading && !viewModel.notificationsState.isRefreshing) {
                                 item(span = StaggeredGridItemSpan.FullLine) {
-                                    CircularProgressIndicator(
-                                        modifier = Modifier.fillMaxWidth().height(80.dp)
-                                            .wrapContentSize(Alignment.Center)
-                                    )
+                                    LoadingComposable()
                                 }
                             }
 

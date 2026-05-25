@@ -52,6 +52,7 @@ import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.ui.composables.states.EndOfListComposable
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
+import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pfpixelix.ui.composables.widgets.CustomPullToRefreshBox
 import com.daniebeler.pfpixelix.ui.composables.widgets.InfiniteListHandler
 import com.daniebeler.pfpixelix.ui.navigation.Destination
@@ -124,12 +125,7 @@ fun ChatComposable(
 
                                 if (viewModel.chatState.isLoading) {
                                     item {
-                                        CircularProgressIndicator(
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .height(80.dp)
-                                                .wrapContentSize(Alignment.Center)
-                                        )
+                                        LoadingComposable()
                                     }
                                 }
 
@@ -197,10 +193,7 @@ fun ChatComposable(
                                         .clip(RoundedCornerShape(12.dp))
                                         .background(MaterialTheme.colorScheme.primary)
                                 ) {
-                                    CircularProgressIndicator(
-                                        modifier = Modifier.size(24.dp),
-                                        color = MaterialTheme.colorScheme.onPrimary
-                                    )
+                                    LoadingComposable(size = 48.dp, color = MaterialTheme.colorScheme.onPrimary)
                                 }
                             } else {
                                 Button(

@@ -124,12 +124,9 @@ fun ConversationsComposable(
                             )
                         }
 
-                        if (viewModel.conversationsState.isLoading && !viewModel.conversationsState.isRefreshing) {
+                        if (!viewModel.conversationsState.isRefreshing) {
                             item(span = StaggeredGridItemSpan.FullLine) {
-                                CircularProgressIndicator(
-                                    modifier = Modifier.fillMaxWidth().height(80.dp)
-                                        .wrapContentSize(Alignment.Center)
-                                )
+                               LoadingComposable(viewModel.conversationsState.isLoading)
                             }
                         }
 

@@ -46,12 +46,7 @@ fun FollowersComposable(
 
         if (viewModel.followersState.followers.isNotEmpty() && viewModel.followersState.isLoading && !viewModel.followersState.isRefreshing) {
             item(span = StaggeredGridItemSpan.FullLine) {
-                CircularProgressIndicator(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(80.dp)
-                        .wrapContentSize(Alignment.Center)
-                )
+                LoadingComposable()
             }
         }
 

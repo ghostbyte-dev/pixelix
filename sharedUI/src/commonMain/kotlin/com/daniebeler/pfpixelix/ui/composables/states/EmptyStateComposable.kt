@@ -1,5 +1,6 @@
 package com.daniebeler.pfpixelix.ui.composables.states
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -20,11 +22,34 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.daniebeler.pfpixelix.ui.composables.widgets.CustomPullToRefreshBox
 
 @Composable
 fun EmptyStateComposable(emptyState: EmptyState, modifier: Modifier = Modifier.fillMaxSize()) {
     Box(modifier = modifier, contentAlignment = Alignment.Center) {
         InnerEmptyState(emptyState)
+    }
+}
+
+@Composable
+fun EmptyStateComposable(
+    emptyState: EmptyState,
+    onRefresh: () -> Unit,
+    isRefreshing: Boolean,
+    modifier: Modifier = Modifier.fillMaxSize()
+) {
+    CustomPullToRefreshBox(
+        isRefreshing = isRefreshing,
+        onRefresh = onRefresh,
+        modifier = modifier.fillMaxSize()
+    ) {
+        LazyColumn(
+            modifier = modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            item { InnerEmptyState(emptyState) }
+        }
     }
 }
 

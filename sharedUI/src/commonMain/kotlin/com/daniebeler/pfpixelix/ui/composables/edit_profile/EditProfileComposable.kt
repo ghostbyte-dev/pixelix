@@ -76,6 +76,7 @@ import com.attafitamim.krop.ui.DefaultControls
 import com.daniebeler.pfpixelix.EdgeToEdgeDialogProperties
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposableDialog
+import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pfpixelix.ui.composables.widgets.SuggestionsBar
 import com.daniebeler.pfpixelix.utils.imeAwareInsets
 import io.github.vinceglb.filekit.dialogs.FileKitMode
@@ -366,7 +367,7 @@ fun EditProfileComposable(
                             modifier = Modifier.width(120.dp),
                             shape = RoundedCornerShape(12.dp)
                         ) {
-                            CircularProgressIndicator(
+                            LoadingComposable(
                                 modifier = Modifier.size(20.dp),
                                 color = MaterialTheme.colorScheme.onPrimary
                             )

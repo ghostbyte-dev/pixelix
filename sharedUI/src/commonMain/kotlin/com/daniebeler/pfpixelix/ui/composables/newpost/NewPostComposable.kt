@@ -555,9 +555,7 @@ fun ImagesPager(
                             )
                         }
                         if (image.isLoading) {
-                            CircularProgressIndicator(
-                                modifier = Modifier.wrapContentSize(Alignment.Center)
-                            )
+                            LoadingComposable()
                         }
                     }
                 }

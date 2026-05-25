@@ -58,6 +58,8 @@ import com.daniebeler.pfpixelix.ui.composables.profile.SwitchViewComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.server_stats.DomainSoftwareComposable
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
+import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposableDialog
+import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pfpixelix.ui.composables.widgets.CustomPullToRefreshBox
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import com.daniebeler.pfpixelix.utils.DomainFormat
@@ -91,7 +93,10 @@ fun OwnProfileComposable(
             TopAppBar(
                 scrollBehavior = scrollBehavior,
                 title = {
-                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp) ,modifier = Modifier.clickable { showBottomSheet = 2 }) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        modifier = Modifier.clickable { showBottomSheet = 2 }) {
                         Column {
                             Text(
                                 text = viewModel.accountState.account?.username ?: "",
@@ -159,9 +164,13 @@ fun OwnProfileComposable(
                                 modifier = Modifier.layout { measurable, constraints ->
                                     val horizontalPadding = 4.dp.roundToPx()
 
-                                    val expandedWidth = constraints.maxWidth + (horizontalPadding * 2)
+                                    val expandedWidth =
+                                        constraints.maxWidth + (horizontalPadding * 2)
                                     val placeable = measurable.measure(
-                                        constraints.copy(maxWidth = expandedWidth, minWidth = expandedWidth)
+                                        constraints.copy(
+                                            maxWidth = expandedWidth,
+                                            minWidth = expandedWidth
+                                        )
                                     )
                                     layout(constraints.maxWidth, placeable.height) {
                                         placeable.placeRelative(-horizontalPadding, 0)
@@ -238,13 +247,19 @@ fun OwnProfileComposable(
                             gridContentWidth = gridContentWidth,
                             navController = navController
                         )
-                    }
-
-                    if (viewModel.postsState.posts.isEmpty() && viewModel.postsState.error.isNotBlank()) {
-                        ErrorComposable(
-                            message = viewModel.postsState.error,
-                            modifier = Modifier.fillMaxSize().padding(36.dp, 20.dp)
-                        )
+                        if (viewModel.postsState.posts.isEmpty() && viewModel.postsState.error.isNotBlank()) {
+                            item(span = StaggeredGridItemSpan.FullLine) {
+                                ErrorComposable(
+                                    message = viewModel.postsState.error,
+                                    modifier = Modifier.fillMaxSize().padding(36.dp, 20.dp)
+                                )
+                            }
+                        }
+                        if (viewModel.postsState.isLoading && viewModel.postsState.posts.isEmpty()) {
+                            item(span = StaggeredGridItemSpan.FullLine) {
+                                LoadingComposable(viewModel.postsState.isLoading)
+                            }
+                        }
                     }
                 }
             }
@@ -257,6 +272,15 @@ fun OwnProfileComposable(
         lazyStaggeredGridState = lazyGridState, itemCount = viewModel.postsState.posts.size
     ) {
         viewModel.getPostsPaginated()
+    }
+
+    if (viewModel.accountState.error.isNotEmpty()) {
+        ErrorComposableDialog(
+            viewModel.accountState.error,
+            onDismiss = {
+                viewModel.dismissError()
+            }
+        )
     }
 
     if (showBottomSheet > 0) {

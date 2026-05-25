@@ -158,8 +158,8 @@ fun EditPostComposable(
                                 Button(
                                     onClick = { }, modifier = Modifier.width(120.dp)
                                 ) {
-                                    CircularProgressIndicator(
-                                        modifier = Modifier.size(20.dp),
+                                    LoadingComposable(
+                                        modifier = Modifier.size(24.dp),
                                         color = MaterialTheme.colorScheme.onPrimary
                                     )
                                 }
@@ -455,7 +455,7 @@ fun ImagesPagerEditPost(
                             )
                         }
                     } else {
-                        CircularProgressIndicator(
+                        LoadingComposable(
                             modifier = Modifier.wrapContentSize(Alignment.Center)
                         )
                     }

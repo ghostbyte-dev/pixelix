@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
@@ -55,7 +56,7 @@ fun ReportDialog(
             Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
                 if (reportState != null) {
                     if (reportState.isLoading) {
-                        CircularProgressIndicator()
+                        LoadingComposable()
                     } else if (reportState.error.isNotBlank()) {
                         Text("an unexpected error occurred")
                     } else {

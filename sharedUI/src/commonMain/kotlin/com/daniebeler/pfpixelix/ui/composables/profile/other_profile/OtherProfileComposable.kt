@@ -69,6 +69,7 @@ import com.daniebeler.pfpixelix.ui.composables.profile.server_stats.DomainSoftwa
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposableDialog
 import com.daniebeler.pfpixelix.ui.composables.widgets.ButtonRowElement
+import com.daniebeler.pfpixelix.ui.composables.widgets.CustomPullToRefreshBox
 import com.daniebeler.pfpixelix.ui.composables.widgets.InfiniteStaggeredGridHandler
 import com.daniebeler.pfpixelix.ui.composables.widgets.ToTopButton
 import com.daniebeler.pfpixelix.ui.navigation.Destination
@@ -202,7 +203,7 @@ fun OtherProfileComposable(
             )
         }) { paddingValues ->
         Box(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
-            PullToRefreshBox(
+            CustomPullToRefreshBox(
                 isRefreshing = viewModel.accountState.refreshing || viewModel.postsState.refreshing,
                 onRefresh = { viewModel.loadData(userId, true, navController) },
                 modifier = Modifier.fillMaxSize()

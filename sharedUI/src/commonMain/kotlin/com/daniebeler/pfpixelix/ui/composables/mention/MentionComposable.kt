@@ -41,6 +41,7 @@ import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.ui.composables.post.PostComposable
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
+import com.daniebeler.pfpixelix.ui.composables.widgets.CustomPullToRefreshBox
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
@@ -94,7 +95,7 @@ fun MentionComposable(
             }
         })
     }) { paddingValues ->
-        PullToRefreshBox(
+        CustomPullToRefreshBox(
             isRefreshing = viewModel.postContextState.isRefreshing && viewModel.postState.isRefreshing,
             onRefresh = { viewModel.loadData(mentionId, true) },
             modifier = Modifier.padding(paddingValues)

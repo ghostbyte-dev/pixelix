@@ -17,6 +17,7 @@ import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyStateComposable
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
+import com.daniebeler.pfpixelix.ui.composables.widgets.CustomPullToRefreshBox
 import org.jetbrains.compose.resources.stringResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.no_trending_hashtags
@@ -27,9 +28,10 @@ fun TrendingHashtagsComposable(
     navController: NavController,
     viewModel: TrendingHashtagsViewModel = injectViewModel(key = "trending-hashtags-key") { trendingHashtagsViewModel }
 ) {
-    PullToRefreshBox(
+    CustomPullToRefreshBox(
         isRefreshing = viewModel.trendingHashtagsState.isRefreshing,
         onRefresh = { viewModel.getTrendingHashtags(true) },
+        animatedBox = true
     ) {
         LazyColumn(
             modifier = Modifier.fillMaxSize().padding(horizontal = 4.dp),

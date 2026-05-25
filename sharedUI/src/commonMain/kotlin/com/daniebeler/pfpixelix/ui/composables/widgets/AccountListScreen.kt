@@ -34,10 +34,11 @@ fun AccountListScreen(
     itemContent: @Composable (Account) -> Unit
 ) {
     ScreenScaffold(title = title, navController = navController) {
-        PullToRefreshBox(
+        CustomPullToRefreshBox(
             isRefreshing = isRefreshing,
             onRefresh = onRefresh,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
+            animatedBox = true
         ) {
             LazyVerticalStaggeredGrid(
                 columns = StaggeredGridCells.Adaptive(300.dp),

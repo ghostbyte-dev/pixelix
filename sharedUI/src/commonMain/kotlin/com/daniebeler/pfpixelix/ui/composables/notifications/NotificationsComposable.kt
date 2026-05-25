@@ -52,6 +52,7 @@ import com.daniebeler.pfpixelix.ui.composables.states.EndOfListComposable
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyStateComposable
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
+import com.daniebeler.pfpixelix.ui.composables.widgets.CustomPullToRefreshBox
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
@@ -170,9 +171,10 @@ fun NotificationsComposable(
                         .background(MaterialTheme.colorScheme.surfaceContainer)
                 )
 
-                PullToRefreshBox(
+                CustomPullToRefreshBox(
                     isRefreshing = viewModel.notificationsState.isRefreshing,
                     onRefresh = { viewModel.refresh() },
+                    animatedBox = true
                 ) {
                     LazyVerticalStaggeredGrid(
                         columns = StaggeredGridCells.Adaptive(350.dp),

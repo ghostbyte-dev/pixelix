@@ -32,6 +32,7 @@ import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.ui.composables.post.PostComposable
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
+import com.daniebeler.pfpixelix.ui.composables.widgets.CustomPullToRefreshBox
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
@@ -69,10 +70,11 @@ fun SinglePostComposable(
                 .padding(top = TopAppBarDefaults.TopAppBarExpandedHeight - 24.dp, bottom = 60.dp)
                 .fillMaxSize()
         ) {
-            PullToRefreshBox(
+            CustomPullToRefreshBox(
                 isRefreshing = viewModel.postState.isLoading,
                 onRefresh = { viewModel.getPost(postId) },
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize(),
+                animatedBox = true
             ) {
                 Column(
                     modifier = Modifier.verticalScroll(scrollState)

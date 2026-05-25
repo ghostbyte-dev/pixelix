@@ -19,6 +19,7 @@ import com.daniebeler.pfpixelix.ui.composables.states.EmptyStateComposable
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pfpixelix.ui.composables.widgets.CustomHashtag
+import com.daniebeler.pfpixelix.ui.composables.widgets.CustomPullToRefreshBox
 import com.daniebeler.pfpixelix.ui.composables.widgets.ScreenScaffold
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import org.jetbrains.compose.resources.stringResource
@@ -35,10 +36,11 @@ fun FollowedHashtagsComposable(
     viewModel: FollowedHashtagsViewModel = injectViewModel(key = "followed-hashtags-key") { followedHashtagsViewModel }
 ) {
     ScreenScaffold(title = stringResource(Res.string.followed_hashtags), navController = navController) {
-        PullToRefreshBox(
+        CustomPullToRefreshBox(
             isRefreshing = viewModel.followedHashtagsState.isRefreshing,
             onRefresh = { viewModel.getFollowedHashtags(true) },
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
+            animatedBox = true
         ) {
             LazyVerticalStaggeredGrid(
                 columns = StaggeredGridCells.Adaptive(300.dp),

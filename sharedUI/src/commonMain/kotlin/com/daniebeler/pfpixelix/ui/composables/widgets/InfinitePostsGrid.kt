@@ -52,7 +52,7 @@ fun InfinitePostsGrid(
 ) {
 
     if (pullToRefresh) {
-        PullToRefreshBox(
+        CustomPullToRefreshBox(
             isRefreshing = isRefreshing, onRefresh = { onRefresh() }, modifier = Modifier.fillMaxSize()
         ) {
             PrivateInfinitePostsGrid(items, isLoading, isRefreshing, error, endReached, emptyMessage, navController, getItemsPaginated, contentPaddingTop, before, after, edit, editRemove, onClick)

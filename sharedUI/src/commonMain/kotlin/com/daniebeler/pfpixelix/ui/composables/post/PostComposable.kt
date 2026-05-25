@@ -579,6 +579,7 @@ private fun PostActionBar(
                     IconButton(onClick = { viewModel.unBookmarkPost(postId, updatePost) }) {
                         Icon(
                             imageVector = vectorResource(Res.drawable.bookmark_filled),
+                            tint = MaterialTheme.colorScheme.primary,
                             contentDescription = "unbookmark post"
                         )
                     }
@@ -586,6 +587,7 @@ private fun PostActionBar(
                     IconButton(onClick = { viewModel.bookmarkPost(postId, updatePost) }) {
                         Icon(
                             imageVector = vectorResource(Res.drawable.bookmark),
+                            tint = MaterialTheme.colorScheme.onSurface,
                             contentDescription = "bookmark post"
                         )
                     }

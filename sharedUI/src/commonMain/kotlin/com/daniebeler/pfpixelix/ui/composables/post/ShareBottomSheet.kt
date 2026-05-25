@@ -46,7 +46,7 @@ import pixelix.app.generated.resources.pencil_outline
 import pixelix.app.generated.resources.report_this_post
 import pixelix.app.generated.resources.share_social_outline
 import pixelix.app.generated.resources.share_this_post
-import pixelix.app.generated.resources.trash_outline
+import pixelix.app.generated.resources.trash
 import pixelix.app.generated.resources.unlisted
 import pixelix.app.generated.resources.visibility_x
 import pixelix.app.generated.resources.warning
@@ -157,7 +157,7 @@ fun ShareBottomSheet(
                 }
             )
             ButtonRowElement(
-                icon = Res.drawable.trash_outline,
+                icon = Res.drawable.trash,
                 text = stringResource(Res.string.delete_this_post),
                 onClick = {
                     viewModel.deleteDialog = post.id

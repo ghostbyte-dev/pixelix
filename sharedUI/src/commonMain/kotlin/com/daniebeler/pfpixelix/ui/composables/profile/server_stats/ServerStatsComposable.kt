@@ -495,7 +495,7 @@ fun StatsCard(
 ) {
     Card(
         shape = MaterialTheme.shapes.medium, colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainer
+            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
         ), modifier = Modifier.fillMaxWidth()
     ) {
         thumbnail?.let {

@@ -106,11 +106,10 @@ import pixelix.app.generated.resources.media_description
 import pixelix.app.generated.resources.ok
 import pixelix.app.generated.resources.others
 import pixelix.app.generated.resources.reblogged_by
-import pixelix.app.generated.resources.save_outline
 import pixelix.app.generated.resources.sync_outline
 import pixelix.app.generated.resources.sync_outline_bold
 import pixelix.app.generated.resources.this_action_cannot_be_undone
-import pixelix.app.generated.resources.trash_outline
+import pixelix.app.generated.resources.trash
 
 private val HeartRedColor = Color(0xFFDD2E44)
 
@@ -247,7 +246,7 @@ private fun PostHeader(
             modifier = Modifier.padding(start = 16.dp, end = 12.dp).clickable {
                 navController.navigate(Destination.Profile(reblogAccount.id))
             }) {
-            Icon(vectorResource(Res.drawable.save_outline), contentDescription = null, modifier = Modifier.size(20.dp))
+            Icon(vectorResource(Res.drawable.sync_outline), contentDescription = null, modifier = Modifier.size(16.dp))
             Text(
                 stringResource(
                     Res.string.reblogged_by, reblogAccount.displayname ?: reblogAccount.username
@@ -287,7 +286,7 @@ private fun PostHeader(
                     Icon(
                         imageVector = vectorResource(Res.drawable.location),
                         contentDescription = null,
-                        modifier = Modifier.height(20.dp)
+                        modifier = Modifier.size(16.dp)
                     )
                     Row {
                         Text(text = post.place?.name ?: "", fontSize = 12.sp)
@@ -303,7 +302,6 @@ private fun PostHeader(
         IconButton(onClick = onMenuClick) {
             Icon(
                 imageVector = vectorResource(Res.drawable.ellipsis_vertical),
-                modifier = Modifier.size(20.dp),
                 contentDescription = null
             )
         }
@@ -687,7 +685,7 @@ private fun PostDeleteDialog(viewModel: PostViewModel) {
     val postIdToDelete = viewModel.deleteDialog ?: return
 
     AlertDialog(
-        icon = { Icon(imageVector = vectorResource(Res.drawable.trash_outline), contentDescription = null) },
+        icon = { Icon(imageVector = vectorResource(Res.drawable.trash), contentDescription = null) },
         title = { Text(text = stringResource(Res.string.delete_post)) },
         text = { Text(text = stringResource(Res.string.this_action_cannot_be_undone)) },
         onDismissRequest = { viewModel.deleteDialog = null },

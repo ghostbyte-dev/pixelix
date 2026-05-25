@@ -6,8 +6,8 @@ import com.daniebeler.pfpixelix.ui.composables.settings.preferences.basic.Settin
 import org.jetbrains.compose.resources.stringResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.open_outline
-import pixelix.app.generated.resources.trash
 import pixelix.app.generated.resources.delete_account
+import pixelix.app.generated.resources.trash
 
 
 @Composable

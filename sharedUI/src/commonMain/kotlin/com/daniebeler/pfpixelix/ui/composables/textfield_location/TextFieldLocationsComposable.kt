@@ -38,7 +38,7 @@ import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.browsers_outline
 import pixelix.app.generated.resources.pencil_outline
-import pixelix.app.generated.resources.trash_outline
+import pixelix.app.generated.resources.trash
 
 @Composable
 fun TextFieldLocationsComposable(
@@ -81,7 +81,7 @@ fun TextFieldLocationsComposable(
                             submit("")
                             submitPlace(null)
                         }) {
-                            Icon(imageVector = vectorResource(Res.drawable.trash_outline), contentDescription = "remove")
+                            Icon(imageVector = vectorResource(Res.drawable.trash), contentDescription = "remove")
                         }
                     }
                 }

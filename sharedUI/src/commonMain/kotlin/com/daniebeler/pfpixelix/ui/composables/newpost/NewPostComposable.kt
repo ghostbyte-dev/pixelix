@@ -104,7 +104,7 @@ import pixelix.app.generated.resources.location
 import pixelix.app.generated.resources.new_post
 import pixelix.app.generated.resources.release
 import pixelix.app.generated.resources.sensitive_nsfw_media
-import pixelix.app.generated.resources.trash_outline
+import pixelix.app.generated.resources.trash
 import pixelix.app.generated.resources.unlisted
 import pixelix.app.generated.resources.are_you_sure
 import pixelix.app.generated.resources.arrow_left
@@ -112,6 +112,7 @@ import pixelix.app.generated.resources.arrow_right
 import pixelix.app.generated.resources.cancel_post_warning
 import pixelix.app.generated.resources.confirm
 import pixelix.app.generated.resources.ok
+import pixelix.app.generated.resources.sensitive_content
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -190,7 +191,7 @@ fun NewPostComposable(
                                 submit = {}
                             )
                             NewPostPref(
-                                leadingIcon = Res.drawable.browsers_outline,
+                                leadingIcon = Res.drawable.sensitive_content,
                                 title = stringResource(Res.string.sensitive_nsfw_media),
                                 trailingContent = {
                                     Switch(
@@ -209,7 +210,7 @@ fun NewPostComposable(
                                 )
                             }
                             NewPostPref(
-                                leadingIcon = Res.drawable.browsers_outline,
+                                leadingIcon = Res.drawable.audience,
                                 title = stringResource(Res.string.audience),
                                 trailingContent = {
                                     Box {
@@ -509,7 +510,7 @@ fun ImagesPager(
                         deleteMedia(page)
                     }) {
                         Icon(
-                            imageVector = vectorResource(Res.drawable.trash_outline),
+                            imageVector = vectorResource(Res.drawable.trash),
                             contentDescription = "delete Image",
                             tint = MaterialTheme.colorScheme.error
                         )

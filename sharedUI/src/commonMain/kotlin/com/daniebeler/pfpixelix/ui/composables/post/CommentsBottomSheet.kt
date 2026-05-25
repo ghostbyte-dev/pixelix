@@ -83,7 +83,7 @@ import pixelix.app.generated.resources.pencil_outline
 import pixelix.app.generated.resources.reply
 import pixelix.app.generated.resources.send
 import pixelix.app.generated.resources.this_action_cannot_be_undone
-import pixelix.app.generated.resources.trash_outline
+import pixelix.app.generated.resources.trash
 
 @Composable
 fun CommentsBottomSheet(
@@ -315,7 +315,7 @@ private fun ReplyElement(
                 if (reply.account.id == myAccountId) {
                     IconButton(onClick = { showDeleteReplyDialog.value = true }) {
                         Icon(
-                            imageVector = vectorResource(Res.drawable.trash_outline),
+                            imageVector = vectorResource(Res.drawable.trash),
                             contentDescription = "",
                             tint = MaterialTheme.colorScheme.error
                         )
@@ -399,7 +399,7 @@ private fun ReplyElement(
     if (showDeleteReplyDialog.value) {
         AlertDialog(icon = {
             Icon(
-                imageVector = vectorResource(Res.drawable.trash_outline),
+                imageVector = vectorResource(Res.drawable.trash),
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.error
             )

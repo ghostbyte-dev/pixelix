@@ -45,7 +45,7 @@ import pixelix.app.generated.resources.developed_by
 import pixelix.app.generated.resources.mastodon_logo
 import pixelix.app.generated.resources.pixelfed_logo
 import pixelix.app.generated.resources.shield_outline
-import pixelix.app.generated.resources.star_outline
+import pixelix.app.generated.resources.star
 import pixelix.app.generated.resources.website
 
 @Composable
@@ -87,7 +87,7 @@ fun AboutPixelixComposable(
             HorizontalDivider(Modifier.padding(12.dp))
 
             ButtonRowElement(
-                icon = Res.drawable.star_outline,
+                icon = Res.drawable.star,
                 text = "Rate Pixelix on Google Play Store",
                 onClick = { viewModel.rateApp() })
 

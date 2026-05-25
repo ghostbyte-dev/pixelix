@@ -28,13 +28,12 @@ import com.daniebeler.pfpixelix.domain.model.Message
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
-import pixelix.app.generated.resources.arrow_left
 import pixelix.app.generated.resources.cancel
 import pixelix.app.generated.resources.delete
 import pixelix.app.generated.resources.this_action_cannot_be_undone
 import pixelix.app.generated.resources.delete_message
 import pixelix.app.generated.resources.eye_off_outline
-import pixelix.app.generated.resources.trash_outline
+import pixelix.app.generated.resources.trash
 
 @Composable
 fun ConversationElementComposable(
@@ -90,7 +89,7 @@ fun ConversationElementComposable(
                                 showDeleteReplyDialog.value = true
                             }) {
                                 Icon(
-                                    imageVector = vectorResource(Res.drawable.trash_outline),
+                                    imageVector = vectorResource(Res.drawable.trash),
                                     contentDescription = "delete message",
                                     Modifier.size(20.dp),
                                     tint = MaterialTheme.colorScheme.onPrimary
@@ -103,7 +102,7 @@ fun ConversationElementComposable(
         }
         if (showDeleteReplyDialog.value) AlertDialog(icon = {
             Icon(
-                imageVector = vectorResource(Res.drawable.trash_outline),
+                imageVector = vectorResource(Res.drawable.trash),
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.error
             )

@@ -73,7 +73,6 @@ import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposableDialog
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pfpixelix.ui.composables.textfield_location.TextFieldLocationsComposable
 import com.daniebeler.pfpixelix.utils.getPlatformUriObject
-import com.daniebeler.pfpixelix.utils.imeAwareInsets
 import com.daniebeler.pfpixelix.utils.toKmpUri
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
@@ -94,7 +93,7 @@ import pixelix.app.generated.resources.location
 import pixelix.app.generated.resources.save
 import pixelix.app.generated.resources.sensitive_nsfw_media
 import pixelix.app.generated.resources.sure_update_post
-import pixelix.app.generated.resources.trash_outline
+import pixelix.app.generated.resources.trash
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -314,7 +313,7 @@ fun EditPostComposable(
 
     if (viewModel.deleteMediaDialog != null) {
         AlertDialog(icon = {
-            Icon(imageVector = vectorResource(Res.drawable.trash_outline), contentDescription = null)
+            Icon(imageVector = vectorResource(Res.drawable.trash), contentDescription = null)
         }, title = {
             Text(text = "Remove Media")
         }, text = {
@@ -409,7 +408,7 @@ fun ImagesPagerEditPost(
                     deleteMedia(image.id)
                 }) {
                     Icon(
-                        imageVector = vectorResource(Res.drawable.trash_outline),
+                        imageVector = vectorResource(Res.drawable.trash),
                         contentDescription = "delete Image",
                         tint = MaterialTheme.colorScheme.error
                     )

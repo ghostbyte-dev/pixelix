@@ -81,7 +81,7 @@ import pixelix.app.generated.resources.explore
 import pixelix.app.generated.resources.hash
 import pixelix.app.generated.resources.hashtags
 import pixelix.app.generated.resources.search_outline
-import pixelix.app.generated.resources.trash_outline
+import pixelix.app.generated.resources.trash
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -145,7 +145,7 @@ fun ExploreComposable(
                             enter = fadeIn(),
                             exit = fadeOut()
                         ) {
-                            Icon(vectorResource(Res.drawable.trash_outline),
+                            Icon(vectorResource(Res.drawable.trash),
                                 contentDescription = "clear search query",
                                 modifier = Modifier.clickable {
                                     textFieldState.clearText()

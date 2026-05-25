@@ -8,7 +8,7 @@ import com.daniebeler.pfpixelix.di.LocalAppComponent
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.basic.SwitchPref
 import org.jetbrains.compose.resources.stringResource
 import pixelix.app.generated.resources.Res
-import pixelix.app.generated.resources.swipe_arrows
+import pixelix.app.generated.resources.swipe_gesture
 import pixelix.app.generated.resources.swipe_between_tabs
 
 @Composable
@@ -19,7 +19,7 @@ fun SwipeBetweenTimelines() {
         prefs.enableSwipeBetweenTabs = state.value
     }
     SwitchPref(
-        leadingIcon =  Res.drawable.swipe_arrows,
+        leadingIcon =  Res.drawable.swipe_gesture,
         title = stringResource(Res.string.swipe_between_tabs),
         state = state
     )

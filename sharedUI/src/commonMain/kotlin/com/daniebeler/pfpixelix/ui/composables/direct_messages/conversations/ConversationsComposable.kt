@@ -55,13 +55,13 @@ import com.daniebeler.pfpixelix.ui.navigation.Destination
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
-import pixelix.app.generated.resources.add_outline
+import pixelix.app.generated.resources.add
 import pixelix.app.generated.resources.cancel
 import pixelix.app.generated.resources.confirm
 import pixelix.app.generated.resources.conversations
 import pixelix.app.generated.resources.direct_messages_encryption_description
-import pixelix.app.generated.resources.help_outline
-import pixelix.app.generated.resources.mail_outline
+import pixelix.app.generated.resources.help
+import pixelix.app.generated.resources.mail
 import pixelix.app.generated.resources.new_direct_message
 import pixelix.app.generated.resources.select_recipient
 import pixelix.app.generated.resources.warning
@@ -87,14 +87,14 @@ fun ConversationsComposable(
             Row {
                 IconButton(onClick = { showNewChatDialog.value = true }) {
                     Icon(
-                        imageVector = vectorResource(Res.drawable.add_outline),
+                        imageVector = vectorResource(Res.drawable.add),
                         contentDescription = null
                     )
                 }
 
                 IconButton(onClick = { showBottomSheet = true }) {
                     Icon(
-                        imageVector = vectorResource(Res.drawable.help_outline),
+                        imageVector = vectorResource(Res.drawable.help),
                         tint = MaterialTheme.colorScheme.error,
                         contentDescription = null
                     )
@@ -142,7 +142,7 @@ fun ConversationsComposable(
             if (!viewModel.conversationsState.isLoading && viewModel.conversationsState.error.isEmpty() && viewModel.conversationsState.conversations.isEmpty()) {
                 EmptyStateComposable(
                     EmptyState(
-                        icon = vectorResource(Res.drawable.mail_outline),
+                        icon = vectorResource(Res.drawable.mail),
                         heading = stringResource(
                             Res.string.you_don_t_have_any_notifications
                         )

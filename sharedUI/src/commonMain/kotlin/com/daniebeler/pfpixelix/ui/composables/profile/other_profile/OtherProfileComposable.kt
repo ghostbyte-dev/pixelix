@@ -91,10 +91,10 @@ import pixelix.app.generated.resources.block_consequence_7
 import pixelix.app.generated.resources.block_consequence_8
 import pixelix.app.generated.resources.block_consequence_9
 import pixelix.app.generated.resources.block_this_profile
-import pixelix.app.generated.resources.browsers_outline
+import pixelix.app.generated.resources.browser
 import pixelix.app.generated.resources.cancel
 import pixelix.app.generated.resources.default_avatar
-import pixelix.app.generated.resources.ellipsis_vertical
+import pixelix.app.generated.resources.more_menu
 import pixelix.app.generated.resources.follow
 import pixelix.app.generated.resources.message
 import pixelix.app.generated.resources.mute
@@ -107,8 +107,9 @@ import pixelix.app.generated.resources.mute_consequence_5
 import pixelix.app.generated.resources.mute_this_profile
 import pixelix.app.generated.resources.open_in_browser
 import pixelix.app.generated.resources.photo
-import pixelix.app.generated.resources.remove_circle_outline
-import pixelix.app.generated.resources.share_social_outline
+import pixelix.app.generated.resources.blocked
+import pixelix.app.generated.resources.muted
+import pixelix.app.generated.resources.share
 import pixelix.app.generated.resources.share_this_profile
 import pixelix.app.generated.resources.unblock_account
 import pixelix.app.generated.resources.unblock_caps
@@ -192,7 +193,7 @@ fun OtherProfileComposable(
                         showBottomSheet = true
                     }) {
                         Icon(
-                            imageVector = vectorResource(Res.drawable.ellipsis_vertical), contentDescription = ""
+                            imageVector = vectorResource(Res.drawable.more_menu), contentDescription = ""
                         )
                     }
                 }, colors = TopAppBarDefaults.mediumTopAppBarColors(
@@ -400,7 +401,7 @@ fun OtherProfileComposable(
                         if (viewModel.relationshipState.accountRelationship != null) {
                             if (viewModel.relationshipState.accountRelationship!!.muting) {
                                 ButtonRowElement(
-                                    icon = Res.drawable.remove_circle_outline,
+                                    icon = Res.drawable.muted,
                                     text = stringResource(
                                         Res.string.unmute_this_profile
                                     ),
@@ -409,7 +410,7 @@ fun OtherProfileComposable(
                                     })
                             } else {
                                 ButtonRowElement(
-                                    icon = Res.drawable.remove_circle_outline,
+                                    icon = Res.drawable.muted,
                                     text = stringResource(
                                         Res.string.mute_this_profile
                                     ),
@@ -420,7 +421,7 @@ fun OtherProfileComposable(
 
                             if (viewModel.relationshipState.accountRelationship!!.blocking) {
                                 ButtonRowElement(
-                                    icon = Res.drawable.remove_circle_outline,
+                                    icon = Res.drawable.blocked,
                                     text = stringResource(
                                         Res.string.unblock_this_profile
                                     ),
@@ -429,7 +430,7 @@ fun OtherProfileComposable(
                                     })
                             } else {
                                 ButtonRowElement(
-                                    icon = Res.drawable.remove_circle_outline,
+                                    icon = Res.drawable.blocked,
                                     text = stringResource(
                                         Res.string.block_this_profile
                                     ),
@@ -442,14 +443,14 @@ fun OtherProfileComposable(
                         HorizontalDivider(Modifier.padding(12.dp))
 
                         ButtonRowElement(
-                            icon = Res.drawable.browsers_outline, text = stringResource(
+                            icon = Res.drawable.browser, text = stringResource(
                                 Res.string.open_in_browser
                             ), onClick = {
                                 viewModel.openUrl(viewModel.accountState.account!!.url)
                             })
 
                         ButtonRowElement(
-                            icon = Res.drawable.share_social_outline,
+                            icon = Res.drawable.share,
                             text = stringResource(Res.string.share_this_profile),
                             onClick = {
                                 viewModel.shareAccountUrl()

@@ -30,7 +30,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.arrow_left
-import pixelix.app.generated.resources.bookmark_outline
+import pixelix.app.generated.resources.bookmark
 import pixelix.app.generated.resources.liked_posts
 import pixelix.app.generated.resources.no_bookmarked_posts
 
@@ -73,7 +73,7 @@ fun BookmarkedPostsComposable(
                 isRefreshing = viewModel.bookmarkedPostsState.isRefreshing,
                 error = viewModel.bookmarkedPostsState.error,
                 emptyMessage = EmptyState(
-                    icon = vectorResource(Res.drawable.bookmark_outline), heading = stringResource(Res.string.no_bookmarked_posts)
+                    icon = vectorResource(Res.drawable.bookmark), heading = stringResource(Res.string.no_bookmarked_posts)
                 ),
                 endReached = false,
                 itemGetsDeleted = {},

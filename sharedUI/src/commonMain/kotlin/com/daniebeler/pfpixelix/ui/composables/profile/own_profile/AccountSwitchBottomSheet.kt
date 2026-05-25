@@ -39,7 +39,7 @@ import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
-import pixelix.app.generated.resources.add_outline
+import pixelix.app.generated.resources.add
 import pixelix.app.generated.resources.add_pixelfed_account
 import pixelix.app.generated.resources.are_you_sure_you_want_to_remove_this_account
 import pixelix.app.generated.resources.cancel
@@ -121,7 +121,7 @@ fun AccountSwitchBottomSheet(
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
-                    imageVector = vectorResource(Res.drawable.add_outline),
+                    imageVector = vectorResource(Res.drawable.add),
                     contentDescription = "add account",
                     Modifier
                         .height(32.dp)

@@ -33,7 +33,7 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
-import pixelix.app.generated.resources.close_outline
+import pixelix.app.generated.resources.close
 import pixelix.app.generated.resources.default_avatar
 import pixelix.app.generated.resources.follower
 import pixelix.app.generated.resources.trash
@@ -75,7 +75,7 @@ fun CustomAccount(
         if (removeSavedSearch != null) {
             IconButton(onClick = removeSavedSearch, modifier = Modifier.height(22.dp).width(22.dp)) {
                 Icon(
-                    imageVector = vectorResource(Res.drawable.close_outline),
+                    imageVector = vectorResource(Res.drawable.close),
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.primary
                 )

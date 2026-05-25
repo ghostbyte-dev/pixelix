@@ -19,7 +19,7 @@ import com.daniebeler.pfpixelix.di.LocalAppComponent
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.basic.SwitchPref
 import org.jetbrains.compose.resources.stringResource
 import pixelix.app.generated.resources.Res
-import pixelix.app.generated.resources.eye_off_outline
+import pixelix.app.generated.resources.eye_off
 import pixelix.app.generated.resources.blur
 import pixelix.app.generated.resources.hide_sensitive_content
 import pixelix.app.generated.resources.blur_sensitive_content
@@ -38,7 +38,7 @@ fun HideSensitiveContentPref() {
     }
     Column {
         SwitchPref(
-            leadingIcon = Res.drawable.eye_off_outline,
+            leadingIcon = Res.drawable.eye_off,
             title = stringResource(Res.string.hide_sensitive_content),
             state = hideState
         )

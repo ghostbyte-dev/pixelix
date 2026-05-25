@@ -48,7 +48,6 @@ kotlin {
             implementation(libs.ui)
             implementation(libs.jetbrains.material)
             implementation(libs.material3)
-            implementation(libs.material.icons.extended)
             implementation(libs.components.resources)
             implementation(libs.compose.ui.graphics)
             implementation(libs.compose.navigationevent)
@@ -124,8 +123,6 @@ kotlin {
             implementation(libs.androidx.core.ktx)
             implementation(libs.androidx.activity.compose)
             implementation(libs.androidx.browser)
-
-            implementation(libs.accompanist.systemuicontroller)
 
             implementation(libs.material)
 

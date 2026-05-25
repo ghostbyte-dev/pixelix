@@ -10,13 +10,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.Colors
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.VolumeOff
-import androidx.compose.material.icons.automirrored.outlined.VolumeUp
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Pause
-import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -48,6 +41,13 @@ import com.daniebeler.pfpixelix.utils.KeepScreenOn
 import io.github.kdroidfilter.composemediaplayer.VideoPlayerState
 import io.github.kdroidfilter.composemediaplayer.VideoPlayerSurface
 import io.github.kdroidfilter.composemediaplayer.rememberVideoPlayerState
+import org.jetbrains.compose.resources.vectorResource
+import pixelix.app.generated.resources.Res
+import pixelix.app.generated.resources.autoplay
+import pixelix.app.generated.resources.close
+import pixelix.app.generated.resources.pause
+import pixelix.app.generated.resources.volume_loud
+import pixelix.app.generated.resources.volume_mute
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -96,7 +96,7 @@ fun VideoAttachment(
                                     colors = IconButtonDefaults.filledTonalIconButtonColors()
                                 ) {
                                     Icon(
-                                        imageVector = Icons.Default.Close,
+                                        imageVector = vectorResource(Res.drawable.close),
                                         contentDescription = "Exit Fullscreen"
                                     )
                                 }
@@ -115,13 +115,13 @@ fun VideoAttachment(
                                     ) {
                                         if (player.isPlaying) {
                                             Icon(
-                                                Icons.Default.Pause,
+                                                vectorResource(Res.drawable.pause),
                                                 contentDescription = "Pause",
                                                 Modifier.size(18.dp)
                                             )
                                         } else {
                                             Icon(
-                                                Icons.Default.PlayArrow,
+                                                vectorResource(Res.drawable.autoplay),
                                                 contentDescription = "Play",
                                                 Modifier.size(18.dp)
                                             )
@@ -142,13 +142,13 @@ fun VideoAttachment(
                                         ) {
                                             if (viewModel.volume) {
                                                 Icon(
-                                                    Icons.AutoMirrored.Outlined.VolumeUp,
+                                                    vectorResource(Res.drawable.volume_loud),
                                                     contentDescription = "Volume on",
                                                     Modifier.size(18.dp)
                                                 )
                                             } else {
                                                 Icon(
-                                                    Icons.AutoMirrored.Outlined.VolumeOff,
+                                                    vectorResource(Res.drawable.volume_mute),
                                                     contentDescription = "Volume off",
                                                     Modifier.size(18.dp)
                                                 )
@@ -174,13 +174,13 @@ fun VideoAttachment(
                     ) {
                         if (viewModel.volume) {
                             Icon(
-                                Icons.AutoMirrored.Outlined.VolumeUp,
+                                vectorResource(Res.drawable.volume_loud),
                                 contentDescription = "Volume on",
                                 Modifier.size(18.dp)
                             )
                         } else {
                             Icon(
-                                Icons.AutoMirrored.Outlined.VolumeOff,
+                                vectorResource(Res.drawable.volume_mute),
                                 contentDescription = "Volume off",
                                 Modifier.size(18.dp)
                             )
@@ -198,13 +198,13 @@ fun VideoAttachment(
                 ) {
                     if (player.isPlaying) {
                         Icon(
-                            Icons.Default.Pause,
+                            vectorResource(Res.drawable.pause),
                             contentDescription = "Pause",
                             Modifier.size(18.dp)
                         )
                     } else {
                         Icon(
-                            Icons.Default.PlayArrow,
+                            vectorResource(Res.drawable.autoplay),
                             contentDescription = "Play",
                             Modifier.size(18.dp)
                         )

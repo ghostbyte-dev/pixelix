@@ -26,11 +26,6 @@ import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Cached
-import androidx.compose.material.icons.outlined.Close
-import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -93,26 +88,28 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.and
+import pixelix.app.generated.resources.bookmark_filled
 import pixelix.app.generated.resources.bookmark
-import pixelix.app.generated.resources.bookmark_outline
 import pixelix.app.generated.resources.cancel
-import pixelix.app.generated.resources.chatbubble_outline
-import pixelix.app.generated.resources.confirm
+import pixelix.app.generated.resources.chatbubble
+import pixelix.app.generated.resources.close
 import pixelix.app.generated.resources.default_avatar
 import pixelix.app.generated.resources.delete
 import pixelix.app.generated.resources.delete_post
-import pixelix.app.generated.resources.document_text_outline
-import pixelix.app.generated.resources.ellipsis_vertical
+import pixelix.app.generated.resources.document_text
+import pixelix.app.generated.resources.more_menu
+import pixelix.app.generated.resources.heart_filled
 import pixelix.app.generated.resources.heart
-import pixelix.app.generated.resources.heart_outline
 import pixelix.app.generated.resources.liked_by
+import pixelix.app.generated.resources.location
 import pixelix.app.generated.resources.media_description
 import pixelix.app.generated.resources.ok
 import pixelix.app.generated.resources.others
 import pixelix.app.generated.resources.reblogged_by
-import pixelix.app.generated.resources.sync_outline
-import pixelix.app.generated.resources.sync_outline_bold
+import pixelix.app.generated.resources.repost
+import pixelix.app.generated.resources.repost_strong
 import pixelix.app.generated.resources.this_action_cannot_be_undone
+import pixelix.app.generated.resources.trash
 
 private val HeartRedColor = Color(0xFFDD2E44)
 
@@ -249,7 +246,7 @@ private fun PostHeader(
             modifier = Modifier.padding(start = 16.dp, end = 12.dp).clickable {
                 navController.navigate(Destination.Profile(reblogAccount.id))
             }) {
-            Icon(Icons.Outlined.Cached, contentDescription = null, modifier = Modifier.size(20.dp))
+            Icon(vectorResource(Res.drawable.repost), contentDescription = null, modifier = Modifier.size(16.dp))
             Text(
                 stringResource(
                     Res.string.reblogged_by, reblogAccount.displayname ?: reblogAccount.username
@@ -287,9 +284,9 @@ private fun PostHeader(
             if (post.place != null) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
-                        imageVector = Icons.Outlined.LocationOn,
+                        imageVector = vectorResource(Res.drawable.location),
                         contentDescription = null,
-                        modifier = Modifier.height(20.dp)
+                        modifier = Modifier.size(16.dp)
                     )
                     Row {
                         Text(text = post.place?.name ?: "", fontSize = 12.sp)
@@ -304,8 +301,7 @@ private fun PostHeader(
 
         IconButton(onClick = onMenuClick) {
             Icon(
-                imageVector = vectorResource(Res.drawable.ellipsis_vertical),
-                modifier = Modifier.size(20.dp),
+                imageVector = vectorResource(Res.drawable.more_menu),
                 contentDescription = null
             )
         }
@@ -498,14 +494,14 @@ private fun PostActionBar(
                 ) {
                     if (post.favourited) {
                         Icon(
-                            imageVector = vectorResource(Res.drawable.heart),
+                            imageVector = vectorResource(Res.drawable.heart_filled),
                             modifier = Modifier.size(22.dp).scale(heartScale),
                             contentDescription = "unlike post",
                             tint = HeartRedColor
                         )
                     } else {
                         Icon(
-                            imageVector = vectorResource(Res.drawable.heart_outline),
+                            imageVector = vectorResource(Res.drawable.heart),
                             modifier = Modifier.size(22.dp),
                             contentDescription = "like post"
                         )
@@ -530,7 +526,7 @@ private fun PostActionBar(
 
                 ) {
                     Icon(
-                        imageVector = vectorResource(Res.drawable.chatbubble_outline),
+                        imageVector = vectorResource(Res.drawable.chatbubble),
                         modifier = Modifier.size(22.dp),
                         contentDescription = "open comments"
                     )
@@ -558,9 +554,9 @@ private fun PostActionBar(
                 ) {
                     Icon(
                         imageVector = if (post.reblogged) {
-                            vectorResource(Res.drawable.sync_outline_bold)
+                            vectorResource(Res.drawable.repost_strong)
                         } else {
-                            vectorResource(Res.drawable.sync_outline)
+                            vectorResource(Res.drawable.repost)
                         }, contentDescription = "reblog", tint = if (post.reblogged) {
                             MaterialTheme.colorScheme.primary
                         } else {
@@ -582,14 +578,16 @@ private fun PostActionBar(
                 if (post.bookmarked) {
                     IconButton(onClick = { viewModel.unBookmarkPost(postId, updatePost) }) {
                         Icon(
-                            imageVector = vectorResource(Res.drawable.bookmark),
+                            imageVector = vectorResource(Res.drawable.bookmark_filled),
+                            tint = MaterialTheme.colorScheme.primary,
                             contentDescription = "unbookmark post"
                         )
                     }
                 } else {
                     IconButton(onClick = { viewModel.bookmarkPost(postId, updatePost) }) {
                         Icon(
-                            imageVector = vectorResource(Res.drawable.bookmark_outline),
+                            imageVector = vectorResource(Res.drawable.bookmark),
+                            tint = MaterialTheme.colorScheme.onSurface,
                             contentDescription = "bookmark post"
                         )
                     }
@@ -688,7 +686,7 @@ private fun PostDeleteDialog(viewModel: PostViewModel) {
     val postIdToDelete = viewModel.deleteDialog ?: return
 
     AlertDialog(
-        icon = { Icon(imageVector = Icons.Outlined.Delete, contentDescription = null) },
+        icon = { Icon(imageVector = vectorResource(Res.drawable.trash), contentDescription = null) },
         title = { Text(text = stringResource(Res.string.delete_post)) },
         text = { Text(text = stringResource(Res.string.this_action_cannot_be_undone)) },
         onDismissRequest = { viewModel.deleteDialog = null },
@@ -716,7 +714,7 @@ fun PostImage(
     updatePost: (post: Post) -> Unit
 ) {
     var showHeart by remember { mutableStateOf(false) }
-    val scale = animateFloatAsState(if (showHeart) 1f else 0f, label = "heart animation")
+    val scale = animateFloatAsState(if (showHeart) 1f else 0f, label = "heart_filled animation")
     var imageLoaded by remember { mutableStateOf(false) }
     LaunchedEffect(showHeart) {
         if (showHeart) {
@@ -782,12 +780,12 @@ fun PostImage(
                     .background(MaterialTheme.colorScheme.background.copy(alpha = 0.5f))
                     .clickable { altText = mediaAttachment.description }.padding(10.dp)
             ) {
-                Icon(vectorResource(Res.drawable.document_text_outline), contentDescription = null, Modifier.size(22.dp))
+                Icon(vectorResource(Res.drawable.document_text), contentDescription = null, Modifier.size(22.dp))
             }
         }
 
         Icon(
-            imageVector = vectorResource(Res.drawable.heart),
+            imageVector = vectorResource(Res.drawable.heart_filled),
             contentDescription = null,
             tint = HeartRedColor,
             modifier = Modifier.size(80.dp).align(Alignment.Center).scale(scale.value).zIndex(100f)
@@ -874,7 +872,7 @@ fun MediaDialog(
             }
             Box(Modifier.align(Alignment.TopEnd).padding(20.dp).zIndex(2f)) {
                 IconButton(onClick = closeDialog) {
-                    Icon(Icons.Outlined.Close, contentDescription = null, tint = Color.White)
+                    Icon(vectorResource(Res.drawable.close), contentDescription = null, tint = Color.White)
                 }
             }
         }

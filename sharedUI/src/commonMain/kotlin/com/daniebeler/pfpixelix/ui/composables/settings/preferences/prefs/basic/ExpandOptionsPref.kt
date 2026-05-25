@@ -18,9 +18,6 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CornerBasedShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.rounded.NavigateNext
-import androidx.compose.material.icons.rounded.KeyboardArrowDown
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -44,6 +41,10 @@ import androidx.compose.ui.unit.dp
 import com.daniebeler.pfpixelix.utils.bottom
 import com.daniebeler.pfpixelix.utils.top
 import org.jetbrains.compose.resources.DrawableResource
+import org.jetbrains.compose.resources.vectorResource
+import pixelix.app.generated.resources.Res
+import pixelix.app.generated.resources.chevron_down
+import pixelix.app.generated.resources.chevron_right
 
 @Composable
 fun ExpandOptionsPref(
@@ -62,7 +63,7 @@ fun ExpandOptionsPref(
         trailingContent = {
             Box(modifier = Modifier.padding(end = 12.dp)) {
                 Icon(
-                    imageVector = Icons.Rounded.KeyboardArrowDown,
+                    imageVector = vectorResource(Res.drawable.chevron_down),
                     contentDescription = null,
                     modifier = Modifier.rotate(rotate)
                 )
@@ -200,7 +201,7 @@ fun Option(
     title: String,
     desc: String? = null,
     trailingContent: (@Composable () -> Unit)? = {
-        Icon(imageVector = Icons.AutoMirrored.Rounded.NavigateNext, contentDescription = title)
+        Icon(imageVector = vectorResource(Res.drawable.chevron_right), contentDescription = title)
     },
     shape: Shape = OptionShapes.defaultShape,
     onClick: () -> Unit = {},

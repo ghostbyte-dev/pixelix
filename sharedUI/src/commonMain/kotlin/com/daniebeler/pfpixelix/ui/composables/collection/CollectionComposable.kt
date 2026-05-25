@@ -47,18 +47,17 @@ import com.daniebeler.pfpixelix.ui.composables.widgets.InfinitePostsList
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
-import pixelix.app.generated.resources.add_circle_outline
+import pixelix.app.generated.resources.add_circle
 import pixelix.app.generated.resources.arrow_left
 import pixelix.app.generated.resources.by
 import pixelix.app.generated.resources.cancel
 import pixelix.app.generated.resources.confirm
-import pixelix.app.generated.resources.ellipsis_vertical
-import pixelix.app.generated.resources.eye_off_outline
-import pixelix.app.generated.resources.heart_outline
+import pixelix.app.generated.resources.more_menu
+import pixelix.app.generated.resources.heart
 import pixelix.app.generated.resources.open_in_browser
-import pixelix.app.generated.resources.open_outline
-import pixelix.app.generated.resources.pencil_outline
-import pixelix.app.generated.resources.share_social_outline
+import pixelix.app.generated.resources.open
+import pixelix.app.generated.resources.edit
+import pixelix.app.generated.resources.share
 import pixelix.app.generated.resources.share_this_collection
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -98,7 +97,7 @@ fun CollectionComposable(
                 isRefreshing = viewModel.collectionPostsState.isRefreshing,
                 error = viewModel.collectionPostsState.error,
                 emptyMessage = EmptyState(
-                    icon = vectorResource(Res.drawable.heart_outline), heading = "Empty Collection"
+                    icon = vectorResource(Res.drawable.heart), heading = "Empty Collection"
                 ),
                 endReached = viewModel.collectionPostsState.endReached,
                 itemGetsDeleted = {},
@@ -116,7 +115,7 @@ fun CollectionComposable(
                             viewModel.getPostsExceptCollection()
                         }) {
                             Icon(
-                                vectorResource(Res.drawable.add_circle_outline),
+                                vectorResource(Res.drawable.add_circle),
                                 contentDescription = "",
                                 Modifier.height(200.dp).width(200.dp)
                             )
@@ -141,7 +140,7 @@ fun CollectionComposable(
                 ) {
 
                     ButtonRowElement(
-                        icon = Res.drawable.open_outline, text = stringResource(
+                        icon = Res.drawable.open, text = stringResource(
                             Res.string.open_in_browser
                         ), onClick = {
                             if (viewModel.collectionState.collection != null) {
@@ -150,7 +149,7 @@ fun CollectionComposable(
                         })
 
                     ButtonRowElement(
-                        icon = Res.drawable.share_social_outline,
+                        icon = Res.drawable.share,
                         text = stringResource(Res.string.share_this_collection),
                         onClick = { viewModel.shareCollectionUrl() })
                 }
@@ -173,7 +172,7 @@ fun CollectionComposable(
                         isRefreshing = false,
                         error = viewModel.editState.error,
                         emptyMessage = EmptyState(
-                            icon = vectorResource(Res.drawable.heart_outline), heading = "Empty Collection"
+                            icon = vectorResource(Res.drawable.heart), heading = "Empty Collection"
                         ),
                         navController = navController,
                         getItemsPaginated = {
@@ -253,7 +252,7 @@ fun CollectionComposable(
                                 viewModel.toggleEditMode()
                             }) {
                                 Icon(
-                                    imageVector = vectorResource(Res.drawable.pencil_outline), contentDescription = ""
+                                    imageVector = vectorResource(Res.drawable.edit), contentDescription = ""
                                 )
                             }
                         }
@@ -264,7 +263,7 @@ fun CollectionComposable(
                         showBottomSheet = true
                     }) {
                         Icon(
-                            imageVector = vectorResource(Res.drawable.ellipsis_vertical), contentDescription = ""
+                            imageVector = vectorResource(Res.drawable.more_menu), contentDescription = ""
                         )
                     }
                 }

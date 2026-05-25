@@ -30,7 +30,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.arrow_left
-import pixelix.app.generated.resources.heart_outline
+import pixelix.app.generated.resources.heart
 import pixelix.app.generated.resources.liked_posts
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -72,7 +72,7 @@ fun LikedPostsComposable(
                 isRefreshing = viewModel.likedPostsState.isRefreshing,
                 error = viewModel.likedPostsState.error,
                 emptyMessage = EmptyState(
-                    icon = vectorResource(Res.drawable.heart_outline), heading = "Empty Collection"
+                    icon = vectorResource(Res.drawable.heart), heading = "Empty Collection"
                 ),
                 endReached = viewModel.likedPostsState.endReached,
                 itemGetsDeleted = {},

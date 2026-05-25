@@ -47,7 +47,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.by
-import pixelix.app.generated.resources.chevron_back_outline
+import pixelix.app.generated.resources.chevron_left
 import pixelix.app.generated.resources.post
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -89,7 +89,7 @@ fun MentionComposable(
                 navController.popBackStack()
             }) {
                 Icon(
-                    imageVector = vectorResource(Res.drawable.chevron_back_outline), contentDescription = ""
+                    imageVector = vectorResource(Res.drawable.chevron_left), contentDescription = ""
                 )
             }
         })

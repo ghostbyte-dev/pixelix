@@ -38,7 +38,7 @@ import com.daniebeler.pfpixelix.ui.navigation.Destination
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
-import pixelix.app.generated.resources.add_outline
+import pixelix.app.generated.resources.add
 import pixelix.app.generated.resources.collection_create_not_supported_explanation
 import pixelix.app.generated.resources.collections
 import pixelix.app.generated.resources.new_
@@ -120,7 +120,7 @@ fun CollectionsComposable(
                                 contentAlignment = Alignment.Center
                             ) {
                                 Icon(
-                                    imageVector = vectorResource(Res.drawable.add_outline),
+                                    imageVector = vectorResource(Res.drawable.add),
                                     contentDescription = "add collection",
                                     Modifier.size(32.dp)
                                 )

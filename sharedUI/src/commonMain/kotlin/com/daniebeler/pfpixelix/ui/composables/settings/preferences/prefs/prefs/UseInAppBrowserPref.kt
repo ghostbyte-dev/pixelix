@@ -8,7 +8,7 @@ import com.daniebeler.pfpixelix.di.LocalAppComponent
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.basic.SwitchPref
 import org.jetbrains.compose.resources.stringResource
 import pixelix.app.generated.resources.Res
-import pixelix.app.generated.resources.browsers_outline
+import pixelix.app.generated.resources.browser
 import pixelix.app.generated.resources.use_in_app_browser
 
 @Composable
@@ -19,7 +19,7 @@ fun UseInAppBrowserPref() {
         prefs.useInAppBrowser = state.value
     }
     SwitchPref(
-        leadingIcon =  Res.drawable.browsers_outline,
+        leadingIcon =  Res.drawable.browser,
         title = stringResource(Res.string.use_in_app_browser),
         state = state
     )

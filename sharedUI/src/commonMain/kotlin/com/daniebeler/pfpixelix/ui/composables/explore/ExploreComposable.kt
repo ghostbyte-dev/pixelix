@@ -74,14 +74,14 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.accounts
-import pixelix.app.generated.resources.chevron_back_outline
-import pixelix.app.generated.resources.close_outline
+import pixelix.app.generated.resources.chevron_left
+import pixelix.app.generated.resources.close
 import pixelix.app.generated.resources.default_avatar
 import pixelix.app.generated.resources.explore
 import pixelix.app.generated.resources.hash
 import pixelix.app.generated.resources.hashtags
-import pixelix.app.generated.resources.search_outline
-import pixelix.app.generated.resources.trash_outline
+import pixelix.app.generated.resources.search
+import pixelix.app.generated.resources.trash
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -97,7 +97,6 @@ fun ExploreComposable(
     val appComponent = LocalAppComponent.current
     LaunchedEffect(Unit) {
         appComponent.searchFieldFocus.events.collect {
-            Logger.d("search") { "Request search focus" }
             focusRequester.requestFocus()
         }
     }
@@ -128,9 +127,9 @@ fun ExploreComposable(
                     modifier = Modifier.focusRequester(focusRequester),
                     leadingIcon = {
                         if (!expanded) {
-                            Icon(vectorResource(Res.drawable.search_outline), contentDescription = null)
+                            Icon(vectorResource(Res.drawable.search), contentDescription = null)
                         } else {
-                            Icon(vectorResource(Res.drawable.chevron_back_outline),
+                            Icon(vectorResource(Res.drawable.chevron_left),
                                 contentDescription = null,
                                 modifier = Modifier.clickable {
                                     expanded = false
@@ -145,7 +144,7 @@ fun ExploreComposable(
                             enter = fadeIn(),
                             exit = fadeOut()
                         ) {
-                            Icon(vectorResource(Res.drawable.trash_outline),
+                            Icon(vectorResource(Res.drawable.close),
                                 contentDescription = "clear search query",
                                 modifier = Modifier.clickable {
                                     textFieldState.clearText()
@@ -348,7 +347,7 @@ private fun PastSearchItem(
                     imageVector = if (item.savedSearchType == SavedSearchType.Hashtag) {
                         vectorResource(Res.drawable.hash)
                     } else {
-                        vectorResource(Res.drawable.search_outline)
+                        vectorResource(Res.drawable.search)
                     }, contentDescription = null, tint = MaterialTheme.colorScheme.primary
                 )
             }
@@ -377,7 +376,7 @@ private fun PastSearchItem(
             contentAlignment = Alignment.Center
         ) {
             Icon(
-                imageVector = vectorResource(Res.drawable.close_outline),
+                imageVector = vectorResource(Res.drawable.close),
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary
             )

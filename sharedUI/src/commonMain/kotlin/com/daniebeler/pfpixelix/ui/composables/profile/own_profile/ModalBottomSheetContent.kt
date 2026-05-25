@@ -20,17 +20,17 @@ import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.about_pixelix
 import pixelix.app.generated.resources.about_x
 import pixelix.app.generated.resources.blocked_accounts
-import pixelix.app.generated.resources.bookmark_outline
+import pixelix.app.generated.resources.bookmark
 import pixelix.app.generated.resources.bookmarked_posts
 import pixelix.app.generated.resources.followed_hashtags
 import pixelix.app.generated.resources.hash
-import pixelix.app.generated.resources.heart_outline
+import pixelix.app.generated.resources.heart
 import pixelix.app.generated.resources.liked_posts
 import pixelix.app.generated.resources.muted_accounts
+import pixelix.app.generated.resources.blocked
+import pixelix.app.generated.resources.muted
 import pixelix.app.generated.resources.pixelfed_logo
-import pixelix.app.generated.resources.remove_circle_outline
 import pixelix.app.generated.resources.settings
-import pixelix.app.generated.resources.settings_outline
 
 @Composable
 fun ModalBottomSheetContent(
@@ -48,7 +48,7 @@ fun ModalBottomSheetContent(
     ) {
 
         ButtonRowElement(
-            icon = Res.drawable.settings_outline,
+            icon = Res.drawable.settings,
             text = stringResource(Res.string.settings),
             onClick = {
                 closeBottomSheet()
@@ -58,7 +58,7 @@ fun ModalBottomSheetContent(
         HorizontalDivider(Modifier.padding(12.dp))
 
         ButtonRowElement(
-            icon = Res.drawable.heart_outline,
+            icon = Res.drawable.heart,
             text = stringResource(Res.string.liked_posts),
             onClick = {
                 closeBottomSheet()
@@ -66,7 +66,7 @@ fun ModalBottomSheetContent(
             })
 
         ButtonRowElement(
-            icon = Res.drawable.bookmark_outline,
+            icon = Res.drawable.bookmark,
             text = stringResource(Res.string.bookmarked_posts),
             onClick = {
                 closeBottomSheet()
@@ -82,7 +82,7 @@ fun ModalBottomSheetContent(
             })
 
         ButtonRowElement(
-            icon = Res.drawable.remove_circle_outline,
+            icon = Res.drawable.muted,
             text = stringResource(Res.string.muted_accounts),
             onClick = {
                 closeBottomSheet()
@@ -90,7 +90,7 @@ fun ModalBottomSheetContent(
             })
 
         ButtonRowElement(
-            icon = Res.drawable.remove_circle_outline,
+            icon = Res.drawable.blocked,
             text = stringResource(Res.string.blocked_accounts),
             onClick = {
                 closeBottomSheet()

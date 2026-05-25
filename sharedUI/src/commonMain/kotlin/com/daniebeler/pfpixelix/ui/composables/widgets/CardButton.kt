@@ -35,56 +35,53 @@ fun CardButton(
         containerColor = MaterialTheme.colorScheme.primaryContainer
     )
 
+
     Card(
+        onClick = onClick,
         shape = shape,
         colors = cardColors,
     ) {
-        Card(
-            onClick = onClick,
-            shape = shape,
-            colors = cardColors,
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.defaultMinSize(minHeight = 54.dp)
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.defaultMinSize(minHeight = 54.dp)
+            Box(Modifier.padding(start = 16.dp)) {
+                Icon(
+                    imageVector = vectorResource(leadingIcon),
+                    contentDescription = title,
+                    tint = textColor
+                )
+            }
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(horizontal = 10.dp, vertical = 10.dp),
             ) {
-                Box(Modifier.padding(start = 16.dp)) {
-                    Icon(
-                        imageVector = vectorResource(leadingIcon),
-                        contentDescription = title,
-                        tint = textColor
-                    )
-                }
-                Column(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(horizontal = 10.dp, vertical = 10.dp),
-                ) {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.Medium,
+                    color = Color.Unspecified
+                )
+                if (desc != null) {
                     Text(
-                        text = title,
-                        style = MaterialTheme.typography.titleSmall,
-                        fontWeight = FontWeight.Medium,
+                        text = desc,
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.padding(top = 2.dp),
+                        maxLines = 5,
+                        overflow = TextOverflow.Ellipsis,
                         color = Color.Unspecified
-                    )
-                    if (desc != null) {
-                        Text(
-                            text = desc,
-                            style = MaterialTheme.typography.bodySmall,
-                            modifier = Modifier.padding(top = 2.dp),
-                            maxLines = 5,
-                            overflow = TextOverflow.Ellipsis,
-                            color = Color.Unspecified
-                        )
-                    }
-                }
-                Box(Modifier.padding(start = 14.dp, end = 10.dp)) {
-                    Icon(
-                        imageVector = vectorResource(trailingContent),
-                        contentDescription = "open",
-                        tint = textColor
                     )
                 }
             }
+            Box(Modifier.padding(start = 14.dp, end = 10.dp)) {
+                Icon(
+                    imageVector = vectorResource(trailingContent),
+                    contentDescription = "open",
+                    tint = textColor
+                )
+            }
         }
     }
+
 }

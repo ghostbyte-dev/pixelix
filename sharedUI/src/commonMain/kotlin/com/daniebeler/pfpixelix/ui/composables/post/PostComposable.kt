@@ -586,7 +586,7 @@ private fun PostActionBar(
                     IconButton(onClick = { viewModel.bookmarkPost(postId, updatePost) }) {
                         Icon(
                             imageVector = vectorResource(Res.drawable.bookmark),
-                            contentDescription = "bookmark_filled post"
+                            contentDescription = "bookmark post"
                         )
                     }
                 }

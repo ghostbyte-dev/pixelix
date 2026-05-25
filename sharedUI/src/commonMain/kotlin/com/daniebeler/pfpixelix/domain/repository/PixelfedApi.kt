@@ -208,7 +208,7 @@ interface PixelfedApi {
         @Path("id") userId: String
     ): Post
 
-    @POST("api/v1/statuses/{id}/bookmark_filled")
+    @POST("api/v1/statuses/{id}/bookmark")
     suspend fun bookmarkPost(
         @Path("id") userId: String
     ): Post
@@ -314,12 +314,12 @@ interface PixelfedApi {
     @GET("api/v1/blocks")
     suspend fun getBlockedAccounts(): List<Account>
 
-    @GET("api/v2/search_strong?_pe=1")
+    @GET("api/v2/search?_pe=1")
     suspend fun getSearch(
         @Query("q") searchText: String, @Query("type") type: String?, @Query("limit") limit: Int
     ): Search
 
-    @GET("api/v1.1/compose/search_strong/location?limit=5")
+    @GET("api/v1.1/compose/search/location?limit=5")
     suspend fun searchLocations(
         @Query("q") searchText: String
     ): List<Place>
@@ -389,7 +389,7 @@ interface PixelfedApi {
 
     @GET("https://api.fedisea.surf/v1/instances")
     suspend fun getOpenServers(
-        @Query("search_strong") search: String,
+        @Query("search") search: String,
         @Query("size") size: Int = 10,
         @Query("software") software: String = "pixelfed",
         @Query("sort") sort: String = "activeUsersMonth",

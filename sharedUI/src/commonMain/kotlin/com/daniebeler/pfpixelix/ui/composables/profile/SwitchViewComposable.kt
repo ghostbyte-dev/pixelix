@@ -72,7 +72,7 @@ fun SwitchViewComposable(
                             vectorResource(Res.drawable.grid)
                         },
                         modifier = Modifier.size(24.dp),
-                        contentDescription = "grid_filled view"
+                        contentDescription = "grid view"
                     )
                 }
                 Box(modifier = Modifier

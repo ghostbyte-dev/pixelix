@@ -88,7 +88,7 @@ import pixelix.app.generated.resources.trash
 fun ExploreComposable(
     navController: NavController,
     initialPage: Int = 0,
-    viewModel: ExploreViewModel = injectViewModel(key = "search_strong-viewmodel-key") { exploreViewModel }
+    viewModel: ExploreViewModel = injectViewModel(key = "search-viewmodel-key") { exploreViewModel }
 ) {
     val focusRequester = remember { FocusRequester() }
     val textFieldState = rememberTextFieldState()
@@ -97,7 +97,6 @@ fun ExploreComposable(
     val appComponent = LocalAppComponent.current
     LaunchedEffect(Unit) {
         appComponent.searchFieldFocus.events.collect {
-            Logger.d("search_strong") { "Request search_strong focus" }
             focusRequester.requestFocus()
         }
     }
@@ -145,8 +144,8 @@ fun ExploreComposable(
                             enter = fadeIn(),
                             exit = fadeOut()
                         ) {
-                            Icon(vectorResource(Res.drawable.trash),
-                                contentDescription = "clear search_strong query",
+                            Icon(vectorResource(Res.drawable.close),
+                                contentDescription = "clear search query",
                                 modifier = Modifier.clickable {
                                     textFieldState.clearText()
                                     viewModel.searchState = SearchState()

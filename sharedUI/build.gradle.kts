@@ -124,8 +124,6 @@ kotlin {
             implementation(libs.androidx.activity.compose)
             implementation(libs.androidx.browser)
 
-            implementation(libs.accompanist.systemuicontroller)
-
             implementation(libs.material)
 
             //media

@@ -50,12 +50,13 @@ class ChatViewModel @Inject constructor(
                     .onEach { result ->
                         chatState = when (result) {
                             is Resource.Success -> {
-                                val endReached = result.data?.messages!!.isEmpty()
 
                                 val existingMessageIds =
                                     chatState.chat?.messages?.map { it.id }?.toSet() ?: emptySet()
                                 val newMessages =
                                     result.data.messages.filter { it.id !in existingMessageIds }
+                                val endReached = newMessages.isEmpty()
+
                                 val messages =
                                     (chatState.chat?.messages ?: emptyList()) + newMessages
 

@@ -600,7 +600,6 @@ private fun PostActionBar(
         // "Liked by" row
         PostLikedByRow(
             post = post,
-            viewModel = viewModel,
             navController = navController,
             onLikesClick = onLikesClick
         )
@@ -623,18 +622,18 @@ private fun PostActionBar(
 
 @Composable
 private fun PostLikedByRow(
-    post: Post, viewModel: PostViewModel, navController: NavController, onLikesClick: () -> Unit
+    post: Post, navController: NavController, onLikesClick: () -> Unit
 ) {
-    if (post.likedBy?.username?.isNotBlank() != true) return
+    if (post.likedBy?.username?.isNotBlank() != true || post.likedBy.id.isNullOrBlank()) return
 
     Row {
         Text(text = stringResource(Res.string.liked_by) + " ", fontSize = 14.sp)
         Text(
-            text = post.likedBy!!.username!!,
+            text = post.likedBy.username,
             fontSize = 14.sp,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.clickable {
-                navController.navigate(Destination.Profile(post.likedBy!!.id!!))
+                navController.navigate(Destination.Profile(post.likedBy.id))
             })
         if (post.favouritesCount > 1) {
             Text(text = " ${stringResource(Res.string.and)} ", fontSize = 14.sp)

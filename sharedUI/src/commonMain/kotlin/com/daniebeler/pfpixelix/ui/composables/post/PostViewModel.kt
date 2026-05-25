@@ -233,7 +233,8 @@ class PostViewModel @Inject constructor(
                 likedBy = post!!.likedBy?.copy(
                     totalCount = post!!.likedBy!!.totalCount + 1,
                     others = true,
-                    username = post!!.likedBy!!.username ?: myUsername
+                    username = post!!.likedBy!!.username ?: myUsername,
+                    id = post?.likedBy?.id ?: myAccountId
                 ) ?: LikedBy(
                     totalCount = 1, others = true, username = myUsername, id = myAccountId
                 )

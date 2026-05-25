@@ -39,12 +39,12 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.about_pixelix
-import pixelix.app.generated.resources.browsers_outline
-import pixelix.app.generated.resources.code_slash_outline
+import pixelix.app.generated.resources.browser
+import pixelix.app.generated.resources.code
 import pixelix.app.generated.resources.developed_by
 import pixelix.app.generated.resources.mastodon_logo
 import pixelix.app.generated.resources.pixelfed_logo
-import pixelix.app.generated.resources.shield_outline
+import pixelix.app.generated.resources.shield
 import pixelix.app.generated.resources.star
 import pixelix.app.generated.resources.website
 
@@ -94,19 +94,19 @@ fun AboutPixelixComposable(
             HorizontalDivider(Modifier.padding(12.dp))
 
             ButtonRowElement(
-                icon = Res.drawable.browsers_outline,
+                icon = Res.drawable.browser,
                 text = "Homepage",
                 smallText = "https://app.pixelix.social",
                 onClick = { viewModel.openUrl("https://app.pixelix.social") })
 
             ButtonRowElement(
-                icon = Res.drawable.shield_outline,
+                icon = Res.drawable.shield,
                 text = "Privacy Policy",
                 smallText = "https://app.pixelix.social/privacy",
                 onClick = { viewModel.openUrl("https://app.pixelix.social/privacy") })
 
             ButtonRowElement(
-                icon = Res.drawable.code_slash_outline,
+                icon = Res.drawable.code,
                 text = "Source Code",
                 smallText = "https://github.com/daniebeler/pixelix",
                 onClick = { viewModel.openUrl("https://github.com/daniebeler/pixelix") })

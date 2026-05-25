@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
@@ -16,7 +15,6 @@ import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -56,14 +54,14 @@ import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.app_name
 import pixelix.app.generated.resources.global
 import pixelix.app.generated.resources.global_timeline_explained
-import pixelix.app.generated.resources.help_outline
+import pixelix.app.generated.resources.help
 import pixelix.app.generated.resources.coffee
 import pixelix.app.generated.resources.home
 import pixelix.app.generated.resources.home_timeline_explained
 import pixelix.app.generated.resources.local
 import pixelix.app.generated.resources.local_timeline_explained
-import pixelix.app.generated.resources.mail_outline
-import pixelix.app.generated.resources.settings_outline
+import pixelix.app.generated.resources.mail
+import pixelix.app.generated.resources.settings
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -95,7 +93,7 @@ fun HomeComposable(
             }, navigationIcon = {
                 IconButton(onClick = { showBottomSheet = true }) {
                     Icon(
-                        imageVector = vectorResource(Res.drawable.help_outline),
+                        imageVector = vectorResource(Res.drawable.help),
                         contentDescription = "Help"
                     )
                 }
@@ -114,7 +112,7 @@ fun HomeComposable(
                         navController.navigate(Destination.Conversations)
                     }) {
                         Icon(
-                            imageVector = vectorResource(Res.drawable.mail_outline),
+                            imageVector = vectorResource(Res.drawable.mail),
                             contentDescription = "Conversations"
                         )
                     }
@@ -122,7 +120,7 @@ fun HomeComposable(
                         openPreferencesDrawer()
                     }) {
                         Icon(
-                            imageVector = vectorResource(Res.drawable.settings_outline),
+                            imageVector = vectorResource(Res.drawable.settings),
                             contentDescription = "Settings"
                         )
                     }

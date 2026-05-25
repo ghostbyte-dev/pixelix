@@ -8,7 +8,7 @@ import com.daniebeler.pfpixelix.di.LocalAppComponent
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.basic.SwitchPref
 import org.jetbrains.compose.resources.stringResource
 import pixelix.app.generated.resources.Res
-import pixelix.app.generated.resources.document_text_outline
+import pixelix.app.generated.resources.document_text
 import pixelix.app.generated.resources.hide_alt_text_button
 
 @Composable
@@ -19,7 +19,7 @@ fun HideAltTextButtonPref() {
         prefs.hideAltTextButton = state.value
     }
     SwitchPref(
-        leadingIcon =  Res.drawable.document_text_outline,
+        leadingIcon =  Res.drawable.document_text,
         title = stringResource(Res.string.hide_alt_text_button),
         state = state
     )

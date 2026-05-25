@@ -12,11 +12,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Divider
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
@@ -31,7 +29,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLinkStyles
@@ -52,14 +49,13 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.active_users
-import pixelix.app.generated.resources.chevron_forward_outline
+import pixelix.app.generated.resources.chevron_right
 import pixelix.app.generated.resources.fediverse_logo
 import pixelix.app.generated.resources.instance_version
 import pixelix.app.generated.resources.instances
 import pixelix.app.generated.resources.license_label
-import pixelix.app.generated.resources.open_outline
-import pixelix.app.generated.resources.registration
 import pixelix.app.generated.resources.open
+import pixelix.app.generated.resources.registration
 import pixelix.app.generated.resources.closed
 import pixelix.app.generated.resources.total_posts
 import pixelix.app.generated.resources.total_users
@@ -97,235 +93,7 @@ fun DomainSoftwareComposable(
             ServerStatsSheet(
                 instance = viewModel.statsState.fediServer,
                 software = viewModel.statsState.fediSoftware,
-                onClick = { viewModel.openUrl(it) })/* Column(
-                 modifier = Modifier
-                     .padding(12.dp)
-                     .fillMaxWidth()
-                     .verticalScroll(state = rememberScrollState())
-             ) {
-                 if (viewModel.statsState.fediSoftware != null) {
-                     Row(
-                         verticalAlignment = Alignment.CenterVertically,
-                         horizontalArrangement = Arrangement.Center,
-                         modifier = Modifier.fillMaxWidth()
-                     ) {
-                         viewModel.statsState.fediSoftware?.let {
-
-                         }
-                         AsyncImage(
-                             model = viewModel.statsState.fediSoftware?.iconUrl
-                                 ?: Res.drawable.fediverse_logo,
-                             error = painterResource(Res.drawable.fediverse_logo),
-                             contentDescription = "",
-                             modifier = Modifier.height(56.dp)
-                         )
-                         Spacer(modifier = Modifier.width(12.dp))
-                         Text(
-                             text = viewModel.statsState.fediSoftware!!.name
-                                 ?: viewModel.statsState.fediSoftware!!.identifier,
-                             fontSize = 32.sp,
-                             fontWeight = FontWeight.Bold
-                         )
-                     }
-
-                     if (viewModel.statsState.fediSoftware!!.description != null) {
-                         Spacer(modifier = Modifier.height(12.dp))
-                         Text(text = viewModel.statsState.fediSoftware!!.description!!)
-                     }
-
-                     Spacer(modifier = Modifier.height(12.dp))
-
-                     Row {
-                         Text(stringResource(Res.string.instances))
-                         Spacer(Modifier.width(8.dp))
-                         Text(
-                             text = StringFormat.groupDigits(
-                                 viewModel.statsState.fediSoftware!!.instances
-                             ), fontWeight = FontWeight.Bold
-                         )
-                     }
-
-
-                     Spacer(modifier = Modifier.height(12.dp))
-
-                     Row {
-                         Text(stringResource(Res.string.total_posts))
-                         Spacer(Modifier.width(8.dp))
-                         Text(
-                             text = StringFormat.groupDigits(
-                                 viewModel.statsState.fediSoftware!!.localPosts
-                             ), fontWeight = FontWeight.Bold
-                         )
-                     }
-
-
-                     Spacer(modifier = Modifier.height(12.dp))
-
-                     Row {
-                         Text(stringResource(Res.string.total_users))
-                         Spacer(Modifier.width(8.dp))
-                         Text(
-                             text = StringFormat.groupDigits(
-                                 viewModel.statsState.fediSoftware!!.totalUsers
-                             ), fontWeight = FontWeight.Bold
-                         )
-                     }
-
-
-                     Spacer(modifier = Modifier.height(12.dp))
-
-                     Row {
-                         Text(stringResource(Res.string.active_users))
-                         Spacer(Modifier.width(8.dp))
-                         Text(
-                             text = StringFormat.groupDigits(
-                                 viewModel.statsState.fediSoftware!!.totalUsers
-                             ), fontWeight = FontWeight.Bold
-                         )
-                     }
-
-
-
-                     Spacer(modifier = Modifier.height(12.dp))
-
-                     if (viewModel.statsState.fediSoftware!!.website != null) {
-                         TextButton(
-                             onClick = {
-                                 viewModel.openUrl(
-                                     viewModel.statsState.fediSoftware!!.website!!
-                                 )
-                             },
-                             shape = RoundedCornerShape(12.dp),
-                             modifier = Modifier.align(Alignment.CenterHorizontally)
-                         ) {
-                             Text(
-                                 text = stringResource(
-                                     Res.string.visit_url,
-                                     viewModel.statsState.fediSoftware!!.website!!
-                                 )
-                             )
-                         }
-                     }
-
-                 }
-
-                 if (viewModel.statsState.fediServer != null) {
-                     Spacer(modifier = Modifier.height(12.dp))
-
-                     HorizontalDivider(Modifier.padding(vertical = 12.dp))
-
-                     Spacer(modifier = Modifier.height(12.dp))
-
-                     Text(
-                         text = viewModel.statsState.fediServer!!.domain,
-                         fontSize = 32.sp,
-                         textAlign = TextAlign.Center,
-                         fontWeight = FontWeight.Bold,
-                         modifier = Modifier.fillMaxWidth()
-                     )
-
-                     if (viewModel.statsState.fediServer!!.description != null) {
-                         Spacer(modifier = Modifier.height(12.dp))
-                         Text(viewModel.statsState.fediServer!!.description!!)
-                         Spacer(modifier = Modifier.height(24.dp))
-                     }
-
-                     Row {
-                         Text(
-                             stringResource(
-                                 Res.string.server_version,
-                                 viewModel.statsState.fediServer!!.software,
-                                 viewModel.statsState.fediServer!!.version
-                             )
-                         )
-                     }
-
-                     Spacer(modifier = Modifier.height(12.dp))
-
-
-                     Row {
-                         Text(
-                             "Open registration:"
-                         )
-                         Spacer(Modifier.width(8.dp))
-
-                         if (viewModel.statsState.fediServer!!.openRegistration) {
-                             Icon(
-                                 imageVector = vectorResource(Res.drawable.confirm),
-                                 tint = Color.Green,
-                                 contentDescription = "true",
-                             )
-                         } else {
-                             Icon(
-                                 imageVector = vectorResource(Res.drawable.close_outline),
-                                 tint = Color.Red,
-                                 contentDescription = "false",
-                             )
-                         }
-                     }
-
-                     Spacer(modifier = Modifier.height(24.dp))
-
-
-
-                     Row {
-                         Text(stringResource(Res.string.total_posts))
-                         Spacer(Modifier.width(8.dp))
-                         Text(
-                             text = StringFormat.groupDigits(
-                                 viewModel.statsState.fediServer!!.localPosts
-                             ), fontWeight = FontWeight.Bold
-                         )
-                     }
-
-                     Spacer(modifier = Modifier.height(12.dp))
-
-                     Row {
-                         Text(stringResource(Res.string.total_users))
-                         Spacer(Modifier.width(8.dp))
-                         Text(
-                             text = StringFormat.groupDigits(
-                                 viewModel.statsState.fediServer!!.totalUsers
-                             ), fontWeight = FontWeight.Bold
-                         )
-                     }
-
-                     Spacer(modifier = Modifier.height(12.dp))
-
-                     Row {
-                         Text(stringResource(Res.string.active_users))
-                         Spacer(Modifier.width(8.dp))
-                         Text(
-                             text = StringFormat.groupDigits(
-                                 viewModel.statsState.fediServer!!.activeUsersMonth
-                             ), fontWeight = FontWeight.Bold
-                         )
-                     }
-
-
-                     Spacer(modifier = Modifier.height(12.dp))
-
-                     TextButton(
-                         onClick = {
-                             viewModel.openUrl(
-                                 "https://" + viewModel.statsState.fediServer!!.domain
-                             )
-                         },
-                         shape = RoundedCornerShape(12.dp),
-                         modifier = Modifier.align(Alignment.CenterHorizontally)
-                     ) {
-                         Text(
-                             text = stringResource(
-                                 Res.string.visit_url,
-                                 ("https://" + viewModel.statsState.fediServer!!.domain)
-                             )
-                         )
-                     }
-
-                     Spacer(modifier = Modifier.height(12.dp))
-                 }
-             }
-         */
+                onClick = { viewModel.openUrl(it) })
         }
     }
 }
@@ -381,6 +149,13 @@ fun ServerStatsSheet(
             verticalArrangement = Arrangement.spacedBy(18.dp),
             modifier = Modifier.verticalScroll(scrollState).fillMaxWidth()
         ) {
+            Text(
+                text = "Software and server",
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier
+                    .padding(start = 16.dp, bottom = 12.dp)
+            )
             software?.let {
                 StatsCard(
                     icon = software.iconUrl,
@@ -555,10 +330,10 @@ fun StatsCard(
             Spacer(Modifier.height(12.dp))
             website?.let {
                 CardButton(
-                    leadingIcon = Res.drawable.open_outline,
+                    leadingIcon = Res.drawable.open,
                     title = website,
                     desc = "Visit website",
-                    trailingContent = Res.drawable.chevron_forward_outline,
+                    trailingContent = Res.drawable.chevron_right,
                     onClick = onClick
                 )
             }

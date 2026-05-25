@@ -40,7 +40,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -57,9 +56,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.di.injectViewModel
@@ -68,8 +64,8 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
-import pixelix.app.generated.resources.chevron_forward_outline
-import pixelix.app.generated.resources.close_outline
+import pixelix.app.generated.resources.chevron_right
+import pixelix.app.generated.resources.close
 import pixelix.app.generated.resources.i_don_t_have_an_account
 import pixelix.app.generated.resources.login_wave_dark
 import pixelix.app.generated.resources.login_wave_light
@@ -114,7 +110,7 @@ fun LoginComposable(
                                 navController.popBackStack()
                             }) {
                                 Icon(
-                                    imageVector = vectorResource(Res.drawable.close_outline),
+                                    imageVector = vectorResource(Res.drawable.close),
                                     tint = if (dark) Color.Black else Color.White,
                                     contentDescription = ""
                                 )
@@ -241,7 +237,7 @@ fun LoginComposable(
                                 )
                             ) {
                                 Icon(
-                                    imageVector = vectorResource(Res.drawable.chevron_forward_outline),
+                                    imageVector = vectorResource(Res.drawable.chevron_right),
                                     contentDescription = "submit",
                                     Modifier.fillMaxSize().fillMaxWidth()
                                 )

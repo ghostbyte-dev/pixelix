@@ -90,11 +90,10 @@ import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
-import pixelix.app.generated.resources.add_outline
+import pixelix.app.generated.resources.add
 import pixelix.app.generated.resources.alt_text
 import pixelix.app.generated.resources.audience
 import pixelix.app.generated.resources.audience_public
-import pixelix.app.generated.resources.browsers_outline
 import pixelix.app.generated.resources.cancel
 import pixelix.app.generated.resources.caption
 import pixelix.app.generated.resources.content_warning_or_spoiler_text
@@ -475,7 +474,7 @@ fun ImagesPager(
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                         Icon(
                             modifier = Modifier.height(50.dp).width(50.dp),
-                            imageVector = vectorResource(Res.drawable.add_outline),
+                            imageVector = vectorResource(Res.drawable.add),
                             contentDescription = null,
                         )
                     }

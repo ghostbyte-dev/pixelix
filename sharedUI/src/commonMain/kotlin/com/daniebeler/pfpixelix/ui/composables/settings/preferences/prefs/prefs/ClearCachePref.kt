@@ -3,15 +3,13 @@ package com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs
 import androidx.compose.material3.DrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.basic.SettingPref
 import org.jetbrains.compose.resources.stringResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.clear_cache
-import pixelix.app.generated.resources.save_outline
+import pixelix.app.generated.resources.save
 
 @Composable
 fun ClearCachePref(drawerState: DrawerState) {
@@ -23,7 +21,7 @@ fun ClearCachePref(drawerState: DrawerState) {
     }
 
     SettingPref(
-        leadingIcon = Res.drawable.save_outline,
+        leadingIcon = Res.drawable.save,
         title = stringResource(Res.string.clear_cache),
         desc = cacheSize.value,
         trailingContent = null,

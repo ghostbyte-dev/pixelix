@@ -25,7 +25,7 @@ import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.amoled
 import pixelix.app.generated.resources.amoled_theme
 import pixelix.app.generated.resources.app_theme
-import pixelix.app.generated.resources.color_palette_outline
+import pixelix.app.generated.resources.theme
 import pixelix.app.generated.resources.dark_theme
 import pixelix.app.generated.resources.device_theme
 import pixelix.app.generated.resources.light_theme
@@ -43,7 +43,7 @@ fun ThemePref() {
     }
 
     ExpandOptionsPref(
-        leadingIcon = Res.drawable.color_palette_outline,
+        leadingIcon = Res.drawable.theme,
         title = stringResource(Res.string.app_theme),
     ) {
         ValueOption(

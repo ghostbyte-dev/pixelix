@@ -47,7 +47,7 @@ import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.UseInA
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
-import pixelix.app.generated.resources.close_outline
+import pixelix.app.generated.resources.close
 import pixelix.app.generated.resources.settings
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -71,7 +71,7 @@ fun PreferencesComposable(
                     closePreferencesDrawer()
                 }) {
                     Icon(
-                        imageVector = vectorResource(Res.drawable.close_outline),
+                        imageVector = vectorResource(Res.drawable.close),
                         contentDescription = ""
                     )
                 }

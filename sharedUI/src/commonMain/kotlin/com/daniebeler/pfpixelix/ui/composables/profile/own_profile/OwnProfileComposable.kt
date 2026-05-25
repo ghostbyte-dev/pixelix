@@ -65,7 +65,7 @@ import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.edit_profile
 import pixelix.app.generated.resources.arrow_down
-import pixelix.app.generated.resources.ellipsis_vertical
+import pixelix.app.generated.resources.more_menu
 import pixelix.app.generated.resources.photo
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -119,7 +119,7 @@ fun OwnProfileComposable(
                         showBottomSheet = 1
                     }) {
                         Icon(
-                            imageVector = vectorResource(Res.drawable.ellipsis_vertical),
+                            imageVector = vectorResource(Res.drawable.more_menu),
                             contentDescription = "preferences"
                         )
                     }

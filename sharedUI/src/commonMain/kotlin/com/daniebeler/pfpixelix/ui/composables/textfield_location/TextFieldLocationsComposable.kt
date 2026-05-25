@@ -36,8 +36,8 @@ import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
-import pixelix.app.generated.resources.browsers_outline
-import pixelix.app.generated.resources.pencil_outline
+import pixelix.app.generated.resources.browser
+import pixelix.app.generated.resources.edit
 import pixelix.app.generated.resources.trash
 
 @Composable
@@ -65,7 +65,7 @@ fun TextFieldLocationsComposable(
 
         if (viewModel.locationsSuggestions.location != null) {
             NewPostPref(
-                leadingIcon = Res.drawable.browsers_outline,
+                leadingIcon = Res.drawable.browser,
                 title = viewModel.locationsSuggestions.location!!.name!!,
                 trailingContent = {
                     Row {
@@ -74,7 +74,7 @@ fun TextFieldLocationsComposable(
                             submit("")
                             submitPlace(null)
                         }) {
-                            Icon(imageVector = vectorResource(Res.drawable.pencil_outline), contentDescription = "edit")
+                            Icon(imageVector = vectorResource(Res.drawable.edit), contentDescription = "edit")
                         }
                         IconButton(onClick = {
                             viewModel.removeLocation()

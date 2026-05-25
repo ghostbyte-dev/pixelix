@@ -44,7 +44,7 @@ import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.chevron_down
-import pixelix.app.generated.resources.chevron_forward_outline
+import pixelix.app.generated.resources.chevron_right
 
 @Composable
 fun ExpandOptionsPref(
@@ -201,7 +201,7 @@ fun Option(
     title: String,
     desc: String? = null,
     trailingContent: (@Composable () -> Unit)? = {
-        Icon(imageVector = vectorResource(Res.drawable.chevron_forward_outline), contentDescription = title)
+        Icon(imageVector = vectorResource(Res.drawable.chevron_right), contentDescription = title)
     },
     shape: Shape = OptionShapes.defaultShape,
     onClick: () -> Unit = {},

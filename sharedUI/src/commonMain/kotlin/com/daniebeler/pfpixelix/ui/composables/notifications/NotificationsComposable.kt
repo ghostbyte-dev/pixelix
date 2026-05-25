@@ -56,10 +56,10 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.all
-import pixelix.app.generated.resources.extension_puzzle_outline
+import pixelix.app.generated.resources.widget
 import pixelix.app.generated.resources.followers
 import pixelix.app.generated.resources.likes_
-import pixelix.app.generated.resources.mail_outline
+import pixelix.app.generated.resources.mail
 import pixelix.app.generated.resources.mentions
 import pixelix.app.generated.resources.notifications
 import pixelix.app.generated.resources.reposts
@@ -69,7 +69,7 @@ import pixelix.app.generated.resources.you_don_t_have_any_notifications
 @Composable
 fun NotificationsComposable(
     navController: NavController,
-    viewModel: NotificationsViewModel = injectViewModel(key = "notifications-viewmodel-key") { notificationsViewModel }
+    viewModel: NotificationsViewModel = injectViewModel(key = "notifications_strong-viewmodel-key") { notificationsViewModel }
 ) {
 
     val staggeredGridState = rememberLazyStaggeredGridState()
@@ -94,7 +94,7 @@ fun NotificationsComposable(
                             viewModel.pinWidget()
                         }) {
                             Icon(
-                                imageVector = vectorResource(Res.drawable.extension_puzzle_outline),
+                                imageVector = vectorResource(Res.drawable.widget),
                                 contentDescription = "add widget"
                             )
                         }
@@ -227,7 +227,7 @@ fun NotificationsComposable(
                     if (!viewModel.notificationsState.isLoading && viewModel.notificationsState.error.isEmpty() && viewModel.notificationsState.notifications.isEmpty()) {
                         EmptyStateComposable(
                             EmptyState(
-                                icon = vectorResource(Res.drawable.mail_outline), heading = stringResource(
+                                icon = vectorResource(Res.drawable.mail), heading = stringResource(
                                     Res.string.you_don_t_have_any_notifications
                                 )
                             )

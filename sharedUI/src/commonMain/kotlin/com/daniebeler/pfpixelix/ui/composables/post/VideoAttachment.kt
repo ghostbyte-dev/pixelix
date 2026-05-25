@@ -44,7 +44,7 @@ import io.github.kdroidfilter.composemediaplayer.rememberVideoPlayerState
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.autoplay
-import pixelix.app.generated.resources.close_outline
+import pixelix.app.generated.resources.close
 import pixelix.app.generated.resources.pause
 import pixelix.app.generated.resources.volume_loud
 import pixelix.app.generated.resources.volume_mute
@@ -96,7 +96,7 @@ fun VideoAttachment(
                                     colors = IconButtonDefaults.filledTonalIconButtonColors()
                                 ) {
                                     Icon(
-                                        imageVector = vectorResource(Res.drawable.close_outline),
+                                        imageVector = vectorResource(Res.drawable.close),
                                         contentDescription = "Exit Fullscreen"
                                     )
                                 }

@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
-import pixelix.app.generated.resources.add_outline
+import pixelix.app.generated.resources.add
 import pixelix.app.generated.resources.remove
 import pixelix.app.generated.resources.follow
 import pixelix.app.generated.resources.unfollow
@@ -83,7 +83,7 @@ private fun IconFollowButton(
             } else if (isFollowing) {
                 Icon(imageVector = vectorResource(Res.drawable.remove), contentDescription = null)
             } else {
-                Icon(imageVector = vectorResource(Res.drawable.add_outline), contentDescription = null)
+                Icon(imageVector = vectorResource(Res.drawable.add), contentDescription = null)
             }
         }
     }

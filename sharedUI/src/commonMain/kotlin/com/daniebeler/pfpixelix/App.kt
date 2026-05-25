@@ -86,19 +86,19 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
+import pixelix.app.generated.resources.add_circle_strong
 import pixelix.app.generated.resources.add_circle
-import pixelix.app.generated.resources.add_circle_outline
-import pixelix.app.generated.resources.bookmark_outline
+import pixelix.app.generated.resources.bookmark
 import pixelix.app.generated.resources.default_avatar
 import pixelix.app.generated.resources.home
 import pixelix.app.generated.resources.house
-import pixelix.app.generated.resources.house_fill
+import pixelix.app.generated.resources.house_strong
 import pixelix.app.generated.resources.new_post
+import pixelix.app.generated.resources.notifications_strong
 import pixelix.app.generated.resources.notifications
-import pixelix.app.generated.resources.notifications_outline
 import pixelix.app.generated.resources.profile
+import pixelix.app.generated.resources.search_strong
 import pixelix.app.generated.resources.search
-import pixelix.app.generated.resources.search_outline
 
 val LocalSnackbarPresenter = compositionLocalOf<(String) -> Unit> {
     error("No LocalSnackbarPresenter provided")
@@ -298,30 +298,30 @@ private enum class HomeTab(
     val label: StringResource
 ) {
     Feeds(
-        Destination.HomeTabFeeds, Res.drawable.house, Res.drawable.house_fill, Res.string.home
+        Destination.HomeTabFeeds, Res.drawable.house, Res.drawable.house_strong, Res.string.home
     ),
     Search(
         Destination.HomeTabSearch,
-        Res.drawable.search_outline,
         Res.drawable.search,
+        Res.drawable.search_strong,
         Res.string.search
     ),
     NewPost(
         Destination.HomeTabNewPost,
-        Res.drawable.add_circle_outline,
         Res.drawable.add_circle,
+        Res.drawable.add_circle_strong,
         Res.string.new_post
     ),
     Notifications(
         Destination.HomeTabNotifications,
-        Res.drawable.notifications_outline,
         Res.drawable.notifications,
+        Res.drawable.notifications_strong,
         Res.string.notifications
     ),
     OwnProfile(
         Destination.HomeTabOwnProfile,
-        Res.drawable.bookmark_outline,
-        Res.drawable.bookmark_outline,
+        Res.drawable.bookmark,
+        Res.drawable.bookmark,
         Res.string.profile
     )
 }

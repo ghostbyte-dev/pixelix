@@ -16,7 +16,6 @@ import org.jetbrains.compose.resources.stringResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.are_you_sure_you_want_to_log_out
 import pixelix.app.generated.resources.cancel
-import pixelix.app.generated.resources.log_out_outline
 import pixelix.app.generated.resources.logout
 import pixelix.app.generated.resources.logout_questionmark
 
@@ -27,7 +26,7 @@ fun LogoutPref(logout: () -> Unit) {
     LogoutAlert(showAlert, logout)
 
     SettingPref(
-        leadingIcon = Res.drawable.log_out_outline,
+        leadingIcon = Res.drawable.logout,
         title = stringResource(Res.string.logout),
         trailingContent = null,
         onClick = { showAlert.value = true },

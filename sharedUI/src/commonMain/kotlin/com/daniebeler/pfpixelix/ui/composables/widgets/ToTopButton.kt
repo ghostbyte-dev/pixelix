@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
-import pixelix.app.generated.resources.chevron_up_outline
+import pixelix.app.generated.resources.chevron_up
 
 @Composable
 fun ToTopButton(listState: LazyListState, refresh: () -> Unit) {
@@ -64,7 +64,7 @@ private fun ToTopButtonContent(visible: Boolean, onScrollToTop: suspend () -> Un
                 }
             },
                 containerColor = MaterialTheme.colorScheme.surfaceContainer) {
-                Icon(vectorResource(Res.drawable.chevron_up_outline), contentDescription = null)
+                Icon(vectorResource(Res.drawable.chevron_up), contentDescription = null)
             }
         }
     }

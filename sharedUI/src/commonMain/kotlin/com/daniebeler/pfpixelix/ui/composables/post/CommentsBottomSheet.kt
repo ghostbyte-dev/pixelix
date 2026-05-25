@@ -76,10 +76,10 @@ import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.cancel
 import pixelix.app.generated.resources.delete
 import pixelix.app.generated.resources.delete_reply
+import pixelix.app.generated.resources.heart_filled
 import pixelix.app.generated.resources.heart
-import pixelix.app.generated.resources.heart_outline
 import pixelix.app.generated.resources.no_comments_yet
-import pixelix.app.generated.resources.pencil_outline
+import pixelix.app.generated.resources.edit
 import pixelix.app.generated.resources.reply
 import pixelix.app.generated.resources.send
 import pixelix.app.generated.resources.this_action_cannot_be_undone
@@ -333,7 +333,7 @@ private fun ReplyElement(
                         viewModel.unlikeReply(reply.id)
                     }) {
                         Icon(
-                            imageVector = vectorResource(Res.drawable.heart),
+                            imageVector = vectorResource(Res.drawable.heart_filled),
                             contentDescription = "",
                             tint = MaterialTheme.colorScheme.primary
                         )
@@ -343,7 +343,7 @@ private fun ReplyElement(
                         viewModel.likeReply(reply.id)
                     }) {
                         Icon(
-                            imageVector = vectorResource(Res.drawable.heart_outline), contentDescription = ""
+                            imageVector = vectorResource(Res.drawable.heart), contentDescription = ""
                         )
                     }
                 }
@@ -454,7 +454,7 @@ fun AddReplyDialog(
                     modifier = Modifier.padding(24.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Icon(vectorResource(Res.drawable.pencil_outline), contentDescription = null)
+                    Icon(vectorResource(Res.drawable.edit), contentDescription = null)
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
                         text = stringResource(Res.string.reply),

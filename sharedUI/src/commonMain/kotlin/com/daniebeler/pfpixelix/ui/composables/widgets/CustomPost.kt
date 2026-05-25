@@ -27,8 +27,8 @@ import com.daniebeler.pfpixelix.ui.navigation.Destination
 import com.daniebeler.pfpixelix.utils.BlurHashDecoder
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
-import pixelix.app.generated.resources.eye_off_outline
-import pixelix.app.generated.resources.remove_circle_outline
+import pixelix.app.generated.resources.eye_off
+import pixelix.app.generated.resources.remove_circle
 import pixelix.app.generated.resources.stack
 
 private const val DEFAULT_BLUR_HASH = "LEHLk~WB2yk8pyo0adR*.7kCMdnj"
@@ -76,7 +76,7 @@ fun CustomPost(
                 modifier = Modifier.aspectRatio(1f).clickable(onClick = handleClick)
             ) {
                 Icon(
-                    imageVector = vectorResource(Res.drawable.eye_off_outline),
+                    imageVector = vectorResource(Res.drawable.eye_off),
                     contentDescription = null,
                     modifier = Modifier.size(50.dp)
                 )
@@ -114,7 +114,7 @@ fun CustomPost(
                     modifier = Modifier.align(Alignment.TopEnd).clickable { editRemove(post.id) }
                 ) {
                     Icon(
-                        imageVector = vectorResource(Res.drawable.remove_circle_outline),
+                        imageVector = vectorResource(Res.drawable.remove_circle),
                         tint = MaterialTheme.colorScheme.error,
                         contentDescription = null
                     )

@@ -1,6 +1,5 @@
 package com.daniebeler.pfpixelix.ui.composables.profile
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -9,9 +8,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -23,10 +20,10 @@ import androidx.compose.ui.unit.sp
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
+import pixelix.app.generated.resources.grid_filled
 import pixelix.app.generated.resources.grid
-import pixelix.app.generated.resources.grid_outline
 import pixelix.app.generated.resources.list_filled
-import pixelix.app.generated.resources.list_outline
+import pixelix.app.generated.resources.list
 import pixelix.app.generated.resources.posts
 
 @Composable
@@ -70,12 +67,12 @@ fun SwitchViewComposable(
                     )) {
                     Icon(
                         imageVector = if (viewType == ViewEnum.Grid) {
-                            vectorResource(Res.drawable.grid)
+                            vectorResource(Res.drawable.grid_filled)
                         } else {
-                            vectorResource(Res.drawable.grid_outline)
+                            vectorResource(Res.drawable.grid)
                         },
                         modifier = Modifier.size(24.dp),
-                        contentDescription = "grid view"
+                        contentDescription = "grid_filled view"
                     )
                 }
                 Box(modifier = Modifier
@@ -90,7 +87,7 @@ fun SwitchViewComposable(
                     )) {
                     Icon(
                         imageVector = if (viewType == ViewEnum.Grid) {
-                            vectorResource(Res.drawable.list_outline)
+                            vectorResource(Res.drawable.list)
                         } else {
                             vectorResource(Res.drawable.list_filled)
                         },

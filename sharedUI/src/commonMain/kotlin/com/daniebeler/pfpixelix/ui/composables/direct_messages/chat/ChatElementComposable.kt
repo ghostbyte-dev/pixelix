@@ -32,7 +32,7 @@ import pixelix.app.generated.resources.cancel
 import pixelix.app.generated.resources.delete
 import pixelix.app.generated.resources.this_action_cannot_be_undone
 import pixelix.app.generated.resources.delete_message
-import pixelix.app.generated.resources.eye_off_outline
+import pixelix.app.generated.resources.eye_off
 import pixelix.app.generated.resources.trash
 
 @Composable
@@ -81,7 +81,7 @@ fun ConversationElementComposable(
                         Text(text = message.timeAgo, color = textColor, fontSize = 10.sp)
                         if (message.seen) {
                             Icon(
-                                imageVector = vectorResource(Res.drawable.eye_off_outline), contentDescription = null
+                                imageVector = vectorResource(Res.drawable.eye_off), contentDescription = null
                             )
                         }
                         if (message.isAuthor) {

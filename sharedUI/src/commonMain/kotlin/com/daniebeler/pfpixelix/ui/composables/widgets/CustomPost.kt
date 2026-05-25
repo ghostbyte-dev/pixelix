@@ -28,6 +28,8 @@ import com.daniebeler.pfpixelix.utils.BlurHashDecoder
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.eye_off
+import pixelix.app.generated.resources.blocked
+import pixelix.app.generated.resources.remove
 import pixelix.app.generated.resources.remove_circle
 import pixelix.app.generated.resources.stack
 

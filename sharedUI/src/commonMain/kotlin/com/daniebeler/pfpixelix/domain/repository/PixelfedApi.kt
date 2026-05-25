@@ -102,7 +102,7 @@ interface PixelfedApi {
 
 
     // Notifications
-    @GET("api/v1/notifications_strong")
+    @GET("api/v1/notifications")
     suspend fun getNotifications(
         @Query("max_id") maxNotificationId: String? = null,
         @Query("limit") limit: Int = NOTIFICATIONS_LIMIT

@@ -69,7 +69,7 @@ import pixelix.app.generated.resources.you_don_t_have_any_notifications
 @Composable
 fun NotificationsComposable(
     navController: NavController,
-    viewModel: NotificationsViewModel = injectViewModel(key = "notifications_strong-viewmodel-key") { notificationsViewModel }
+    viewModel: NotificationsViewModel = injectViewModel(key = "notifications-viewmodel-key") { notificationsViewModel }
 ) {
 
     val staggeredGridState = rememberLazyStaggeredGridState()

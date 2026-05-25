@@ -107,7 +107,8 @@ import pixelix.app.generated.resources.mute_consequence_5
 import pixelix.app.generated.resources.mute_this_profile
 import pixelix.app.generated.resources.open_in_browser
 import pixelix.app.generated.resources.photo
-import pixelix.app.generated.resources.remove_circle
+import pixelix.app.generated.resources.blocked
+import pixelix.app.generated.resources.muted
 import pixelix.app.generated.resources.share
 import pixelix.app.generated.resources.share_this_profile
 import pixelix.app.generated.resources.unblock_account
@@ -400,7 +401,7 @@ fun OtherProfileComposable(
                         if (viewModel.relationshipState.accountRelationship != null) {
                             if (viewModel.relationshipState.accountRelationship!!.muting) {
                                 ButtonRowElement(
-                                    icon = Res.drawable.remove_circle,
+                                    icon = Res.drawable.muted,
                                     text = stringResource(
                                         Res.string.unmute_this_profile
                                     ),
@@ -409,7 +410,7 @@ fun OtherProfileComposable(
                                     })
                             } else {
                                 ButtonRowElement(
-                                    icon = Res.drawable.remove_circle,
+                                    icon = Res.drawable.muted,
                                     text = stringResource(
                                         Res.string.mute_this_profile
                                     ),
@@ -420,7 +421,7 @@ fun OtherProfileComposable(
 
                             if (viewModel.relationshipState.accountRelationship!!.blocking) {
                                 ButtonRowElement(
-                                    icon = Res.drawable.remove_circle,
+                                    icon = Res.drawable.blocked,
                                     text = stringResource(
                                         Res.string.unblock_this_profile
                                     ),
@@ -429,7 +430,7 @@ fun OtherProfileComposable(
                                     })
                             } else {
                                 ButtonRowElement(
-                                    icon = Res.drawable.remove_circle,
+                                    icon = Res.drawable.blocked,
                                     text = stringResource(
                                         Res.string.block_this_profile
                                     ),

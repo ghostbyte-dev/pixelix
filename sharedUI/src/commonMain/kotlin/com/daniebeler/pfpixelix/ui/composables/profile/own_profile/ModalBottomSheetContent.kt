@@ -28,7 +28,8 @@ import pixelix.app.generated.resources.heart
 import pixelix.app.generated.resources.liked_posts
 import pixelix.app.generated.resources.muted_accounts
 import pixelix.app.generated.resources.pixelfed_logo
-import pixelix.app.generated.resources.remove_circle
+import pixelix.app.generated.resources.blocked
+import pixelix.app.generated.resources.muted
 import pixelix.app.generated.resources.settings
 
 @Composable
@@ -81,7 +82,7 @@ fun ModalBottomSheetContent(
             })
 
         ButtonRowElement(
-            icon = Res.drawable.remove_circle,
+            icon = Res.drawable.muted,
             text = stringResource(Res.string.muted_accounts),
             onClick = {
                 closeBottomSheet()
@@ -89,7 +90,7 @@ fun ModalBottomSheetContent(
             })
 
         ButtonRowElement(
-            icon = Res.drawable.remove_circle,
+            icon = Res.drawable.blocked,
             text = stringResource(Res.string.blocked_accounts),
             onClick = {
                 closeBottomSheet()

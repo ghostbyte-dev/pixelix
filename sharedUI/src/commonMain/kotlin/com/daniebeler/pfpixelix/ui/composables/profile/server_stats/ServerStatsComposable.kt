@@ -14,6 +14,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -444,11 +445,9 @@ fun ServerStatsSheet(
                     ),
                     secondStats = listOf(
                         Pair(
-                            stringResource(Res.string.instance_version) + ":",
-                            instance.version
-                        ),
-                        Pair(
-                            stringResource(Res.string.registration)  + ":",
+                            stringResource(Res.string.instance_version) + ":", instance.version
+                        ), Pair(
+                            stringResource(Res.string.registration) + ":",
                             if (instance.openRegistration) {
                                 stringResource(Res.string.open)
                             } else {
@@ -464,8 +463,7 @@ fun ServerStatsSheet(
                     buildAnnotatedString {
                         append("Powered by ")
                         val link = LinkAnnotation.Url(
-                            "https://fedisea.surf",
-                            TextLinkStyles(
+                            "https://fedisea.surf", TextLinkStyles(
                                 SpanStyle(
                                     color = MaterialTheme.colorScheme.primary,
                                     fontWeight = FontWeight.Bold
@@ -495,7 +493,11 @@ fun StatsCard(
     website: String?,
     onClick: () -> Unit,
 ) {
-    Card(shape = MaterialTheme.shapes.medium, modifier = Modifier.fillMaxWidth()) {
+    Card(
+        shape = MaterialTheme.shapes.medium, colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainer
+        ), modifier = Modifier.fillMaxWidth()
+    ) {
         thumbnail?.let {
             AsyncImage(
                 model = it,

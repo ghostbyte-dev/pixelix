@@ -37,7 +37,7 @@ class HashtagTimelineViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             prefs.showUserGridTimelineFlow.collect { res ->
-                view = if (res) ViewEnum.Grid else ViewEnum.Timeline
+                view = ViewEnum.getView(res)
             }
         }
     }
@@ -51,7 +51,7 @@ class HashtagTimelineViewModel @Inject constructor(
 
     fun changeView(newView: ViewEnum) {
         view = newView
-        prefs.showUserGridTimeline = newView == ViewEnum.Grid
+        prefs.showUserGridTimeline = newView.ordinal
     }
 
     fun getItemsFirstLoad(hashtag: String, refreshing: Boolean = false) {

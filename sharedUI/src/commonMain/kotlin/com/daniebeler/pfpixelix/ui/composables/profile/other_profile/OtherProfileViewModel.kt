@@ -75,7 +75,7 @@ class OtherProfileViewModel(
 
         viewModelScope.launch {
             prefs.showUserGridTimelineFlow.collect { res ->
-                view = if (res) ViewEnum.Grid else ViewEnum.Timeline
+                view = ViewEnum.getView(res)
             }
         }
     }
@@ -395,7 +395,7 @@ class OtherProfileViewModel(
 
     fun changeView(newView: ViewEnum) {
         view = newView
-        prefs.showUserGridTimeline = newView == ViewEnum.Grid
+        prefs.showUserGridTimeline = newView.ordinal
     }
 
     fun postGetsDeleted(postId: String) {

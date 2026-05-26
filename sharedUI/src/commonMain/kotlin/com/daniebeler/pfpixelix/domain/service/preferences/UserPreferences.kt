@@ -32,8 +32,8 @@ class UserPreferences(observableSettings: DataStoreSettings) {
     val autoplayVideoFlow = observableSettings.getBooleanFlow("k_autoplay_mode", autoplayVideo)
 
 
-    var showUserGridTimeline by settings.boolean("k_grid_timeline", true)
-    val showUserGridTimelineFlow = observableSettings.getBooleanFlow("k_grid_timeline", showUserGridTimeline)
+    var showUserGridTimeline by settings.int("k_timeline_view", 1)
+    val showUserGridTimelineFlow = observableSettings.getIntFlow("k_timeline_view", showUserGridTimeline)
 
     var enableVolume by settings.boolean("k_enable_volume", true)
     val enableVolumeFlow = observableSettings.getBooleanFlow("k_enable_volume", enableVolume)

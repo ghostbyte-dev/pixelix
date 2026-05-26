@@ -187,7 +187,7 @@ fun PostComposable(
 
         Spacer(modifier = Modifier.height(6.dp))
 
-        Box(Modifier.padding(start = 12.dp, end = 12.dp)) {
+        Column(Modifier.padding(start = 12.dp, end = 12.dp)) {
             PostMediaSection(
                 post = currentPost,
                 viewModel = viewModel,
@@ -259,8 +259,6 @@ fun MasonryPost(
             viewModel.updatePost(post)
         }
     }
-
-    val currentPost = viewModel.post ?: return
     val pagerState = rememberPagerState(pageCount = { post.mediaAttachments.count() })
 
     PostMediaSection(
@@ -367,7 +365,7 @@ private fun PostMediaSection(
 ) {
     if (post.mediaAttachments.isNotEmpty()) {
         if (post.sensitive && !viewModel.showPost && viewModel.blurSensitiveContent) {
-            PostSensitiveOverlay(post = post, viewModel = viewModel)
+            PostSensitiveOverlay(post = post, viewModel = viewModel, isMasonry = isMasonry)
         } else {
             PostMediaContent(
                 post = post,
@@ -377,7 +375,8 @@ private fun PostMediaSection(
                 isMasonry = isMasonry,
                 setZindex = setZindex,
                 onLikeAnimation = onLikeAnimation,
-                updatePost = updatePost
+                updatePost = updatePost,
+                navController = navController
             )
         }
     } else if (post.content.isNotBlank()) {
@@ -398,9 +397,9 @@ private fun PostMediaSection(
 }
 
 @Composable
-private fun PostSensitiveOverlay(post: Post, viewModel: PostViewModel) {
+private fun PostSensitiveOverlay(post: Post, viewModel: PostViewModel, isMasonry: Boolean) {
     Box(
-        modifier = Modifier.padding(start = 8.dp, end = 8.dp).clip(RoundedCornerShape(16.dp))
+        modifier = Modifier.fillMaxWidth().zIndex(80f).clip(RoundedCornerShape(16.dp))
     ) {
         val blurHashBitmap = BlurHashDecoder.decode(post.mediaAttachments[0].blurHash)
         val aspectRatio = post.mediaAttachments[0].meta?.original?.aspect?.toFloat() ?: 1.5f
@@ -415,14 +414,21 @@ private fun PostSensitiveOverlay(post: Post, viewModel: PostViewModel) {
         }
 
         Column(
-            Modifier.aspectRatio(aspectRatio),
+            Modifier.aspectRatio(aspectRatio).fillMaxWidth(),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            val textStyle = if (isMasonry) {
+                MaterialTheme.typography.bodySmall
+            } else {
+                MaterialTheme.typography.bodyMedium
+            }
             Text(
-                text = post.spoilerText.ifEmpty { "This post may contain sensitive content." })
+                text = post.spoilerText.ifEmpty { "This post may contain sensitive content." },
+                style = textStyle
+            )
             Button(onClick = { viewModel.toggleShowPost() }) {
-                Text(text = "Show post")
+                Text(text = "Show post", style = textStyle)
             }
         }
     }
@@ -437,7 +443,8 @@ private fun PostMediaContent(
     isMasonry: Boolean,
     setZindex: (zIndex: Float) -> Unit,
     onLikeAnimation: () -> Unit,
-    updatePost: (post: Post) -> Unit
+    updatePost: (post: Post) -> Unit,
+    navController: NavController
 ) {
     if (post.mediaAttachments.count() > 1) {
         val smallestAspectRatio = post.mediaAttachments.minByOrNull {
@@ -456,7 +463,9 @@ private fun PostMediaContent(
                         setZindex = setZindex,
                         viewModel = viewModel,
                         like = onLikeAnimation,
-                        updatePost = updatePost
+                        updatePost = updatePost,
+                        isMasonry = isMasonry,
+                        navController = navController
                     )
                 }
             }
@@ -504,7 +513,9 @@ private fun PostMediaContent(
                 setZindex = setZindex,
                 viewModel = viewModel,
                 like = onLikeAnimation,
-                updatePost = updatePost
+                updatePost = updatePost,
+                isMasonry = isMasonry,
+                navController = navController
             )
         }
     }
@@ -737,10 +748,10 @@ private fun PostDeleteDialog(viewModel: PostViewModel) {
 
     AlertDialog(
         icon = {
-        Icon(
-            imageVector = vectorResource(Res.drawable.trash), contentDescription = null
-        )
-    },
+            Icon(
+                imageVector = vectorResource(Res.drawable.trash), contentDescription = null
+            )
+        },
         title = { Text(text = stringResource(Res.string.delete_post)) },
         text = { Text(text = stringResource(Res.string.this_action_cannot_be_undone)) },
         onDismissRequest = { viewModel.deleteDialog = null },
@@ -765,7 +776,9 @@ fun PostImage(
     setZindex: (zIndex: Float) -> Unit,
     viewModel: PostViewModel,
     like: () -> Unit,
-    updatePost: (post: Post) -> Unit
+    updatePost: (post: Post) -> Unit,
+    isMasonry: Boolean,
+    navController: NavController
 ) {
     var showHeart by remember { mutableStateOf(false) }
     val scale = animateFloatAsState(if (showHeart) 1f else 0f, label = "heart_filled animation")
@@ -812,8 +825,12 @@ fun PostImage(
                     showHeart = true
                 }
             }, onTap = {
-                if (mediaAttachment.type != "video") {
-                    showMediaDialog = mediaAttachment
+                if (isMasonry) {
+                    navController.navigate(Destination.Post(postId))
+                } else {
+                    if (mediaAttachment.type != "video") {
+                        showMediaDialog = mediaAttachment
+                    }
                 }
             })
         }) {

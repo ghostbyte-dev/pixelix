@@ -19,7 +19,11 @@
     <string name="unfollow">Deixar de seguir</string>
     <string name="followers">Seguidores</string>
     <string name="following">Seguindo</string>
-    <string name="posts">Postagens</string>
+    <plurals name="posts">
+        <item quantity="one">Postagem</item>
+        <item quantity="many">Postagens</item>
+        <item quantity="other">Postagens</item>
+    </plurals>
     <string name="reblogged_your_post">compartilhou sua publicação</string>
     <string name="liked_your_post">curtiu sua postagem</string>
     <string name="followed_you">seguiu você</string>
@@ -110,7 +114,7 @@
     <string name="save">Salvar</string>
     <string name="delete_reply">Excluir resposta</string>
     <string name="reply">Responder</string>
-    <string name="post">Publicar</string>
+    <string name="post">Postagem</string>
     <string name="pixelfed_description">Pixelfed é uma rede de compartilhamento de fotos e imagens no Fediverse com uma interface voltada para foto, que inclui álbuns, filtros, momentos, etc.</string>
     <string name="mastodon_description">Mastodon é uma plataforma gratuita e de código aberto de microblogging</string>
     <string name="peertube_description">O PeerTube é uma ferramenta para compartilhar vídeos on-line desenvolvido por Framasoft, uma organização sem fins lucrativos.</string>
@@ -194,8 +198,99 @@
     <string name="displayname">Nome em exibição</string>
     <string name="bio">Biografia</string>
     <string name="website">Site</string>
-    <string name="location">Local</string>
+    <string name="location">Localização</string>
     <string name="mentions">Menções</string>
     <string name="explore">Explorar</string>
     <string name="reblogged_by">repostado por %1$s</string>
+    <plurals name="follower">
+        <item quantity="one">Seguidor</item>
+        <item quantity="many">Seguidores</item>
+        <item quantity="other">Seguidores</item>
+    </plurals>
+    <string name="hashtags">Hashtags</string>
+    <string name="global">Global</string>
+    <string name="follow_accounts_or_hashtags_to_fill_your_home_timeline">Siga perfis ou hashtags para preencher sua linha de tempo</string>
+    <string name="what_makes_an_account_trend">O que faz um perfil ficar em destaque?</string>
+    <string name="block_account">Bloquear perfil?</string>
+    <string name="unmute_account">Deixar de silenciar a conta?</string>
+    <string name="mute_account">Silenciar a conta?</string>
+    <string name="current_account">Perfil atual:</string>
+    <string name="other_accounts">Outros perfis:</string>
+    <string name="are_you_sure_you_want_to_remove_this_account">Tem certeza de que deseja remover este perfil?</string>
+    <string name="remove_account">Remover Perfil?</string>
+    <string name="license_label">Licença</string>
+    <string name="no_followers_yet">Ainda não há seguidores</string>
+    <string name="not_following_anyone">Não segue ninguém</string>
+    <string name="read_more">Leia mais</string>
+    <string name="read_less">Leia menos</string>
+    <string name="local">Local</string>
+    <string name="trending_account_description">A seção de perfis em destaque mostra os perfis que mais tem seguidores na sua instância. Os perfis que você já segue não aparecem.</string>
+    <string name="ago">atrás</string>
+    <string name="delete_message">Excluir mensagem</string>
+    <plurals name="minute">
+        <item quantity="one">minuto</item>
+        <item quantity="many">minutos</item>
+        <item quantity="other">minutos</item>
+    </plurals>
+    <plurals name="hour">
+        <item quantity="one">hora</item>
+        <item quantity="many">horas</item>
+        <item quantity="other">horas</item>
+    </plurals>
+    <plurals name="day">
+        <item quantity="one">dia</item>
+        <item quantity="many">dias</item>
+        <item quantity="other">dias</item>
+    </plurals>
+    <plurals name="week">
+        <item quantity="one">semana</item>
+        <item quantity="many">semanas</item>
+        <item quantity="other">semanas</item>
+    </plurals>
+    <plurals name="month">
+        <item quantity="one">mês</item>
+        <item quantity="many">meses</item>
+        <item quantity="other">meses</item>
+    </plurals>
+    <plurals name="year">
+        <item quantity="one">ano</item>
+        <item quantity="many">anos</item>
+        <item quantity="other">anos</item>
+    </plurals>
+    <string name="blur_sensitive_content">Desfocar conteúdo sensível</string>
+    <string name="autoplay_videos">Reproduzir vídeos automaticamente</string>
+    <string name="report_this_post">Denunciar esta publicação</string>
+    <string name="report">Denunciar</string>
+    <string name="spam">Spam</string>
+    <string name="adult_or_sensitive_content">Conteúdo adulto ou sensível</string>
+    <string name="abusive_or_harmful">Abusivo ou prejudicial</string>
+    <string name="underage_account">Conta de menor de idade</string>
+    <string name="violence">Violência</string>
+    <string name="copyright_infringement">Violação de direitos autorais</string>
+    <string name="impersonation">Usurpação de identidade</string>
+    <string name="scam">Golpe</string>
+    <string name="terrorism">Terrorismo</string>
+    <string name="reported">Denunciado</string>
+    <string name="delete_account">Excluir Conta</string>
+    <string name="swipe_between_tabs">Deslize para alternar entre as abas</string>
+    <string name="discard">Descartar</string>
+    <string name="are_you_sure">Tem certeza?</string>
+    <string name="cancel_post_warning">Você quer descartar este post?</string>
+    <string name="cancel_profile_edit">Você quer descartar as mudanças?</string>
+    <string name="cancel_post_edit">Você quer descartar as mudanças?</string>
+    <string name="registration">Registro</string>
+    <string name="open">aberto</string>
+    <string name="closed">fechado</string>
+    <string name="add_pixelfed_account">Adicionar perfil Pixelfed</string>
+    <string name="focus_mode">Modo Foco</string>
+    <string name="focus_mode_description">Esconder descrição e botões de reações e de posts.</string>
+    <string name="repost_settings">Configurações de compartilhamento</string>
+    <string name="amoled">AMOLED</string>
+    <string name="video_player_not_supported">O reprodutor de vídeo não é compatível</string>
+    <plurals name="second">
+        <item quantity="one">segundo</item>
+        <item quantity="many">segundos</item>
+        <item quantity="other">segundos</item>
+    </plurals>
+    <string name="character_count">%1$d / %2$d caracteres</string>
 </resources>

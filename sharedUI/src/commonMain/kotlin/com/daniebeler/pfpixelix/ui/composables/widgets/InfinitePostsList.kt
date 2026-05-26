@@ -54,7 +54,8 @@ fun InfinitePostsList(
     emptyMessage: EmptyState = EmptyState(
         icon = vectorResource(Res.drawable.photo), heading = "No Posts"
     ),
-    onRefresh: () -> Unit,
+    onRefresh: (() -> Unit),
+    refreshable: Boolean = true,
     itemGetsDeleted: (postId: String) -> Unit,
     postGetsUpdated: (post: Post) -> Unit,
     view: ViewEnum = ViewEnum.Timeline,
@@ -75,7 +76,8 @@ fun InfinitePostsList(
         CustomPullToRefreshBox(
             isRefreshing = isRefreshing,
             onRefresh = onRefresh,
-            animatedBox = true
+            animatedBox = true,
+            enabled = refreshable
         ) {
             BoxWithConstraints {
                 val gridContentWidth = maxWidth - 8.dp // account for horizontal padding

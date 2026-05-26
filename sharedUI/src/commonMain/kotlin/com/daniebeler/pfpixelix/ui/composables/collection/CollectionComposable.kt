@@ -27,6 +27,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,8 +42,8 @@ import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.ui.composables.profile.ViewEnum
 import com.daniebeler.pfpixelix.ui.composables.widgets.ButtonRowElement
-import com.daniebeler.pfpixelix.ui.composables.widgets.InfinitePostsGrid
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
+import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposableDialog
 import com.daniebeler.pfpixelix.ui.composables.widgets.InfinitePostsList
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
@@ -72,6 +73,12 @@ fun CollectionComposable(
     val showAddPostBottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = false)
     var showBottomSheet by remember { mutableStateOf(false) }
     var showAddPostBottomSheet by remember { mutableStateOf(false) }
+
+    val filteredPosts by remember(viewModel.editState.allPosts, viewModel.editState.editPosts) {
+        derivedStateOf {
+            viewModel.filterPostsExceptCollection(viewModel.editState.allPosts)
+        }
+    }
 
     LaunchedEffect(Unit) {
         viewModel.loadData(collectionId)
@@ -112,7 +119,7 @@ fun CollectionComposable(
                         Spacer(Modifier.height(22.dp))
                         IconButton(onClick = {
                             showAddPostBottomSheet = true
-                            viewModel.getPostsExceptCollection()
+                            viewModel.getAllPosts()
                         }) {
                             Icon(
                                 vectorResource(Res.drawable.add_circle),
@@ -166,27 +173,37 @@ fun CollectionComposable(
                 Column(
                     modifier = Modifier.padding(bottom = 32.dp)
                 ) {
-                    InfinitePostsGrid(
-                        items = viewModel.editState.allPostsExceptCollection,
-                        isLoading = viewModel.editState.isLoading,
+
+                    InfinitePostsList(
+                        items = filteredPosts,
+                        isLoading = viewModel.editState.isAllPostsLoading,
                         isRefreshing = false,
-                        error = viewModel.editState.error,
-                        emptyMessage = EmptyState(
-                            icon = vectorResource(Res.drawable.heart), heading = "Empty Collection"
-                        ),
+                        error = viewModel.editState.errorAllPosts,
+                        endReached = viewModel.editState.isAllPostsEndReached,
+                        itemGetsDeleted = {},
+                        postGetsUpdated = {},
                         navController = navController,
                         getItemsPaginated = {
-                            //viewModel.getItemsPaginated()
+                            viewModel.getPostsExceptCollectionPaginated()
                         },
-                        onRefresh = {
-                            viewModel.refresh()
-                        },
+                        onRefresh = {},
                         onClick = { viewModel.addPostToCollection(it) },
-                        pullToRefresh = false
+                        view = ViewEnum.Grid,
+                        refreshable = false
                     )
                 }
             }
         }
+
+        ErrorComposableDialog(
+            viewModel.editState.updateError,
+            onDismiss = {
+                viewModel.getCollection()
+                viewModel.getPostsFirstLoad(true)
+                viewModel.editState = viewModel.editState.copy(updateError = "")
+            })
+
+
 
         TopAppBar(
             modifier = Modifier.clip(
@@ -229,7 +246,8 @@ fun CollectionComposable(
                     navController.popBackStack()
                 }) {
                     Icon(
-                        imageVector = vectorResource(Res.drawable.arrow_left), contentDescription = ""
+                        imageVector = vectorResource(Res.drawable.arrow_left),
+                        contentDescription = ""
                     )
                 }
             }, actions = {
@@ -252,7 +270,8 @@ fun CollectionComposable(
                                 viewModel.toggleEditMode()
                             }) {
                                 Icon(
-                                    imageVector = vectorResource(Res.drawable.edit), contentDescription = ""
+                                    imageVector = vectorResource(Res.drawable.edit),
+                                    contentDescription = ""
                                 )
                             }
                         }
@@ -263,7 +282,8 @@ fun CollectionComposable(
                         showBottomSheet = true
                     }) {
                         Icon(
-                            imageVector = vectorResource(Res.drawable.more_menu), contentDescription = ""
+                            imageVector = vectorResource(Res.drawable.more_menu),
+                            contentDescription = ""
                         )
                     }
                 }

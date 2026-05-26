@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
 import com.daniebeler.pfpixelix.domain.model.Post
+import com.daniebeler.pfpixelix.domain.repository.PixelfedApi
 import com.daniebeler.pfpixelix.domain.service.collection.CollectionService
 import com.daniebeler.pfpixelix.domain.service.platform.Platform
 import com.daniebeler.pfpixelix.domain.service.post.PostService
@@ -25,7 +26,7 @@ class CollectionViewModel @Inject constructor(
     private val postService: PostService,
     private val authService: AuthService,
     private val prefs: UserPreferences,
-    ) : ViewModel() {
+) : ViewModel() {
 
     var collectionState by mutableStateOf(CollectionState())
     var collectionPostsState by mutableStateOf(CollectionPostsState())
@@ -45,7 +46,7 @@ class CollectionViewModel @Inject constructor(
     fun loadData(collectionId: String) {
         if (collectionState.id == null) {
             myUsername = authService.getCurrentSession()!!.username
-            collectionState = collectionState.copy(id = collectionId)
+            collectionState = collectionState.copy(id = collectionId, isLoading = true)
             getCollection()
             getPostsFirstLoad(false)
         }
@@ -56,7 +57,7 @@ class CollectionViewModel @Inject constructor(
         prefs.showUserGridTimeline = newView.ordinal
     }
 
-    private fun getCollection() {
+    fun getCollection() {
         if (collectionState.id != null) {
             collectionService.getCollection(collectionState.id!!).onEach { result ->
                 collectionState = when (result) {
@@ -86,7 +87,7 @@ class CollectionViewModel @Inject constructor(
 
     }
 
-    private fun getPostsFirstLoad(refreshing: Boolean) {
+    fun getPostsFirstLoad(refreshing: Boolean) {
         if (collectionState.id != null) {
             collectionService.getPostsOfCollection(collectionState.id!!, 1).onEach { result ->
                 when (result) {
@@ -105,7 +106,7 @@ class CollectionViewModel @Inject constructor(
                     }
 
                     is Resource.Loading -> {
-                        collectionPostsState =  CollectionPostsState(
+                        collectionPostsState = CollectionPostsState(
                             isLoading = true,
                             isRefreshing = refreshing,
                             posts = collectionPostsState.posts
@@ -157,34 +158,67 @@ class CollectionViewModel @Inject constructor(
         }
     }
 
-    fun getPostsExceptCollection() {
+    fun getAllPosts() {
+        if (editState.allPosts.isNotEmpty()) {
+            return
+        }
         postService.getOwnPosts().onEach { result ->
             when (result) {
                 is Resource.Success -> {
-                    val posts = result.data!!.filter { !editState.editPosts.contains(it) }
-                    editState = editState.copy(allPostsExceptCollection = posts)
+                    val endReached = (result.data.size) < PixelfedApi.PROFILE_POSTS_LIMIT
+
+                    editState = editState.copy(
+                        allPosts = result.data,
+                        isAllPostsEndReached = endReached,
+                        isAllPostsLoading = false
+                    )
                 }
 
                 is Resource.Error -> {
-
+                    editState = editState.copy(errorAllPosts = "An unexpected error occurred", isAllPostsLoading = false)
                 }
 
                 is Resource.Loading -> {
-                    editState = editState.copy(isLoading = true)
+                    editState = editState.copy(isAllPostsLoading = true)
                 }
             }
         }.launchIn(viewModelScope)
     }
 
+    fun getPostsExceptCollectionPaginated() {
+        if (!editState.isAllPostsLoading && editState.allPosts.isNotEmpty() && !editState.isAllPostsEndReached) {
+            postService.getOwnPosts(editState.allPosts.last().id).onEach { result ->
+                when (result) {
+                    is Resource.Success -> {
+                        val endReached = (result.data.size) < PixelfedApi.PROFILE_POSTS_LIMIT
+
+                        editState = editState.copy(
+                            allPosts = editState.allPosts + result.data,
+                            isAllPostsEndReached = endReached,
+                            isAllPostsLoading = false,
+                            errorAllPosts = ""
+                        )
+                    }
+
+                    is Resource.Error -> {
+                        editState = editState.copy(error = "An unexpected error occurred", isAllPostsLoading = false)
+                    }
+
+                    is Resource.Loading -> {
+                        editState = editState.copy(isAllPostsLoading = true)
+                    }
+                }
+            }.launchIn(viewModelScope)
+        }
+    }
+
     fun addPostToCollection(id: String) {
-        val postToAdd = editState.allPostsExceptCollection.find { it.id == id }
-        val allPosts = editState.allPostsExceptCollection.filter { it.id != id }
+        val postToAdd = editState.allPosts.find { it.id == id }
         postToAdd?.let {
             val posts = editState.editPosts + postToAdd
             editState = editState.copy(
                 editPosts = posts,
                 addedIds = editState.addedIds + id,
-                allPostsExceptCollection = allPosts
             )
         }
     }
@@ -192,10 +226,10 @@ class CollectionViewModel @Inject constructor(
     fun confirmEdit() {
         collectionPostsState = collectionPostsState.copy(posts = editState.editPosts)
         editState = editState.copy(editMode = false)
-        editState.removedIds.map {
+        editState.removedIds.forEach {
             removePostOfCollection(it)
         }
-        editState.addedIds.map {
+        editState.addedIds.forEach {
             addPostsOfCollection(
                 it
             )
@@ -221,7 +255,7 @@ class CollectionViewModel @Inject constructor(
                     }
 
                     is Resource.Error -> {
-
+                        editState = editState.copy(updateError = "An unexpected error occurred while updating the collection")
                     }
 
                     is Resource.Loading -> {
@@ -237,11 +271,11 @@ class CollectionViewModel @Inject constructor(
             collectionService.addPostOfCollection(collectionState.id!!, postId).onEach { result ->
                 when (result) {
                     is Resource.Success -> {
-                        getPostsFirstLoad(false)
+                        //getPostsFirstLoad(false)
                     }
 
                     is Resource.Error -> {
-
+                        editState = editState.copy(updateError = "An unexpected error occurred while updating the collection")
                     }
 
                     is Resource.Loading -> {
@@ -258,11 +292,11 @@ class CollectionViewModel @Inject constructor(
                 .onEach { result ->
                     when (result) {
                         is Resource.Success -> {
-                            getPostsFirstLoad(false)
+                            //getPostsFirstLoad(false)
                         }
 
                         is Resource.Error -> {
-
+                            editState = editState.copy(updateError = "An unexpected error occurred while updating the collection")
                         }
 
                         is Resource.Loading -> {
@@ -290,6 +324,7 @@ class CollectionViewModel @Inject constructor(
         newEditState.removedIds += id
         newEditState.editPosts =
             newEditState.editPosts.filter { !newEditState.removedIds.contains(it.id) }
+        newEditState.addedIds = newEditState.addedIds.filter { it != id }
         editState = newEditState
     }
 
@@ -304,5 +339,10 @@ class CollectionViewModel @Inject constructor(
 
     fun shareCollectionUrl() {
         collectionState.collection?.url?.let { platform.shareText(it) }
+    }
+
+    fun filterPostsExceptCollection(posts: List<Post>): List<Post> {
+        val excludedIds = editState.editPosts.map { it.id }.toSet()
+        return posts.filter { post -> post.id !in excludedIds }
     }
 }

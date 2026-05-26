@@ -213,4 +213,14 @@
     <string name="focus_mode">Modo de foco</string>
     <string name="focus_mode_description">Oculta a descrição, gostos e botões das publicações.</string>
     <string name="repost_settings">Configurações de impulsos</string>
+    <plurals name="follower">
+        <item quantity="one">Seguidor</item>
+        <item quantity="many">Seguidores</item>
+        <item quantity="other">Seguidores</item>
+    </plurals>
+    <string name="local">Local</string>
+    <string name="global">Global</string>
+    <string name="license_label">Licença</string>
+    <string name="amoled">AMOLED</string>
+    <string name="no_followers_yet">Ainda não há seguidores</string>
 </resources>

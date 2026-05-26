@@ -221,6 +221,10 @@ fun OtherProfileComposable(
                                 gridColumnCount
                             )
 
+                            com.daniebeler.pfpixelix.ui.composables.profile.ViewEnum.Masonry -> StaggeredGridCells.Adaptive(
+                                150.dp
+                            )
+
                             com.daniebeler.pfpixelix.ui.composables.profile.ViewEnum.Timeline -> StaggeredGridCells.Adaptive(
                                 350.dp
                             )

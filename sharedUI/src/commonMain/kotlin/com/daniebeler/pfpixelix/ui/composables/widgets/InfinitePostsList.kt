@@ -82,6 +82,7 @@ fun InfinitePostsList(
                 val gridColumnCount = maxOf(3, (gridContentWidth / 120.dp).toInt())
                 val columns = when (view) {
                     ViewEnum.Grid -> StaggeredGridCells.Fixed(gridColumnCount)
+                    ViewEnum.Masonry -> StaggeredGridCells.Adaptive(150.dp)
                     ViewEnum.Timeline -> StaggeredGridCells.Adaptive(350.dp)
                 }
 

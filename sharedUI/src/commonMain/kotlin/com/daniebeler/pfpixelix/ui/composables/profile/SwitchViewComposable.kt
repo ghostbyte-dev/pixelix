@@ -24,6 +24,8 @@ import pixelix.app.generated.resources.grid_filled
 import pixelix.app.generated.resources.grid
 import pixelix.app.generated.resources.list_filled
 import pixelix.app.generated.resources.list
+import pixelix.app.generated.resources.masonry
+import pixelix.app.generated.resources.masonry_filled
 import pixelix.app.generated.resources.posts
 
 @Composable
@@ -32,9 +34,7 @@ fun SwitchViewComposable(
 ) {
 
     Column(
-        Modifier
-            .fillMaxWidth()
-            .padding(12.dp)
+        Modifier.fillMaxWidth().padding(12.dp)
     ) {
 
         Row(
@@ -45,9 +45,7 @@ fun SwitchViewComposable(
             postsCount?.let {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
-                        text = postsCount.toString(),
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp
+                        text = postsCount.toString(), fontWeight = FontWeight.Bold, fontSize = 18.sp
                     )
                     Text(text = " " + stringResource(Res.string.posts), fontSize = 12.sp)
                 }
@@ -55,14 +53,29 @@ fun SwitchViewComposable(
 
 
             Row {
-                Box(modifier = Modifier
-                    .padding(4.dp)
-                    .clickable { onViewChange(ViewEnum.Grid) }
+                Box(modifier = Modifier.padding(4.dp).clickable { onViewChange(ViewEnum.Masonry) }
                     .alpha(
-                        if (viewType == ViewEnum.Timeline) {
-                            0.5f
-                        } else {
+                        if (viewType == ViewEnum.Masonry) {
                             1f
+                        } else {
+                            0.5f
+                        }
+                    )) {
+                    Icon(
+                        imageVector = if (viewType == ViewEnum.Masonry) {
+                            vectorResource(Res.drawable.masonry_filled)
+                        } else {
+                            vectorResource(Res.drawable.masonry)
+                        }, modifier = Modifier.size(24.dp), contentDescription = "masonry view"
+                    )
+                }
+
+                Box(modifier = Modifier.padding(4.dp).clickable { onViewChange(ViewEnum.Grid) }
+                    .alpha(
+                        if (viewType == ViewEnum.Grid) {
+                            1f
+                        } else {
+                            0.5f
                         }
                     )) {
                     Icon(
@@ -70,28 +83,23 @@ fun SwitchViewComposable(
                             vectorResource(Res.drawable.grid_filled)
                         } else {
                             vectorResource(Res.drawable.grid)
-                        },
-                        modifier = Modifier.size(24.dp),
-                        contentDescription = "grid view"
+                        }, modifier = Modifier.size(24.dp), contentDescription = "grid view"
                     )
                 }
-                Box(modifier = Modifier
-                    .padding(4.dp)
-                    .clickable { onViewChange(ViewEnum.Timeline) }
+                Box(modifier = Modifier.padding(4.dp).clickable { onViewChange(ViewEnum.Timeline) }
                     .alpha(
-                        if (viewType == ViewEnum.Grid) {
-                            0.5f
-                        } else {
+                        if (viewType == ViewEnum.Timeline) {
                             1f
+                        } else {
+                            0.5f
                         }
                     )) {
                     Icon(
-                        imageVector = if (viewType == ViewEnum.Grid) {
-                            vectorResource(Res.drawable.list)
-                        } else {
+                        imageVector = if (viewType == ViewEnum.Timeline) {
                             vectorResource(Res.drawable.list_filled)
-                        },
-                        contentDescription = "timeline view"
+                        } else {
+                            vectorResource(Res.drawable.list)
+                        }, contentDescription = "timeline view"
                     )
                 }
             }

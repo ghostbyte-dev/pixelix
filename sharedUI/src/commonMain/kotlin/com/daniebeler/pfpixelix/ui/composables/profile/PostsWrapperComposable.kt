@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.domain.model.Post
+import com.daniebeler.pfpixelix.ui.composables.post.MasonryPost
 import com.daniebeler.pfpixelix.ui.composables.widgets.CustomPost
 import com.daniebeler.pfpixelix.ui.composables.post.PostComposable
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
@@ -70,6 +71,20 @@ fun LazyStaggeredGridScope.PostsWrapperComposable(
 
     if (view == ViewEnum.Timeline) {
         PostsListInScope(
+            posts = posts,
+            isLoading = isLoading,
+            isRefreshing = isRefreshing,
+            error = error,
+            endReached = endReached,
+            emptyMessage = emptyMessage,
+            postGetsDeleted = postGetsDeleted,
+            updatePost = updatePost,
+            navController = navController
+        )
+    }
+
+    if (view == ViewEnum.Masonry) {
+        PostsMasonryInScope(
             posts = posts,
             isLoading = isLoading,
             isRefreshing = isRefreshing,
@@ -169,7 +184,8 @@ private fun LazyStaggeredGridScope.PostsGridInScope(
     } else {
         items(posts.size, key = { posts[it].id }) { index ->
             CustomPost(
-                post = posts[index], navController = navController,
+                post = posts[index],
+                navController = navController,
                 edit = edit,
                 editRemove = editRemove,
                 onClick = onClick
@@ -189,6 +205,8 @@ private fun LazyStaggeredGridScope.PostsGridInScope(
         }
     }
 }
+
+
 
 
 private fun LazyStaggeredGridScope.PostsListInScope(
@@ -221,6 +239,46 @@ private fun LazyStaggeredGridScope.PostsListInScope(
                     })
             }
             Spacer(Modifier.height(spacedBy))
+        }
+
+        if (isLoading && !isRefreshing) {
+            item(span = StaggeredGridItemSpan.FullLine) {
+                LoadingComposable(Modifier.fillMaxWidth().padding(vertical = 50.dp))
+            }
+        }
+
+        if (endReached && posts.size > 3) {
+            item(span = StaggeredGridItemSpan.FullLine) {
+                EndOfListComposable()
+            }
+        }
+    }
+}
+
+private fun LazyStaggeredGridScope.PostsMasonryInScope(
+    posts: List<Post>,
+    isLoading: Boolean,
+    isRefreshing: Boolean,
+    error: String,
+    endReached: Boolean,
+    emptyMessage: EmptyState,
+    postGetsDeleted: (postId: String) -> Unit,
+    updatePost: (post: Post) -> Unit,
+    navController: NavController,
+) {
+
+    if (posts.isNotEmpty()) {
+
+        items(posts.size, key = { posts[it].id }) { index ->
+            val zIndex = remember {
+                mutableFloatStateOf(1f)
+            }
+            Box(modifier = Modifier.zIndex(zIndex.floatValue).padding(horizontal = 2.dp)) {
+                MasonryPost(
+                    post = posts[index],
+                    navController = navController,
+                    )
+            }
         }
 
         if (isLoading && !isRefreshing) {

@@ -1,8 +1,11 @@
 package com.daniebeler.pfpixelix.ui.composables.timelines.home_timeline
 
+import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.daniebeler.pfpixelix.di.LocalAppComponent
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.ui.composables.widgets.InfinitePostsList
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
@@ -20,6 +23,16 @@ fun HomeTimelineComposable(
     navController: NavController,
     viewModel: HomeTimelineViewModel = injectViewModel(key = "home-timeline-key") { homeTimelineViewModel }
 ) {
+    val staggeredGridState = rememberLazyStaggeredGridState()
+    val appComponent = LocalAppComponent.current
+
+    LaunchedEffect(Unit) {
+        appComponent.backToTopTrigger.event.collect {
+            staggeredGridState.animateScrollToItem(0, 0)
+            viewModel.refresh()
+        }
+    }
+
     InfinitePostsList(
         items = viewModel.timelineState.posts,
         contentPaddingTop = 32.dp,
@@ -38,6 +51,7 @@ fun HomeTimelineComposable(
         getItemsPaginated = { viewModel.getItemsPaginated() },
         onRefresh = { viewModel.refresh() },
         itemGetsDeleted = { postId -> viewModel.postGetsDeleted(postId) },
-        postGetsUpdated = { viewModel.postGetsUpdated(it) }
+        postGetsUpdated = { viewModel.postGetsUpdated(it) },
+        staggeredGridState = staggeredGridState
     )
 }

@@ -419,6 +419,8 @@ private fun BottomBarFloating(
                                 )
                             } else if (currentDestination.hasRoute<Destination.Search>()) {
                                 appComponent.searchFieldFocus.focus()
+                            } else if (currentDestination.hasRoute<Destination.Feeds>()) {
+                                appComponent.backToTopTrigger.scrollToTop()
                             }
                         }
                     }

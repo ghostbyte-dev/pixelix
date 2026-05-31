@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
@@ -53,9 +54,9 @@ fun InfinitePostsList(
     after: @Composable (() -> Unit)? = null,
     edit: Boolean = false,
     editRemove: (postId: String) -> Unit = { },
-    onClick: ((id: String) -> Unit)? = null
+    onClick: ((id: String) -> Unit)? = null,
+    staggeredGridState: LazyStaggeredGridState = rememberLazyStaggeredGridState()
 ) {
-    val staggeredGridState = rememberLazyStaggeredGridState()
 
     if (error.isEmpty() || items.isNotEmpty()) {
         CustomPullToRefreshBox(

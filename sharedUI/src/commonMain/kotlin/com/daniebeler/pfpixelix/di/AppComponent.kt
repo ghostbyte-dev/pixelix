@@ -27,6 +27,7 @@ import com.daniebeler.pfpixelix.domain.service.session.SessionStorageDataSeriali
 import com.daniebeler.pfpixelix.domain.service.session.SystemUrlHandler
 import com.daniebeler.pfpixelix.domain.service.share.AccountIntentHandler
 import com.daniebeler.pfpixelix.domain.service.share.SystemFileShare
+import com.daniebeler.pfpixelix.domain.service.timeline.BackToTopTrigger
 import com.daniebeler.pfpixelix.domain.service.widget.WidgetService
 import com.daniebeler.pfpixelix.utils.KmpContext
 import com.daniebeler.pfpixelix.utils.coilContext
@@ -73,6 +74,7 @@ abstract class AppComponent(
 
     abstract val preferences: UserPreferences
     abstract val searchFieldFocus: SearchFieldFocus
+    abstract val backToTopTrigger: BackToTopTrigger
 
     @get:Provides
     @get:AppSingleton

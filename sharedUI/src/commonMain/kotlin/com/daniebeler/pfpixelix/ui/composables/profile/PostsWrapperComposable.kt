@@ -10,13 +10,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridScope
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
-import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -26,19 +23,14 @@ import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.ui.composables.post.MasonryPost
 import com.daniebeler.pfpixelix.ui.composables.widgets.CustomPost
 import com.daniebeler.pfpixelix.ui.composables.post.PostComposable
-import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
-import com.daniebeler.pfpixelix.ui.composables.states.EmptyStateComposable
 import com.daniebeler.pfpixelix.ui.composables.states.EndOfListComposable
-import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 
-fun LazyStaggeredGridScope.PostsWrapperComposable(
+fun LazyStaggeredGridScope.postsWrapperComposable(
     posts: List<Post>,
     isLoading: Boolean,
     isRefreshing: Boolean,
-    error: String,
     endReached: Boolean,
-    emptyMessage: EmptyState,
     view: ViewEnum,
     postGetsDeleted: (postId: String) -> Unit,
     updatePost: (post: Post) -> Unit,
@@ -52,13 +44,11 @@ fun LazyStaggeredGridScope.PostsWrapperComposable(
 ) {
 
     if (view == ViewEnum.Grid) {
-        PostsGridInScope(
+        postsGridInScope(
             posts = posts,
             isLoading = isLoading,
             isRefreshing = isRefreshing,
-            error = error,
             endReached = endReached,
-            emptyMessage = emptyMessage,
             isFirstImageLarge = isFirstImageLarge,
             columnCount = gridColumnCount,
             contentWidth = gridContentWidth,
@@ -70,13 +60,11 @@ fun LazyStaggeredGridScope.PostsWrapperComposable(
     }
 
     if (view == ViewEnum.Timeline) {
-        PostsListInScope(
+        postsListInScope(
             posts = posts,
             isLoading = isLoading,
             isRefreshing = isRefreshing,
-            error = error,
             endReached = endReached,
-            emptyMessage = emptyMessage,
             postGetsDeleted = postGetsDeleted,
             updatePost = updatePost,
             navController = navController
@@ -84,27 +72,21 @@ fun LazyStaggeredGridScope.PostsWrapperComposable(
     }
 
     if (view == ViewEnum.Masonry) {
-        PostsMasonryInScope(
+        postsMasonryInScope(
             posts = posts,
             isLoading = isLoading,
             isRefreshing = isRefreshing,
-            error = error,
             endReached = endReached,
-            emptyMessage = emptyMessage,
-            postGetsDeleted = postGetsDeleted,
-            updatePost = updatePost,
             navController = navController
         )
     }
 }
 
-private fun LazyStaggeredGridScope.PostsGridInScope(
+private fun LazyStaggeredGridScope.postsGridInScope(
     posts: List<Post>,
     isLoading: Boolean,
     isRefreshing: Boolean,
-    error: String,
     endReached: Boolean,
-    emptyMessage: EmptyState,
     isFirstImageLarge: Boolean = false,
     columnCount: Int = 3,
     contentWidth: Dp = 0.dp,
@@ -207,15 +189,11 @@ private fun LazyStaggeredGridScope.PostsGridInScope(
 }
 
 
-
-
-private fun LazyStaggeredGridScope.PostsListInScope(
+private fun LazyStaggeredGridScope.postsListInScope(
     posts: List<Post>,
     isLoading: Boolean,
     isRefreshing: Boolean,
-    error: String,
     endReached: Boolean,
-    emptyMessage: EmptyState,
     postGetsDeleted: (postId: String) -> Unit,
     updatePost: (post: Post) -> Unit,
     navController: NavController,
@@ -255,15 +233,11 @@ private fun LazyStaggeredGridScope.PostsListInScope(
     }
 }
 
-private fun LazyStaggeredGridScope.PostsMasonryInScope(
+private fun LazyStaggeredGridScope.postsMasonryInScope(
     posts: List<Post>,
     isLoading: Boolean,
     isRefreshing: Boolean,
-    error: String,
     endReached: Boolean,
-    emptyMessage: EmptyState,
-    postGetsDeleted: (postId: String) -> Unit,
-    updatePost: (post: Post) -> Unit,
     navController: NavController,
 ) {
 
@@ -273,11 +247,11 @@ private fun LazyStaggeredGridScope.PostsMasonryInScope(
             val zIndex = remember {
                 mutableFloatStateOf(1f)
             }
-            Box(modifier = Modifier.zIndex(zIndex.floatValue).padding(horizontal = 2.dp)) {
+            Box(modifier = Modifier.zIndex(zIndex.floatValue)) {
                 MasonryPost(
                     post = posts[index],
                     navController = navController,
-                    )
+                )
             }
         }
 

@@ -27,7 +27,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -39,7 +38,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -62,11 +60,13 @@ import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.ui.composables.profile.CollectionsComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.MutualFollowersComposable
-import com.daniebeler.pfpixelix.ui.composables.profile.PostsWrapperComposable
+import com.daniebeler.pfpixelix.ui.composables.profile.postsWrapperComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.ProfileTopSection
 import com.daniebeler.pfpixelix.ui.composables.profile.SwitchViewComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.server_stats.DomainSoftwareComposable
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
+import com.daniebeler.pfpixelix.ui.composables.states.EmptyStateComposable
+import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposableDialog
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pfpixelix.ui.composables.widgets.ButtonRowElement
@@ -157,8 +157,7 @@ fun OtherProfileComposable(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             TopAppBar(
-                scrollBehavior = scrollBehavior,
-                title = {
+                scrollBehavior = scrollBehavior, title = {
                     Row {
                         Column {
                             Text(
@@ -199,7 +198,7 @@ fun OtherProfileComposable(
                             contentDescription = ""
                         )
                     }
-                }, colors = TopAppBarDefaults.mediumTopAppBarColors(
+                }, colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.surfaceContainer
                 )
             )
@@ -208,8 +207,7 @@ fun OtherProfileComposable(
             CustomPullToRefreshBox(
                 isRefreshing = viewModel.accountState.refreshing || viewModel.postsState.refreshing,
                 onRefresh = { viewModel.loadData(userId, true, navController) },
-                modifier = Modifier.fillMaxSize()
-                    .background(MaterialTheme.colorScheme.background)
+                modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)
             ) {
 
                 BoxWithConstraints {
@@ -243,8 +241,7 @@ fun OtherProfileComposable(
                                         constraints.maxWidth + (horizontalPadding * 2)
                                     val placeable = measurable.measure(
                                         constraints.copy(
-                                            maxWidth = expandedWidth,
-                                            minWidth = expandedWidth
+                                            maxWidth = expandedWidth, minWidth = expandedWidth
                                         )
                                     )
                                     layout(constraints.maxWidth, placeable.height) {
@@ -271,8 +268,7 @@ fun OtherProfileComposable(
                                 )
 
                                 Row(
-                                    modifier = Modifier.fillMaxWidth()
-                                        .padding(horizontal = 12.dp)
+                                    modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp)
                                 ) {
                                     var containerColor by remember {
                                         mutableStateOf(Color(0xFFFFFFFF))
@@ -368,15 +364,11 @@ fun OtherProfileComposable(
                                 })
                         }
 
-                        PostsWrapperComposable(
+                        postsWrapperComposable(
                             posts = viewModel.postsState.posts,
                             isLoading = viewModel.postsState.isLoading,
                             isRefreshing = viewModel.accountState.refreshing || viewModel.postsState.refreshing,
-                            error = viewModel.postsState.error,
                             endReached = viewModel.postsState.endReached,
-                            emptyMessage = EmptyState(
-                                icon = photoIcon, heading = "No Posts"
-                            ),
                             view = viewModel.view,
                             postGetsDeleted = { viewModel.postGetsDeleted(it) },
                             updatePost = { viewModel.updatePost(it) },
@@ -385,6 +377,26 @@ fun OtherProfileComposable(
                             gridContentWidth = gridContentWidth,
                             navController = navController
                         )
+                        if (viewModel.postsState.posts.isEmpty() && viewModel.postsState.error.isNotBlank()) {
+                            item(span = StaggeredGridItemSpan.FullLine) {
+                                ErrorComposable(
+                                    message = viewModel.postsState.error,
+                                    modifier = Modifier.fillMaxSize().padding(36.dp, 20.dp)
+                                )
+                            }
+                        }
+                        if (viewModel.postsState.isLoading && viewModel.postsState.posts.isEmpty()) {
+                            item(span = StaggeredGridItemSpan.FullLine) {
+                                LoadingComposable(viewModel.postsState.isLoading)
+                            }
+                        }
+                        if (viewModel.postsState.posts.isEmpty() && !viewModel.postsState.isLoading && viewModel.postsState.error.isEmpty()) {
+                            item(span = StaggeredGridItemSpan.FullLine) {
+                                EmptyStateComposable(
+                                    emptyState = EmptyState(icon = photoIcon, heading = "No Posts")
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -394,8 +406,7 @@ fun OtherProfileComposable(
                 refresh = { viewModel.loadData(userId, true, navController) })
 
             InfiniteStaggeredGridHandler(
-                lazyStaggeredGridState = lazyGridState,
-                itemCount = viewModel.postsState.posts.size
+                lazyStaggeredGridState = lazyGridState, itemCount = viewModel.postsState.posts.size
             ) {
                 viewModel.getPostsPaginated(viewModel.userId)
             }
@@ -412,40 +423,32 @@ fun OtherProfileComposable(
                         if (viewModel.relationshipState.accountRelationship != null) {
                             if (viewModel.relationshipState.accountRelationship!!.muting) {
                                 ButtonRowElement(
-                                    icon = Res.drawable.muted,
-                                    text = stringResource(
+                                    icon = Res.drawable.muted, text = stringResource(
                                         Res.string.unmute_this_profile
-                                    ),
-                                    onClick = {
+                                    ), onClick = {
                                         showUnMuteAlert = true
                                     })
                             } else {
                                 ButtonRowElement(
-                                    icon = Res.drawable.muted,
-                                    text = stringResource(
+                                    icon = Res.drawable.muted, text = stringResource(
                                         Res.string.mute_this_profile
-                                    ),
-                                    onClick = {
+                                    ), onClick = {
                                         showMuteAlert = true
                                     })
                             }
 
                             if (viewModel.relationshipState.accountRelationship!!.blocking) {
                                 ButtonRowElement(
-                                    icon = Res.drawable.blocked,
-                                    text = stringResource(
+                                    icon = Res.drawable.blocked, text = stringResource(
                                         Res.string.unblock_this_profile
-                                    ),
-                                    onClick = {
+                                    ), onClick = {
                                         showUnBlockAlert = true
                                     })
                             } else {
                                 ButtonRowElement(
-                                    icon = Res.drawable.blocked,
-                                    text = stringResource(
+                                    icon = Res.drawable.blocked, text = stringResource(
                                         Res.string.block_this_profile
-                                    ),
-                                    onClick = {
+                                    ), onClick = {
                                         showBlockAlert = true
                                     })
                             }
@@ -472,11 +475,13 @@ fun OtherProfileComposable(
 
             if (showUnMuteAlert) {
                 UnMuteAccountAlert(
-                    onDismissRequest = { showUnMuteAlert = false }, onConfirmation = {
+                    onDismissRequest = { showUnMuteAlert = false },
+                    onConfirmation = {
                         showUnMuteAlert = false
                         showBottomSheet = false
                         viewModel.unMuteAccount(viewModel.userId)
-                    }, account = viewModel.accountState.account!!
+                    },
+                    account = viewModel.accountState.account!!
                 )
             }
             if (showMuteAlert) {
@@ -499,28 +504,26 @@ fun OtherProfileComposable(
             }
             if (showUnBlockAlert) {
                 UnBlockAccountAlert(
-                    onDismissRequest = { showUnBlockAlert = false }, onConfirmation = {
+                    onDismissRequest = { showUnBlockAlert = false },
+                    onConfirmation = {
                         showUnBlockAlert = false
                         showBottomSheet = false
                         viewModel.unblockAccount(viewModel.userId)
-                    }, account = viewModel.accountState.account!!
+                    },
+                    account = viewModel.accountState.account!!
                 )
             }
 
             ErrorComposableDialog(
-                errorMessage = viewModel.relationshipState.error,
-                onDismiss = {
+                errorMessage = viewModel.relationshipState.error, onDismiss = {
                     viewModel.relationshipState = viewModel.relationshipState.copy(error = "")
                     viewModel.getRelationship(userId)
                     showBottomSheet = false
-                }
-            )
+                })
             ErrorComposableDialog(
-                viewModel.accountState.error,
-                onDismiss = {
+                viewModel.accountState.error, onDismiss = {
                     viewModel.accountState = viewModel.accountState.copy(error = "")
-                }
-            )
+                })
         }
     }
 }
@@ -693,8 +696,7 @@ fun AlertTopSection(account: Account) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(text = account.username, fontSize = 12.sp)
                     Text(
-                        text = " • " + (account.url.substringAfter("https://").substringBefore("/")
-                            ?: ""), color = MaterialTheme.colorScheme.secondary, fontSize = 12.sp
+                        text = " • " + (account.url.substringAfter("https://").substringBefore("/")), color = MaterialTheme.colorScheme.secondary, fontSize = 12.sp
                     )
                 }
 

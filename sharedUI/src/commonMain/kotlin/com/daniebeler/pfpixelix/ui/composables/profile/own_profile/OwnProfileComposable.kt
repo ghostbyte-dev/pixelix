@@ -31,7 +31,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -52,11 +51,12 @@ import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.service.platform.PlatformFeatures
 import com.daniebeler.pfpixelix.ui.composables.widgets.InfiniteStaggeredGridHandler
 import com.daniebeler.pfpixelix.ui.composables.profile.CollectionsComposable
-import com.daniebeler.pfpixelix.ui.composables.profile.PostsWrapperComposable
+import com.daniebeler.pfpixelix.ui.composables.profile.postsWrapperComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.ProfileTopSection
 import com.daniebeler.pfpixelix.ui.composables.profile.SwitchViewComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.server_stats.DomainSoftwareComposable
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
+import com.daniebeler.pfpixelix.ui.composables.states.EmptyStateComposable
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposableDialog
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
@@ -129,7 +129,7 @@ fun OwnProfileComposable(
                             contentDescription = "preferences"
                         )
                     }
-                }, colors = TopAppBarDefaults.mediumTopAppBarColors(
+                }, colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.surfaceContainer
                 )
             )
@@ -234,15 +234,11 @@ fun OwnProfileComposable(
                                 onViewChange = { viewModel.changeView(it) })
                         }
 
-                        PostsWrapperComposable(
+                        postsWrapperComposable(
                             posts = viewModel.postsState.posts,
                             isLoading = viewModel.postsState.isLoading,
                             isRefreshing = viewModel.accountState.refreshing || viewModel.postsState.refreshing,
-                            error = viewModel.postsState.error,
                             endReached = viewModel.postsState.endReached,
-                            emptyMessage = EmptyState(
-                                icon = photoIcon, heading = "No Posts"
-                            ),
                             view = viewModel.view,
                             postGetsDeleted = { viewModel.postGetsDeleted(it) },
                             updatePost = { viewModel.updatePost(it) },
@@ -262,6 +258,13 @@ fun OwnProfileComposable(
                         if (viewModel.postsState.isLoading && viewModel.postsState.posts.isEmpty()) {
                             item(span = StaggeredGridItemSpan.FullLine) {
                                 LoadingComposable(viewModel.postsState.isLoading)
+                            }
+                        }
+                        if (viewModel.postsState.posts.isEmpty() && !viewModel.postsState.isLoading && viewModel.postsState.error.isEmpty()) {
+                            item(span = StaggeredGridItemSpan.FullLine) {
+                                EmptyStateComposable(
+                                    emptyState = EmptyState(icon = photoIcon, heading = "No Posts")
+                                )
                             }
                         }
                     }

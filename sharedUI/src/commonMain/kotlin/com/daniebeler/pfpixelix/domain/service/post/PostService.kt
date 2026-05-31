@@ -55,7 +55,7 @@ class PostService(
 
         try {
             val response: PaginatedResponse<List<Post>> =
-                api.getLikedPosts(maxId).executeAndParsePagination( true, "max_id")
+                api.getLikedPosts(maxId).executeAndParsePagination(true, "max_id")
             val filteredPosts = response.data.filter { it.mediaAttachments.isNotEmpty() }
             val filteredResponse = response.copy(data = filteredPosts)
             emit(Resource.Success(filteredResponse))
@@ -108,7 +108,7 @@ class PostService(
 
         try {
             val response: PaginatedResponse<List<Post>> =
-                api.getBookmarkedPosts(cursor = cursor).executeAndParsePagination( true, "max_id")
+                api.getBookmarkedPosts(cursor = cursor).executeAndParsePagination(true, "max_id")
             val filteredPosts = response.data.filter { it.mediaAttachments.isNotEmpty() }
             val filteredResponse = response.copy(data = filteredPosts)
             emit(Resource.Success(filteredResponse))

@@ -267,9 +267,7 @@ fun MasonryPost(
         pagerState = pagerState,
         postId = postId,
         isMasonry = true,
-        onLikeAnimation = {
-            //animateHeart = true
-        },
+        onLikeAnimation = {},
         navController = navController,
         setZindex = {},
         updatePost = {})
@@ -333,9 +331,9 @@ private fun PostHeader(
                         modifier = Modifier.size(16.dp)
                     )
                     Row {
-                        Text(text = post.place?.name ?: "", fontSize = 12.sp)
-                        if (post.place?.country != null) {
-                            Text(text = ", ${post.place?.country ?: ""}", fontSize = 12.sp)
+                        Text(text = post.place.name ?: "", fontSize = 12.sp)
+                        if (post.place.country != null) {
+                            Text(text = ", ${post.place.country}", fontSize = 12.sp)
                         }
                     }
                 }

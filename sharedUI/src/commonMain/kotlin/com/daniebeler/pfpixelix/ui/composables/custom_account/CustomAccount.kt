@@ -142,7 +142,6 @@ private fun AccountRow(
                         text = account.displayname,
                         lineHeight = 8.sp,
                         fontWeight = FontWeight.Bold,
-                        modifier = Modifier.weight(1f),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
@@ -153,7 +152,9 @@ private fun AccountRow(
                             }",
                             fontSize = 12.sp,
                             color = MaterialTheme.colorScheme.primary,
-                            lineHeight = 8.sp
+                            lineHeight = 8.sp,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
                         )
                     }
                 }

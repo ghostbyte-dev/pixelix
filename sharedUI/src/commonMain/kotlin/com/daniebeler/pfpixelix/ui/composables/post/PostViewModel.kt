@@ -24,6 +24,7 @@ import com.daniebeler.pfpixelix.domain.service.suggestions.HashtagMentionsSugges
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.ui.composables.post.reply.OwnReplyState
 import com.daniebeler.pfpixelix.ui.composables.post.reply.RepliesState
+import com.daniebeler.pfpixelix.ui.composables.profile.RelationshipState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.launchIn
@@ -68,6 +69,7 @@ class PostViewModel @Inject constructor(
     var replyText by mutableStateOf(TextFieldValue())
 
     var volume by mutableStateOf(prefs.enableVolume)
+    var relationshipState by mutableStateOf(RelationshipState())
 
     init {
         myAccountId = authService.getCurrentSession()!!.accountId
@@ -468,6 +470,42 @@ class PostViewModel @Inject constructor(
                 }
             }.launchIn(viewModelScope)
         }
+    }
+
+    fun muteAccount(userId: String) {
+        accountService.muteAccount(userId).onEach { result ->
+            relationshipState = when (result) {
+                is Resource.Success -> {
+                    RelationshipState(accountRelationship = result.data)
+                }
+
+                is Resource.Error -> {
+                    RelationshipState(error = result.message)
+                }
+
+                is Resource.Loading -> {
+                    RelationshipState(isLoading = true)
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    fun blockAccount(userId: String) {
+        accountService.blockAccount(userId).onEach { result ->
+            relationshipState = when (result) {
+                is Resource.Success -> {
+                    RelationshipState(accountRelationship = result.data)
+                }
+
+                is Resource.Error -> {
+                    RelationshipState(error = result.message)
+                }
+
+                is Resource.Loading -> {
+                    RelationshipState(isLoading = true)
+                }
+            }
+        }.launchIn(viewModelScope)
     }
 
     fun openUrl(url: String) {

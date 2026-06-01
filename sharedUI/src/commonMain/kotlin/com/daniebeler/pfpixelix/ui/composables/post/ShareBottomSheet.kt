@@ -25,6 +25,8 @@ import com.daniebeler.pfpixelix.domain.model.MediaAttachment
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.model.Visibility
 import com.daniebeler.pfpixelix.domain.service.platform.PlatformFeatures
+import com.daniebeler.pfpixelix.ui.composables.profile.other_profile.BlockAccountAlert
+import com.daniebeler.pfpixelix.ui.composables.profile.other_profile.MuteAccountAlert
 import com.daniebeler.pfpixelix.ui.composables.widgets.ButtonRowElement
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import org.jetbrains.compose.resources.getString
@@ -32,6 +34,8 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.audience_public
+import pixelix.app.generated.resources.block_this_profile
+import pixelix.app.generated.resources.blocked
 import pixelix.app.generated.resources.download
 import pixelix.app.generated.resources.delete_this_post
 import pixelix.app.generated.resources.document_text
@@ -43,6 +47,8 @@ import pixelix.app.generated.resources.license
 import pixelix.app.generated.resources.open_in_browser
 import pixelix.app.generated.resources.open
 import pixelix.app.generated.resources.edit
+import pixelix.app.generated.resources.mute_this_profile
+import pixelix.app.generated.resources.muted
 import pixelix.app.generated.resources.report_this_post
 import pixelix.app.generated.resources.share
 import pixelix.app.generated.resources.share_this_post
@@ -67,6 +73,8 @@ fun ShareBottomSheet(
     }
 
     var isReportDialogOpen by remember { mutableStateOf(false) }
+    var showMuteAlert by remember { mutableStateOf(false) }
+    var showBlockAlert by remember { mutableStateOf(false) }
 
     val mediaAttachment: MediaAttachment? = viewModel.post?.mediaAttachments?.let { attachments ->
         if (attachments.isNotEmpty() && currentMediaAttachmentNumber in attachments.indices) {
@@ -167,27 +175,69 @@ fun ShareBottomSheet(
         } else {
             HorizontalDivider(Modifier.padding(12.dp))
 
-            ButtonRowElement(
-                icon = Res.drawable.warning,
-                text = stringResource(Res.string.report_this_post),
-                onClick = {
-                    isReportDialogOpen = true
-                },
-                color = MaterialTheme.colorScheme.error
+            val relationship = viewModel.relationshipState.accountRelationship
+
+            if (relationship == null || !relationship.muting) {
+                ButtonRowElement(
+                    icon = Res.drawable.muted, text = stringResource(
+                        Res.string.mute_this_profile
+                    ), onClick = {
+                        showMuteAlert = true
+                    }, color = MaterialTheme.colorScheme.error
+                )
+            }
+            if (relationship == null || !relationship.blocking) {
+                ButtonRowElement(
+                icon = Res.drawable.blocked, text = stringResource(
+                    Res.string.block_this_profile
+                ), onClick = {
+                    showBlockAlert = true
+                }, color = MaterialTheme.colorScheme.error
             )
         }
-    }
 
-    if (isReportDialogOpen) {
-        ReportDialog(
-            dismissDialog = {
-                isReportDialogOpen = false
-                viewModel.reportState = null
+
+
+        ButtonRowElement(
+            icon = Res.drawable.warning,
+            text = stringResource(Res.string.report_this_post),
+            onClick = {
+                isReportDialogOpen = true
             },
-            reportState = viewModel.reportState
-        ) { category ->
-            viewModel.reportPost(category)
-            viewModel.reportState = null
-        }
+            color = MaterialTheme.colorScheme.error
+        )
     }
+}
+
+if (showMuteAlert) {
+    MuteAccountAlert(
+        onDismissRequest = { showMuteAlert = false }, onConfirmation = {
+            showMuteAlert = false
+            viewModel.post?.account?.let { viewModel.muteAccount(it.id) }
+            closeBottomSheet()
+        }, account = viewModel.post?.account
+    )
+}
+if (showBlockAlert) {
+    BlockAccountAlert(
+        onDismissRequest = { showBlockAlert = false }, onConfirmation = {
+            showBlockAlert = false
+            viewModel.post?.account?.let { viewModel.blockAccount(it.id) }
+            closeBottomSheet()
+        }, account = viewModel.post?.account
+    )
+}
+
+if (isReportDialogOpen) {
+    ReportDialog(
+        dismissDialog = {
+            isReportDialogOpen = false
+            viewModel.reportState = null
+        },
+        reportState = viewModel.reportState
+    ) { category ->
+        viewModel.reportPost(category)
+        viewModel.reportState = null
+    }
+}
 }

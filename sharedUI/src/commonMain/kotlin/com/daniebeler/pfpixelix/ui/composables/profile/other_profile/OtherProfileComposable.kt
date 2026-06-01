@@ -530,16 +530,18 @@ fun OtherProfileComposable(
 
 @Composable
 fun MuteAccountAlert(
-    onDismissRequest: () -> Unit, onConfirmation: () -> Unit, account: Account
+    onDismissRequest: () -> Unit, onConfirmation: () -> Unit, account: Account?
 ) {
     AlertDialog(title = {
         Text(text = stringResource(Res.string.mute_account))
     }, text = {
         Column {
 
-            AlertTopSection(account = account)
+            account?.let {
+                AlertTopSection(account = account)
+                HorizontalDivider(Modifier.padding(vertical = 12.dp))
+            }
 
-            HorizontalDivider(Modifier.padding(vertical = 12.dp))
 
             Text(text = stringResource(Res.string.mute_consequence_1))
             Text(text = stringResource(Res.string.mute_consequence_2))
@@ -597,16 +599,18 @@ fun UnMuteAccountAlert(
 
 @Composable
 fun BlockAccountAlert(
-    onDismissRequest: () -> Unit, onConfirmation: () -> Unit, account: Account
+    onDismissRequest: () -> Unit, onConfirmation: () -> Unit, account: Account?
 ) {
     AlertDialog(title = {
         Text(text = stringResource(Res.string.block_account))
     }, text = {
         Column {
 
-            AlertTopSection(account = account)
+            account?.let {
+                AlertTopSection(account = account)
+                HorizontalDivider(Modifier.padding(vertical = 12.dp))
+            }
 
-            HorizontalDivider(Modifier.padding(vertical = 12.dp))
 
             Text(text = stringResource(Res.string.block_consequence_1))
             Text(text = stringResource(Res.string.block_consequence_2))
@@ -696,7 +700,10 @@ fun AlertTopSection(account: Account) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(text = account.username, fontSize = 12.sp)
                     Text(
-                        text = " • " + (account.url.substringAfter("https://").substringBefore("/")), color = MaterialTheme.colorScheme.secondary, fontSize = 12.sp
+                        text = " • " + (account.url.substringAfter("https://")
+                            .substringBefore("/")),
+                        color = MaterialTheme.colorScheme.secondary,
+                        fontSize = 12.sp
                     )
                 }
 

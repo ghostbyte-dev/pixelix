@@ -450,7 +450,7 @@ private fun PostMediaContent(
         }
         Box {
             HorizontalPager(
-                state = pagerState, modifier = Modifier.zIndex(50f).aspectRatio(
+                state = pagerState, pageSpacing = if (isMasonry) {4.dp} else {16.dp}, modifier = Modifier.zIndex(50f).aspectRatio(
                     smallestAspectRatio?.meta?.original?.aspect?.toFloat() ?: 1f
                 )
             ) { page ->

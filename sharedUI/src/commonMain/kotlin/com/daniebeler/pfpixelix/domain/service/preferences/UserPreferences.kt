@@ -51,7 +51,7 @@ class UserPreferences(observableSettings: DataStoreSettings) {
     val showHomeTimelineHelpFlow = observableSettings.getBooleanFlow("k_show_home_timeline_help", showHomeTimelineHelp)
 
     var showLocalTimelineHelp by settings.boolean("k_show_local_timeline_help", true)
-    val showLocalTimelineHelpFlow = observableSettings.getBooleanFlow("k_show_home_timeline_help", showLocalTimelineHelp)
+    val showLocalTimelineHelpFlow = observableSettings.getBooleanFlow("k_show_local_timeline_help", showLocalTimelineHelp)
 
     var showGlobalTimelineHelp by settings.boolean("k_show_global_timeline_help", true)
     val showGlobalTimelineHelpFlow = observableSettings.getBooleanFlow("k_show_global_timeline_help", showGlobalTimelineHelp)

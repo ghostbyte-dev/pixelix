@@ -431,7 +431,8 @@ fun OtherProfileComposable(
                                         Res.string.mute_this_profile
                                     ), onClick = {
                                         showMuteAlert = true
-                                    })
+                                    }, color = MaterialTheme.colorScheme.error
+                                )
                             }
 
                             if (viewModel.relationshipState.accountRelationship!!.blocking) {
@@ -447,7 +448,8 @@ fun OtherProfileComposable(
                                         Res.string.block_this_profile
                                     ), onClick = {
                                         showBlockAlert = true
-                                    })
+                                    }, color = MaterialTheme.colorScheme.error
+                                )
                             }
                         }
 
@@ -697,9 +699,12 @@ fun AlertTopSection(account: Account) {
                 }
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(text = account.username, fontSize = 12.sp,
+                    Text(
+                        text = account.username,
+                        fontSize = 12.sp,
                         maxLines = 1,
-                        overflow = TextOverflow.Ellipsis)
+                        overflow = TextOverflow.Ellipsis
+                    )
                     Text(
                         text = " • " + (account.url.substringAfter("https://")
                             .substringBefore("/")),

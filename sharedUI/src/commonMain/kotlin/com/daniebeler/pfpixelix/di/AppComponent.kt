@@ -20,6 +20,7 @@ import com.daniebeler.pfpixelix.domain.service.file.toOkIoPath
 import com.daniebeler.pfpixelix.domain.service.icon.AppIconManager
 import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
 import com.daniebeler.pfpixelix.domain.service.search.SearchFieldFocus
+import com.daniebeler.pfpixelix.domain.service.session.AuthInterceptor
 import com.daniebeler.pfpixelix.domain.service.session.AuthService
 import com.daniebeler.pfpixelix.domain.service.session.Session
 import com.daniebeler.pfpixelix.domain.service.session.SessionStorage
@@ -38,6 +39,8 @@ import de.jensklingenberg.ktorfit.Ktorfit
 import de.jensklingenberg.ktorfit.converter.CallConverterFactory
 import io.github.vinceglb.filekit.resolve
 import io.ktor.client.HttpClient
+import io.ktor.client.call.body
+import io.ktor.client.plugins.HttpResponseValidator
 import io.ktor.client.plugins.HttpSend
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -90,28 +93,35 @@ abstract class AppComponent(
     @AppSingleton
     fun provideHttpClient(
         json: Json,
-        session: Session
-    ): HttpClient = HttpClient {
-        expectSuccess = true
-        install(ContentNegotiation) { json(json) }
-        install(Logging) {
-            logger = object : io.ktor.client.plugins.logging.Logger {
-                override fun log(message: String) {
-                    Logger.v("Pixelix HttpClient") {
-                        message.lines().joinToString { "\n\t\t$it" }
+        session: Session,
+        sessionStorage: DataStore<SessionStorage>
+    ): HttpClient {
+        val authInterceptor = AuthInterceptor(session, json, sessionStorage)
+
+        return HttpClient {
+
+            expectSuccess = true
+            install(ContentNegotiation) { json(json) }
+            install(Logging) {
+                logger = object : io.ktor.client.plugins.logging.Logger {
+                    override fun log(message: String) {
+                        Logger.v("Pixelix HttpClient") {
+                            message.lines().joinToString { "\n\t\t$it" }
+                        }
                     }
                 }
+                level = LogLevel.NONE
             }
-            level = LogLevel.NONE
-        }
-        install(HttpTimeout) {
-            requestTimeoutMillis = 60000
-            socketTimeoutMillis = 60000
-            connectTimeoutMillis = 60000
-        }
-    }.apply {
-        plugin(HttpSend).intercept { request ->
-            with(session) { intercept(request) }
+            install(HttpTimeout) {
+                requestTimeoutMillis = 60000
+                socketTimeoutMillis = 60000
+                connectTimeoutMillis = 60000
+            }
+        }.apply {
+            plugin(HttpSend).intercept { request ->
+                with(session) { intercept(request) }
+                with(authInterceptor) {intercept(request)}
+            }
         }
     }
 

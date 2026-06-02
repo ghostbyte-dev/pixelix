@@ -15,7 +15,11 @@ data class Credentials(
     val displayName: String,
     val avatar: String,
     val serverUrl: String,
-    val token: String
+    val token: String,
+    val refreshToken: String,
+    val clientId: String,
+    val clientSecret: String,
+    val createdAt: String
 ) {
     fun key(): String {
         val cleanUrl =

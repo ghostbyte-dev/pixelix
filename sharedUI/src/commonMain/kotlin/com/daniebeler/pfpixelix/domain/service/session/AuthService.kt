@@ -41,7 +41,7 @@ class AuthService(
 
     suspend fun auth(host: String) {
         val serverUrl = getServerUrl(host)
-        val api = createAuthApi(serverUrl)
+        val api = createAuthApi(serverUrl, json)
         val authData = api.getAuthData(clientName, redirectUrl)
 
         val authUrl = URLBuilder("${serverUrl}oauth/authorize").apply {
@@ -79,9 +79,13 @@ class AuthService(
             displayName = account.displayname ?: account.username,
             avatar = account.avatar,
             serverUrl = serverUrl.toString(),
-            token = token.accessToken
+            token = token.accessToken  + "sdf",
+            refreshToken = token.refreshToken,
+            clientId = authData.clientId,
+            clientSecret = authData.clientSecret,
+            createdAt = token.createdAt
         )
-        updateSession(newCred);
+        updateSession(newCred)
     }
 
     private suspend fun updateSession(newCred: Credentials) {
@@ -159,25 +163,24 @@ class AuthService(
         require(isValidHost(host)) { "The host is invalid '$host'" }
         return Url("https://$host/")
     }
-
-    private fun createAuthApi(baseUrl: Url): AuthApi {
-        val httpClient = HttpClient {
-            install(ContentNegotiation) { json(json) }
-            install(Logging) {
-                logger = object : io.ktor.client.plugins.logging.Logger {
-                    override fun log(message: String) {
-                        Logger.v(tag = "Pixelix HttpAuth") {
-                            message.lines().joinToString { "\n\t\t$it" }
-                        }
+}
+fun createAuthApi(baseUrl: Url, json: Json): AuthApi {
+    val httpClient = HttpClient {
+        install(ContentNegotiation) { json(json) }
+        install(Logging) {
+            logger = object : io.ktor.client.plugins.logging.Logger {
+                override fun log(message: String) {
+                    Logger.v(tag = "Pixelix HttpAuth") {
+                        message.lines().joinToString { "\n\t\t$it" }
                     }
                 }
-                level = LogLevel.INFO
             }
+            level = LogLevel.INFO
         }
-        val ktorfit = Ktorfit.Builder()
-            .httpClient(httpClient)
-            .baseUrl(baseUrl.toString())
-            .build()
-        return ktorfit.createAuthApi()
     }
+    val ktorfit = Ktorfit.Builder()
+        .httpClient(httpClient)
+        .baseUrl(baseUrl.toString())
+        .build()
+    return ktorfit.createAuthApi()
 }

@@ -56,4 +56,16 @@
     <string name="delete">Kustuta</string>
     <string name="this_is_the_end">See ongi Lõpp!</string>
     <string name="and">ja</string>
+    <string name="bookmarked_posts">Järjehoidjana lisatud postitused</string>
+    <string name="unmute_caps">Lõpeta summutamine</string>
+    <string name="unmute">lõpeta summutamine</string>
+    <string name="media_description">Meediumi kirjeldus</string>
+    <string name="no_posts_yet">Postitusi veel pole</string>
+    <string name="mentioned_you_in_a_post">mainis sind</string>
+    <string name="no_bookmarked_posts">Järjehoidjana lisatud postitusi pole</string>
+    <string name="i_don_t_have_an_account">Mul pole profiili</string>
+    <string name="server_url">Serveri võrguaadress</string>
+    <string name="are_you_sure_you_want_to_log_out">Kas sa oled kindel, et soovid logida välja?</string>
+    <string name="logout_questionmark">Kas logime välja?</string>
+    <string name="view_comments">Vaata %1$s kommentaari</string>
 </resources>

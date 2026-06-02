@@ -305,4 +305,6 @@
     <string name="cancel_post_warning">Czy chcesz porzucić ten wpis?</string>
     <string name="cancel_profile_edit">Czy chcesz porzucić zmiany?</string>
     <string name="cancel_post_edit">Czy chcesz porzucić zmiany?</string>
+    <string name="license_label">Licencja</string>
+    <string name="registration">Rejestracja</string>
 </resources>

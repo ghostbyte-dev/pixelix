@@ -1,6 +1,6 @@
 # Pixelix - A Pixelfed Client
 
-![Preview of App](https://github.com/ghostbyte-dev/pixelix/blob/c42cbda6ac92b80e3d4d6e8f726ac211c1b02de6/assets/pixelix_screenshots.png)
+![Preview of App](https://github.com/ghostbyte-dev/pixelix/blob/5687e50de0f986d5d043d58d2518740c3ef0e0c6/assets/pixelix_screenshots.png)
 
 Pixelix is an Android and iOS client for [Pixelfed](https://pixelfed.org/), the federated photo-sharing platform.
 

@@ -52,6 +52,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -692,18 +693,24 @@ fun AlertTopSection(account: Account) {
                         Text(
                             text = account.displayname,
                             lineHeight = 8.sp,
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Bold,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
                         )
                     }
                 }
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(text = account.username, fontSize = 12.sp)
+                    Text(text = account.username, fontSize = 12.sp,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis)
                     Text(
                         text = " • " + (account.url.substringAfter("https://")
                             .substringBefore("/")),
                         color = MaterialTheme.colorScheme.secondary,
-                        fontSize = 12.sp
+                        fontSize = 12.sp,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
                 }
 

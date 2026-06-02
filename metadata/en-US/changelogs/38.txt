@@ -1,0 +1,15 @@
+- New floating navigation bar
+- Top bar and navigation bar now automatically hide while scrolling
+- Added support for displaying posts in a masonry grid layout
+- Support rendering of custom instance emojis
+- Refreshed icon set across the app
+- Added Material 3 Expressive loading indicators
+- Text in posts and profiles can now be selected
+- Profiles can now be muted or blocked directly from the timeline
+- Improved managing collections
+- Added a new support-us-section
+- Fixed image sharing from the gallery
+- Use refresh-tokens to automatically update expired sessions
+- Improved error handling and stability
+- Updated translations
+- Various bug fixes and UI/UX improvements

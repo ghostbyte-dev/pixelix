@@ -54,7 +54,6 @@ import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.app_name
 import pixelix.app.generated.resources.global
 import pixelix.app.generated.resources.global_timeline_explained
-import pixelix.app.generated.resources.help
 import pixelix.app.generated.resources.coffee
 import pixelix.app.generated.resources.home
 import pixelix.app.generated.resources.home_timeline_explained
@@ -79,55 +78,49 @@ fun HomeComposable(
     val donationSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showDonationBottomSheet by remember { mutableStateOf(false) }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top),
         topBar = {
             TopAppBar(
                 scrollBehavior = scrollBehavior, title = {
-                Text(
-                    stringResource(Res.string.app_name),
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp
-                )
-            }, navigationIcon = {
-                IconButton(onClick = { showBottomSheet = true }) {
-                    Icon(
-                        imageVector = vectorResource(Res.drawable.help),
-                        contentDescription = "Help"
+                    Text(
+                        stringResource(Res.string.app_name),
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp
                     )
-                }
-            }, actions = {
-                Row {
-                    IconButton(onClick = {
-                        showDonationBottomSheet = true
-                    }) {
-                        Icon(
-                            imageVector = vectorResource(Res.drawable.coffee),
-                            contentDescription = "Conversations"
-                        )
-                    }
+                }, actions = {
+                    Row {
+                        IconButton(onClick = {
+                            showDonationBottomSheet = true
+                        }) {
+                            Icon(
+                                imageVector = vectorResource(Res.drawable.coffee),
+                                contentDescription = "Conversations"
+                            )
+                        }
 
-                    IconButton(onClick = {
-                        navController.navigate(Destination.Conversations)
-                    }) {
-                        Icon(
-                            imageVector = vectorResource(Res.drawable.mail),
-                            contentDescription = "Conversations"
-                        )
+                        IconButton(onClick = {
+                            navController.navigate(Destination.Conversations)
+                        }) {
+                            Icon(
+                                imageVector = vectorResource(Res.drawable.mail),
+                                contentDescription = "Conversations"
+                            )
+                        }
+                        IconButton(onClick = {
+                            openPreferencesDrawer()
+                        }) {
+                            Icon(
+                                imageVector = vectorResource(Res.drawable.settings),
+                                contentDescription = "Settings"
+                            )
+                        }
                     }
-                    IconButton(onClick = {
-                        openPreferencesDrawer()
-                    }) {
-                        Icon(
-                            imageVector = vectorResource(Res.drawable.settings),
-                            contentDescription = "Settings"
-                        )
-                    }
-                }
-            }, colors = TopAppBarDefaults.mediumTopAppBarColors(
-                containerColor = MaterialTheme.colorScheme.surfaceContainer
-            )
+                }, colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceContainer
+                )
             )
         }) { paddingValues ->
         Box(

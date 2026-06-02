@@ -46,4 +46,13 @@ class UserPreferences(observableSettings: DataStoreSettings) {
 
     var enableSwipeBetweenTabs by settings.boolean("k_enable_swipe_between_timelines", true)
     val enableSwipeBetweenTabsFlow = observableSettings.getBooleanFlow("k_enable_swipe_between_timelines", enableSwipeBetweenTabs)
+
+    var showHomeTimelineHelp by settings.boolean("k_show_home_timeline_help", true)
+    val showHomeTimelineHelpFlow = observableSettings.getBooleanFlow("k_show_home_timeline_help", showHomeTimelineHelp)
+
+    var showLocalTimelineHelp by settings.boolean("k_show_local_timeline_help", true)
+    val showLocalTimelineHelpFlow = observableSettings.getBooleanFlow("k_show_home_timeline_help", showLocalTimelineHelp)
+
+    var showGlobalTimelineHelp by settings.boolean("k_show_global_timeline_help", true)
+    val showGlobalTimelineHelpFlow = observableSettings.getBooleanFlow("k_show_global_timeline_help", showGlobalTimelineHelp)
 }

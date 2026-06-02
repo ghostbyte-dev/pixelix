@@ -15,7 +15,6 @@ class HomeViewModel @Inject constructor(
     private val platform: Platform
 ) : ViewModel() {
     var isSwipeBetweenTabsEnabled by mutableStateOf(true)
-
     init {
         viewModelScope.launch {
             prefs.enableSwipeBetweenTabsFlow.collect { isSwipeBetweenTabsEnabled = it }

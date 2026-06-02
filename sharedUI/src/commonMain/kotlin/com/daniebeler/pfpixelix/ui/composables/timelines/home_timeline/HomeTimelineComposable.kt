@@ -9,12 +9,15 @@ import com.daniebeler.pfpixelix.di.LocalAppComponent
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.ui.composables.widgets.InfinitePostsList
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
+import com.daniebeler.pfpixelix.ui.composables.timelines.TimelineHelpCard
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.explore_trending_profiles
 import pixelix.app.generated.resources.follow_accounts_or_hashtags_to_fill_your_home_timeline
+import pixelix.app.generated.resources.home
+import pixelix.app.generated.resources.home_timeline_explained
 import pixelix.app.generated.resources.no_posts
 import pixelix.app.generated.resources.photo
 
@@ -52,6 +55,20 @@ fun HomeTimelineComposable(
         onRefresh = { viewModel.refresh() },
         itemGetsDeleted = { postId -> viewModel.postGetsDeleted(postId) },
         postGetsUpdated = { viewModel.postGetsUpdated(it) },
-        staggeredGridState = staggeredGridState
+        staggeredGridState = staggeredGridState,
+        before = if (!viewModel.showTimelineHelp) {
+            null
+        } else {
+            {
+                TimelineHelpCard(
+                    title = stringResource(Res.string.home),
+                    description = stringResource(Res.string.home_timeline_explained),
+                    onDiscard = {
+                        viewModel.discardHelp()
+                    }
+                )
+            }
+
+        }
     )
 }

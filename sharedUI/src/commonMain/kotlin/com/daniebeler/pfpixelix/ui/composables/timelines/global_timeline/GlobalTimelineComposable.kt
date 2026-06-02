@@ -7,7 +7,12 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.di.LocalAppComponent
 import com.daniebeler.pfpixelix.di.injectViewModel
+import com.daniebeler.pfpixelix.ui.composables.timelines.TimelineHelpCard
 import com.daniebeler.pfpixelix.ui.composables.widgets.InfinitePostsList
+import org.jetbrains.compose.resources.stringResource
+import pixelix.app.generated.resources.Res
+import pixelix.app.generated.resources.global
+import pixelix.app.generated.resources.global_timeline_explained
 
 @Composable
 fun GlobalTimelineComposable(
@@ -37,6 +42,19 @@ fun GlobalTimelineComposable(
             viewModel.refresh()
         },
         itemGetsDeleted = { postId -> viewModel.postGetsDeleted(postId) },
-        postGetsUpdated = { post -> viewModel.postGetsUpdated(post) }
+        postGetsUpdated = { post -> viewModel.postGetsUpdated(post) },
+        before = if (!viewModel.showTimelineHelp) {
+            null
+        } else {
+            {
+                TimelineHelpCard(
+                    title = stringResource(Res.string.global),
+                    description = stringResource(Res.string.global_timeline_explained),
+                    onDiscard = {
+                        viewModel.discardHelp()
+                    }
+                )
+            }
+        }
     )
 }

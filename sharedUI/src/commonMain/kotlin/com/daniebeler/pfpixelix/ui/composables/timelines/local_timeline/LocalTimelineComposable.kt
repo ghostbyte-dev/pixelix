@@ -9,6 +9,11 @@ import com.daniebeler.pfpixelix.di.LocalAppComponent
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.ui.composables.widgets.InfinitePostsList
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
+import com.daniebeler.pfpixelix.ui.composables.timelines.TimelineHelpCard
+import org.jetbrains.compose.resources.stringResource
+import pixelix.app.generated.resources.Res
+import pixelix.app.generated.resources.local
+import pixelix.app.generated.resources.local_timeline_explained
 
 @Composable
 fun LocalTimelineComposable(
@@ -40,6 +45,19 @@ fun LocalTimelineComposable(
             viewModel.refresh()
         },
         itemGetsDeleted = { postId -> viewModel.postGetsDeleted(postId) },
-        postGetsUpdated = { viewModel.postGetsUpdated(it) }
+        postGetsUpdated = { viewModel.postGetsUpdated(it) },
+        before = if (!viewModel.showTimelineHelp) {
+            null
+        } else {
+            {
+                TimelineHelpCard(
+                    title = stringResource(Res.string.local),
+                    description = stringResource(Res.string.local_timeline_explained),
+                    onDiscard = {
+                        viewModel.discardHelp()
+                    }
+                )
+            }
+        }
     )
 }

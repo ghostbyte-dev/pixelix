@@ -118,8 +118,8 @@
     <string name="empty">Empty</string>
     <string name="follow_accounts_or_hashtags_to_fill_your_home_timeline">Follow profiles or hashtags to fill your home timeline</string>
     <string name="no_posts">No posts</string>
-    <string name="home_timeline_explained">The Home timeline shows you posts from people and hashtags that you follow.</string>
-    <string name="local_timeline_explained">The Local timeline shows posts from all users on your server</string>
+    <string name="home_timeline_explained">The Home timeline shows posts from people and hashtags that you follow.</string>
+    <string name="local_timeline_explained">The Local timeline shows posts from all users on your server.</string>
     <string name="global_timeline_explained">The Global timeline shows posts from all users on all servers your server federates with.</string>
     <string name="this_user_has_not_postet_anything_yet">This user has not postet anything yet</string>
     <string name="you_don_t_have_any_notifications">You don't have any notifications</string>

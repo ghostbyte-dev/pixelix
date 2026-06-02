@@ -69,6 +69,7 @@ import androidx.navigation.compose.rememberNavController
 import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.di.AppComponent
 import com.daniebeler.pfpixelix.di.LocalAppComponent
+import com.daniebeler.pfpixelix.domain.service.utils.GlobalNavigationEvent
 import com.daniebeler.pfpixelix.ui.composables.profile.own_profile.AccountSwitchBottomSheet
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.PreferencesComposable
 import com.daniebeler.pfpixelix.ui.composables.widgets.ReverseModalNavigationDrawer
@@ -180,6 +181,20 @@ fun App(
                     navController.clearBackStack<Destination.HomeTabNewPost>()
                     navController.clearBackStack<Destination.HomeTabNotifications>()
                     navController.clearBackStack<Destination.HomeTabOwnProfile>()
+                }
+
+                LaunchedEffect(appComponent.globalNavigator) {
+                    appComponent.globalNavigator.navigationEvents.collect { event ->
+                        when (event) {
+                            is GlobalNavigationEvent.NavigateToLogin -> {
+                                navController.navigate(Destination.FirstLogin) {
+                                    popUpTo(navController.graph.startDestinationId) {
+                                        inclusive = true
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
 
                 CompositionLocalProvider(

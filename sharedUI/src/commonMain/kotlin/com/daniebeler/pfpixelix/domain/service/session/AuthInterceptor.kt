@@ -2,8 +2,9 @@ package com.daniebeler.pfpixelix.domain.service.session
 
 import androidx.datastore.core.DataStore
 import co.touchlab.kermit.Logger
+import com.daniebeler.pfpixelix.domain.service.utils.GlobalNavigationEvent
+import com.daniebeler.pfpixelix.domain.service.utils.GlobalNavigator
 import io.ktor.client.call.HttpClientCall
-import io.ktor.client.call.body
 import io.ktor.client.plugins.Sender
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.statement.bodyAsText
@@ -21,6 +22,7 @@ class AuthInterceptor(
     private val session: Session,
     private val json: Json,
     private val sessionStorage: DataStore<SessionStorage>,
+    private val globalNavigator: GlobalNavigator
 ) {
     private val refreshMutex = Mutex()
     suspend fun Sender.intercept(request: HttpRequestBuilder): HttpClientCall {
@@ -49,12 +51,14 @@ class AuthInterceptor(
                         request.headers[HttpHeaders.Authorization] = "Bearer $newToken"
                         execute(request)
                     } else {
+                        globalNavigator.emit(GlobalNavigationEvent.NavigateToLogin)
                         executedRequest
                     }
                 } catch (e: Exception) {
                     Logger.e(tag = "Unauthorized") {
                         "error refreshing token" + e.message
                     }
+                    globalNavigator.emit(GlobalNavigationEvent.NavigateToLogin)
                     executedRequest
                 }
             }

@@ -29,6 +29,8 @@ import com.daniebeler.pfpixelix.domain.service.session.SystemUrlHandler
 import com.daniebeler.pfpixelix.domain.service.share.AccountIntentHandler
 import com.daniebeler.pfpixelix.domain.service.share.SystemFileShare
 import com.daniebeler.pfpixelix.domain.service.timeline.BackToTopTrigger
+import com.daniebeler.pfpixelix.domain.service.utils.GlobalNavigator
+import com.daniebeler.pfpixelix.domain.service.utils.GlobalNavigatorImpl
 import com.daniebeler.pfpixelix.domain.service.widget.WidgetService
 import com.daniebeler.pfpixelix.utils.KmpContext
 import com.daniebeler.pfpixelix.utils.coilContext
@@ -39,8 +41,6 @@ import de.jensklingenberg.ktorfit.Ktorfit
 import de.jensklingenberg.ktorfit.converter.CallConverterFactory
 import io.github.vinceglb.filekit.resolve
 import io.ktor.client.HttpClient
-import io.ktor.client.call.body
-import io.ktor.client.plugins.HttpResponseValidator
 import io.ktor.client.plugins.HttpSend
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -78,6 +78,10 @@ abstract class AppComponent(
     abstract val preferences: UserPreferences
     abstract val searchFieldFocus: SearchFieldFocus
     abstract val backToTopTrigger: BackToTopTrigger
+    abstract val globalNavigator: GlobalNavigator
+
+    @Provides
+    fun bindGlobalNavigator(impl: GlobalNavigatorImpl): GlobalNavigator = impl
 
     @get:Provides
     @get:AppSingleton
@@ -94,9 +98,10 @@ abstract class AppComponent(
     fun provideHttpClient(
         json: Json,
         session: Session,
-        sessionStorage: DataStore<SessionStorage>
+        sessionStorage: DataStore<SessionStorage>,
+        globalNavigator: GlobalNavigator
     ): HttpClient {
-        val authInterceptor = AuthInterceptor(session, json, sessionStorage)
+        val authInterceptor = AuthInterceptor(session, json, sessionStorage, globalNavigator)
 
         return HttpClient {
 

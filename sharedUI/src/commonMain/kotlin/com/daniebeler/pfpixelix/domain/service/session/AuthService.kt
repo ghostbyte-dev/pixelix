@@ -79,7 +79,7 @@ class AuthService(
             displayName = account.displayname ?: account.username,
             avatar = account.avatar,
             serverUrl = serverUrl.toString(),
-            token = token.accessToken  + "sdf",
+            token = token.accessToken,
             refreshToken = token.refreshToken,
             clientId = authData.clientId,
             clientSecret = authData.clientSecret,

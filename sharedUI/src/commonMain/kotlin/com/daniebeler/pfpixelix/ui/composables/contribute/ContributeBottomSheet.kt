@@ -66,8 +66,8 @@ fun ContributeBottomSheet(openUrl: (url: String) -> Unit) {
 
             ContributeCard(
                 "Share feedback",
-                desc = "Have an idea for a feature or improvement? We’d love to hear it. Suggestions help shape the future of Pixelix.",
-                onClick = { openUrl("https://github.com/ghostbyte-dev/pixelix/issues") },
+                desc = "Take part in a short survey to share your ideas, opinions, and suggestions about Pixelix’s design and features.",
+                onClick = { openUrl("https://app.formbricks.com/s/cmplkixsldbx0qh01yijw6fcy") },
                 buttonTitle = "Share feedback",
                 buttonDesc = "Your ideas directly improve the app",
                 buttonIcon = Res.drawable.feedback

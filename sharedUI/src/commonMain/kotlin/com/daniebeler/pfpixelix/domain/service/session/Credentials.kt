@@ -1,6 +1,5 @@
 package com.daniebeler.pfpixelix.domain.service.session
 
-import androidx.datastore.core.DataMigration
 import androidx.datastore.core.okio.OkioSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerializationException
@@ -42,7 +41,7 @@ object SessionStorageDataSerializer : OkioSerializer<SessionStorage> {
         get() = SessionStorage(emptyMap(), null)
 
     override suspend fun readFrom(source: BufferedSource): SessionStorage {
-        val rawJson = source.readUtf8();
+        val rawJson = source.readUtf8()
         return try {
             Json.decodeFromString(
                 deserializer = SessionStorage.serializer(),
@@ -50,17 +49,52 @@ object SessionStorageDataSerializer : OkioSerializer<SessionStorage> {
             )
         } catch (e: SerializationException) {
             try {
-                // Define what the old structure looked like
+                @Serializable
+                data class OldCredentials(
+                    val accountId: String,
+                    val username: String,
+                    val displayName: String,
+                    val avatar: String,
+                    val serverUrl: String,
+                    val token: String,
+                )
+
                 @Serializable
                 data class OldSessionStorage(
+                    val sessions: Set<OldCredentials>,
+                    val activeUserId: String?
+                )
+
+                @Serializable
+                data class OldSessionStorageWithNewCredentials(
                     val sessions: Set<Credentials>,
                     val activeUserId: String?
                 )
 
                 val oldData = Json.decodeFromString(OldSessionStorage.serializer(), rawJson)
 
-                val migratedMap = oldData.sessions.associateBy { it.key() }
-                val migratedActiveKey = oldData.sessions
+                val iterator = oldData.sessions.iterator()
+                val newSessionsSet = mutableSetOf<Credentials>()
+                iterator.forEach {
+                    newSessionsSet.add(Credentials(
+                        accountId = it.accountId,
+                        username = it.username,
+                        displayName = it.displayName,
+                        avatar = it.avatar,
+                        serverUrl = it.serverUrl,
+                        token = it.token,
+                        refreshToken = "",
+                        clientId = "",
+                        clientSecret = "",
+                        createdAt = ""
+                    ))
+                }
+                val oldDataWithNewCredentials = OldSessionStorageWithNewCredentials(
+                    activeUserId = oldData.activeUserId,
+                    sessions = newSessionsSet
+                )
+                val migratedMap = oldDataWithNewCredentials.sessions.associateBy { it.key() }
+                val migratedActiveKey = oldDataWithNewCredentials.sessions
                     .firstOrNull { it.accountId == oldData.activeUserId }?.key()
 
                 SessionStorage(

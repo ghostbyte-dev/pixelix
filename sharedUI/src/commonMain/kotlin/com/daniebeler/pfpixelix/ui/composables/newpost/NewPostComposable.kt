@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
@@ -29,10 +30,6 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.ArrowLeft
-import androidx.compose.material.icons.automirrored.outlined.ArrowRight
-import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -76,9 +73,9 @@ import androidx.navigationevent.compose.rememberNavigationEventState
 import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.model.Visibility
-import com.daniebeler.pfpixelix.ui.composables.CustomLoader
-import com.daniebeler.pfpixelix.ui.composables.MaxLengthTextField
-import com.daniebeler.pfpixelix.ui.composables.SuggestionsBar
+import com.daniebeler.pfpixelix.ui.composables.widgets.CustomLoader
+import com.daniebeler.pfpixelix.ui.composables.widgets.MaxLengthTextField
+import com.daniebeler.pfpixelix.ui.composables.widgets.SuggestionsBar
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposableDialog
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pfpixelix.ui.composables.textfield_location.TextFieldLocationsComposable
@@ -93,11 +90,10 @@ import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
-import pixelix.app.generated.resources.add_outline
+import pixelix.app.generated.resources.add
 import pixelix.app.generated.resources.alt_text
 import pixelix.app.generated.resources.audience
 import pixelix.app.generated.resources.audience_public
-import pixelix.app.generated.resources.browsers_outline
 import pixelix.app.generated.resources.cancel
 import pixelix.app.generated.resources.caption
 import pixelix.app.generated.resources.content_warning_or_spoiler_text
@@ -107,11 +103,15 @@ import pixelix.app.generated.resources.location
 import pixelix.app.generated.resources.new_post
 import pixelix.app.generated.resources.release
 import pixelix.app.generated.resources.sensitive_nsfw_media
-import pixelix.app.generated.resources.trash_outline
+import pixelix.app.generated.resources.trash
 import pixelix.app.generated.resources.unlisted
 import pixelix.app.generated.resources.are_you_sure
+import pixelix.app.generated.resources.arrow_left
+import pixelix.app.generated.resources.arrow_right
 import pixelix.app.generated.resources.cancel_post_warning
+import pixelix.app.generated.resources.confirm
 import pixelix.app.generated.resources.ok
+import pixelix.app.generated.resources.sensitive_content
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -143,6 +143,7 @@ fun NewPostComposable(
     Box(modifier = Modifier.fillMaxSize()) {
 
         val statusBarPadding = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
+        val navigationBarPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
 
         Box(
             modifier = Modifier.padding(top = TopAppBarDefaults.TopAppBarExpandedHeight + statusBarPadding - 24.dp)
@@ -154,10 +155,10 @@ fun NewPostComposable(
                 ) {
                     Column(
                         Modifier.weight(1f).verticalScroll(rememberScrollState())
-                            .padding(bottom = 60.dp),
+                            .padding(bottom = 60.dp + navigationBarPadding),
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        Spacer(Modifier.height(24.dp))
+                        Spacer(Modifier.height(0.dp))
 
                         ImagesPager(
                             viewModel.images,
@@ -189,7 +190,7 @@ fun NewPostComposable(
                                 submit = {}
                             )
                             NewPostPref(
-                                leadingIcon = Res.drawable.browsers_outline,
+                                leadingIcon = Res.drawable.sensitive_content,
                                 title = stringResource(Res.string.sensitive_nsfw_media),
                                 trailingContent = {
                                     Switch(
@@ -208,7 +209,7 @@ fun NewPostComposable(
                                 )
                             }
                             NewPostPref(
-                                leadingIcon = Res.drawable.browsers_outline,
+                                leadingIcon = Res.drawable.audience,
                                 title = stringResource(Res.string.audience),
                                 trailingContent = {
                                     Box {
@@ -237,7 +238,7 @@ fun NewPostComposable(
                                                     trailingIcon = {
                                                         if (viewModel.audience == Visibility.PUBLIC) {
                                                             Icon(
-                                                                imageVector = Icons.Outlined.Check,
+                                                                imageVector = vectorResource(Res.drawable.confirm),
                                                                 contentDescription = null,
                                                                 tint = MaterialTheme.colorScheme.primary
                                                             )
@@ -251,7 +252,7 @@ fun NewPostComposable(
                                                     trailingIcon = {
                                                         if (viewModel.audience == Visibility.UNLISTED) {
                                                             Icon(
-                                                                imageVector = Icons.Outlined.Check,
+                                                                imageVector = vectorResource(Res.drawable.confirm),
                                                                 contentDescription = null,
                                                                 tint = MaterialTheme.colorScheme.primary
                                                             )
@@ -266,7 +267,7 @@ fun NewPostComposable(
                                                 trailingIcon = {
                                                     if (viewModel.audience == Visibility.PRIVATE) {
                                                         Icon(
-                                                            imageVector = Icons.Outlined.Check,
+                                                            imageVector = vectorResource(Res.drawable.confirm),
                                                             contentDescription = null,
                                                             tint = MaterialTheme.colorScheme.primary
                                                         )
@@ -473,7 +474,7 @@ fun ImagesPager(
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                         Icon(
                             modifier = Modifier.height(50.dp).width(50.dp),
-                            imageVector = vectorResource(Res.drawable.add_outline),
+                            imageVector = vectorResource(Res.drawable.add),
                             contentDescription = null,
                         )
                     }
@@ -499,7 +500,7 @@ fun ImagesPager(
                             }
                         }) {
                             Icon(
-                                imageVector = Icons.AutoMirrored.Outlined.ArrowLeft,
+                                imageVector = vectorResource(Res.drawable.arrow_left),
                                 contentDescription = "move Image upwards"
                             )
                         }
@@ -508,7 +509,7 @@ fun ImagesPager(
                         deleteMedia(page)
                     }) {
                         Icon(
-                            imageVector = vectorResource(Res.drawable.trash_outline),
+                            imageVector = vectorResource(Res.drawable.trash),
                             contentDescription = "delete Image",
                             tint = MaterialTheme.colorScheme.error
                         )
@@ -525,7 +526,7 @@ fun ImagesPager(
                             }
                         }) {
                             Icon(
-                                imageVector = Icons.AutoMirrored.Outlined.ArrowRight,
+                                imageVector = vectorResource(Res.drawable.arrow_right),
                                 contentDescription = "move Image downwards"
                             )
                         }
@@ -554,9 +555,7 @@ fun ImagesPager(
                             )
                         }
                         if (image.isLoading) {
-                            CircularProgressIndicator(
-                                modifier = Modifier.wrapContentSize(Alignment.Center)
-                            )
+                            LoadingComposable()
                         }
                     }
                 }

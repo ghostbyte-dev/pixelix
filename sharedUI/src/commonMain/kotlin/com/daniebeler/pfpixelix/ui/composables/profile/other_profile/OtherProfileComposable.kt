@@ -3,42 +3,41 @@ package com.daniebeler.pfpixelix.ui.composables.profile.other_profile
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
+import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.outlined.MoreVert
-import androidx.compose.material.icons.outlined.Photo
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -50,29 +49,38 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.model.Account
-import com.daniebeler.pfpixelix.ui.composables.ButtonRowElement
-import com.daniebeler.pfpixelix.ui.composables.InfiniteListHandler
-import com.daniebeler.pfpixelix.ui.composables.ToTopButton
 import com.daniebeler.pfpixelix.ui.composables.profile.CollectionsComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.MutualFollowersComposable
-import com.daniebeler.pfpixelix.ui.composables.profile.PostsWrapperComposable
+import com.daniebeler.pfpixelix.ui.composables.profile.postsWrapperComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.ProfileTopSection
 import com.daniebeler.pfpixelix.ui.composables.profile.SwitchViewComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.server_stats.DomainSoftwareComposable
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
+import com.daniebeler.pfpixelix.ui.composables.states.EmptyStateComposable
+import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposableDialog
+import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
+import com.daniebeler.pfpixelix.ui.composables.widgets.ButtonRowElement
+import com.daniebeler.pfpixelix.ui.composables.widgets.CustomPullToRefreshBox
+import com.daniebeler.pfpixelix.ui.composables.widgets.InfiniteStaggeredGridHandler
+import com.daniebeler.pfpixelix.ui.composables.widgets.ToTopButton
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import com.daniebeler.pfpixelix.utils.DomainFormat
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
+import pixelix.app.generated.resources.arrow_left
 import pixelix.app.generated.resources.block
 import pixelix.app.generated.resources.block_account
 import pixelix.app.generated.resources.block_consequence_1
@@ -86,9 +94,10 @@ import pixelix.app.generated.resources.block_consequence_7
 import pixelix.app.generated.resources.block_consequence_8
 import pixelix.app.generated.resources.block_consequence_9
 import pixelix.app.generated.resources.block_this_profile
-import pixelix.app.generated.resources.browsers_outline
+import pixelix.app.generated.resources.browser
 import pixelix.app.generated.resources.cancel
 import pixelix.app.generated.resources.default_avatar
+import pixelix.app.generated.resources.more_menu
 import pixelix.app.generated.resources.follow
 import pixelix.app.generated.resources.message
 import pixelix.app.generated.resources.mute
@@ -100,8 +109,10 @@ import pixelix.app.generated.resources.mute_consequence_4
 import pixelix.app.generated.resources.mute_consequence_5
 import pixelix.app.generated.resources.mute_this_profile
 import pixelix.app.generated.resources.open_in_browser
-import pixelix.app.generated.resources.remove_circle_outline
-import pixelix.app.generated.resources.share_social_outline
+import pixelix.app.generated.resources.photo
+import pixelix.app.generated.resources.blocked
+import pixelix.app.generated.resources.muted
+import pixelix.app.generated.resources.share
 import pixelix.app.generated.resources.share_this_profile
 import pixelix.app.generated.resources.unblock_account
 import pixelix.app.generated.resources.unblock_caps
@@ -123,7 +134,10 @@ fun OtherProfileComposable(
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
-    val lazyGridState = rememberLazyListState()
+    val lazyGridState = rememberLazyStaggeredGridState()
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+
+    val photoIcon = vectorResource(Res.drawable.photo)
 
     var showBottomSheet by remember { mutableStateOf(false) }
     var showMuteAlert by remember { mutableStateOf(false) }
@@ -139,332 +153,396 @@ fun OtherProfileComposable(
         }
     }
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Scaffold(
+        contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top),
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        topBar = {
+            TopAppBar(
+                scrollBehavior = scrollBehavior, title = {
+                    Row {
+                        Column {
+                            Text(
+                                text = viewModel.accountState.account?.username ?: "",
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 18.sp
+                            )
+                            Text(
+                                text = DomainFormat.formatDomain(viewModel.domain),
+                                fontSize = 12.sp,
+                                lineHeight = 6.sp
+                            )
+                        }
 
-        val statusBarPadding = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
+                    }
+                }, navigationIcon = {
+                    IconButton(onClick = {
+                        navController.popBackStack()
+                    }) {
+                        Icon(
+                            imageVector = vectorResource(Res.drawable.arrow_left),
+                            contentDescription = ""
+                        )
+                    }
+                }, actions = {
 
-        Box(
-            modifier = Modifier.padding(top = TopAppBarDefaults.TopAppBarExpandedHeight + statusBarPadding - 24.dp)
-                .fillMaxSize()
-        ) {
-            PullToRefreshBox(
+                    if (viewModel.domain.isNotEmpty()) {
+                        DomainSoftwareComposable(
+                            domain = viewModel.domain
+                        )
+                    }
+
+                    IconButton(onClick = {
+                        showBottomSheet = true
+                    }) {
+                        Icon(
+                            imageVector = vectorResource(Res.drawable.more_menu),
+                            contentDescription = ""
+                        )
+                    }
+                }, colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceContainer
+                )
+            )
+        }) { paddingValues ->
+        Box(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
+            CustomPullToRefreshBox(
                 isRefreshing = viewModel.accountState.refreshing || viewModel.postsState.refreshing,
                 onRefresh = { viewModel.loadData(userId, true, navController) },
                 modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)
             ) {
 
-                LazyColumn(
-                    verticalArrangement = Arrangement.spacedBy(4.dp), state = lazyGridState, contentPadding = PaddingValues(bottom = 60.dp)
-                ) {
-                    item {
-                        Column(
-                            modifier = Modifier.clip(
-                                RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)
-                            ).background(MaterialTheme.colorScheme.surfaceContainer)
-                                .padding(top = 24.dp, bottom = 12.dp)
-                        ) {
-                            if (viewModel.accountState.account != null) {
-                                ProfileTopSection(
-                                    account = viewModel.accountState.account,
-                                    relationship = viewModel.relationshipState.accountRelationship,
-                                    navController,
-                                    openUrl = { url ->
-                                        viewModel.openUrl(url)
-                                    })
-                            }
-
-                            MutualFollowersComposable(
-                                mutualFollowersState = viewModel.mutualFollowersState,
-                                navController = navController
+                BoxWithConstraints {
+                    val gridContentWidth = maxWidth - 8.dp
+                    val gridColumnCount = maxOf(3, (gridContentWidth / 120.dp).toInt())
+                    LazyVerticalStaggeredGrid(
+                        columns = when (viewModel.view) {
+                            com.daniebeler.pfpixelix.ui.composables.profile.ViewEnum.Grid -> StaggeredGridCells.Fixed(
+                                gridColumnCount
                             )
 
-                            Row(
-                                modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp)
+                            com.daniebeler.pfpixelix.ui.composables.profile.ViewEnum.Masonry -> StaggeredGridCells.Adaptive(
+                                150.dp
+                            )
+
+                            com.daniebeler.pfpixelix.ui.composables.profile.ViewEnum.Timeline -> StaggeredGridCells.Adaptive(
+                                350.dp
+                            )
+                        },
+                        verticalItemSpacing = 4.dp,
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                        state = lazyGridState,
+                        contentPadding = PaddingValues(bottom = 60.dp, start = 4.dp, end = 4.dp)
+                    ) {
+                        item(span = StaggeredGridItemSpan.FullLine) {
+                            Column(
+                                modifier = Modifier.layout { measurable, constraints ->
+                                    val horizontalPadding = 4.dp.roundToPx()
+
+                                    val expandedWidth =
+                                        constraints.maxWidth + (horizontalPadding * 2)
+                                    val placeable = measurable.measure(
+                                        constraints.copy(
+                                            maxWidth = expandedWidth, minWidth = expandedWidth
+                                        )
+                                    )
+                                    layout(constraints.maxWidth, placeable.height) {
+                                        placeable.placeRelative(-horizontalPadding, 0)
+                                    }
+                                }.fillMaxWidth().clip(
+                                    RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)
+                                ).background(MaterialTheme.colorScheme.surfaceContainer)
+                                    .padding(top = 24.dp, bottom = 12.dp)
                             ) {
-                                var containerColor by remember {
-                                    mutableStateOf(Color(0xFFFFFFFF))
+                                if (viewModel.accountState.account != null) {
+                                    ProfileTopSection(
+                                        account = viewModel.accountState.account,
+                                        relationship = viewModel.relationshipState.accountRelationship,
+                                        navController,
+                                        openUrl = { url ->
+                                            viewModel.openUrl(url)
+                                        })
                                 }
 
-                                var contentColor by remember {
-                                    mutableStateOf(Color(0xFFFFFFFF))
-                                }
+                                MutualFollowersComposable(
+                                    mutualFollowersState = viewModel.mutualFollowersState,
+                                    navController = navController
+                                )
 
-                                if (viewModel.relationshipState.accountRelationship?.following == true) {
-                                    containerColor = MaterialTheme.colorScheme.secondaryContainer
-                                    contentColor = MaterialTheme.colorScheme.onSecondaryContainer
-                                } else {
-                                    containerColor = MaterialTheme.colorScheme.primary
-                                    contentColor = MaterialTheme.colorScheme.onPrimary
-                                }
+                                Row(
+                                    modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp)
+                                ) {
+                                    var containerColor by remember {
+                                        mutableStateOf(Color(0xFFFFFFFF))
+                                    }
 
-                                Button(
-                                    onClick = {
-                                        if (!viewModel.relationshipState.isLoading && viewModel.relationshipState.accountRelationship != null) {
+                                    var contentColor by remember {
+                                        mutableStateOf(Color(0xFFFFFFFF))
+                                    }
+
+                                    if (viewModel.relationshipState.accountRelationship?.following == true) {
+                                        containerColor =
+                                            MaterialTheme.colorScheme.secondaryContainer
+                                        contentColor =
+                                            MaterialTheme.colorScheme.onSecondaryContainer
+                                    } else {
+                                        containerColor = MaterialTheme.colorScheme.primary
+                                        contentColor = MaterialTheme.colorScheme.onPrimary
+                                    }
+
+                                    Button(
+                                        onClick = {
+                                            if (!viewModel.relationshipState.isLoading && viewModel.relationshipState.accountRelationship != null) {
+                                                if (viewModel.relationshipState.accountRelationship?.following == true) {
+                                                    viewModel.unfollowAccount(viewModel.userId)
+                                                } else {
+                                                    viewModel.followAccount(viewModel.userId)
+                                                }
+                                            }
+                                        },
+                                        modifier = Modifier.weight(1f),
+                                        shape = RoundedCornerShape(12.dp),
+                                        contentPadding = PaddingValues(12.dp),
+                                        colors = ButtonDefaults.buttonColors(
+                                            containerColor = containerColor,
+                                            contentColor = contentColor
+                                        )
+                                    ) {
+                                        if (viewModel.relationshipState.isLoading) {
+                                            LoadingComposable(
+                                                modifier = Modifier.size(20.dp),
+                                                color = contentColor
+                                            )
+                                        } else {
                                             if (viewModel.relationshipState.accountRelationship?.following == true) {
-                                                viewModel.unfollowAccount(viewModel.userId)
+                                                Text(text = stringResource(Res.string.unfollow))
                                             } else {
-                                                viewModel.followAccount(viewModel.userId)
+                                                Text(text = stringResource(Res.string.follow))
                                             }
                                         }
-                                    },
-                                    modifier = Modifier.weight(1f),
-                                    shape = RoundedCornerShape(12.dp),
-                                    contentPadding = PaddingValues(12.dp),
-                                    colors = ButtonDefaults.buttonColors(
-                                        containerColor = containerColor, contentColor = contentColor
-                                    )
-                                ) {
-                                    if (viewModel.relationshipState.isLoading) {
-                                        CircularProgressIndicator(
-                                            modifier = Modifier.size(20.dp), color = contentColor
+                                    }
+
+                                    Spacer(modifier = Modifier.width(12.dp))
+
+                                    Button(
+                                        onClick = {
+                                            viewModel.accountState.account?.let { account ->
+                                                navController.navigate(Destination.Chat(account.id))
+                                            }
+                                        },
+                                        modifier = Modifier.weight(1f),
+                                        shape = RoundedCornerShape(12.dp),
+                                        contentPadding = PaddingValues(12.dp),
+                                        colors = ButtonDefaults.buttonColors(
+                                            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                                            contentColor = MaterialTheme.colorScheme.onSurface
                                         )
-                                    } else {
-                                        if (viewModel.relationshipState.accountRelationship?.following == true) {
-                                            Text(text = stringResource(Res.string.unfollow))
-                                        } else {
-                                            Text(text = stringResource(Res.string.follow))
-                                        }
+                                    ) {
+                                        Text(text = stringResource(Res.string.message))
                                     }
                                 }
 
-                                Spacer(modifier = Modifier.width(12.dp))
-
-                                Button(
-                                    onClick = {
-                                        viewModel.accountState.account?.let { account ->
-                                            navController.navigate(Destination.Chat(account.id))
-                                        }
-                                    },
-                                    modifier = Modifier.weight(1f),
-                                    shape = RoundedCornerShape(12.dp),
-                                    contentPadding = PaddingValues(12.dp),
-                                    colors = ButtonDefaults.buttonColors(
-                                        containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-                                        contentColor = MaterialTheme.colorScheme.onSurface
-                                    )
-                                ) {
-                                    Text(text = stringResource(Res.string.message))
+                                viewModel.accountState.account?.let { account ->
+                                    CollectionsComposable(
+                                        collectionsState = viewModel.collectionsState,
+                                        getMoreCollections = {
+                                            viewModel.getCollections(
+                                                account.id, true
+                                            )
+                                        },
+                                        navController = navController,
+                                        instanceDomain = viewModel.domain,
+                                        openUrl = { url -> viewModel.openUrl(url) })
                                 }
                             }
+                        }
 
-                            viewModel.accountState.account?.let { account ->
-                                CollectionsComposable(
-                                    collectionsState = viewModel.collectionsState,
-                                    getMoreCollections = {
-                                        viewModel.getCollections(
-                                            account.id, true
-                                        )
-                                    },
-                                    navController = navController,
-                                    instanceDomain = viewModel.domain,
-                                    openUrl = { url -> viewModel.openUrl(url) })
+                        item(span = StaggeredGridItemSpan.FullLine) {
+                            SwitchViewComposable(
+                                postsCount = viewModel.accountState.account?.postsCount ?: 0,
+                                viewType = viewModel.view,
+                                onViewChange = {
+                                    viewModel.changeView(it)
+                                })
+                        }
+
+                        postsWrapperComposable(
+                            posts = viewModel.postsState.posts,
+                            isLoading = viewModel.postsState.isLoading,
+                            isRefreshing = viewModel.accountState.refreshing || viewModel.postsState.refreshing,
+                            endReached = viewModel.postsState.endReached,
+                            view = viewModel.view,
+                            postGetsDeleted = { viewModel.postGetsDeleted(it) },
+                            updatePost = { viewModel.updatePost(it) },
+                            isFirstImageLarge = true,
+                            gridColumnCount = gridColumnCount,
+                            gridContentWidth = gridContentWidth,
+                            navController = navController
+                        )
+                        if (viewModel.postsState.posts.isEmpty() && viewModel.postsState.error.isNotBlank()) {
+                            item(span = StaggeredGridItemSpan.FullLine) {
+                                ErrorComposable(
+                                    message = viewModel.postsState.error,
+                                    modifier = Modifier.fillMaxSize().padding(36.dp, 20.dp)
+                                )
+                            }
+                        }
+                        if (viewModel.postsState.isLoading && viewModel.postsState.posts.isEmpty()) {
+                            item(span = StaggeredGridItemSpan.FullLine) {
+                                LoadingComposable(viewModel.postsState.isLoading)
+                            }
+                        }
+                        if (viewModel.postsState.posts.isEmpty() && !viewModel.postsState.isLoading && viewModel.postsState.error.isEmpty()) {
+                            item(span = StaggeredGridItemSpan.FullLine) {
+                                EmptyStateComposable(
+                                    emptyState = EmptyState(icon = photoIcon, heading = "No Posts")
+                                )
                             }
                         }
                     }
-
-                    item {
-                        SwitchViewComposable(
-                            postsCount = viewModel.accountState.account?.postsCount ?: 0,
-                            viewType = viewModel.view,
-                            onViewChange = {
-                                viewModel.changeView(it)
-                            })
-                    }
-
-                    PostsWrapperComposable(
-                        posts = viewModel.postsState.posts,
-                        isLoading = viewModel.postsState.isLoading,
-                        isRefreshing = viewModel.accountState.refreshing || viewModel.postsState.refreshing,
-                        error = viewModel.postsState.error,
-                        endReached = viewModel.postsState.endReached,
-                        emptyMessage = EmptyState(
-                            icon = Icons.Outlined.Photo, heading = "No Posts"
-                        ),
-                        view = viewModel.view,
-                        isFirstImageLarge = true,
-                        postGetsDeleted = { viewModel.postGetsDeleted(it) },
-                        updatePost = { viewModel.updatePost(it) },
-                        navController = navController
-                    )
                 }
             }
 
-        }
+            ToTopButton(
+                staggeredGridState = lazyGridState,
+                refresh = { viewModel.loadData(userId, true, navController) })
 
-        TopAppBar(
-            modifier = Modifier.clip(
-                RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)
-            ), title = {
-                Row {
-                    Column {
-                        Text(
-                            text = viewModel.accountState.account?.username ?: "",
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 18.sp
-                        )
-                        Text(
-                            text = DomainFormat.formatDomain(viewModel.domain), fontSize = 12.sp, lineHeight = 6.sp
-                        )
-                    }
-
-                }
-            }, navigationIcon = {
-                IconButton(onClick = {
-                    navController.popBackStack()
-                }) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = ""
-                    )
-                }
-            }, actions = {
-
-                if (viewModel.domain.isNotEmpty()) {
-                    DomainSoftwareComposable(
-                        domain = viewModel.domain
-                    )
-                }
-
-                IconButton(onClick = {
-                    showBottomSheet = true
-                }) {
-                    Icon(
-                        imageVector = Icons.Outlined.MoreVert, contentDescription = ""
-                    )
-                }
-            }, colors = TopAppBarDefaults.mediumTopAppBarColors(
-                containerColor = MaterialTheme.colorScheme.surfaceContainer
-            )
-        )
-    }
-
-    ToTopButton(
-        listState = lazyGridState, refresh = { viewModel.loadData(userId, true, navController) })
-
-    InfiniteListHandler(lazyListState = lazyGridState) {
-        viewModel.getPostsPaginated(viewModel.userId)
-    }
-
-    if (showBottomSheet) {
-        ModalBottomSheet(
-            onDismissRequest = {
-                showBottomSheet = false
-            }, sheetState = sheetState
-        ) {
-            Column(
-                modifier = Modifier.padding(bottom = 32.dp)
+            InfiniteStaggeredGridHandler(
+                lazyStaggeredGridState = lazyGridState, itemCount = viewModel.postsState.posts.size
             ) {
-                if (viewModel.relationshipState.accountRelationship != null) {
-                    if (viewModel.relationshipState.accountRelationship!!.muting) {
-                        ButtonRowElement(
-                            icon = Res.drawable.remove_circle_outline, text = stringResource(
-                                Res.string.unmute_this_profile
-                            ), onClick = {
-                                showUnMuteAlert = true
-                            })
-                    } else {
-                        ButtonRowElement(
-                            icon = Res.drawable.remove_circle_outline, text = stringResource(
-                                Res.string.mute_this_profile
-                            ), onClick = {
-                                showMuteAlert = true
-                            })
-                    }
+                viewModel.getPostsPaginated(viewModel.userId)
+            }
 
-                    if (viewModel.relationshipState.accountRelationship!!.blocking) {
+            if (showBottomSheet) {
+                ModalBottomSheet(
+                    onDismissRequest = {
+                        showBottomSheet = false
+                    }, sheetState = sheetState
+                ) {
+                    Column(
+                        modifier = Modifier.padding(bottom = 32.dp)
+                    ) {
+                        if (viewModel.relationshipState.accountRelationship != null) {
+                            if (viewModel.relationshipState.accountRelationship!!.muting) {
+                                ButtonRowElement(
+                                    icon = Res.drawable.muted, text = stringResource(
+                                        Res.string.unmute_this_profile
+                                    ), onClick = {
+                                        showUnMuteAlert = true
+                                    })
+                            } else {
+                                ButtonRowElement(
+                                    icon = Res.drawable.muted, text = stringResource(
+                                        Res.string.mute_this_profile
+                                    ), onClick = {
+                                        showMuteAlert = true
+                                    })
+                            }
+
+                            if (viewModel.relationshipState.accountRelationship!!.blocking) {
+                                ButtonRowElement(
+                                    icon = Res.drawable.blocked, text = stringResource(
+                                        Res.string.unblock_this_profile
+                                    ), onClick = {
+                                        showUnBlockAlert = true
+                                    })
+                            } else {
+                                ButtonRowElement(
+                                    icon = Res.drawable.blocked, text = stringResource(
+                                        Res.string.block_this_profile
+                                    ), onClick = {
+                                        showBlockAlert = true
+                                    })
+                            }
+                        }
+
+                        HorizontalDivider(Modifier.padding(12.dp))
+
                         ButtonRowElement(
-                            icon = Res.drawable.remove_circle_outline, text = stringResource(
-                                Res.string.unblock_this_profile
+                            icon = Res.drawable.browser, text = stringResource(
+                                Res.string.open_in_browser
                             ), onClick = {
-                                showUnBlockAlert = true
+                                viewModel.openUrl(viewModel.accountState.account!!.url)
                             })
-                    } else {
+
                         ButtonRowElement(
-                            icon = Res.drawable.remove_circle_outline, text = stringResource(
-                                Res.string.block_this_profile
-                            ), onClick = {
-                                showBlockAlert = true
+                            icon = Res.drawable.share,
+                            text = stringResource(Res.string.share_this_profile),
+                            onClick = {
+                                viewModel.shareAccountUrl()
                             })
                     }
                 }
-
-                HorizontalDivider(Modifier.padding(12.dp))
-
-                ButtonRowElement(
-                    icon = Res.drawable.browsers_outline, text = stringResource(
-                        Res.string.open_in_browser
-                    ), onClick = {
-                        viewModel.openUrl(viewModel.accountState.account!!.url)
-                    })
-
-                ButtonRowElement(
-                    icon = Res.drawable.share_social_outline,
-                    text = stringResource(Res.string.share_this_profile),
-                    onClick = {
-                        viewModel.shareAccountUrl()
-                    })
             }
+
+            if (showUnMuteAlert) {
+                UnMuteAccountAlert(
+                    onDismissRequest = { showUnMuteAlert = false },
+                    onConfirmation = {
+                        showUnMuteAlert = false
+                        showBottomSheet = false
+                        viewModel.unMuteAccount(viewModel.userId)
+                    },
+                    account = viewModel.accountState.account!!
+                )
+            }
+            if (showMuteAlert) {
+                MuteAccountAlert(
+                    onDismissRequest = { showMuteAlert = false }, onConfirmation = {
+                        showMuteAlert = false
+                        showBottomSheet = false
+                        viewModel.muteAccount(viewModel.userId)
+                    }, account = viewModel.accountState.account!!
+                )
+            }
+            if (showBlockAlert) {
+                BlockAccountAlert(
+                    onDismissRequest = { showBlockAlert = false }, onConfirmation = {
+                        showBlockAlert = false
+                        showBottomSheet = false
+                        viewModel.blockAccount(viewModel.userId)
+                    }, account = viewModel.accountState.account!!
+                )
+            }
+            if (showUnBlockAlert) {
+                UnBlockAccountAlert(
+                    onDismissRequest = { showUnBlockAlert = false },
+                    onConfirmation = {
+                        showUnBlockAlert = false
+                        showBottomSheet = false
+                        viewModel.unblockAccount(viewModel.userId)
+                    },
+                    account = viewModel.accountState.account!!
+                )
+            }
+
+            ErrorComposableDialog(
+                errorMessage = viewModel.relationshipState.error, onDismiss = {
+                    viewModel.relationshipState = viewModel.relationshipState.copy(error = "")
+                    viewModel.getRelationship(userId)
+                    showBottomSheet = false
+                })
+            ErrorComposableDialog(
+                viewModel.accountState.error, onDismiss = {
+                    viewModel.accountState = viewModel.accountState.copy(error = "")
+                })
         }
     }
-
-    if (showUnMuteAlert) {
-        UnMuteAccountAlert(
-            onDismissRequest = { showUnMuteAlert = false }, onConfirmation = {
-                showUnMuteAlert = false
-                showBottomSheet = false
-                viewModel.unMuteAccount(viewModel.userId)
-            }, account = viewModel.accountState.account!!
-        )
-    }
-    if (showMuteAlert) {
-        MuteAccountAlert(
-            onDismissRequest = { showMuteAlert = false }, onConfirmation = {
-                showMuteAlert = false
-                showBottomSheet = false
-                viewModel.muteAccount(viewModel.userId)
-            }, account = viewModel.accountState.account!!
-        )
-    }
-    if (showBlockAlert) {
-        BlockAccountAlert(
-            onDismissRequest = { showBlockAlert = false }, onConfirmation = {
-                showBlockAlert = false
-                showBottomSheet = false
-                viewModel.blockAccount(viewModel.userId)
-            }, account = viewModel.accountState.account!!
-        )
-    }
-    if (showUnBlockAlert) {
-        UnBlockAccountAlert(
-            onDismissRequest = { showUnBlockAlert = false }, onConfirmation = {
-                showUnBlockAlert = false
-                showBottomSheet = false
-                viewModel.unblockAccount(viewModel.userId)
-            }, account = viewModel.accountState.account!!
-        )
-    }
-
-    ErrorComposableDialog(
-        errorMessage = viewModel.relationshipState.error,
-        onDismiss = {
-            viewModel.relationshipState = viewModel.relationshipState.copy(error = "")
-            viewModel.getRelationship(userId)
-            showBottomSheet = false
-        }
-    )
 }
 
 @Composable
 fun MuteAccountAlert(
-    onDismissRequest: () -> Unit, onConfirmation: () -> Unit, account: Account
+    onDismissRequest: () -> Unit, onConfirmation: () -> Unit, account: Account?
 ) {
     AlertDialog(title = {
         Text(text = stringResource(Res.string.mute_account))
     }, text = {
         Column {
 
-            AlertTopSection(account = account)
+            account?.let {
+                AlertTopSection(account = account)
+                HorizontalDivider(Modifier.padding(vertical = 12.dp))
+            }
 
-            HorizontalDivider(Modifier.padding(vertical = 12.dp))
 
             Text(text = stringResource(Res.string.mute_consequence_1))
             Text(text = stringResource(Res.string.mute_consequence_2))
@@ -522,16 +600,18 @@ fun UnMuteAccountAlert(
 
 @Composable
 fun BlockAccountAlert(
-    onDismissRequest: () -> Unit, onConfirmation: () -> Unit, account: Account
+    onDismissRequest: () -> Unit, onConfirmation: () -> Unit, account: Account?
 ) {
     AlertDialog(title = {
         Text(text = stringResource(Res.string.block_account))
     }, text = {
         Column {
 
-            AlertTopSection(account = account)
+            account?.let {
+                AlertTopSection(account = account)
+                HorizontalDivider(Modifier.padding(vertical = 12.dp))
+            }
 
-            HorizontalDivider(Modifier.padding(vertical = 12.dp))
 
             Text(text = stringResource(Res.string.block_consequence_1))
             Text(text = stringResource(Res.string.block_consequence_2))
@@ -613,16 +693,24 @@ fun AlertTopSection(account: Account) {
                         Text(
                             text = account.displayname,
                             lineHeight = 8.sp,
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Bold,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
                         )
                     }
                 }
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(text = account.username, fontSize = 12.sp)
+                    Text(text = account.username, fontSize = 12.sp,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis)
                     Text(
-                        text = " • " + (account.url.substringAfter("https://").substringBefore("/")
-                            ?: ""), color = MaterialTheme.colorScheme.secondary, fontSize = 12.sp
+                        text = " • " + (account.url.substringAfter("https://")
+                            .substringBefore("/")),
+                        color = MaterialTheme.colorScheme.secondary,
+                        fontSize = 12.sp,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
                 }
 

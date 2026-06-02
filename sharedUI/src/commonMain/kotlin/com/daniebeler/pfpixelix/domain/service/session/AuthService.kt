@@ -41,7 +41,7 @@ class AuthService(
 
     suspend fun auth(host: String) {
         val serverUrl = getServerUrl(host)
-        val api = createAuthApi(serverUrl)
+        val api = createAuthApi(serverUrl, json)
         val authData = api.getAuthData(clientName, redirectUrl)
 
         val authUrl = URLBuilder("${serverUrl}oauth/authorize").apply {
@@ -79,44 +79,58 @@ class AuthService(
             displayName = account.displayname ?: account.username,
             avatar = account.avatar,
             serverUrl = serverUrl.toString(),
-            token = token.accessToken
+            token = token.accessToken,
+            refreshToken = token.refreshToken,
+            clientId = authData.clientId,
+            clientSecret = authData.clientSecret,
+            createdAt = token.createdAt
         )
+        updateSession(newCred)
+    }
+
+    private suspend fun updateSession(newCred: Credentials) {
+        val targetKey = newCred.key()
         sessionStorage.updateData { data ->
             data.copy(
-                sessions = data.sessions + newCred,
-                activeUserId = newCred.accountId
+                sessions = data.sessions + (targetKey to newCred),
+                activeKey = targetKey
             )
         }
         session.setCredentials(newCred)
     }
 
-    suspend fun openSessionIfExist(userId: String? = null) {
+    suspend fun openSessionIfExist(key: String? = null) {
+        var resolvedCredentials: Credentials? = null
         sessionStorage.updateData { data ->
-            val cred = if (userId == null) {
+            val cred = if (key == null) {
                 data.getActiveSession()
             } else {
-                data.sessions.firstOrNull { it.accountId == userId }
+                data.sessions[key]
             }
-            session.setCredentials(cred)
-            data.copy(activeUserId = cred?.accountId)
-
+            resolvedCredentials = cred
+            if (cred != null) {
+                data.copy(activeKey = cred.key())
+            } else {
+                data
+            }
         }
+        session.setCredentials(resolvedCredentials)
     }
 
     fun isValidHost(host: String): Boolean = domainRegex.matches(host)
 
-    suspend fun deleteSession(userId: String? = null) {
+    suspend fun deleteSession(keyParam: String? = null) {
         sessionStorage.updateData { data ->
-            val id = userId ?: data.activeUserId
-            val newSessions = data.sessions.filter { it.accountId != id }.toSet()
-            val newId = if (data.activeUserId == id) {
-                newSessions.firstOrNull()?.accountId
+            val key = keyParam ?: data.activeKey
+            val newSessions = data.sessions.filter { it.key != key }
+            val newId = if (data.activeKey == key) {
+                newSessions.values.firstOrNull()?.key()
             } else {
-                data.activeUserId
+                data.activeKey
             }
-            data.copy(sessions = newSessions, activeUserId = newId)
+            data.copy(sessions = newSessions, activeKey = newId)
         }
-        if (userId == null) {
+        if (keyParam == null) {
             savedSearchesService.clearSavedSearches()
             openSessionIfExist()
         }
@@ -128,13 +142,14 @@ class AuthService(
 
     suspend fun updateSessionAvatar(accountId: String, avatarUrl: String) {
         sessionStorage.updateData { data ->
-            val updatedSessions = data.sessions.map { credentials ->
+            val updatedSessions = data.sessions.mapValues { (_, credentials) ->
                 if (credentials.accountId == accountId) {
                     credentials.copy(avatar = avatarUrl)
                 } else {
                     credentials
                 }
-            }.toSet()
+            }
+
             data.copy(sessions = updatedSessions)
         }
         openSessionIfExist()
@@ -148,25 +163,24 @@ class AuthService(
         require(isValidHost(host)) { "The host is invalid '$host'" }
         return Url("https://$host/")
     }
-
-    private fun createAuthApi(baseUrl: Url): AuthApi {
-        val httpClient = HttpClient {
-            install(ContentNegotiation) { json(json) }
-            install(Logging) {
-                logger = object : io.ktor.client.plugins.logging.Logger {
-                    override fun log(message: String) {
-                        Logger.v("Pixelix HttpAuth") {
-                            message.lines().joinToString { "\n\t\t$it" }
-                        }
+}
+fun createAuthApi(baseUrl: Url, json: Json): AuthApi {
+    val httpClient = HttpClient {
+        install(ContentNegotiation) { json(json) }
+        install(Logging) {
+            logger = object : io.ktor.client.plugins.logging.Logger {
+                override fun log(message: String) {
+                    Logger.v(tag = "Pixelix HttpAuth") {
+                        message.lines().joinToString { "\n\t\t$it" }
                     }
                 }
-                level = LogLevel.INFO
             }
+            level = LogLevel.INFO
         }
-        val ktorfit = Ktorfit.Builder()
-            .httpClient(httpClient)
-            .baseUrl(baseUrl.toString())
-            .build()
-        return ktorfit.createAuthApi()
     }
+    val ktorfit = Ktorfit.Builder()
+        .httpClient(httpClient)
+        .baseUrl(baseUrl.toString())
+        .build()
+    return ktorfit.createAuthApi()
 }

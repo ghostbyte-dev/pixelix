@@ -29,7 +29,7 @@ class Session {
             request.apply {
                 if (url.host != "api.fedisea.surf" && url.host != "pixelfed.org") {
                     url.set(host = Url(creds.serverUrl).host)
-                    headers["Authorization"] = "Bearer ${creds.token}"
+                   // headers["Authorization"] = "Bearer ${creds.token}"
                 }
             }
         }

@@ -7,5 +7,6 @@ data class FollowersState(
     val isRefreshing: Boolean = false,
     val endReached: Boolean = false,
     val followers: List<Account> = emptyList(),
+    val cursor: String = "",
     val error: String = ""
 )

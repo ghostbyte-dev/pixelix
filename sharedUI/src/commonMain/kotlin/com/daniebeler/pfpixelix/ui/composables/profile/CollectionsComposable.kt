@@ -33,12 +33,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
-import com.daniebeler.pfpixelix.ui.composables.InfiniteListHandler
+import com.daniebeler.pfpixelix.ui.composables.widgets.InfiniteListHandler
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
-import pixelix.app.generated.resources.add_outline
+import pixelix.app.generated.resources.add
 import pixelix.app.generated.resources.collection_create_not_supported_explanation
 import pixelix.app.generated.resources.collections
 import pixelix.app.generated.resources.new_
@@ -92,16 +92,6 @@ fun CollectionsComposable(
                         Text(text = it.title, fontSize = 14.sp)
                     }
                 }
-                if (collectionsState.isLoading) {
-                    item {
-                        CircularProgressIndicator(
-                            modifier = Modifier
-                                .fillMaxHeight()
-                                .height(96.dp)
-                                .wrapContentSize(Alignment.Center)
-                        )
-                    }
-                }
                 if (addNewButton) {
                     item {
                         Column(
@@ -120,7 +110,7 @@ fun CollectionsComposable(
                                 contentAlignment = Alignment.Center
                             ) {
                                 Icon(
-                                    imageVector = vectorResource(Res.drawable.add_outline),
+                                    imageVector = vectorResource(Res.drawable.add),
                                     contentDescription = "add collection",
                                     Modifier.size(32.dp)
                                 )

@@ -7,18 +7,33 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.domain.service.post.PostService
+import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
+import com.daniebeler.pfpixelix.ui.composables.profile.ViewEnum
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 
 class LikedPostsViewModel @Inject constructor(
-    private val postService: PostService
-) : ViewModel() {
+    private val postService: PostService,
+    private val prefs: UserPreferences,
+    ) : ViewModel() {
 
     var likedPostsState by mutableStateOf(LikedPostsState())
+    var view by mutableStateOf(ViewEnum.Grid)
 
     init {
         getItemsFirstLoad()
+        viewModelScope.launch {
+            prefs.showUserGridTimelineFlow.collect { res ->
+                view = ViewEnum.getView(res)
+            }
+        }
+    }
+
+    fun changeView(newView: ViewEnum) {
+        view = newView
+        prefs.showUserGridTimeline = newView.ordinal
     }
 
     fun getItemsFirstLoad(refreshing: Boolean = false) {
@@ -26,15 +41,15 @@ class LikedPostsViewModel @Inject constructor(
             likedPostsState = when (result) {
                 is Resource.Success -> {
                     LikedPostsState(
-                        likedPosts = result.data?.posts ?: emptyList(),
-                        nextMaxId = result.data?.nextId ?: ""
+                        likedPosts = result.data.data,
+                        nextMaxId = result.data.next ?: ""
                     )
                 }
 
                 is Resource.Error -> {
                     LikedPostsState(
                         likedPosts = likedPostsState.likedPosts,
-                        error = result.message ?: "An unexpected error occurred"
+                        error = result.message
                     )
                 }
 
@@ -56,9 +71,8 @@ class LikedPostsViewModel @Inject constructor(
                 likedPostsState = when (result) {
                     is Resource.Success -> {
                         LikedPostsState(
-                            likedPosts = likedPostsState.likedPosts + (result.data?.posts
-                                ?: emptyList()),
-                            nextMaxId = result.data?.nextId ?: "",
+                            likedPosts = likedPostsState.likedPosts + (result.data.data),
+                            nextMaxId = result.data.next ?: "",
                             error = "",
                             isLoading = false,
                             isRefreshing = false
@@ -68,7 +82,7 @@ class LikedPostsViewModel @Inject constructor(
                     is Resource.Error -> {
                         LikedPostsState(
                             likedPosts = likedPostsState.likedPosts,
-                            error = result.message ?: "An unexpected error occurred",
+                            error = result.message,
                             isLoading = false,
                             isRefreshing = false
                         )

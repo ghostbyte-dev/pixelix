@@ -14,6 +14,7 @@ import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
 import com.daniebeler.pfpixelix.domain.service.timeline.TimelineService
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.ui.composables.profile.ViewEnum
+import com.daniebeler.pfpixelix.ui.composables.timelines.TimelineState
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -25,7 +26,7 @@ class HashtagTimelineViewModel @Inject constructor(
     private val prefs: UserPreferences
 ) : ViewModel() {
 
-    var postsState by mutableStateOf(HashtagTimelineState())
+    var timelineState by mutableStateOf(TimelineState())
     var hashtagState by mutableStateOf(HashtagState())
     var view by mutableStateOf(ViewEnum.Grid)
 
@@ -36,13 +37,13 @@ class HashtagTimelineViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             prefs.showUserGridTimelineFlow.collect { res ->
-                view = if (res) ViewEnum.Grid else ViewEnum.Timeline
+                view = ViewEnum.getView(res)
             }
         }
     }
 
     fun refresh() {
-        postsState = postsState.copy(isRefreshing = true)
+        timelineState = timelineState.copy(isRefreshing = true)
         if (hashtagState.hashtag != null) {
             getItemsFirstLoad(hashtagState.hashtag!!.name, true)
         }
@@ -50,20 +51,20 @@ class HashtagTimelineViewModel @Inject constructor(
 
     fun changeView(newView: ViewEnum) {
         view = newView
-        prefs.showUserGridTimeline = newView == ViewEnum.Grid
+        prefs.showUserGridTimeline = newView.ordinal
     }
 
     fun getItemsFirstLoad(hashtag: String, refreshing: Boolean = false) {
-        if (postsState.hashtagTimeline.isNotEmpty() && !refreshing) {
+        if (timelineState.posts.isNotEmpty() && !refreshing) {
             return
         }
         timelineService.getHashtagTimeline(hashtag).onEach { result ->
-            postsState = when (result) {
+            timelineState = when (result) {
                 is Resource.Success -> {
                     val endReached =
                         (result.data?.size ?: 0) < PixelfedApi.HASHTAG_TIMELINE_POSTS_LIMIT
-                    HashtagTimelineState(
-                        hashtagTimeline = result.data ?: emptyList(),
+                    TimelineState(
+                        posts = result.data ?: emptyList(),
                         error = "",
                         isLoading = false,
                         isRefreshing = false,
@@ -72,8 +73,8 @@ class HashtagTimelineViewModel @Inject constructor(
                 }
 
                 is Resource.Error -> {
-                    HashtagTimelineState(
-                        hashtagTimeline = postsState.hashtagTimeline,
+                    TimelineState(
+                        posts = timelineState.posts,
                         error = result.message ?: "An unexpected error occurred",
                         isLoading = false,
                         isRefreshing = false
@@ -81,8 +82,8 @@ class HashtagTimelineViewModel @Inject constructor(
                 }
 
                 is Resource.Loading -> {
-                    HashtagTimelineState(
-                        hashtagTimeline = postsState.hashtagTimeline,
+                    TimelineState(
+                        posts = timelineState.posts,
                         error = "",
                         isLoading = true,
                         isRefreshing = refreshing
@@ -94,15 +95,15 @@ class HashtagTimelineViewModel @Inject constructor(
     }
 
     fun getItemsPaginated(hashtag: String) {
-        if (postsState.hashtagTimeline.isNotEmpty() && !postsState.isLoading && !postsState.endReached) {
+        if (timelineState.posts.isNotEmpty() && !timelineState.isLoading && !timelineState.endReached) {
             timelineService.getHashtagTimeline(
-                hashtag, postsState.hashtagTimeline.last().id
+                hashtag, timelineState.posts.last().id
             ).onEach { result ->
-                postsState = when (result) {
+                timelineState = when (result) {
                     is Resource.Success -> {
                         val endReached = (result.data?.size ?: 0) == 0
-                        HashtagTimelineState(
-                            hashtagTimeline = postsState.hashtagTimeline + (result.data
+                        TimelineState(
+                            posts = timelineState.posts + (result.data
                                 ?: emptyList()),
                             error = "",
                             isLoading = false,
@@ -112,8 +113,8 @@ class HashtagTimelineViewModel @Inject constructor(
                     }
 
                     is Resource.Error -> {
-                        HashtagTimelineState(
-                            hashtagTimeline = postsState.hashtagTimeline,
+                        TimelineState(
+                            posts = timelineState.posts,
                             error = result.message ?: "An unexpected error occurred",
                             isLoading = false,
                             isRefreshing = false
@@ -121,8 +122,8 @@ class HashtagTimelineViewModel @Inject constructor(
                     }
 
                     is Resource.Loading -> {
-                        HashtagTimelineState(
-                            hashtagTimeline = postsState.hashtagTimeline,
+                        TimelineState(
+                            posts = timelineState.posts,
                             error = "",
                             isLoading = true,
                             isRefreshing = false
@@ -145,8 +146,8 @@ class HashtagTimelineViewModel @Inject constructor(
     }
 
     fun postGetsDeleted(postId: String) {
-        postsState =
-            postsState.copy(hashtagTimeline = postsState.hashtagTimeline.filter { post -> post.id != postId })
+        timelineState =
+            timelineState.copy(posts = timelineState.posts.filter { post -> post.id != postId })
     }
 
     fun getHashtagInfo(hashtag: String) {
@@ -214,7 +215,7 @@ class HashtagTimelineViewModel @Inject constructor(
     }
 
     fun postGetsUpdated(post: Post) {
-        postsState = postsState.copy(hashtagTimeline = postsState.hashtagTimeline.map {
+        timelineState = timelineState.copy(posts = timelineState.posts.map {
             if (it.id == post.id) {
                 post
             } else {

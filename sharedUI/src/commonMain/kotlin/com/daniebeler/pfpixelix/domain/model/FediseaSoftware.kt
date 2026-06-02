@@ -20,7 +20,7 @@ data class FediseaSoftware(
     @SerialName("description")
     val description: String? = null,
 
-    @SerialName("license")
+    @SerialName("licence")
     val license: String? = null,
 
     @SerialName("joinUrl")

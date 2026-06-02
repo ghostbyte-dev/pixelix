@@ -2,11 +2,6 @@ package com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs
 
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.BrightnessAuto
-import androidx.compose.material.icons.rounded.Contrast
-import androidx.compose.material.icons.rounded.DarkMode
-import androidx.compose.material.icons.rounded.LightMode
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -25,10 +20,15 @@ import com.daniebeler.pfpixelix.ui.composables.settings.preferences.basic.imageV
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.basic.radioButtonBlock
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.CustomAccentColorPref
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.amoled
+import pixelix.app.generated.resources.amoled_theme
 import pixelix.app.generated.resources.app_theme
-import pixelix.app.generated.resources.color_palette_outline
+import pixelix.app.generated.resources.theme
+import pixelix.app.generated.resources.dark_theme
+import pixelix.app.generated.resources.device_theme
+import pixelix.app.generated.resources.light_theme
 import pixelix.app.generated.resources.theme_dark
 import pixelix.app.generated.resources.theme_light
 import pixelix.app.generated.resources.theme_system
@@ -43,13 +43,13 @@ fun ThemePref() {
     }
 
     ExpandOptionsPref(
-        leadingIcon = Res.drawable.color_palette_outline,
+        leadingIcon = Res.drawable.theme,
         title = stringResource(Res.string.app_theme),
     ) {
         ValueOption(
             shape = OptionShapes.indexOfShape(0, 3),
             leadingIcon = imageVectorIconBlock(
-                imageVector = Icons.Rounded.BrightnessAuto,
+                imageVector = vectorResource(Res.drawable.device_theme),
                 contentDescription = stringResource(Res.string.theme_system)
             ),
             title = stringResource(Res.string.theme_system),
@@ -60,7 +60,7 @@ fun ThemePref() {
         ValueOption(
             shape = OptionShapes.indexOfShape(1, 3),
             leadingIcon = imageVectorIconBlock(
-                imageVector = Icons.Rounded.LightMode,
+                imageVector = vectorResource(Res.drawable.light_theme),
                 contentDescription = stringResource(Res.string.theme_light)
             ),
             title = stringResource(Res.string.theme_light),
@@ -71,7 +71,7 @@ fun ThemePref() {
         ValueOption(
             shape = OptionShapes.indexOfShape(2, 3),
             leadingIcon = imageVectorIconBlock(
-                imageVector = Icons.Rounded.DarkMode,
+                imageVector = vectorResource(Res.drawable.dark_theme),
                 contentDescription = stringResource(Res.string.theme_dark)
             ),
             title = stringResource(Res.string.theme_dark),
@@ -82,7 +82,7 @@ fun ThemePref() {
         ValueOption(
             shape = OptionShapes.indexOfShape(2, 3),
             leadingIcon = imageVectorIconBlock(
-                imageVector = Icons.Rounded.Contrast,
+                imageVector = vectorResource(Res.drawable.amoled_theme),
                 contentDescription = stringResource(Res.string.amoled)
             ),
             title = stringResource(Res.string.amoled),

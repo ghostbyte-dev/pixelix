@@ -314,7 +314,7 @@ class NewPostViewModel @Inject constructor(
                         images[index] = images[index].copy(
                             isLoading = false,
                             id = result.data?.id
-                        ) // Replacing the object forces recomposition
+                        )
                     }
 
                     mediaUploadState.copy(

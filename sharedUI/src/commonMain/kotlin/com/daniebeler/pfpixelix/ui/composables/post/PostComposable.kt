@@ -22,16 +22,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.outlined.Cached
-import androidx.compose.material.icons.outlined.Close
-import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.material.icons.outlined.Description
-import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -46,7 +40,6 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
@@ -66,6 +59,7 @@ import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -94,25 +88,32 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.and
+import pixelix.app.generated.resources.bookmark_filled
 import pixelix.app.generated.resources.bookmark
-import pixelix.app.generated.resources.bookmark_outline
 import pixelix.app.generated.resources.cancel
-import pixelix.app.generated.resources.chatbubble_outline
+import pixelix.app.generated.resources.chatbubble
+import pixelix.app.generated.resources.close
 import pixelix.app.generated.resources.default_avatar
 import pixelix.app.generated.resources.delete
 import pixelix.app.generated.resources.delete_post
-import pixelix.app.generated.resources.ellipsis_vertical
+import pixelix.app.generated.resources.document_text
+import pixelix.app.generated.resources.more_menu
+import pixelix.app.generated.resources.heart_filled
 import pixelix.app.generated.resources.heart
-import pixelix.app.generated.resources.heart_outline
 import pixelix.app.generated.resources.liked_by
+import pixelix.app.generated.resources.location
 import pixelix.app.generated.resources.media_description
 import pixelix.app.generated.resources.ok
 import pixelix.app.generated.resources.others
 import pixelix.app.generated.resources.reblogged_by
-import pixelix.app.generated.resources.sync_outline
-import pixelix.app.generated.resources.sync_outline_bold
+import pixelix.app.generated.resources.repost
+import pixelix.app.generated.resources.repost_strong
 import pixelix.app.generated.resources.this_action_cannot_be_undone
+import pixelix.app.generated.resources.trash
 
+private val HeartRedColor = Color(0xFFDD2E44)
+
+private enum class BottomSheetType { None, Comments, Menu, Likes }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -129,14 +130,8 @@ fun PostComposable(
 ) {
     var postId by remember { mutableStateOf(post.id) }
     val sheetState = rememberModalBottomSheetState()
-    var showBottomSheet by remember {
-        mutableIntStateOf(
-            if (openReplies) {
-                1
-            } else {
-                0
-            }
-        )
+    var activeSheet by remember {
+        mutableStateOf(if (openReplies) BottomSheetType.Comments else BottomSheetType.None)
     }
 
     val timeAgoText = produceState(initialValue = "") {
@@ -144,18 +139,12 @@ fun PostComposable(
     }
 
     LaunchedEffect(Unit) {
-        if (post.reblogId != null) {
-            postId = post.reblogId
-        }
-        if (viewModel.post == null) {
-            viewModel.updatePost(post)
-        }
+        if (post.reblogId != null) postId = post.reblogId
+        if (viewModel.post == null) viewModel.updatePost(post)
     }
 
     LaunchedEffect(viewModel.deleteState.deleted) {
-        if (viewModel.deleteState.deleted) {
-            postGetsDeleted(post.id)
-        }
+        if (viewModel.deleteState.deleted) postGetsDeleted(post.id)
     }
 
     LaunchedEffect(post) {
@@ -165,497 +154,618 @@ fun PostComposable(
     }
 
     LaunchedEffect(openReplies) {
-        if (openReplies) {
-            viewModel.loadReplies(
-                postId
-            )
-
-        }
+        if (openReplies) viewModel.loadReplies(postId)
     }
 
-    val mediaAttachmentsCount = post.mediaAttachments.count()
-
-    val pagerState = rememberPagerState(pageCount = { mediaAttachmentsCount })
+    val pagerState = rememberPagerState(pageCount = { post.mediaAttachments.count() })
 
     var animateBoost by remember { mutableStateOf(false) }
     val boostRotation by animateFloatAsState(
-        label = "StarRotation", targetValue = if (animateBoost) {
-            720f
-        } else {
-            0f
-        }, animationSpec = tween(durationMillis = 800, easing = EaseInOut)
+        label = "BoostRotation",
+        targetValue = if (animateBoost) 720f else 0f,
+        animationSpec = tween(durationMillis = 800, easing = EaseInOut),
     )
-
 
     var animateHeart by remember { mutableStateOf(false) }
     val heartScale by animateFloatAsState(
         targetValue = if (animateHeart) 1.3f else 1f,
         animationSpec = tween(durationMillis = 200, easing = LinearEasing),
-        finishedListener = {
-            animateHeart = false
-        })
+        finishedListener = { animateHeart = false })
 
-    if (viewModel.post != null) {
-        Column(
-            modifier = modifier.clip(
-                RoundedCornerShape(16.dp)
-            ).background(MaterialTheme.colorScheme.surfaceContainerLow)
-                .padding(top = 12.dp, bottom = 12.dp)
-        ) {
-            post.rebloggedBy?.let { reblogAccount ->
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(6.dp),
-                    modifier = Modifier.padding(start = 16.dp, end = 12.dp).clickable(onClick = {
-                        navController.navigate(Destination.Profile(reblogAccount.id))
-                    })
-                ) {
+    val currentPost = viewModel.post ?: return
+
+    Column(
+        modifier = modifier.clip(RoundedCornerShape(16.dp))
+            .background(MaterialTheme.colorScheme.surfaceContainerLow)
+            .padding(top = 12.dp, bottom = 12.dp)
+    ) {
+        PostHeader(
+            post = currentPost,
+            timeAgoText = timeAgoText.value,
+            navController = navController,
+            onMenuClick = { activeSheet = BottomSheetType.Menu })
+
+        Spacer(modifier = Modifier.height(6.dp))
+
+        Column(Modifier.padding(start = 12.dp, end = 12.dp)) {
+            PostMediaSection(
+                post = currentPost,
+                viewModel = viewModel,
+                pagerState = pagerState,
+                postId = postId,
+                setZindex = setZindex,
+                isMasonry = false,
+                onLikeAnimation = { animateHeart = true },
+                updatePost = updatePost,
+                navController = navController
+            )
+        }
+
+
+        if (!viewModel.isInFocusMode) {
+            PostActionBar(
+                post = currentPost,
+                viewModel = viewModel,
+                postId = postId,
+                heartScale = heartScale,
+                boostRotation = boostRotation,
+                animateHeart = { animateHeart = true },
+                animateBoost = { animateBoost = !animateBoost },
+                onCommentsClick = {
+                    viewModel.loadReplies(postId)
+                    activeSheet = BottomSheetType.Comments
+                },
+                onLikesClick = {
+                    viewModel.loadLikedBy(postId)
+                    activeSheet = BottomSheetType.Likes
+                },
+                navController = navController,
+                updatePost = updatePost
+            )
+        }
+    }
+
+    PostBottomSheet(
+        activeSheet = activeSheet,
+        sheetState = sheetState,
+        post = post,
+        viewModel = viewModel,
+        pagerState = pagerState,
+        navController = navController,
+        onDismiss = { activeSheet = BottomSheetType.None })
+
+    PostDeleteDialog(viewModel = viewModel)
+
+    LoadingComposable(isLoading = viewModel.deleteState.isLoading)
+}
+
+
+@Composable
+fun MasonryPost(
+    post: Post,
+    navController: NavController,
+    modifier: Modifier = Modifier,
+    viewModel: PostViewModel = injectViewModel(key = "post" + post.id) { postViewModel }
+) {
+    var postId by remember { mutableStateOf(post.id) }
+
+    LaunchedEffect(Unit) {
+        if (post.reblogId != null) postId = post.reblogId
+        if (viewModel.post == null) viewModel.updatePost(post)
+    }
+
+    LaunchedEffect(post) {
+        if (viewModel.post == null || viewModel.post!!.copy() != post.copy()) {
+            viewModel.updatePost(post)
+        }
+    }
+    val pagerState = rememberPagerState(pageCount = { post.mediaAttachments.count() })
+
+    PostMediaSection(
+        post = post,
+        viewModel = viewModel,
+        pagerState = pagerState,
+        postId = postId,
+        isMasonry = true,
+        onLikeAnimation = {},
+        navController = navController,
+        setZindex = {},
+        updatePost = {})
+}
+
+@Composable
+private fun PostHeader(
+    post: Post, timeAgoText: String, navController: NavController, onMenuClick: () -> Unit
+) {
+    post.rebloggedBy?.let { reblogAccount ->
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
+            modifier = Modifier.padding(start = 16.dp, end = 12.dp).clickable {
+                navController.navigate(Destination.Profile(reblogAccount.id))
+            }) {
+            Icon(
+                vectorResource(Res.drawable.repost),
+                contentDescription = null,
+                modifier = Modifier.size(16.dp)
+            )
+            Text(
+                stringResource(
+                    Res.string.reblogged_by, reblogAccount.displayname ?: reblogAccount.username
+                ), fontSize = 11.sp
+            )
+        }
+    }
+
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.padding(start = 16.dp, end = 12.dp).clickable {
+            navController.navigate(Destination.Profile(post.account.id))
+        }) {
+        AsyncImage(
+            model = post.account.avatar,
+            error = painterResource(Res.drawable.default_avatar),
+            contentDescription = null,
+            modifier = Modifier.height(40.dp).width(40.dp).clip(CircleShape)
+        )
+        Column(modifier = Modifier.padding(start = 8.dp).weight(1f)) {
+            Text(
+                text = post.account.acct,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Bold,
+                lineHeight = 8.sp,
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 1
+            )
+            Text(
+                text = timeAgoText,
+                fontSize = 12.sp,
+                lineHeight = 8.sp,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+            if (post.place != null) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
-                        Icons.Outlined.Cached,
-                        contentDescription = "reblogged by",
-                        modifier = Modifier.size(20.dp)
+                        imageVector = vectorResource(Res.drawable.location),
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp)
                     )
-                    Text(
-                        stringResource(
-                            Res.string.reblogged_by,
-                            reblogAccount.displayname ?: reblogAccount.username
-                        ), fontSize = 11.sp
+                    Row {
+                        Text(text = post.place.name ?: "", fontSize = 12.sp)
+                        if (post.place.country != null) {
+                            Text(text = ", ${post.place.country}", fontSize = 12.sp)
+                        }
+                    }
+                }
+            }
+        }
+
+
+        IconButton(onClick = onMenuClick) {
+            Icon(
+                imageVector = vectorResource(Res.drawable.more_menu), contentDescription = null
+            )
+        }
+    }
+}
+
+@Composable
+private fun PostMediaSection(
+    post: Post,
+    viewModel: PostViewModel,
+    pagerState: PagerState,
+    postId: String,
+    isMasonry: Boolean,
+    setZindex: (zIndex: Float) -> Unit,
+    onLikeAnimation: () -> Unit,
+    updatePost: (post: Post) -> Unit,
+    navController: NavController
+) {
+    if (post.mediaAttachments.isNotEmpty()) {
+        if (post.sensitive && !viewModel.showPost && viewModel.blurSensitiveContent) {
+            PostSensitiveOverlay(post = post, viewModel = viewModel, isMasonry = isMasonry)
+        } else {
+            PostMediaContent(
+                post = post,
+                viewModel = viewModel,
+                pagerState = pagerState,
+                postId = postId,
+                isMasonry = isMasonry,
+                setZindex = setZindex,
+                onLikeAnimation = onLikeAnimation,
+                updatePost = updatePost,
+                navController = navController
+            )
+        }
+    } else if (post.content.isNotBlank()) {
+        Column(Modifier.padding(start = 16.dp, top = 8.dp, end = 16.dp)) {
+            HorizontalDivider()
+            HashtagsMentionsTextView(
+                text = post.content,
+                mentions = post.mentions,
+                navController = navController,
+                textSize = 18.sp,
+                openUrl = { url -> viewModel.openUrl(url) },
+                modifier = Modifier.padding(top = 16.dp, bottom = 16.dp),
+                emojis = post.emojis
+            )
+            HorizontalDivider()
+        }
+    }
+}
+
+@Composable
+private fun PostSensitiveOverlay(post: Post, viewModel: PostViewModel, isMasonry: Boolean) {
+    Box(
+        modifier = Modifier.fillMaxWidth().zIndex(80f).clip(RoundedCornerShape(16.dp))
+    ) {
+        val blurHashBitmap = BlurHashDecoder.decode(post.mediaAttachments[0].blurHash)
+        val aspectRatio = post.mediaAttachments[0].meta?.original?.aspect?.toFloat() ?: 1.5f
+
+        if (blurHashBitmap != null) {
+            Image(
+                blurHashBitmap,
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.aspectRatio(aspectRatio)
+            )
+        }
+
+        Column(
+            Modifier.aspectRatio(aspectRatio).fillMaxWidth(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            val textStyle = if (isMasonry) {
+                MaterialTheme.typography.bodySmall
+            } else {
+                MaterialTheme.typography.bodyMedium
+            }
+            Text(
+                text = post.spoilerText.ifEmpty { "This post may contain sensitive content." },
+                style = textStyle
+            )
+            Button(onClick = { viewModel.toggleShowPost() }) {
+                Text(text = "Show post", style = textStyle)
+            }
+        }
+    }
+}
+
+@Composable
+private fun PostMediaContent(
+    post: Post,
+    viewModel: PostViewModel,
+    pagerState: PagerState,
+    postId: String,
+    isMasonry: Boolean,
+    setZindex: (zIndex: Float) -> Unit,
+    onLikeAnimation: () -> Unit,
+    updatePost: (post: Post) -> Unit,
+    navController: NavController
+) {
+    if (post.mediaAttachments.count() > 1) {
+        val smallestAspectRatio = post.mediaAttachments.minByOrNull {
+            it.meta?.original?.aspect ?: 1.0
+        }
+        Box {
+            HorizontalPager(
+                state = pagerState, pageSpacing = if (isMasonry) {4.dp} else {16.dp}, modifier = Modifier.zIndex(50f).aspectRatio(
+                    smallestAspectRatio?.meta?.original?.aspect?.toFloat() ?: 1f
+                )
+            ) { page ->
+                Box(modifier = Modifier.zIndex(10f)) {
+                    PostImage(
+                        mediaAttachment = post.mediaAttachments[page],
+                        postId = postId,
+                        setZindex = setZindex,
+                        viewModel = viewModel,
+                        like = onLikeAnimation,
+                        updatePost = updatePost,
+                        isMasonry = isMasonry,
+                        navController = navController
                     )
                 }
             }
+
+            Box(
+                modifier = Modifier.align(Alignment.TopEnd).zIndex(51f)
+                    .padding(top = 20.dp, end = 20.dp).clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.background.copy(alpha = 0.5f))
+                    .padding(vertical = 2.dp, horizontal = 8.dp)
+            ) {
+                Text(
+                    text = "${pagerState.currentPage + 1}/${post.mediaAttachments.count()}",
+                    fontSize = 13.sp
+                )
+            }
+        }
+
+        if (!isMasonry) {
+            Spacer(modifier = Modifier.height(5.dp))
 
             Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(start = 16.dp, end = 12.dp).clickable(onClick = {
-                    navController.navigate(Destination.Profile(viewModel.post!!.account.id))
-                })
+                Modifier.wrapContentHeight().fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
             ) {
-                AsyncImage(
-                    model = viewModel.post!!.account.avatar,
-                    error = painterResource(Res.drawable.default_avatar),
-                    contentDescription = "",
-                    modifier = Modifier.height(40.dp).width(40.dp).clip(CircleShape)
-                )
-                Column(modifier = Modifier.padding(start = 8.dp)) {
-                    Text(
-                        text = viewModel.post!!.account.acct,
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Bold,
-                        lineHeight = 8.sp
-                    )
-
-                    Text(
-                        text = timeAgoText.value,
-                        fontSize = 12.sp,
-                        lineHeight = 8.sp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-
-                    if (viewModel.post!!.place != null) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(
-                                imageVector = Icons.Outlined.LocationOn,
-                                contentDescription = "",
-                                modifier = Modifier.height(20.dp)
-                            )
-                            Row {
-                                Text(text = viewModel.post!!.place?.name ?: "", fontSize = 12.sp)
-                                if (post.place?.country != null) {
-                                    Text(
-                                        text = ", " + (viewModel.post!!.place?.country ?: ""),
-                                        fontSize = 12.sp
-                                    )
-                                }
-                            }
-                        }
+                repeat(pagerState.pageCount) { iteration ->
+                    val color = if (pagerState.currentPage == iteration) {
+                        MaterialTheme.colorScheme.primary
+                    } else {
+                        MaterialTheme.colorScheme.onBackground
                     }
-                }
-
-                Spacer(modifier = Modifier.weight(1f))
-
-                IconButton(onClick = {
-                    showBottomSheet = 2
-                }) {
-                    Icon(
-                        imageVector = vectorResource(Res.drawable.ellipsis_vertical),
-                        modifier = Modifier.size(20.dp),
-                        contentDescription = ""
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height(6.dp))
-
-            if (viewModel.post!!.mediaAttachments.isNotEmpty()) {
-                if (viewModel.post!!.sensitive && !viewModel.showPost && viewModel.blurSensitiveContent) {
-
                     Box(
-                        modifier.padding(start = 8.dp, end = 8.dp).clip(RoundedCornerShape(16.dp))
-                    ) {
-                        val blurHashBitmap = BlurHashDecoder.decode(
-                            viewModel.post!!.mediaAttachments[0].blurHash
-                        )
-
-                        if (blurHashBitmap != null) {
-                            Image(
-                                blurHashBitmap,
-                                contentDescription = null,
-                                contentScale = ContentScale.Crop,
-                                modifier = Modifier.aspectRatio(
-                                    viewModel.post!!.mediaAttachments[0].meta?.original?.aspect?.toFloat()
-                                        ?: 1.5f
-                                )
-                            )
-                        }
-
-
-                        Column(
-                            Modifier.aspectRatio(
-                                viewModel.post!!.mediaAttachments[0].meta?.original?.aspect?.toFloat()
-                                    ?: 1.5f
-                            ),
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-
-                            if (viewModel.post!!.spoilerText.isNotEmpty()) {
-                                Text(text = viewModel.post!!.spoilerText)
-                            } else {
-                                Text(text = "This post may contain sensitive content.")
-                            }
-
-
-                            Button(onClick = {
-                                viewModel.toggleShowPost()
-                            }) {
-                                Text(text = "Show post")
-                            }
-                        }
-                    }
-
-                } else {
-                    if (viewModel.post!!.mediaAttachments.count() > 1) {
-                        val smallestAspectRatio = viewModel.post!!.mediaAttachments.minByOrNull {
-                            it.meta?.original?.aspect ?: 1.0
-                        }
-                        Box {
-                            HorizontalPager(
-                                state = pagerState, modifier = Modifier.zIndex(50f).aspectRatio(
-                                    smallestAspectRatio?.meta?.original?.aspect?.toFloat() ?: 1f
-                                )
-                            ) { page ->
-                                Box(
-                                    modifier = Modifier.zIndex(10f)
-                                        .padding(start = 8.dp, end = 8.dp)
-                                ) {
-                                    PostImage(
-                                        mediaAttachment = viewModel.post!!.mediaAttachments[page],
-                                        postId,
-                                        setZindex = { setZindex(it) },
-                                        viewModel,
-                                        like = { animateHeart = true },
-                                        updatePost
-                                    )
-                                }
-                            }
-
-                            Box(
-                                modifier = Modifier.align(Alignment.TopEnd).zIndex(51f)
-                                    .padding(top = 20.dp, end = 20.dp).clip(CircleShape)
-                                    .background(MaterialTheme.colorScheme.background.copy(alpha = 0.5f))
-                                    .padding(vertical = 2.dp, horizontal = 8.dp)
-                            ) {
-                                Text(
-                                    text = (pagerState.currentPage + 1).toString() + "/" + viewModel.post!!.mediaAttachments.count(),
-                                    fontSize = 13.sp
-                                )
-                            }
-                        }
-
-                        Spacer(modifier = Modifier.height(5.dp))
-                        Row(
-                            Modifier.wrapContentHeight().fillMaxWidth()
-                                .align(Alignment.CenterHorizontally),
-                            horizontalArrangement = Arrangement.Center
-                        ) {
-                            repeat(pagerState.pageCount) { iteration ->
-                                val color =
-                                    if (pagerState.currentPage == iteration) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground
-                                Box(
-                                    modifier = Modifier.padding(2.dp).clip(CircleShape)
-                                        .background(color).size(8.dp)
-                                )
-                            }
-                        }
-                    } else if (viewModel.post != null && viewModel.post!!.mediaAttachments.isNotEmpty()) {
-                        Box(
-                            modifier = Modifier.zIndex(10f).padding(start = 12.dp, end = 12.dp)
-                        ) {
-                            PostImage(
-                                mediaAttachment = viewModel.post!!.mediaAttachments[0],
-                                postId,
-                                setZindex = { setZindex(it) },
-                                viewModel,
-                                like = { animateHeart = true },
-                                updatePost
-                            )
-                        }
-                    }
-                }
-            } else {
-                if (viewModel.post!!.content.isNotBlank()) {
-                    Column(Modifier.padding(start = 16.dp, top = 8.dp, end = 16.dp)) {
-                        HorizontalDivider()
-                        HashtagsMentionsTextView(
-                            text = viewModel.post!!.content,
-                            mentions = viewModel.post!!.mentions,
-                            navController = navController,
-                            textSize = 18.sp,
-                            openUrl = { url -> viewModel.openUrl(url) },
-                            modifier = Modifier.padding(top = 16.dp, bottom = 16.dp)
-                        )
-                        HorizontalDivider()
-                    }
+                        modifier = Modifier.padding(2.dp).clip(CircleShape).background(color)
+                            .size(8.dp)
+                    )
                 }
             }
-
-            if (!viewModel.isInFocusMode) {
-                Column(Modifier.padding(start = 16.dp, top = 8.dp, end = 16.dp)) {
-                    Row(
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier.clip(
-                                    RoundedCornerShape(percent = 50)
-                                ).background(MaterialTheme.colorScheme.surfaceContainerHigh)
-                                    .padding(horizontal = 10.dp, vertical = 4.dp)
-                            ) {
-                                if (viewModel.post!!.favourited) {
-                                    Icon(
-                                        imageVector = vectorResource(Res.drawable.heart),
-                                        modifier = Modifier.size(22.dp).clickable {
-                                            viewModel.unlikePost(postId, updatePost)
-                                        }.scale(heartScale),
-                                        contentDescription = "unlike post",
-                                        tint = Color(0xFFDD2E44)
-                                    )
-                                } else {
-                                    Icon(
-                                        imageVector = vectorResource(Res.drawable.heart_outline),
-                                        modifier = Modifier.size(22.dp).clickable {
-                                            animateHeart = true
-                                            viewModel.likePost(postId, updatePost)
-                                        },
-                                        contentDescription = "like post"
-                                    )
-
-                                }
-
-                                Spacer(Modifier.width(4.dp))
-
-                                Text(
-                                    text = viewModel.post!!.favouritesCount.toString(),
-                                    fontSize = 16.sp,
-                                    fontWeight = FontWeight.Bold
-                                )
-                            }
+        }
 
 
-                            Spacer(Modifier.width(16.dp))
-
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier.clip(
-                                    RoundedCornerShape(percent = 50)
-                                ).background(MaterialTheme.colorScheme.surfaceContainerHigh)
-                                    .padding(horizontal = 10.dp, vertical = 4.dp)
-                            ) {
-                                Icon(
-                                    imageVector = vectorResource(Res.drawable.chatbubble_outline),
-                                    modifier = Modifier.size(22.dp).clickable {
-                                        viewModel.loadReplies(
-                                            postId
-                                        )
-                                        showBottomSheet = 1
-                                    },
-                                    contentDescription = "comments of post"
-                                )
-
-                                Spacer(Modifier.width(4.dp))
-
-                                Text(
-                                    text = viewModel.post!!.replyCount.toString(),
-                                    fontSize = 16.sp,
-                                    fontWeight = FontWeight.Bold
-                                )
-                            }
-                        }
-
-                        Row {
-                            if (viewModel.post!!.reblogged) {
-                                IconButton(onClick = {
-                                    viewModel.unreblogPost(postId, updatePost)
-                                }) {
-                                    Icon(
-                                        imageVector = vectorResource(Res.drawable.sync_outline_bold),
-                                        contentDescription = "undo reblog post",
-                                        tint = MaterialTheme.colorScheme.primary,
-                                        modifier = Modifier.rotate(boostRotation)
-                                    )
-                                }
-                            } else {
-                                IconButton(onClick = {
-                                    animateBoost = true
-                                    viewModel.reblogPost(postId, updatePost)
-                                }) {
-                                    Icon(
-                                        imageVector = vectorResource(Res.drawable.sync_outline),
-                                        contentDescription = "reblog post",
-                                    )
-                                }
-                            }
-
-                            Spacer(Modifier.width(14.dp))
-
-                            if (viewModel.post!!.bookmarked) {
-                                IconButton(onClick = {
-                                    viewModel.unBookmarkPost(postId, updatePost)
-                                }) {
-                                    Icon(
-                                        imageVector = vectorResource(Res.drawable.bookmark),
-                                        contentDescription = "unbookmark post"
-                                    )
-                                }
-                            } else {
-                                IconButton(onClick = {
-                                    viewModel.bookmarkPost(postId, updatePost)
-                                }) {
-                                    Icon(
-                                        imageVector = vectorResource(Res.drawable.bookmark_outline),
-                                        contentDescription = "bookmark post"
-                                    )
-                                }
-                            }
-                        }
-                    }
-
-                    Row {
-                        if (viewModel.post!!.likedBy?.username?.isNotBlank() == true) {
-                            Text(
-                                text = stringResource(Res.string.liked_by) + " ", fontSize = 14.sp
-                            )
-                            Text(
-                                text = viewModel.post!!.likedBy!!.username!!,
-                                fontSize = 14.sp,
-                                fontWeight = FontWeight.Bold,
-                                modifier = Modifier.clickable {
-                                    navController.navigate(Destination.Profile(viewModel.post!!.likedBy!!.id!!))
-                                })
-                            if (post.favouritesCount > 1) {
-                                Text(
-                                    text = " " + stringResource(Res.string.and) + " ",
-                                    fontSize = 14.sp
-                                )
-                                Text(
-                                    text = (viewModel.post!!.favouritesCount - 1).toString() + " " + stringResource(
-                                        Res.string.others
-                                    ),
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 14.sp,
-                                    modifier = Modifier.clickable {
-                                        viewModel.loadLikedBy(postId)
-                                        showBottomSheet = 3
-                                    })
-                            }
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(12.dp))
-
-                    if (viewModel.post!!.mediaAttachments.isNotEmpty()) {
-                        if (viewModel.post!!.content.isNotBlank()) {
-                            HashtagsMentionsTextView(
-                                text = viewModel.post!!.content,
-                                mentions = viewModel.post!!.mentions,
-                                navController = navController,
-                                openUrl = { url -> viewModel.openUrl(url) },
-                                maximumLines = 4
-                            )
-                        }
-                    }
-                }
-            }
-
+    } else if (post.mediaAttachments.isNotEmpty()) {
+        Box(modifier = Modifier.zIndex(10f)) {
+            PostImage(
+                mediaAttachment = post.mediaAttachments[0],
+                postId = postId,
+                setZindex = setZindex,
+                viewModel = viewModel,
+                like = onLikeAnimation,
+                updatePost = updatePost,
+                isMasonry = isMasonry,
+                navController = navController
+            )
         }
     }
+}
 
-
-
-    if (showBottomSheet > 0) {
-        ModalBottomSheet(
-            onDismissRequest = {
-                showBottomSheet = 0
-            }, sheetState = sheetState
+@Composable
+private fun PostActionBar(
+    post: Post,
+    viewModel: PostViewModel,
+    postId: String,
+    heartScale: Float,
+    boostRotation: Float,
+    animateHeart: () -> Unit,
+    animateBoost: () -> Unit,
+    onCommentsClick: () -> Unit,
+    onLikesClick: () -> Unit,
+    navController: NavController,
+    updatePost: (post: Post) -> Unit
+) {
+    Column(Modifier.padding(start = 16.dp, top = 8.dp, end = 16.dp)) {
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            if (showBottomSheet == 1) {
-                CommentsBottomSheet(post, navController, viewModel)
-            } else if (showBottomSheet == 2) {
-                if (viewModel.myAccountId != null && post.account.id == viewModel.myAccountId) {
-                    ShareBottomSheet(
-                        post.url,
-                        true,
-                        viewModel,
-                        post,
-                        pagerState.currentPage,
-                        navController,
-                        { showBottomSheet = 0 })
-                } else {
-                    ShareBottomSheet(
-                        post.url,
-                        false,
-                        viewModel,
-                        post,
-                        pagerState.currentPage,
-                        navController,
-                        { showBottomSheet = 0 })
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                // Like button with count
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.clip(RoundedCornerShape(percent = 50))
+                        .background(MaterialTheme.colorScheme.surfaceContainerHigh).clickable {
+                            if (post.favourited) {
+                                viewModel.unlikePost(postId, updatePost)
+                            } else {
+                                animateHeart()
+                                viewModel.likePost(postId, updatePost)
+                            }
+                        }.padding(horizontal = 10.dp, vertical = 4.dp),
+                ) {
+                    if (post.favourited) {
+                        Icon(
+                            imageVector = vectorResource(Res.drawable.heart_filled),
+                            modifier = Modifier.size(22.dp).scale(heartScale),
+                            contentDescription = "unlike post",
+                            tint = HeartRedColor
+                        )
+                    } else {
+                        Icon(
+                            imageVector = vectorResource(Res.drawable.heart),
+                            modifier = Modifier.size(22.dp),
+                            contentDescription = "like post"
+                        )
+                    }
+                    Spacer(Modifier.width(4.dp))
+                    Text(
+                        text = post.favouritesCount.toString(),
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold
+                    )
                 }
-            } else if (showBottomSheet == 3) {
-                LikesBottomSheet(viewModel, navController)
+
+                Spacer(Modifier.width(16.dp))
+
+                // Comment button with count
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.clip(RoundedCornerShape(percent = 50))
+                        .background(MaterialTheme.colorScheme.surfaceContainerHigh)
+                        .clickable(onClick = onCommentsClick)
+                        .padding(horizontal = 10.dp, vertical = 4.dp)
+
+                ) {
+                    Icon(
+                        imageVector = vectorResource(Res.drawable.chatbubble),
+                        modifier = Modifier.size(22.dp),
+                        contentDescription = "open comments"
+                    )
+                    Spacer(Modifier.width(4.dp))
+                    Text(
+                        text = post.replyCount.toString(),
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.clip(RoundedCornerShape(percent = 50))
+                        .background(MaterialTheme.colorScheme.surfaceContainerHigh).clickable {
+                            animateBoost()
+                            if (post.reblogged) {
+                                viewModel.unreblogPost(postId, updatePost)
+                            } else {
+                                viewModel.reblogPost(postId, updatePost)
+                            }
+                        }.padding(horizontal = 10.dp, vertical = 4.dp)
+                ) {
+                    Icon(
+                        imageVector = if (post.reblogged) {
+                            vectorResource(Res.drawable.repost_strong)
+                        } else {
+                            vectorResource(Res.drawable.repost)
+                        }, contentDescription = "reblog", tint = if (post.reblogged) {
+                            MaterialTheme.colorScheme.primary
+                        } else {
+                            MaterialTheme.colorScheme.onSurface
+                        }, modifier = Modifier.rotate(boostRotation).size(22.dp)
+                    )
+                    Spacer(Modifier.width(4.dp))
+                    Text(
+                        text = post.reblogCount.toString(),
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+
+
+                Spacer(Modifier.width(14.dp))
+
+                // Bookmark button
+                if (post.bookmarked) {
+                    IconButton(onClick = { viewModel.unBookmarkPost(postId, updatePost) }) {
+                        Icon(
+                            imageVector = vectorResource(Res.drawable.bookmark_filled),
+                            tint = MaterialTheme.colorScheme.primary,
+                            contentDescription = "unbookmark post"
+                        )
+                    }
+                } else {
+                    IconButton(onClick = { viewModel.bookmarkPost(postId, updatePost) }) {
+                        Icon(
+                            imageVector = vectorResource(Res.drawable.bookmark),
+                            tint = MaterialTheme.colorScheme.onSurface,
+                            contentDescription = "bookmark post"
+                        )
+                    }
+                }
             }
         }
+
+        // "Liked by" row
+        PostLikedByRow(
+            post = post, navController = navController, onLikesClick = onLikesClick
+        )
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        // Post content text (when media is present)
+        if (post.mediaAttachments.isNotEmpty() && post.content.isNotBlank()) {
+            HashtagsMentionsTextView(
+                text = post.content,
+                mentions = post.mentions,
+                navController = navController,
+                openUrl = { url -> viewModel.openUrl(url) },
+                maximumLines = 4,
+                emojis = post.emojis
+            )
+        }
     }
-    if (viewModel.deleteDialog != null) {
-        AlertDialog(icon = {
-            Icon(imageVector = Icons.Outlined.Delete, contentDescription = null)
-        }, title = {
-            Text(text = stringResource(Res.string.delete_post))
-        }, text = {
-            Text(text = stringResource(Res.string.this_action_cannot_be_undone))
-        }, onDismissRequest = {
-            viewModel.deleteDialog = null
-        }, confirmButton = {
-            TextButton(onClick = {
-                viewModel.deletePost(viewModel.deleteDialog!!)
-            }) {
+}
+
+@Composable
+private fun PostLikedByRow(
+    post: Post, navController: NavController, onLikesClick: () -> Unit
+) {
+    if (post.likedBy?.username?.isNotBlank() != true || post.likedBy.id.isNullOrBlank()) return
+
+    Row {
+        Text(text = stringResource(Res.string.liked_by) + " ", fontSize = 14.sp)
+        Text(
+            text = post.likedBy.username,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.clickable {
+                navController.navigate(Destination.Profile(post.likedBy.id))
+            })
+        if (post.favouritesCount > 1) {
+            Text(text = " ${stringResource(Res.string.and)} ", fontSize = 14.sp)
+            Text(
+                text = "${post.favouritesCount - 1} ${stringResource(Res.string.others)}",
+                fontWeight = FontWeight.Bold,
+                fontSize = 14.sp,
+                modifier = Modifier.clickable(onClick = onLikesClick)
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun PostBottomSheet(
+    activeSheet: BottomSheetType,
+    sheetState: androidx.compose.material3.SheetState,
+    post: Post,
+    viewModel: PostViewModel,
+    pagerState: PagerState,
+    navController: NavController,
+    onDismiss: () -> Unit
+) {
+    if (activeSheet == BottomSheetType.None) return
+
+    ModalBottomSheet(onDismissRequest = onDismiss, sheetState = sheetState) {
+        when (activeSheet) {
+            BottomSheetType.Comments -> CommentsBottomSheet(post, navController, viewModel)
+            BottomSheetType.Menu -> {
+                val isMyPost =
+                    viewModel.myAccountId != null && post.account.id == viewModel.myAccountId
+                ShareBottomSheet(
+                    post.url,
+                    isMyPost,
+                    viewModel,
+                    post,
+                    pagerState.currentPage,
+                    navController,
+                    onDismiss
+                )
+            }
+
+            BottomSheetType.Likes -> LikesBottomSheet(viewModel, navController)
+            BottomSheetType.None -> {}
+        }
+    }
+}
+
+@Composable
+private fun PostDeleteDialog(viewModel: PostViewModel) {
+    val postIdToDelete = viewModel.deleteDialog ?: return
+
+    AlertDialog(
+        icon = {
+            Icon(
+                imageVector = vectorResource(Res.drawable.trash), contentDescription = null
+            )
+        },
+        title = { Text(text = stringResource(Res.string.delete_post)) },
+        text = { Text(text = stringResource(Res.string.this_action_cannot_be_undone)) },
+        onDismissRequest = { viewModel.deleteDialog = null },
+        confirmButton = {
+            TextButton(onClick = { viewModel.deletePost(postIdToDelete) }) {
                 Text(stringResource(Res.string.delete))
             }
-        }, dismissButton = {
-            TextButton(onClick = {
-                viewModel.deleteDialog = null
-            }) {
+        },
+        dismissButton = {
+            TextButton(onClick = { viewModel.deleteDialog = null }) {
                 Text(stringResource(Res.string.cancel))
             }
         })
-
-    }
-    LoadingComposable(isLoading = viewModel.deleteState.isLoading)
 }
+
+// --- Post Image and Media Components ---
 
 @Composable
 fun PostImage(
@@ -664,10 +774,12 @@ fun PostImage(
     setZindex: (zIndex: Float) -> Unit,
     viewModel: PostViewModel,
     like: () -> Unit,
-    updatePost: (post: Post) -> Unit
+    updatePost: (post: Post) -> Unit,
+    isMasonry: Boolean,
+    navController: NavController
 ) {
     var showHeart by remember { mutableStateOf(false) }
-    val scale = animateFloatAsState(if (showHeart) 1f else 0f, label = "heart animation")
+    val scale = animateFloatAsState(if (showHeart) 1f else 0f, label = "heart_filled animation")
     var imageLoaded by remember { mutableStateOf(false) }
     LaunchedEffect(showHeart) {
         if (showHeart) {
@@ -676,35 +788,24 @@ fun PostImage(
         }
     }
     var showMediaDialog by remember { mutableStateOf<MediaAttachment?>(null) }
-
     var altText by remember { mutableStateOf("") }
 
-    Box(
-        modifier = Modifier.fillMaxWidth().zIndex(80f).clip(RoundedCornerShape(16.dp))
-    ) {
+    Box(modifier = Modifier.fillMaxWidth().zIndex(80f).clip(RoundedCornerShape(16.dp))) {
+        val blurHashBitmap = BlurHashDecoder.decode(mediaAttachment.blurHash)
 
-        val blurHashBitmap = BlurHashDecoder.decode(
-            mediaAttachment.blurHash,
-        )
-
-        if (!imageLoaded) {
-            if (blurHashBitmap != null) {
-                Image(
-                    blurHashBitmap,
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.aspectRatio(
-                        mediaAttachment.meta?.original?.aspect?.toFloat() ?: 1f
-                    )
+        if (!imageLoaded && blurHashBitmap != null) {
+            Image(
+                blurHashBitmap,
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.aspectRatio(
+                    mediaAttachment.meta?.original?.aspect?.toFloat() ?: 1f
                 )
-            }
+            )
         }
 
         val zoomState = rememberZoomState()
-
-        val showAltTextIcon = remember {
-            mutableStateOf(true)
-        }
+        val showAltTextIcon = remember { mutableStateOf(true) }
 
         if (zoomState.scale != 1f) {
             setZindex(100f)
@@ -722,8 +823,12 @@ fun PostImage(
                     showHeart = true
                 }
             }, onTap = {
-                if (mediaAttachment.type != "video") {
-                    showMediaDialog = mediaAttachment
+                if (isMasonry) {
+                    navController.navigate(Destination.Post(postId))
+                } else {
+                    if (mediaAttachment.type != "video") {
+                        showMediaDialog = mediaAttachment
+                    }
                 }
             })
         }) {
@@ -733,8 +838,7 @@ fun PostImage(
                     { zoomState.setContentSize(it.painter.intrinsicSize) },
                     { imageLoaded = true })
             } else {
-                VideoAttachment(
-                    mediaAttachment, viewModel, { imageLoaded = true })
+                VideoAttachment(mediaAttachment, viewModel, { imageLoaded = true })
             }
         }
 
@@ -742,43 +846,37 @@ fun PostImage(
             Box(
                 modifier = Modifier.align(Alignment.BottomStart).zIndex(3f).padding(10.dp)
                     .clip(RoundedCornerShape(10.dp))
-                    .background(MaterialTheme.colorScheme.background.copy(alpha = 0.5f)).clickable {
-                        altText = mediaAttachment.description
-                    }.padding(10.dp),
+                    .background(MaterialTheme.colorScheme.background.copy(alpha = 0.5f))
+                    .clickable { altText = mediaAttachment.description }.padding(10.dp)
             ) {
                 Icon(
-                    Icons.Outlined.Description,
-                    contentDescription = "Show alt text",
+                    vectorResource(Res.drawable.document_text),
+                    contentDescription = null,
                     Modifier.size(22.dp)
                 )
             }
         }
 
-
-
         Icon(
-            imageVector = Icons.Filled.Favorite,
+            imageVector = vectorResource(Res.drawable.heart_filled),
             contentDescription = null,
-            tint = Color(0xFFDD2E44),
+            tint = HeartRedColor,
             modifier = Modifier.size(80.dp).align(Alignment.Center).scale(scale.value).zIndex(100f)
         )
 
         if (altText.isNotBlank()) {
-            AlertDialog(title = {
-                Text(text = stringResource(Res.string.media_description))
-            }, text = {
-                Text(text = altText)
-            }, onDismissRequest = {
-                altText = ""
-            }, confirmButton = {
-                TextButton(onClick = {
-                    altText = ""
-                }) {
-                    Text(stringResource(Res.string.ok))
-                }
-            })
+            AlertDialog(
+                title = { Text(text = stringResource(Res.string.media_description)) },
+                text = { Text(text = altText) },
+                onDismissRequest = { altText = "" },
+                confirmButton = {
+                    TextButton(onClick = { altText = "" }) {
+                        Text(stringResource(Res.string.ok))
+                    }
+                })
         }
     }
+
     showMediaDialog?.let {
         MediaDialog(it, closeDialog = { showMediaDialog = null }, postViewModel = viewModel)
     }
@@ -792,8 +890,8 @@ private fun ImageWrapper(
 ) {
     AsyncImage(
         model = mediaAttachment.url,
-        contentDescription = "",
-        Modifier.fillMaxWidth(),
+        contentDescription = null,
+        modifier = Modifier.fillMaxWidth(),
         contentScale = ContentScale.FillWidth,
         onSuccess = { state ->
             setContentSize(state)
@@ -804,7 +902,6 @@ private fun ImageWrapper(
 fun Modifier.isVisible(
     threshold: Int, onVisibilityChange: (Boolean) -> Unit
 ) = composed {
-
     Modifier.onGloballyPositioned { layoutCoordinates: LayoutCoordinates ->
         val layoutHeight = layoutCoordinates.size.height
         val thresholdHeight = layoutHeight * threshold / 100
@@ -812,17 +909,12 @@ fun Modifier.isVisible(
         val layoutBottom = layoutTop + layoutHeight
 
         val parent = layoutCoordinates.parentLayoutCoordinates
-
         parent?.boundsInRoot()?.let { rect: Rect ->
             val parentTop = rect.top
             val parentBottom = rect.bottom
-
-            if (parentBottom - layoutTop > thresholdHeight && (parentTop < layoutBottom - thresholdHeight)) {
-                onVisibilityChange(true)
-            } else {
-                onVisibilityChange(false)
-
-            }
+            val isVisible =
+                parentBottom - layoutTop > thresholdHeight && parentTop < layoutBottom - thresholdHeight
+            onVisibilityChange(isVisible)
         }
     }
 }
@@ -838,9 +930,8 @@ fun MediaDialog(
         properties = DialogProperties(usePlatformDefaultWidth = false)
     ) {
         Box(
-            modifier = Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.8f)).clickable {
-                closeDialog()
-            }, contentAlignment = Alignment.Center
+            modifier = Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.8f))
+                .clickable { closeDialog() }, contentAlignment = Alignment.Center
         ) {
             Box(modifier = Modifier.zIndex(2f).zoomable(zoomState).clickable { }) {
                 if (mediaAttachment.type != "video") {
@@ -853,8 +944,12 @@ fun MediaDialog(
                 }
             }
             Box(Modifier.align(Alignment.TopEnd).padding(20.dp).zIndex(2f)) {
-                IconButton(onClick = { closeDialog() }) {
-                    Icon(Icons.Outlined.Close, "", tint = Color.White)
+                IconButton(onClick = closeDialog) {
+                    Icon(
+                        vectorResource(Res.drawable.close),
+                        contentDescription = null,
+                        tint = Color.White
+                    )
                 }
             }
         }

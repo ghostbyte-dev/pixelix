@@ -75,7 +75,7 @@ class OtherProfileViewModel(
 
         viewModelScope.launch {
             prefs.showUserGridTimelineFlow.collect { res ->
-                view = if (res) ViewEnum.Grid else ViewEnum.Timeline
+                view = ViewEnum.getView(res)
             }
         }
     }
@@ -205,9 +205,9 @@ class OtherProfileViewModel(
             when (result) {
                 is Resource.Success -> {
                     collectionsState = if (!paginated) {
-                        CollectionsState(collections = result.data ?: emptyList())
+                        CollectionsState(collections = result.data)
                     } else {
-                        val endReached = result.data!!.isEmpty()
+                        val endReached = result.data.isEmpty()
                         CollectionsState(
                             collections = collectionsState.collections + result.data,
                             endReached = endReached
@@ -395,7 +395,7 @@ class OtherProfileViewModel(
 
     fun changeView(newView: ViewEnum) {
         view = newView
-        prefs.showUserGridTimeline = newView == ViewEnum.Grid
+        prefs.showUserGridTimeline = newView.ordinal
     }
 
     fun postGetsDeleted(postId: String) {

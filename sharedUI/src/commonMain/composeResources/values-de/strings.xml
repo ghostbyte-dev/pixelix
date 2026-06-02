@@ -281,4 +281,9 @@
     <string name="delete_account">Konto löschen</string>
     <string name="character_count">%1$d / %2$d Zeichen</string>
     <string name="swipe_between_tabs">Wischen, um zwischen Tabs zu wechseln</string>
+    <string name="discard">Verwerfen</string>
+    <string name="are_you_sure">Bist du dir sicher?</string>
+    <string name="cancel_post_warning">Willst du diesen Post verwerfen?</string>
+    <string name="cancel_profile_edit">Willst du die Änderungen verwerfen?</string>
+    <string name="cancel_post_edit">Willst du die Änderungen verwerfen?</string>
 </resources>

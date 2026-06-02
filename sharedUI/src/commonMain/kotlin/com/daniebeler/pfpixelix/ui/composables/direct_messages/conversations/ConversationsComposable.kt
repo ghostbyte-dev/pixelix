@@ -7,20 +7,17 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
+import androidx.compose.foundation.lazy.staggeredgrid.items
+import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -31,8 +28,6 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -44,30 +39,30 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.TextRange
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.di.injectViewModel
-import com.daniebeler.pfpixelix.ui.composables.InfiniteListHandler
+import com.daniebeler.pfpixelix.ui.composables.widgets.InfiniteStaggeredGridHandler
 import com.daniebeler.pfpixelix.ui.composables.SheetItem
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 import com.daniebeler.pfpixelix.ui.composables.states.EndOfListComposable
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
-import com.daniebeler.pfpixelix.ui.composables.states.FullscreenEmptyStateComposable
+import com.daniebeler.pfpixelix.ui.composables.states.EmptyStateComposable
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
+import com.daniebeler.pfpixelix.ui.composables.widgets.CustomPullToRefreshBox
+import com.daniebeler.pfpixelix.ui.composables.widgets.ScreenScaffold
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
-import pixelix.app.generated.resources.add_outline
+import pixelix.app.generated.resources.add
 import pixelix.app.generated.resources.cancel
 import pixelix.app.generated.resources.confirm
 import pixelix.app.generated.resources.conversations
 import pixelix.app.generated.resources.direct_messages_encryption_description
-import pixelix.app.generated.resources.help_outline
-import pixelix.app.generated.resources.mail_outline
+import pixelix.app.generated.resources.help
+import pixelix.app.generated.resources.mail
 import pixelix.app.generated.resources.new_direct_message
 import pixelix.app.generated.resources.select_recipient
 import pixelix.app.generated.resources.warning
@@ -84,112 +79,83 @@ fun ConversationsComposable(
     var showBottomSheet by remember { mutableStateOf(false) }
     val showNewChatDialog = remember { mutableStateOf(false) }
 
-    val lazyListState = rememberLazyListState()
+    val staggeredGridState = rememberLazyStaggeredGridState()
 
-    Box(modifier = Modifier.fillMaxSize()) {
-
-        val statusBarPadding = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
-
-        Box(
-            modifier = Modifier.padding(top = TopAppBarDefaults.TopAppBarExpandedHeight + statusBarPadding - 24.dp)
-                .fillMaxSize()
-        ) {
-            PullToRefreshBox(
-                isRefreshing = viewModel.conversationsState.isRefreshing,
-                onRefresh = { viewModel.refresh() },
-                modifier = Modifier.fillMaxSize()
-            ) {
-                LazyColumn(
-                    state = lazyListState,
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(top = 28.dp, bottom = 60.dp),
-                    content = {
-                        if (viewModel.conversationsState.conversations.isNotEmpty()) {
-                            items(viewModel.conversationsState.conversations, key = {
-                                it.id
-                            }) {
-                                ConversationElementComposable(
-                                    conversation = it, navController = navController
-                                )
-                            }
-
-                            if (viewModel.conversationsState.isLoading && !viewModel.conversationsState.isRefreshing) {
-                                item {
-                                    CircularProgressIndicator(
-                                        modifier = Modifier.fillMaxWidth().height(80.dp)
-                                            .wrapContentSize(Alignment.Center)
-                                    )
-                                }
-                            }
-
-                            if (viewModel.conversationsState.endReached && viewModel.conversationsState.conversations.size > 10) {
-                                item {
-                                    EndOfListComposable()
-                                }
-                            }
-                        }
-                    })
-
-                if (!viewModel.conversationsState.isLoading && viewModel.conversationsState.error.isEmpty() && viewModel.conversationsState.conversations.isEmpty()) {
-                    FullscreenEmptyStateComposable(
-                        EmptyState(
-                            icon = vectorResource(Res.drawable.mail_outline),
-                            heading = stringResource(
-                                Res.string.you_don_t_have_any_notifications
-                            )
-                        )
-                    )
-                }
-
-                if (!viewModel.conversationsState.isRefreshing && viewModel.conversationsState.conversations.isEmpty()) {
-                    LoadingComposable(isLoading = viewModel.conversationsState.isLoading)
-                }
-                ErrorComposable(message = viewModel.conversationsState.error)
-            }
-        }
-
-        TopAppBar(
-            modifier = Modifier.clip(
-            RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)
-        ), title = {
-            Text(
-                stringResource(Res.string.conversations),
-                fontWeight = FontWeight.Bold,
-                fontSize = 18.sp
-            )
-
-        }, navigationIcon = {
-            IconButton(onClick = {
-                navController.popBackStack()
-            }) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = ""
-                )
-            }
-        }, actions = {
+    ScreenScaffold(
+        title = stringResource(Res.string.conversations),
+        navController = navController,
+        actions = {
             Row {
                 IconButton(onClick = { showNewChatDialog.value = true }) {
                     Icon(
-                        imageVector = vectorResource(Res.drawable.add_outline),
+                        imageVector = vectorResource(Res.drawable.add),
                         contentDescription = null
                     )
                 }
 
                 IconButton(onClick = { showBottomSheet = true }) {
                     Icon(
-                        imageVector = vectorResource(Res.drawable.help_outline),
+                        imageVector = vectorResource(Res.drawable.help),
                         tint = MaterialTheme.colorScheme.error,
                         contentDescription = null
                     )
                 }
             }
+        }
+    ) {
+        CustomPullToRefreshBox(
+            isRefreshing = viewModel.conversationsState.isRefreshing,
+            onRefresh = { viewModel.refresh() },
+            modifier = Modifier.fillMaxSize(),
+            animatedBox = true
+        ) {
+            LazyVerticalStaggeredGrid(
+                columns = StaggeredGridCells.Adaptive(350.dp),
+                state = staggeredGridState,
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(top = 28.dp, bottom = 60.dp),
+            ) {
+                    if (viewModel.conversationsState.conversations.isNotEmpty()) {
+                        items(viewModel.conversationsState.conversations, key = {
+                            it.id
+                        }) {
+                            ConversationElementComposable(
+                                conversation = it, navController = navController
+                            )
+                        }
 
-        }, colors = TopAppBarDefaults.mediumTopAppBarColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainer
-        )
-        )
+                        if (!viewModel.conversationsState.isRefreshing) {
+                            item(span = StaggeredGridItemSpan.FullLine) {
+                               LoadingComposable(viewModel.conversationsState.isLoading)
+                            }
+                        }
 
-        InfiniteListHandler(lazyListState = lazyListState) {
+                        if (viewModel.conversationsState.endReached && viewModel.conversationsState.conversations.size > 10) {
+                            item(span = StaggeredGridItemSpan.FullLine) {
+                                EndOfListComposable()
+                            }
+                        }
+                    }
+                }
+
+            if (!viewModel.conversationsState.isLoading && viewModel.conversationsState.error.isEmpty() && viewModel.conversationsState.conversations.isEmpty()) {
+                EmptyStateComposable(
+                    EmptyState(
+                        icon = vectorResource(Res.drawable.mail),
+                        heading = stringResource(
+                            Res.string.you_don_t_have_any_notifications
+                        )
+                    )
+                )
+            }
+
+            if (!viewModel.conversationsState.isRefreshing && viewModel.conversationsState.conversations.isEmpty()) {
+                LoadingComposable(isLoading = viewModel.conversationsState.isLoading)
+            }
+            ErrorComposable(message = viewModel.conversationsState.error)
+        }
+
+        InfiniteStaggeredGridHandler(lazyStaggeredGridState = staggeredGridState, itemCount = viewModel.conversationsState.conversations.size) {
             //viewModel.getNotificationsPaginated()
         }
 

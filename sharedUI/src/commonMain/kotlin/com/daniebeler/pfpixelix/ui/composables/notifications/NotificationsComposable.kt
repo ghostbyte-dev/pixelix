@@ -17,13 +17,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
+import androidx.compose.foundation.lazy.staggeredgrid.items
+import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -39,25 +39,28 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.service.platform.PlatformFeatures
-import com.daniebeler.pfpixelix.ui.composables.InfiniteListHandler
+import com.daniebeler.pfpixelix.ui.composables.widgets.InfiniteStaggeredGridHandler
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 import com.daniebeler.pfpixelix.ui.composables.states.EndOfListComposable
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
-import com.daniebeler.pfpixelix.ui.composables.states.FullscreenEmptyStateComposable
+import com.daniebeler.pfpixelix.ui.composables.states.EmptyStateComposable
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
+import com.daniebeler.pfpixelix.ui.composables.widgets.CustomPullToRefreshBox
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.all
-import pixelix.app.generated.resources.extension_puzzle_outline
+import pixelix.app.generated.resources.widget
 import pixelix.app.generated.resources.followers
 import pixelix.app.generated.resources.likes_
+import pixelix.app.generated.resources.mail
 import pixelix.app.generated.resources.mentions
 import pixelix.app.generated.resources.notifications
 import pixelix.app.generated.resources.reposts
@@ -70,33 +73,38 @@ fun NotificationsComposable(
     viewModel: NotificationsViewModel = injectViewModel(key = "notifications-viewmodel-key") { notificationsViewModel }
 ) {
 
-    val lazyListState = rememberLazyListState()
+    val staggeredGridState = rememberLazyStaggeredGridState()
     val scrollState = rememberScrollState()
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
-    Scaffold(contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top), topBar = {
-        TopAppBar(
-            title = {
-                Text(
-                    stringResource(Res.string.notifications),
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp
-                )
-            }, actions = {
-                if (PlatformFeatures.notificationWidgets) {
-                    IconButton(onClick = {
-                        viewModel.pinWidget()
-                    }) {
-                        Icon(
-                            imageVector = vectorResource(Res.drawable.extension_puzzle_outline),
-                            contentDescription = "add widget"
-                        )
+    Scaffold(
+        contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top),
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        topBar = {
+            TopAppBar(
+                scrollBehavior = scrollBehavior,
+                title = {
+                    Text(
+                        stringResource(Res.string.notifications),
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp
+                    )
+                }, actions = {
+                    if (PlatformFeatures.notificationWidgets) {
+                        IconButton(onClick = {
+                            viewModel.pinWidget()
+                        }) {
+                            Icon(
+                                imageVector = vectorResource(Res.drawable.widget),
+                                contentDescription = "add widget"
+                            )
+                        }
                     }
-                }
-            }, colors = TopAppBarDefaults.mediumTopAppBarColors(
-                containerColor = MaterialTheme.colorScheme.surfaceContainer
+                }, colors = TopAppBarDefaults.mediumTopAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceContainer
+                )
             )
-        )
-    }) { paddingValues ->
+        }) { paddingValues ->
         Box(
             modifier = Modifier.fillMaxSize().padding(paddingValues)
         ) {
@@ -163,11 +171,17 @@ fun NotificationsComposable(
                         .background(MaterialTheme.colorScheme.surfaceContainer)
                 )
 
-                PullToRefreshBox(
+                CustomPullToRefreshBox(
                     isRefreshing = viewModel.notificationsState.isRefreshing,
                     onRefresh = { viewModel.refresh() },
+                    animatedBox = true
                 ) {
-                    LazyColumn(state = lazyListState, contentPadding = PaddingValues(bottom = 60.dp), modifier = Modifier.fillMaxSize(), content = {
+                    LazyVerticalStaggeredGrid(
+                        columns = StaggeredGridCells.Adaptive(350.dp),
+                        state = staggeredGridState,
+                        contentPadding = PaddingValues(bottom = 60.dp),
+                        modifier = Modifier.fillMaxSize()
+                    ) {
                         if (viewModel.notificationsState.notifications.isNotEmpty()) {
                             items(viewModel.notificationsState.notifications, key = {
                                 it.id
@@ -196,26 +210,23 @@ fun NotificationsComposable(
                             }
 
                             if (viewModel.notificationsState.isLoading && !viewModel.notificationsState.isRefreshing) {
-                                item {
-                                    CircularProgressIndicator(
-                                        modifier = Modifier.fillMaxWidth().height(80.dp)
-                                            .wrapContentSize(Alignment.Center)
-                                    )
+                                item(span = StaggeredGridItemSpan.FullLine) {
+                                    LoadingComposable()
                                 }
                             }
 
                             if (viewModel.notificationsState.endReached && viewModel.notificationsState.notifications.size > 10) {
-                                item {
+                                item(span = StaggeredGridItemSpan.FullLine) {
                                     EndOfListComposable()
                                 }
                             }
                         }
-                    })
+                    }
 
                     if (!viewModel.notificationsState.isLoading && viewModel.notificationsState.error.isEmpty() && viewModel.notificationsState.notifications.isEmpty()) {
-                        FullscreenEmptyStateComposable(
+                        EmptyStateComposable(
                             EmptyState(
-                                icon = Icons.Outlined.Email, heading = stringResource(
+                                icon = vectorResource(Res.drawable.mail), heading = stringResource(
                                     Res.string.you_don_t_have_any_notifications
                                 )
                             )
@@ -230,7 +241,10 @@ fun NotificationsComposable(
             }
         }
 
-        InfiniteListHandler(lazyListState = lazyListState) {
+        InfiniteStaggeredGridHandler(
+            lazyStaggeredGridState = staggeredGridState,
+            itemCount = viewModel.notificationsState.notifications.size
+        ) {
             viewModel.getNotificationsPaginated()
         }
     }

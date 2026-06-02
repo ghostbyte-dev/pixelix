@@ -56,7 +56,7 @@
     <string name="liked_by">Kedveli</string>
     <string name="delete_this_post">Bejegyzés törlése</string>
     <string name="delete_post">Bejegyzés törlése?</string>
-    <string name="this_action_cannot_be_undone">Ez a művelet nem vonható vissza.</string>
+    <string name="this_action_cannot_be_undone">Ez a művelet nem vonható vissza</string>
     <string name="delete">Törlés</string>
     <string name="this_is_the_end">Nincs több!</string>
     <string name="and">és</string>
@@ -80,8 +80,8 @@
     <string name="home">Kezdőlap</string>
     <string name="likes">%1$s kedvelés</string>
     <string name="search">Keresés</string>
-    <string name="unmute_caps">Feloldás</string>
-    <string name="unmute">feloldás</string>
+    <string name="unmute_caps">Némítás feloldása</string>
+    <string name="unmute">némítás feloldása</string>
     <string name="media_description">Képleírás</string>
     <string name="no_posts_yet">Még nincs bejegyzés</string>
     <string name="mentioned_you_in_a_post">megemlített</string>

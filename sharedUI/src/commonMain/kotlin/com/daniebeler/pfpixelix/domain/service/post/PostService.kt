@@ -1,8 +1,8 @@
 package com.daniebeler.pfpixelix.domain.service.post
 
-import com.daniebeler.pfpixelix.domain.model.LikedPostsWithNext
 import com.daniebeler.pfpixelix.domain.model.NewReply
 import com.daniebeler.pfpixelix.domain.model.NewReport
+import com.daniebeler.pfpixelix.domain.model.PaginatedResponse
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.repository.PixelfedApi
 import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
@@ -10,18 +10,13 @@ import com.daniebeler.pfpixelix.domain.service.session.AuthService
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.domain.service.utils.loadListResources
 import com.daniebeler.pfpixelix.domain.service.utils.loadResource
-import de.jensklingenberg.ktorfit.Call
-import de.jensklingenberg.ktorfit.Callback
-import io.ktor.client.statement.HttpResponse
+import com.daniebeler.pfpixelix.utils.executeAndParsePagination
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.json.Json
 import me.tatarka.inject.annotations.Inject
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
-import kotlin.coroutines.suspendCoroutine
 
 @Inject
 class PostService(
@@ -59,18 +54,15 @@ class PostService(
         emit(Resource.Loading())
 
         try {
-            val (response, data) = api.getLikedPosts(maxId).executeWithResponse()
-            val linkHeader = response.headers["link"] ?: ""
-            val onlyLink = linkHeader.substringAfter("rel=\"next\",<", "").substringBefore(">", "")
-            val nextMinId = onlyLink.substringAfter("min_id=", "")
-
-            val posts = data.filter { it.mediaAttachments.isNotEmpty() }
-
-            val result = LikedPostsWithNext(posts, nextMinId)
-            emit(Resource.Success(result))
+            val response: PaginatedResponse<List<Post>> =
+                api.getLikedPosts(maxId).executeAndParsePagination(true, "max_id")
+            val filteredPosts = response.data.filter { it.mediaAttachments.isNotEmpty() }
+            val filteredResponse = response.copy(data = filteredPosts)
+            emit(Resource.Success(filteredResponse))
         } catch (e: Exception) {
             emit(Resource.Error(e.message ?: "Unknown error"))
         }
+
     }
 
     fun createReply(postId: String, content: String) = loadResource {
@@ -106,8 +98,23 @@ class PostService(
         api.unbookmarkPost(postId)
     }
 
-    fun getBookmarkedPosts() = loadListResources {
+    /*fun getBookmarkedPosts() = loadListResources {
         api.getBookmarkedPosts()
+    }*/
+
+
+    fun getBookmarkedPosts(cursor: String? = null) = flow {
+        emit(Resource.Loading())
+
+        try {
+            val response: PaginatedResponse<List<Post>> =
+                api.getBookmarkedPosts(cursor = cursor).executeAndParsePagination(true, "max_id")
+            val filteredPosts = response.data.filter { it.mediaAttachments.isNotEmpty() }
+            val filteredResponse = response.copy(data = filteredPosts)
+            emit(Resource.Success(filteredResponse))
+        } catch (e: Exception) {
+            emit(Resource.Error(e.message ?: "Unknown error"))
+        }
     }
 
     fun reportPost(reportBody: NewReport) = loadResource {
@@ -128,15 +135,4 @@ class PostService(
         }
     }
 
-    private suspend fun <T> Call<T>.executeWithResponse() = suspendCoroutine { cont ->
-        onExecute(object : Callback<T> {
-            override fun onResponse(call: T, response: HttpResponse) {
-                cont.resume(response to call)
-            }
-
-            override fun onError(exception: Throwable) {
-                cont.resumeWithException(exception)
-            }
-        })
-    }
 }

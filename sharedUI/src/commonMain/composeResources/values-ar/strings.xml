@@ -92,4 +92,15 @@
     <string name="message">رسالة</string>
     <string name="profile">الملف الشخصي</string>
     <string name="remove">إزالة</string>
+    <string name="local">المحلي</string>
+    <string name="home">الرئيسي</string>
+    <string name="search">بحث</string>
+    <string name="unmute_caps">إلغاء الكتم</string>
+    <string name="audience_public">للعامة</string>
+    <string name="block">حظر</string>
+    <string name="new_">جديد</string>
+    <string name="bio">السيرة الذاتية</string>
+    <string name="website">موقع الويب</string>
+    <string name="mentions">الإشارات</string>
+    <string name="explore">استكشف</string>
 </resources>

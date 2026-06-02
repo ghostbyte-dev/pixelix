@@ -24,12 +24,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Send
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.material.icons.outlined.Edit
-import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
@@ -68,22 +62,28 @@ import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.model.Instance
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.model.Visibility
-import com.daniebeler.pfpixelix.ui.composables.MaxLengthTextField
-import com.daniebeler.pfpixelix.ui.composables.SuggestionsBar
+import com.daniebeler.pfpixelix.ui.composables.widgets.MaxLengthTextField
+import com.daniebeler.pfpixelix.ui.composables.widgets.SuggestionsBar
 import com.daniebeler.pfpixelix.ui.composables.hashtagMentionText.HashtagsMentionsTextView
 import com.daniebeler.pfpixelix.ui.composables.post.reply.ReplyElementViewModel
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
-import com.daniebeler.pfpixelix.ui.composables.states.FixedHeightLoadingComposable
+import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import com.daniebeler.pfpixelix.utils.TimeAgo
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.cancel
 import pixelix.app.generated.resources.delete
 import pixelix.app.generated.resources.delete_reply
+import pixelix.app.generated.resources.heart_filled
+import pixelix.app.generated.resources.heart
 import pixelix.app.generated.resources.no_comments_yet
+import pixelix.app.generated.resources.edit
 import pixelix.app.generated.resources.reply
+import pixelix.app.generated.resources.send
 import pixelix.app.generated.resources.this_action_cannot_be_undone
+import pixelix.app.generated.resources.trash
 
 @Composable
 fun CommentsBottomSheet(
@@ -117,7 +117,9 @@ fun CommentsBottomSheet(
                             visibility = Visibility.PUBLIC,
                             spoilerText = "",
                             place = null,
-                            inReplyToId = null
+                            inReplyToId = null,
+                            emojis = emptyList(),
+                            reblogCount = 0
                         )
                         ReplyElement(
                             reply = ownDescription,
@@ -129,55 +131,6 @@ fun CommentsBottomSheet(
                             instance = viewModel.instance
                         )
                     }
-//                Column {
-//                    TextFieldMentionsComposable(
-//                        submit = { text ->
-//                            viewModel.replyText = TextFieldValue()
-//                            viewModel.createReply(
-//                                post.id, text
-//                            )
-//                        },
-//                        viewModel.replyText,
-//                        changeText = { newText -> viewModel.replyText = newText },
-//                        labelStringId = Res.string.reply,
-//                        modifier = null,
-//                        imeAction = ImeAction.Send,
-//                        suggestionsBoxColor = MaterialTheme.colorScheme.surface,
-//                        submitButton = { enabled ->
-//                            Button(
-//                                onClick = {
-//                                    if (!viewModel.ownReplyState.isLoading) {
-//                                        viewModel.createReply(post.id, viewModel.replyText.text)
-//                                        viewModel.replyText = viewModel.replyText.copy(text = "")
-//                                    }
-//                                },
-//                                Modifier
-//                                    .height(56.dp)
-//                                    .width(56.dp)
-//                                    .padding(0.dp, 0.dp),
-//                                shape = RoundedCornerShape(16.dp),
-//                                contentPadding = PaddingValues(12.dp),
-//                                enabled = enabled
-//                            ) {
-//                                if (viewModel.ownReplyState.isLoading) {
-//                                    CircularProgressIndicator(
-//                                        modifier = Modifier.size(24.dp),
-//                                        color = MaterialTheme.colorScheme.onPrimary
-//                                    )
-//                                } else {
-//                                    Icon(
-//                                        imageVector = Icons.AutoMirrored.Filled.Send,
-//                                        contentDescription = "submit",
-//                                        Modifier
-//                                            .fillMaxSize()
-//                                            .fillMaxWidth()
-//                                    )
-//                                }
-//
-//                            }
-//                        },
-//                        maxLength = viewModel.instance?.configuration?.statusConfig?.maxCharacters)
-//                }
 
                     Row(verticalAlignment = Alignment.Bottom, modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                         MaxLengthTextField(
@@ -211,13 +164,13 @@ fun CommentsBottomSheet(
                                 ?: Int.MAX_VALUE)
                         ) {
                             if (viewModel.ownReplyState.isLoading) {
-                                CircularProgressIndicator(
+                                LoadingComposable(
                                     modifier = Modifier.size(24.dp),
                                     color = MaterialTheme.colorScheme.onPrimary
                                 )
                             } else {
                                 Icon(
-                                    imageVector = Icons.AutoMirrored.Filled.Send,
+                                    imageVector = vectorResource(Res.drawable.send),
                                     contentDescription = "submit",
                                     Modifier.fillMaxSize().fillMaxWidth()
                                 )
@@ -246,10 +199,7 @@ fun CommentsBottomSheet(
 
                 if (viewModel.repliesState.isLoading) {
                     item {
-                        CircularProgressIndicator(
-                            modifier = Modifier.fillMaxWidth().height(80.dp)
-                                .wrapContentSize(Alignment.Center)
-                        )
+                        LoadingComposable()
                     }
                 }
 
@@ -334,6 +284,8 @@ private fun ReplyElement(
                         text = reply.account.acct,
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
                         modifier = Modifier.clickable {
                             navController.navigate(Destination.Profile(reply.account.id))
                         })
@@ -346,10 +298,10 @@ private fun ReplyElement(
                     )
                 }
 
-
                 HashtagsMentionsTextView(
                     text = reply.content,
                     mentions = reply.mentions,
+                    emojis = reply.emojis,
                     navController = navController,
                     openUrl = { url -> openUrl(url) })
             }
@@ -360,7 +312,7 @@ private fun ReplyElement(
                 if (reply.account.id == myAccountId) {
                     IconButton(onClick = { showDeleteReplyDialog.value = true }) {
                         Icon(
-                            imageVector = Icons.Outlined.Delete,
+                            imageVector = vectorResource(Res.drawable.trash),
                             contentDescription = "",
                             tint = MaterialTheme.colorScheme.error
                         )
@@ -378,7 +330,7 @@ private fun ReplyElement(
                         viewModel.unlikeReply(reply.id)
                     }) {
                         Icon(
-                            imageVector = Icons.Filled.Favorite,
+                            imageVector = vectorResource(Res.drawable.heart_filled),
                             contentDescription = "",
                             tint = MaterialTheme.colorScheme.primary
                         )
@@ -388,7 +340,7 @@ private fun ReplyElement(
                         viewModel.likeReply(reply.id)
                     }) {
                         Icon(
-                            imageVector = Icons.Outlined.FavoriteBorder, contentDescription = ""
+                            imageVector = vectorResource(Res.drawable.heart), contentDescription = ""
                         )
                     }
                 }
@@ -409,7 +361,7 @@ private fun ReplyElement(
             }
             if (viewModel.repliesState.isLoading) {
                 Box(modifier = Modifier.padding(54.dp, 0.dp, 0.dp, 0.dp)) {
-                    FixedHeightLoadingComposable()
+                    LoadingComposable(Modifier.fillMaxWidth().padding(vertical = 50.dp))
                 }
             } else if (viewModel.repliesState.error != "") {
                 Box(modifier = Modifier.padding(54.dp, 0.dp, 0.dp, 0.dp)) {
@@ -444,7 +396,7 @@ private fun ReplyElement(
     if (showDeleteReplyDialog.value) {
         AlertDialog(icon = {
             Icon(
-                imageVector = Icons.Outlined.Delete,
+                imageVector = vectorResource(Res.drawable.trash),
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.error
             )
@@ -499,7 +451,7 @@ fun AddReplyDialog(
                     modifier = Modifier.padding(24.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Icon(Icons.Outlined.Edit, contentDescription = null)
+                    Icon(vectorResource(Res.drawable.edit), contentDescription = null)
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
                         text = stringResource(Res.string.reply),

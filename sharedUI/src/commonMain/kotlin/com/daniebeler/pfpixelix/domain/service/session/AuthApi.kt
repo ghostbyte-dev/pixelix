@@ -28,6 +28,15 @@ interface AuthApi {
         @Field("grant_type") grantType: String
     ): AuthToken
 
+    @FormUrlEncoded
+    @POST("oauth/token")
+    suspend fun getTokenRefresh(
+        @Field("client_id") clientId: String,
+        @Field("client_secret") clientSecret: String,
+        @Field("refresh_token") refreshToken: String,
+        @Field("grant_type") grantType: String
+    ): AuthToken
+
     @GET("api/v1/accounts/verify_credentials")
     suspend fun verify(
         @Header("Authorization") token: String
@@ -46,5 +55,6 @@ data class AuthData(
 @Serializable
 data class AuthToken(
     @SerialName("access_token") val accessToken: String,
-    @SerialName("created_at") val createdAt: String
+    @SerialName("created_at") val createdAt: String,
+    @SerialName("refresh_token") val refreshToken: String
 )

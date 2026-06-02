@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
@@ -24,9 +25,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -39,6 +37,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -51,18 +50,23 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.di.injectViewModel
-import com.daniebeler.pfpixelix.ui.composables.InfiniteListHandler
 import com.daniebeler.pfpixelix.ui.composables.states.EndOfListComposable
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
+import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
+import com.daniebeler.pfpixelix.ui.composables.widgets.CustomPullToRefreshBox
+import com.daniebeler.pfpixelix.ui.composables.widgets.InfiniteListHandler
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import com.daniebeler.pfpixelix.utils.imeAwareInsets
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
+import pixelix.app.generated.resources.arrow_left
 import pixelix.app.generated.resources.beginning_of_chat_note
 import pixelix.app.generated.resources.character_count
 import pixelix.app.generated.resources.default_avatar
 import pixelix.app.generated.resources.message
+import pixelix.app.generated.resources.send
 
 @OptIn(ExperimentalMaterial3Api::class)
 
@@ -84,13 +88,13 @@ fun ChatComposable(
     }
     Box(modifier = Modifier.fillMaxSize()) {
         val statusBarPadding = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
+        val navigationBarPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
 
         Box(
             modifier = Modifier.padding(top = TopAppBarDefaults.TopAppBarExpandedHeight + statusBarPadding - 24.dp)
                 .fillMaxSize()
         ) {
-
-            PullToRefreshBox(
+            CustomPullToRefreshBox(
                 isRefreshing = viewModel.chatState.isRefreshing,
                 onRefresh = { viewModel.getChat(accountId, true) },
                 modifier = Modifier
@@ -99,7 +103,7 @@ fun ChatComposable(
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(bottom = 76.dp, start = 8.dp, end = 8.dp)
+                        .padding(bottom = 76.dp + navigationBarPadding, start = 8.dp, end = 8.dp)
                 ) {
                     LazyColumn(
                         state = lazyListState,
@@ -121,12 +125,7 @@ fun ChatComposable(
 
                                 if (viewModel.chatState.isLoading) {
                                     item {
-                                        CircularProgressIndicator(
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .height(80.dp)
-                                                .wrapContentSize(Alignment.Center)
-                                        )
+                                        LoadingComposable()
                                     }
                                 }
 
@@ -194,10 +193,7 @@ fun ChatComposable(
                                         .clip(RoundedCornerShape(12.dp))
                                         .background(MaterialTheme.colorScheme.primary)
                                 ) {
-                                    CircularProgressIndicator(
-                                        modifier = Modifier.size(24.dp),
-                                        color = MaterialTheme.colorScheme.onPrimary
-                                    )
+                                    LoadingComposable(size = 48.dp, color = MaterialTheme.colorScheme.onPrimary)
                                 }
                             } else {
                                 Button(
@@ -214,7 +210,7 @@ fun ChatComposable(
                                     contentPadding = PaddingValues(12.dp)
                                 ) {
                                     Icon(
-                                        imageVector = Icons.AutoMirrored.Filled.Send,
+                                        imageVector = vectorResource(Res.drawable.send),
                                         contentDescription = "send",
                                         Modifier
                                             .fillMaxSize()
@@ -289,7 +285,7 @@ fun ChatComposable(
                     navController.popBackStack()
                 }) {
                     Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = ""
+                        imageVector = vectorResource(Res.drawable.arrow_left), contentDescription = ""
                     )
                 }
             }, colors = TopAppBarDefaults.mediumTopAppBarColors(

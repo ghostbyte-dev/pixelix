@@ -7,5 +7,6 @@ data class FollowingState(
     val isRefreshing: Boolean = false,
     val endReached: Boolean = false,
     val following: List<Account> = emptyList(),
+    val cursor: String = "",
     val error: String = ""
 )

@@ -14,30 +14,97 @@ data class Credentials(
     val displayName: String,
     val avatar: String,
     val serverUrl: String,
-    val token: String
-)
+    val token: String,
+    val refreshToken: String,
+    val clientId: String,
+    val clientSecret: String,
+    val createdAt: String
+) {
+    fun key(): String {
+        val cleanUrl =
+            serverUrl.removePrefix("https://").removePrefix("http://").removeSuffix("/")
+        return "$cleanUrl:$accountId".lowercase()
+    }
+}
 
 @Serializable
 data class SessionStorage(
-    val sessions: Set<Credentials>,
-    val activeUserId: String?
+    val sessions: Map<String, Credentials>,
+    val activeKey: String?
 ) {
-    fun getActiveSession() = activeUserId?.let { sessions.first { s -> s.accountId == it }}
+    fun getActiveSession() = activeKey?.let { sessions[it] }
+
 }
 
-object SessionStorageDataSerializer: OkioSerializer<SessionStorage> {
+object SessionStorageDataSerializer : OkioSerializer<SessionStorage> {
     override val defaultValue: SessionStorage
-        get() = SessionStorage(emptySet(), null)
+        get() = SessionStorage(emptyMap(), null)
 
     override suspend fun readFrom(source: BufferedSource): SessionStorage {
+        val rawJson = source.readUtf8()
         return try {
             Json.decodeFromString(
                 deserializer = SessionStorage.serializer(),
-                string = source.readUtf8()
+                string = rawJson
             )
         } catch (e: SerializationException) {
-            e.printStackTrace();
-            defaultValue
+            try {
+                @Serializable
+                data class OldCredentials(
+                    val accountId: String,
+                    val username: String,
+                    val displayName: String,
+                    val avatar: String,
+                    val serverUrl: String,
+                    val token: String,
+                )
+
+                @Serializable
+                data class OldSessionStorage(
+                    val sessions: Set<OldCredentials>,
+                    val activeUserId: String?
+                )
+
+                @Serializable
+                data class OldSessionStorageWithNewCredentials(
+                    val sessions: Set<Credentials>,
+                    val activeUserId: String?
+                )
+
+                val oldData = Json.decodeFromString(OldSessionStorage.serializer(), rawJson)
+
+                val iterator = oldData.sessions.iterator()
+                val newSessionsSet = mutableSetOf<Credentials>()
+                iterator.forEach {
+                    newSessionsSet.add(Credentials(
+                        accountId = it.accountId,
+                        username = it.username,
+                        displayName = it.displayName,
+                        avatar = it.avatar,
+                        serverUrl = it.serverUrl,
+                        token = it.token,
+                        refreshToken = "",
+                        clientId = "",
+                        clientSecret = "",
+                        createdAt = ""
+                    ))
+                }
+                val oldDataWithNewCredentials = OldSessionStorageWithNewCredentials(
+                    activeUserId = oldData.activeUserId,
+                    sessions = newSessionsSet
+                )
+                val migratedMap = oldDataWithNewCredentials.sessions.associateBy { it.key() }
+                val migratedActiveKey = oldDataWithNewCredentials.sessions
+                    .firstOrNull { it.accountId == oldData.activeUserId }?.key()
+
+                SessionStorage(
+                    sessions = migratedMap,
+                    activeKey = migratedActiveKey
+                )
+            } catch (fallbackException: Exception) {
+                fallbackException.printStackTrace()
+                defaultValue
+            }
         }
     }
 

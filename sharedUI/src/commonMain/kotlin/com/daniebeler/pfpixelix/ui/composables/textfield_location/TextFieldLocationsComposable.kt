@@ -6,15 +6,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -36,11 +32,13 @@ import androidx.compose.ui.unit.dp
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.model.Place
 import com.daniebeler.pfpixelix.ui.composables.newpost.NewPostPref
-import com.daniebeler.pfpixelix.ui.composables.newpost.NewPostTextField
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
-import pixelix.app.generated.resources.browsers_outline
+import pixelix.app.generated.resources.browser
+import pixelix.app.generated.resources.edit
+import pixelix.app.generated.resources.trash
 
 @Composable
 fun TextFieldLocationsComposable(
@@ -67,7 +65,7 @@ fun TextFieldLocationsComposable(
 
         if (viewModel.locationsSuggestions.location != null) {
             NewPostPref(
-                leadingIcon = Res.drawable.browsers_outline,
+                leadingIcon = Res.drawable.browser,
                 title = viewModel.locationsSuggestions.location!!.name!!,
                 trailingContent = {
                     Row {
@@ -76,14 +74,14 @@ fun TextFieldLocationsComposable(
                             submit("")
                             submitPlace(null)
                         }) {
-                            Icon(imageVector = Icons.Outlined.Edit, contentDescription = "edit")
+                            Icon(imageVector = vectorResource(Res.drawable.edit), contentDescription = "edit")
                         }
                         IconButton(onClick = {
                             viewModel.removeLocation()
                             submit("")
                             submitPlace(null)
                         }) {
-                            Icon(imageVector = Icons.Outlined.Delete, contentDescription = "remove")
+                            Icon(imageVector = vectorResource(Res.drawable.trash), contentDescription = "remove")
                         }
                     }
                 }

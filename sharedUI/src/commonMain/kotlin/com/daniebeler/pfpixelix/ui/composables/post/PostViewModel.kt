@@ -24,6 +24,7 @@ import com.daniebeler.pfpixelix.domain.service.suggestions.HashtagMentionsSugges
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.ui.composables.post.reply.OwnReplyState
 import com.daniebeler.pfpixelix.ui.composables.post.reply.RepliesState
+import com.daniebeler.pfpixelix.ui.composables.profile.RelationshipState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.launchIn
@@ -68,6 +69,7 @@ class PostViewModel @Inject constructor(
     var replyText by mutableStateOf(TextFieldValue())
 
     var volume by mutableStateOf(prefs.enableVolume)
+    var relationshipState by mutableStateOf(RelationshipState())
 
     init {
         myAccountId = authService.getCurrentSession()!!.accountId
@@ -233,7 +235,8 @@ class PostViewModel @Inject constructor(
                 likedBy = post!!.likedBy?.copy(
                     totalCount = post!!.likedBy!!.totalCount + 1,
                     others = true,
-                    username = post!!.likedBy!!.username ?: myUsername
+                    username = post!!.likedBy!!.username ?: myUsername,
+                    id = post?.likedBy?.id ?: myAccountId
                 ) ?: LikedBy(
                     totalCount = 1, others = true, username = myUsername, id = myAccountId
                 )
@@ -319,18 +322,24 @@ class PostViewModel @Inject constructor(
 
     fun reblogPost(postId: String, updatePost: (Post) -> Unit) {
         if (post?.reblogged == false) {
-            post = post?.copy(reblogged = true)
+            post = post?.copy(
+                reblogged = true,
+                reblogCount = post?.reblogCount?.plus(1) ?: 0
+            )
             post?.let { updatePost(it) }
             CoroutineScope(Dispatchers.Default).launch {
                 postService.reblogPost(postId).onEach { result ->
                     when (result) {
                         is Resource.Success -> {
-                            post = post?.copy(reblogged = result.data.reblogged)
+                            post = post?.copy(reblogged = result.data.reblogged, reblogCount = result.data.reblogCount)
                             post?.let { updatePost(it) }
                         }
 
                         is Resource.Error -> {
-                            post = post?.copy(reblogged = false)
+                            post = post?.copy(
+                                reblogged = false,
+                                reblogCount = post?.reblogCount?.minus(1) ?: 0
+                            )
                             post?.let { updatePost(it) }
                         }
 
@@ -344,18 +353,24 @@ class PostViewModel @Inject constructor(
 
     fun unreblogPost(postId: String, updatePost: (Post) -> Unit) {
         if (post?.reblogged == true) {
-            post = post?.copy(reblogged = false)
+            post = post?.copy(reblogged = false, reblogCount = post?.reblogCount?.minus(1) ?: 0)
             post?.let { updatePost(it) }
             CoroutineScope(Dispatchers.Default).launch {
                 postService.unreblogPost(postId).onEach { result ->
                     when (result) {
                         is Resource.Success -> {
-                            post = post?.copy(reblogged = result.data.reblogged)
+                            post = post?.copy(
+                                reblogged = result.data.reblogged,
+                                reblogCount = result.data.reblogCount
+                            )
                             post?.let { updatePost(it) }
                         }
 
                         is Resource.Error -> {
-                            post = post?.copy(reblogged = true)
+                            post = post?.copy(
+                                reblogged = true,
+                                reblogCount = post?.reblogCount?.plus(1) ?: 0
+                            )
                             post?.let { updatePost(it) }
                         }
 
@@ -420,7 +435,11 @@ class PostViewModel @Inject constructor(
     fun reportPost(category: String) {
         reportState = ReportState(isLoading = true, reported = false)
         if (post == null) {
-            reportState = ReportState(isLoading = false, reported = false, error = "an unexpected error occurred")
+            reportState = ReportState(
+                isLoading = false,
+                reported = false,
+                error = "an unexpected error occurred"
+            )
             return
         }
         val newReport = NewReport(
@@ -451,6 +470,42 @@ class PostViewModel @Inject constructor(
                 }
             }.launchIn(viewModelScope)
         }
+    }
+
+    fun muteAccount(userId: String) {
+        accountService.muteAccount(userId).onEach { result ->
+            relationshipState = when (result) {
+                is Resource.Success -> {
+                    RelationshipState(accountRelationship = result.data)
+                }
+
+                is Resource.Error -> {
+                    RelationshipState(error = result.message)
+                }
+
+                is Resource.Loading -> {
+                    RelationshipState(isLoading = true)
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    fun blockAccount(userId: String) {
+        accountService.blockAccount(userId).onEach { result ->
+            relationshipState = when (result) {
+                is Resource.Success -> {
+                    RelationshipState(accountRelationship = result.data)
+                }
+
+                is Resource.Error -> {
+                    RelationshipState(error = result.message)
+                }
+
+                is Resource.Loading -> {
+                    RelationshipState(isLoading = true)
+                }
+            }
+        }.launchIn(viewModelScope)
     }
 
     fun openUrl(url: String) {

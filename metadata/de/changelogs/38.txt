@@ -1,0 +1,15 @@
+- Neue Floating Navigation Bar
+- Top Bar und Navigation Bar werden beim Scrollen automatisch ausgeblendet
+- Unterstützung für Posts im Masonry-Grid Layout hinzugefügt
+- Custom Instance Emojis werden jetzt unterstützt
+- Icons in der gesamten App überarbeitet
+- Neue Material 3 Expressive Ladeanimation
+- Text in Posts und Profilen ist jetzt markierbar
+- Profile können direkt aus der Timeline stummgeschaltet oder blockiert werden
+- Verbessertes bearbeiten von Collections
+- Neuer „Unterstütze uns“-Bereich hinzugefügt
+- Problem beim Teilen von Bildern aus der Galerie behoben
+- Refresh Tokens werden jetzt verwendet, um Sessions automatisch zu erneuern
+- Verbesserte Fehlerbehandlung und Stabilität
+- Übersetzungen aktualisiert
+- Diverse Bugfixes und UI/UX Verbesserungen

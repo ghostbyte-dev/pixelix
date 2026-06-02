@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
@@ -90,10 +92,11 @@ sealed interface Destination {
     @Serializable data object HomeTabOwnProfile : Destination
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 internal fun NavGraphBuilder.appGraph(
     navController: NavHostController,
     openPreferencesDrawer: () -> Unit,
-    exitApp: () -> Unit
+    exitApp: () -> Unit,
 ) {
     composable<Destination.FirstLogin>(
         enterTransition = { EnterTransition.None },

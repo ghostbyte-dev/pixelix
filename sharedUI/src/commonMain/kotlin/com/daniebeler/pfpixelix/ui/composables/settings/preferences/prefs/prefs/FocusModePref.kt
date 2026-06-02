@@ -9,7 +9,7 @@ import com.daniebeler.pfpixelix.ui.composables.settings.preferences.basic.Switch
 import org.jetbrains.compose.resources.stringResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.focus_mode
-import pixelix.app.generated.resources.square_outline
+import pixelix.app.generated.resources.square
 
 @Composable
 fun FocusModePref() {
@@ -19,7 +19,7 @@ fun FocusModePref() {
         prefs.focusMode = state.value
     }
     SwitchPref(
-        leadingIcon =  Res.drawable.square_outline,
+        leadingIcon =  Res.drawable.square,
         title = stringResource(Res.string.focus_mode),
         state = state
     )

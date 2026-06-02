@@ -10,9 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Delete
-import androidx.compose.material.icons.outlined.RemoveRedEye
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -29,11 +26,15 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.domain.model.Message
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.cancel
 import pixelix.app.generated.resources.delete
 import pixelix.app.generated.resources.this_action_cannot_be_undone
 import pixelix.app.generated.resources.delete_message
+import pixelix.app.generated.resources.eye_off
+import pixelix.app.generated.resources.trash
+
 @Composable
 fun ConversationElementComposable(
     message: Message, deleteMessage: () -> Unit, navController: NavController
@@ -80,7 +81,7 @@ fun ConversationElementComposable(
                         Text(text = message.timeAgo, color = textColor, fontSize = 10.sp)
                         if (message.seen) {
                             Icon(
-                                imageVector = Icons.Outlined.RemoveRedEye, contentDescription = null
+                                imageVector = vectorResource(Res.drawable.eye_off), contentDescription = null
                             )
                         }
                         if (message.isAuthor) {
@@ -88,7 +89,7 @@ fun ConversationElementComposable(
                                 showDeleteReplyDialog.value = true
                             }) {
                                 Icon(
-                                    imageVector = Icons.Outlined.Delete,
+                                    imageVector = vectorResource(Res.drawable.trash),
                                     contentDescription = "delete message",
                                     Modifier.size(20.dp),
                                     tint = MaterialTheme.colorScheme.onPrimary
@@ -101,7 +102,7 @@ fun ConversationElementComposable(
         }
         if (showDeleteReplyDialog.value) AlertDialog(icon = {
             Icon(
-                imageVector = Icons.Outlined.Delete,
+                imageVector = vectorResource(Res.drawable.trash),
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.error
             )

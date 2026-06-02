@@ -1,5 +1,6 @@
 package com.daniebeler.pfpixelix.ui.composables.states
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -20,26 +22,36 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.daniebeler.pfpixelix.ui.composables.widgets.CustomPullToRefreshBox
 
 @Composable
-fun FullscreenEmptyStateComposable(emptyState: EmptyState) {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+fun EmptyStateComposable(emptyState: EmptyState, modifier: Modifier = Modifier.fillMaxSize()) {
+    Box(modifier = modifier, contentAlignment = Alignment.Center) {
         InnerEmptyState(emptyState)
     }
 }
 
 @Composable
-fun FixedHeightEmptyStateComposable(emptyState: EmptyState) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 50.dp),
-        contentAlignment = Alignment.Center
+fun EmptyStateComposable(
+    emptyState: EmptyState,
+    onRefresh: () -> Unit,
+    isRefreshing: Boolean,
+    modifier: Modifier = Modifier.fillMaxSize()
+) {
+    CustomPullToRefreshBox(
+        isRefreshing = isRefreshing,
+        onRefresh = onRefresh,
+        modifier = modifier.fillMaxSize()
     ) {
-        InnerEmptyState(emptyState)
+        LazyColumn(
+            modifier = modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            item { InnerEmptyState(emptyState) }
+        }
     }
 }
-
 
 @Composable
 private fun InnerEmptyState(emptyState: EmptyState) {
@@ -52,7 +64,7 @@ private fun InnerEmptyState(emptyState: EmptyState) {
         if (emptyState.icon != null) {
             Icon(
                 imageVector = emptyState.icon,
-                contentDescription = "",
+                contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(64.dp)
             )
@@ -70,9 +82,10 @@ private fun InnerEmptyState(emptyState: EmptyState) {
         if (emptyState.message.isNotBlank()) {
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = emptyState.message, Modifier.wrapContentSize(
-                    Alignment.Center
-                ), textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.onSurface
+                text = emptyState.message,
+                modifier = Modifier.wrapContentSize(Alignment.Center),
+                textAlign = TextAlign.Center,
+                color = MaterialTheme.colorScheme.onSurface
             )
         }
 

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name" translatable="false">Pixelix</string>
     <string name="ok" translatable="false">OK</string>
@@ -117,9 +118,9 @@
     <string name="empty">Empty</string>
     <string name="follow_accounts_or_hashtags_to_fill_your_home_timeline">Follow profiles or hashtags to fill your home timeline</string>
     <string name="no_posts">No posts</string>
-    <string name="home_timeline_explained">The Home timeline shows you posts from people and hashtags that you follow</string>
-    <string name="local_timeline_explained">The Local timeline shows posts from all users in your server</string>
-    <string name="global_timeline_explained">The Global timeline shows posts from all users in all servers your server federates with</string>
+    <string name="home_timeline_explained">The Home timeline shows posts from people and hashtags that you follow.</string>
+    <string name="local_timeline_explained">The Local timeline shows posts from all users on your server.</string>
+    <string name="global_timeline_explained">The Global timeline shows posts from all users on all servers your server federates with.</string>
     <string name="this_user_has_not_postet_anything_yet">This user has not postet anything yet</string>
     <string name="you_don_t_have_any_notifications">You don't have any notifications</string>
     <string name="view_more">view more</string>
@@ -211,6 +212,7 @@
     <string name="sure_update_post">Are you sure, you want to update this post?</string>
     <string name="mutual_followers">Mutual followers</string>
     <string name="license">License: %1$s</string>
+    <string name="license_label">License</string>
     <string name="hide_alt_text_button">Hide Alt-text button</string>
     <string name="instances">Instances:</string>
     <string name="total_posts">Total posts:</string>
@@ -287,4 +289,8 @@
     <string name="cancel_post_warning">Do you want to discard this post?</string>
     <string name="cancel_profile_edit">Do you want to discard the changes?</string>
     <string name="cancel_post_edit">Do you want to discard the changes?</string>
+    <string name="registration">Registration</string>
+    <string name="open">open</string>
+    <string name="closed">closed</string>
+    <string name="jump_to_top">Jump to top</string>
 </resources>

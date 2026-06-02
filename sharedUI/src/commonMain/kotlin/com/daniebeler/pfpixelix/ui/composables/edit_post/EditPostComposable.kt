@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -23,11 +24,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.outlined.ArrowLeft
-import androidx.compose.material.icons.automirrored.outlined.ArrowRight
-import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -71,13 +67,12 @@ import androidx.navigationevent.compose.rememberNavigationEventState
 import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.model.MediaAttachment
-import com.daniebeler.pfpixelix.ui.composables.MaxLengthTextField
-import com.daniebeler.pfpixelix.ui.composables.SuggestionsBar
+import com.daniebeler.pfpixelix.ui.composables.widgets.MaxLengthTextField
+import com.daniebeler.pfpixelix.ui.composables.widgets.SuggestionsBar
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposableDialog
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pfpixelix.ui.composables.textfield_location.TextFieldLocationsComposable
 import com.daniebeler.pfpixelix.utils.getPlatformUriObject
-import com.daniebeler.pfpixelix.utils.imeAwareInsets
 import com.daniebeler.pfpixelix.utils.toKmpUri
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
@@ -85,6 +80,8 @@ import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.alt_text
 import pixelix.app.generated.resources.are_you_sure
+import pixelix.app.generated.resources.arrow_left
+import pixelix.app.generated.resources.arrow_right
 import pixelix.app.generated.resources.cancel
 import pixelix.app.generated.resources.cancel_post_edit
 import pixelix.app.generated.resources.caption
@@ -96,7 +93,7 @@ import pixelix.app.generated.resources.location
 import pixelix.app.generated.resources.save
 import pixelix.app.generated.resources.sensitive_nsfw_media
 import pixelix.app.generated.resources.sure_update_post
-import pixelix.app.generated.resources.trash_outline
+import pixelix.app.generated.resources.trash
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -147,7 +144,7 @@ fun EditPostComposable(
                         }
                     }) {
                         Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            imageVector = vectorResource(Res.drawable.arrow_left),
                             contentDescription = ""
                         )
                     }
@@ -161,8 +158,8 @@ fun EditPostComposable(
                                 Button(
                                     onClick = { }, modifier = Modifier.width(120.dp)
                                 ) {
-                                    CircularProgressIndicator(
-                                        modifier = Modifier.size(20.dp),
+                                    LoadingComposable(
+                                        modifier = Modifier.size(24.dp),
                                         color = MaterialTheme.colorScheme.onPrimary
                                     )
                                 }
@@ -186,7 +183,7 @@ fun EditPostComposable(
         }) { paddingValues ->
         Box(Modifier.padding(paddingValues)) {
             Column(
-                Modifier.imeAwareInsets(60.dp).fillMaxSize()
+                Modifier.imePadding().fillMaxSize()
             ) {
                 Column(
                     Modifier
@@ -316,7 +313,7 @@ fun EditPostComposable(
 
     if (viewModel.deleteMediaDialog != null) {
         AlertDialog(icon = {
-            Icon(imageVector = Icons.Outlined.Delete, contentDescription = null)
+            Icon(imageVector = vectorResource(Res.drawable.trash), contentDescription = null)
         }, title = {
             Text(text = "Remove Media")
         }, text = {
@@ -402,7 +399,7 @@ fun ImagesPagerEditPost(
                         }
                     }) {
                         Icon(
-                            imageVector = Icons.AutoMirrored.Outlined.ArrowLeft,
+                            imageVector = vectorResource(Res.drawable.arrow_left),
                             contentDescription = "move Image upwards"
                         )
                     }
@@ -411,7 +408,7 @@ fun ImagesPagerEditPost(
                     deleteMedia(image.id)
                 }) {
                     Icon(
-                        imageVector = vectorResource(Res.drawable.trash_outline),
+                        imageVector = vectorResource(Res.drawable.trash),
                         contentDescription = "delete Image",
                         tint = MaterialTheme.colorScheme.error
                     )
@@ -428,7 +425,7 @@ fun ImagesPagerEditPost(
                         }
                     }) {
                         Icon(
-                            imageVector = Icons.AutoMirrored.Outlined.ArrowRight,
+                            imageVector = vectorResource(Res.drawable.arrow_right),
                             contentDescription = "move Image downwards"
                         )
                     }
@@ -458,7 +455,7 @@ fun ImagesPagerEditPost(
                             )
                         }
                     } else {
-                        CircularProgressIndicator(
+                        LoadingComposable(
                             modifier = Modifier.wrapContentSize(Alignment.Center)
                         )
                     }

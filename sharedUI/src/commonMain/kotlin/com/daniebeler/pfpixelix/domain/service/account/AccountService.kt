@@ -1,18 +1,16 @@
 package com.daniebeler.pfpixelix.domain.service.account
 
 import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.toPixelMap
 import co.touchlab.kermit.Logger
 import com.daniebeler.pfpixelix.di.AppSingleton
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.domain.repository.PixelfedApi
 import com.daniebeler.pfpixelix.domain.model.Account
-import com.daniebeler.pfpixelix.domain.service.platform.Platform
 import com.daniebeler.pfpixelix.domain.service.session.AuthService
 import com.daniebeler.pfpixelix.domain.service.utils.loadListResources
 import com.daniebeler.pfpixelix.domain.service.utils.loadResource
-import com.daniebeler.pfpixelix.utils.KmpUri
 import com.daniebeler.pfpixelix.utils.encodeToPngBytes
+import com.daniebeler.pfpixelix.utils.executeAndParsePagination
 import io.ktor.client.request.forms.MultiPartFormDataContent
 import io.ktor.client.request.forms.formData
 import io.ktor.http.Headers
@@ -22,6 +20,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
@@ -35,6 +34,7 @@ class AccountService(
     private val api: PixelfedApi,
 ) {
     private val refreshSignal = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
+
     @OptIn(ExperimentalCoroutinesApi::class)
     fun getOwnAccount(): Flow<Resource<Account>> {
         val current =
@@ -99,11 +99,33 @@ class AccountService(
     fun getBlockedAccounts() = loadListResources { api.getBlockedAccounts() }
     fun getLikedBy(postId: String) = loadListResources { api.getAccountsWhoLikedPost(postId) }
 
+    /*
     fun getAccountsFollowers(accountId: String, maxId: String? = null) = loadListResources {
         api.getAccountsFollowers(accountId, maxId)
+    }*/
+
+    fun getAccountsFollowers(accountId: String, cursor: String? = null) = flow {
+        emit(Resource.Loading())
+
+        try {
+            val response = api.getAccountsFollowers(accountId, cursor)
+                .executeAndParsePagination(false, "cursor")
+            emit(Resource.Success(response))
+        } catch (e: Exception) {
+            emit(Resource.Error(e.message ?: "Unknown error"))
+        }
     }
 
-    fun getAccountsFollowing(accountId: String, maxId: String? = null) = loadListResources {
-        api.getAccountsFollowing(accountId, maxId)
+    fun getAccountsFollowing(accountId: String, cursor: String? = null) = flow {
+        emit(Resource.Loading())
+
+        try {
+            val response = api.getAccountsFollowing(accountId, cursor)
+                .executeAndParsePagination(false, "cursor")
+
+            emit(Resource.Success(response))
+        } catch (e: Exception) {
+            emit(Resource.Error(e.message ?: "Unknown error"))
+        }
     }
 }

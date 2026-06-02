@@ -32,8 +32,8 @@ class UserPreferences(observableSettings: DataStoreSettings) {
     val autoplayVideoFlow = observableSettings.getBooleanFlow("k_autoplay_mode", autoplayVideo)
 
 
-    var showUserGridTimeline by settings.boolean("k_grid_timeline", true)
-    val showUserGridTimelineFlow = observableSettings.getBooleanFlow("k_grid_timeline", showUserGridTimeline)
+    var showUserGridTimeline by settings.int("k_timeline_view", 1)
+    val showUserGridTimelineFlow = observableSettings.getIntFlow("k_timeline_view", showUserGridTimeline)
 
     var enableVolume by settings.boolean("k_enable_volume", true)
     val enableVolumeFlow = observableSettings.getBooleanFlow("k_enable_volume", enableVolume)
@@ -46,4 +46,13 @@ class UserPreferences(observableSettings: DataStoreSettings) {
 
     var enableSwipeBetweenTabs by settings.boolean("k_enable_swipe_between_timelines", true)
     val enableSwipeBetweenTabsFlow = observableSettings.getBooleanFlow("k_enable_swipe_between_timelines", enableSwipeBetweenTabs)
+
+    var showHomeTimelineHelp by settings.boolean("k_show_home_timeline_help", true)
+    val showHomeTimelineHelpFlow = observableSettings.getBooleanFlow("k_show_home_timeline_help", showHomeTimelineHelp)
+
+    var showLocalTimelineHelp by settings.boolean("k_show_local_timeline_help", true)
+    val showLocalTimelineHelpFlow = observableSettings.getBooleanFlow("k_show_local_timeline_help", showLocalTimelineHelp)
+
+    var showGlobalTimelineHelp by settings.boolean("k_show_global_timeline_help", true)
+    val showGlobalTimelineHelpFlow = observableSettings.getBooleanFlow("k_show_global_timeline_help", showGlobalTimelineHelp)
 }

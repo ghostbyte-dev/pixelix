@@ -36,15 +36,16 @@ class EditProfileViewModel @Inject constructor(
         if (accountState.account == null) return@derivedStateOf false
         !(displayName.text == (accountState.account?.displayname
             ?: "") && note.text == (accountState.account?.note
-            ?: "") && "https://$website" == (accountState.account?.website
-            ?: "") && newAvatar == null && privateProfile == accountState.account?.locked)
+            ?: "") && ("https://$website" == (accountState.account?.website
+            ?: "") || (accountState.account?.website.isNullOrEmpty() && website.isEmpty())) && newAvatar == null && privateProfile == accountState.account?.locked)
     }
 
     init {
         getAccount()
     }
 
-    private fun getAccount() {
+    fun getAccount() {
+        accountState = EditProfileState(isLoading = true)
         accountService.getOwnAccount().onEach { result ->
             when (result) {
                 is Resource.Success -> {

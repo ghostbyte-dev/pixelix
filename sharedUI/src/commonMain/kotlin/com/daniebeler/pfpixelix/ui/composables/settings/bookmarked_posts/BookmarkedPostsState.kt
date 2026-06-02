@@ -6,5 +6,6 @@ data class BookmarkedPostsState(
     val isLoading: Boolean = false,
     val isRefreshing: Boolean = false,
     val bookmarkedPosts: List<Post> = emptyList(),
-    val error: String = ""
+    val error: String = "",
+    val nextCursor: String = "",
 )

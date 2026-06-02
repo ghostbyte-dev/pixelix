@@ -46,7 +46,7 @@ interface PixelfedApi {
         const val PROFILE_POSTS_LIMIT = 18
         const val LIKED_BY_LIMIT = 40
         const val FOLLOWERS_LIMIT = 40
-        const val BOOKMARKED_LIMIT = 12
+        const val BOOKMARKED_LIMIT = 18
     }
 
     // Discover
@@ -175,16 +175,16 @@ interface PixelfedApi {
     @GET("api/v1/accounts/{id}/followers")
     suspend fun getAccountsFollowers(
         @Path("id") userId: String,
-        @Query("max_id") maxId: String? = null,
+        @Query("cursor") cursor: String? = null,
         @Query("limit") limit: Int = FOLLOWERS_LIMIT
-    ): List<Account>
+    ): Call<List<Account>>
 
     @GET("api/v1/accounts/{id}/following")
     suspend fun getAccountsFollowing(
         @Path("id") userId: String,
-        @Query("max_id") maxId: String? = null,
+        @Query("cursor") cursor: String? = null,
         @Query("limit") limit: Int = FOLLOWERS_LIMIT
-    ): List<Account>
+    ): Call<List<Account>>
 
     // Statuses
     @GET("api/v1/statuses/{postid}?_pe=1")
@@ -294,10 +294,11 @@ interface PixelfedApi {
     suspend fun deleteMessage(@Query("id") id: String): List<Int>
     // Other
 
-    @GET("api/v1/bookmarks")
+    @GET("api/v1/bookmarks?_pe=1")
     suspend fun getBookmarkedPosts(
-        @Query("limit") limit: Int = BOOKMARKED_LIMIT
-    ): List<Post>
+        @Query("limit") limit: Int = BOOKMARKED_LIMIT,
+        @Query("cursor") cursor: String?
+    ): Call<List<Post>>
 
     @GET("api/v1/statuses/{postid}/context?_pe=1")
     suspend fun getReplies(

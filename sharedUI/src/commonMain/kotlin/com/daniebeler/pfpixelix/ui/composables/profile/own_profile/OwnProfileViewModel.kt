@@ -4,10 +4,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.repository.PixelfedApi
 import com.daniebeler.pfpixelix.domain.service.account.AccountService
@@ -17,18 +15,15 @@ import com.daniebeler.pfpixelix.domain.service.platform.Platform
 import com.daniebeler.pfpixelix.domain.service.post.PostService
 import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
 import com.daniebeler.pfpixelix.domain.service.session.AuthService
+import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.ui.composables.profile.AccountState
 import com.daniebeler.pfpixelix.ui.composables.profile.CollectionsState
 import com.daniebeler.pfpixelix.ui.composables.profile.PostsState
 import com.daniebeler.pfpixelix.ui.composables.profile.ViewEnum
-import com.daniebeler.pfpixelix.utils.KmpContext
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
-import org.jetbrains.compose.resources.DrawableResource
-import pixelix.app.generated.resources.Res
-import pixelix.app.generated.resources.pixelix_logo
 
 class OwnProfileViewModel @Inject constructor(
     private val accountService: AccountService,
@@ -53,10 +48,14 @@ class OwnProfileViewModel @Inject constructor(
 
         viewModelScope.launch {
             prefs.showUserGridTimelineFlow.collect { res ->
-                view = if (res) ViewEnum.Grid else ViewEnum.Timeline
+                view = ViewEnum.getView(res)
             }
         }
         ownDomain = authService.getCurrentSession()?.serverUrl.orEmpty()
+    }
+
+    fun dismissError() {
+        accountState = accountState.copy(error = "")
     }
 
     fun updateAccountSwitch() {
@@ -102,8 +101,8 @@ class OwnProfileViewModel @Inject constructor(
         postService.getOwnPosts().onEach { result ->
             postsState = when (result) {
                 is Resource.Success -> {
-                    val endReached = (result.data?.size ?: 0) < PixelfedApi.PROFILE_POSTS_LIMIT
-                    PostsState(posts = result.data ?: emptyList(), endReached = endReached)
+                    val endReached = (result.data.size) < PixelfedApi.PROFILE_POSTS_LIMIT
+                    PostsState(posts = result.data, endReached = endReached)
                 }
 
                 is Resource.Error -> {
@@ -184,7 +183,7 @@ class OwnProfileViewModel @Inject constructor(
 
     fun changeView(newView: ViewEnum) {
         view = newView
-        prefs.showUserGridTimeline = newView == ViewEnum.Grid
+        prefs.showUserGridTimeline = newView.ordinal
     }
 
     fun postGetsDeleted(postId: String) {

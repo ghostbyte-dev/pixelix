@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.domain.model.Account
+import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
@@ -61,12 +62,7 @@ fun LikesBottomSheet(
 
             if (viewModel.likedByState.isLoading) {
                 item {
-                    CircularProgressIndicator(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(80.dp)
-                            .wrapContentSize(Alignment.Center)
-                    )
+                    LoadingComposable()
                 }
             }
 

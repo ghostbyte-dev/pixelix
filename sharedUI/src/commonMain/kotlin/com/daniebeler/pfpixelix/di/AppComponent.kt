@@ -20,6 +20,7 @@ import com.daniebeler.pfpixelix.domain.service.file.toOkIoPath
 import com.daniebeler.pfpixelix.domain.service.icon.AppIconManager
 import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
 import com.daniebeler.pfpixelix.domain.service.search.SearchFieldFocus
+import com.daniebeler.pfpixelix.domain.service.session.AuthInterceptor
 import com.daniebeler.pfpixelix.domain.service.session.AuthService
 import com.daniebeler.pfpixelix.domain.service.session.Session
 import com.daniebeler.pfpixelix.domain.service.session.SessionStorage
@@ -27,6 +28,9 @@ import com.daniebeler.pfpixelix.domain.service.session.SessionStorageDataSeriali
 import com.daniebeler.pfpixelix.domain.service.session.SystemUrlHandler
 import com.daniebeler.pfpixelix.domain.service.share.AccountIntentHandler
 import com.daniebeler.pfpixelix.domain.service.share.SystemFileShare
+import com.daniebeler.pfpixelix.domain.service.timeline.BackToTopTrigger
+import com.daniebeler.pfpixelix.domain.service.utils.GlobalNavigator
+import com.daniebeler.pfpixelix.domain.service.utils.GlobalNavigatorImpl
 import com.daniebeler.pfpixelix.domain.service.widget.WidgetService
 import com.daniebeler.pfpixelix.utils.KmpContext
 import com.daniebeler.pfpixelix.utils.coilContext
@@ -73,6 +77,11 @@ abstract class AppComponent(
 
     abstract val preferences: UserPreferences
     abstract val searchFieldFocus: SearchFieldFocus
+    abstract val backToTopTrigger: BackToTopTrigger
+    abstract val globalNavigator: GlobalNavigator
+
+    @Provides
+    fun bindGlobalNavigator(impl: GlobalNavigatorImpl): GlobalNavigator = impl
 
     @get:Provides
     @get:AppSingleton
@@ -88,28 +97,36 @@ abstract class AppComponent(
     @AppSingleton
     fun provideHttpClient(
         json: Json,
-        session: Session
-    ): HttpClient = HttpClient {
-        expectSuccess = true
-        install(ContentNegotiation) { json(json) }
-        install(Logging) {
-            logger = object : io.ktor.client.plugins.logging.Logger {
-                override fun log(message: String) {
-                    Logger.v("Pixelix HttpClient") {
-                        message.lines().joinToString { "\n\t\t$it" }
+        session: Session,
+        sessionStorage: DataStore<SessionStorage>,
+        globalNavigator: GlobalNavigator
+    ): HttpClient {
+        val authInterceptor = AuthInterceptor(session, json, sessionStorage, globalNavigator)
+
+        return HttpClient {
+
+            expectSuccess = true
+            install(ContentNegotiation) { json(json) }
+            install(Logging) {
+                logger = object : io.ktor.client.plugins.logging.Logger {
+                    override fun log(message: String) {
+                        Logger.v("Pixelix HttpClient") {
+                            message.lines().joinToString { "\n\t\t$it" }
+                        }
                     }
                 }
+                level = LogLevel.NONE
             }
-            level = LogLevel.NONE
-        }
-        install(HttpTimeout) {
-            requestTimeoutMillis = 60000
-            socketTimeoutMillis = 60000
-            connectTimeoutMillis = 60000
-        }
-    }.apply {
-        plugin(HttpSend).intercept { request ->
-            with(session) { intercept(request) }
+            install(HttpTimeout) {
+                requestTimeoutMillis = 60000
+                socketTimeoutMillis = 60000
+                connectTimeoutMillis = 60000
+            }
+        }.apply {
+            plugin(HttpSend).intercept { request ->
+                with(session) { intercept(request) }
+                with(authInterceptor) {intercept(request)}
+            }
         }
     }
 

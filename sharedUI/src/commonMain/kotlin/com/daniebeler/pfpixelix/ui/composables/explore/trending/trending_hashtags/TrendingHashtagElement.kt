@@ -29,7 +29,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.model.Tag
-import com.daniebeler.pfpixelix.ui.composables.CustomPost
+import com.daniebeler.pfpixelix.ui.composables.widgets.CustomPost
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import com.daniebeler.pfpixelix.utils.StringFormat
 import org.jetbrains.compose.resources.stringResource
@@ -118,7 +118,7 @@ fun TrendingHashtagElement(
                         .width(140.dp)
                         .height(140.dp)
                 ) {
-                    CustomPost(post = post, navController = navController, customModifier = customModifier)
+                    CustomPost(post = post, navController = navController, modifier = customModifier)
                 }
             }
         }

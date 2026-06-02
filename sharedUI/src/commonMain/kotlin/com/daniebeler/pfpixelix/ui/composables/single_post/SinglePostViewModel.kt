@@ -17,7 +17,7 @@ class SinglePostViewModel @Inject constructor(
 
     var postState by mutableStateOf(SinglePostState())
 
-    fun getPost(postId: String) {
+    fun getPost(postId: String, refreshing: Boolean = false) {
         postService.getPostById(postId).onEach { result ->
             postState = when (result) {
                 is Resource.Success -> {
@@ -29,7 +29,7 @@ class SinglePostViewModel @Inject constructor(
                 }
 
                 is Resource.Loading -> {
-                    postState.copy(isLoading = true)
+                    postState.copy(isLoading = !refreshing, isRefreshing = refreshing)
                 }
             }
         }.launchIn(viewModelScope)

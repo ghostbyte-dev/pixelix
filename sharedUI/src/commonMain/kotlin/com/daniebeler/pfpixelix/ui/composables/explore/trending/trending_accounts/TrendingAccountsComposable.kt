@@ -14,9 +14,10 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
-import com.daniebeler.pfpixelix.ui.composables.states.FullscreenEmptyStateComposable
-import com.daniebeler.pfpixelix.ui.composables.states.FullscreenErrorComposable
-import com.daniebeler.pfpixelix.ui.composables.states.FullscreenLoadingComposable
+import com.daniebeler.pfpixelix.ui.composables.states.EmptyStateComposable
+import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
+import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
+import com.daniebeler.pfpixelix.ui.composables.widgets.CustomPullToRefreshBox
 import org.jetbrains.compose.resources.stringResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.no_trending_profiles
@@ -27,9 +28,10 @@ fun TrendingAccountsComposable(
     navController: NavController,
     viewModel: TrendingAccountsViewModel = injectViewModel(key = "trending-accounts-key") { trendingAccountsViewModel }
 ) {
-    PullToRefreshBox(
+    CustomPullToRefreshBox(
         isRefreshing = viewModel.trendingAccountsState.isRefreshing,
         onRefresh = { viewModel.getTrendingAccountsState(true) },
+        animatedBox = true
     ) {
         LazyColumn(modifier = Modifier.fillMaxSize().padding(horizontal = 4.dp),
             contentPadding = PaddingValues(top = 32.dp, bottom = 72.dp),
@@ -43,19 +45,20 @@ fun TrendingAccountsComposable(
                     )
                 }
             })
+        if (viewModel.trendingAccountsState.trendingAccounts.isEmpty()) {
+            if (viewModel.trendingAccountsState.isLoading && !viewModel.trendingAccountsState.isRefreshing) {
+                LoadingComposable()
+            }
+
+            if (viewModel.trendingAccountsState.error.isNotEmpty()) {
+                ErrorComposable(message = viewModel.trendingAccountsState.error, modifier = Modifier.fillMaxSize().padding(36.dp, 20.dp))
+            }
+
+            if (!viewModel.trendingAccountsState.isLoading && viewModel.trendingAccountsState.error.isEmpty()) {
+                EmptyStateComposable(EmptyState(heading = stringResource(Res.string.no_trending_profiles)))
+            }
+        }
     }
 
-    if (viewModel.trendingAccountsState.trendingAccounts.isEmpty()) {
-        if (viewModel.trendingAccountsState.isLoading && !viewModel.trendingAccountsState.isRefreshing) {
-            FullscreenLoadingComposable()
-        }
 
-        if (viewModel.trendingAccountsState.error.isNotEmpty()) {
-            FullscreenErrorComposable(message = viewModel.trendingAccountsState.error)
-        }
-
-        if (!viewModel.trendingAccountsState.isLoading && viewModel.trendingAccountsState.error.isEmpty()) {
-            FullscreenEmptyStateComposable(EmptyState(heading = stringResource(Res.string.no_trending_profiles)))
-        }
-    }
 }

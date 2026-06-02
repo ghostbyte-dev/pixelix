@@ -1,4 +1,7 @@
+@file:OptIn(ExperimentalKotlinGradlePluginApi::class)
+
 import com.google.devtools.ksp.gradle.KspAATask
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -20,6 +23,7 @@ kotlin {
     android {
         namespace = "com.daniebeler.pfpixelix"
         compileSdk = 36
+        minSdk = 26
 
         androidResources { enable = true }
         compilerOptions { jvmTarget = JvmTarget.JVM_17 }
@@ -44,10 +48,10 @@ kotlin {
             implementation(libs.ui)
             implementation(libs.jetbrains.material)
             implementation(libs.material3)
-            implementation(libs.material.icons.extended)
             implementation(libs.components.resources)
             implementation(libs.compose.ui.graphics)
             implementation(libs.compose.navigationevent)
+            implementation(libs.compose.preview)
             //logger
             implementation(libs.kermit)
 
@@ -120,8 +124,6 @@ kotlin {
             implementation(libs.androidx.activity.compose)
             implementation(libs.androidx.browser)
 
-            implementation(libs.accompanist.systemuicontroller)
-
             implementation(libs.material)
 
             //media
@@ -165,7 +167,7 @@ dependencies {
     ).forEach {
         add(it, libs.kotlin.inject.compiler.ksp)
     }
-}
+    androidRuntimeClasspath(libs.ui.tooling)}
 
 tasks.configureEach {
     if (this is KspAATask && name != "kspCommonMainKotlinMetadata")

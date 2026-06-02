@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
@@ -28,12 +29,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.input.clearText
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.foundation.text.input.setTextAndPlaceCursorAtEnd
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.ArrowBackIosNew
-import androidx.compose.material.icons.outlined.Clear
-import androidx.compose.material.icons.outlined.Close
-import androidx.compose.material.icons.outlined.Search
-import androidx.compose.material.icons.outlined.Tag
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -68,22 +63,25 @@ import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.model.SavedSearchItem
 import com.daniebeler.pfpixelix.domain.model.SavedSearchType
-import com.daniebeler.pfpixelix.ui.composables.CustomHashtag
+import com.daniebeler.pfpixelix.ui.composables.widgets.CustomHashtag
 import com.daniebeler.pfpixelix.ui.composables.custom_account.CustomAccount
 import com.daniebeler.pfpixelix.ui.composables.explore.trending.TrendingComposable
-import com.daniebeler.pfpixelix.ui.composables.states.FullscreenLoadingComposable
+import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pfpixelix.ui.navigation.Destination
-import com.daniebeler.pfpixelix.utils.imeAwareInsets
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.accounts
+import pixelix.app.generated.resources.chevron_left
+import pixelix.app.generated.resources.close
 import pixelix.app.generated.resources.default_avatar
 import pixelix.app.generated.resources.explore
+import pixelix.app.generated.resources.hash
 import pixelix.app.generated.resources.hashtags
-import pixelix.app.generated.resources.search_outline
+import pixelix.app.generated.resources.search
+import pixelix.app.generated.resources.trash
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -99,7 +97,6 @@ fun ExploreComposable(
     val appComponent = LocalAppComponent.current
     LaunchedEffect(Unit) {
         appComponent.searchFieldFocus.events.collect {
-            Logger.d("search") { "Request search focus" }
             focusRequester.requestFocus()
         }
     }
@@ -130,9 +127,9 @@ fun ExploreComposable(
                     modifier = Modifier.focusRequester(focusRequester),
                     leadingIcon = {
                         if (!expanded) {
-                            Icon(vectorResource(Res.drawable.search_outline), contentDescription = null)
+                            Icon(vectorResource(Res.drawable.search), contentDescription = null)
                         } else {
-                            Icon(Icons.Outlined.ArrowBackIosNew,
+                            Icon(vectorResource(Res.drawable.chevron_left),
                                 contentDescription = null,
                                 modifier = Modifier.clickable {
                                     expanded = false
@@ -147,7 +144,7 @@ fun ExploreComposable(
                             enter = fadeIn(),
                             exit = fadeOut()
                         ) {
-                            Icon(Icons.Outlined.Clear,
+                            Icon(vectorResource(Res.drawable.close),
                                 contentDescription = "clear search query",
                                 modifier = Modifier.clickable {
                                     textFieldState.clearText()
@@ -166,16 +163,18 @@ fun ExploreComposable(
 
             if (textFieldState.text.isBlank() && viewModel.savedSearches.isNotEmpty()) {
                 LazyColumn(
-                    modifier = Modifier.imeAwareInsets(60.dp),
+                    modifier = Modifier.imePadding(),
                     contentPadding = PaddingValues(bottom = 60.dp),
                 ) {
                     items(viewModel.savedSearches.reversed()) {
                         if (it.savedSearchType == SavedSearchType.Account) {
                             Row {
-                                CustomAccount(account = it.account!!,
+                                CustomAccount(
+                                    account = it.account!!,
                                     relationship = null,
                                     navController = navController,
-                                    { viewModel.deleteSavedSearch(it) })
+                                    removeSavedSearch = { viewModel.deleteSavedSearch(it) }
+                                )
                             }
                         } else {
                             PastSearchItem(item = it, navController, { text ->
@@ -189,7 +188,7 @@ fun ExploreComposable(
             }
             viewModel.searchState.searchResult?.let { searchResult ->
                 LazyColumn(
-                    modifier = Modifier.imeAwareInsets(60.dp),
+                    modifier = Modifier.imePadding(),
                     contentPadding = PaddingValues(bottom = 60.dp),
                     content = {
                     items(searchResult.accounts) {
@@ -212,7 +211,7 @@ fun ExploreComposable(
             }
 
             if (viewModel.searchState.isLoading) {
-                FullscreenLoadingComposable()
+                LoadingComposable()
             }
         }
         Box(
@@ -346,9 +345,9 @@ private fun PastSearchItem(
             ) {
                 Icon(
                     imageVector = if (item.savedSearchType == SavedSearchType.Hashtag) {
-                        Icons.Outlined.Tag
+                        vectorResource(Res.drawable.hash)
                     } else {
-                        Icons.Outlined.Search
+                        vectorResource(Res.drawable.search)
                     }, contentDescription = null, tint = MaterialTheme.colorScheme.primary
                 )
             }
@@ -377,7 +376,7 @@ private fun PastSearchItem(
             contentAlignment = Alignment.Center
         ) {
             Icon(
-                imageVector = Icons.Outlined.Close,
+                imageVector = vectorResource(Res.drawable.close),
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary
             )

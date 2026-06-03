@@ -8,7 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.model.SavedSearchItem
-import com.daniebeler.pfpixelix.domain.service.hashtag.SearchService
+import com.daniebeler.pfpixelix.domain.service.general.ExploreService
 import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
 import com.daniebeler.pfpixelix.domain.service.search.SavedSearchesService
 import com.daniebeler.pfpixelix.domain.service.session.AuthService
@@ -20,7 +20,7 @@ import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 
 class ExploreViewModel @Inject constructor(
-    private val searchService: SearchService,
+    private val exploreService: ExploreService,
     private val savedSearchesService: SavedSearchesService,
     private val authService: AuthService,
     private val prefs: UserPreferences
@@ -112,7 +112,7 @@ class ExploreViewModel @Inject constructor(
     }
 
     private fun getSearchResults(text: String, limit: Int) {
-        searchService.search(text, limit = limit).onEach { result ->
+        exploreService.search(text, limit = limit).onEach { result ->
             searchState = when (result) {
                 is Resource.Success -> {
                     SearchState(searchResult = result.data)

@@ -7,12 +7,11 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
-import co.touchlab.kermit.Logger
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.repository.PixelfedApi
 import com.daniebeler.pfpixelix.domain.service.account.AccountService
 import com.daniebeler.pfpixelix.domain.service.collection.CollectionService
-import com.daniebeler.pfpixelix.domain.service.hashtag.SearchService
+import com.daniebeler.pfpixelix.domain.service.general.ExploreService
 import com.daniebeler.pfpixelix.domain.service.platform.Platform
 import com.daniebeler.pfpixelix.domain.service.post.PostService
 import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
@@ -34,7 +33,7 @@ import me.tatarka.inject.annotations.Inject
 class OtherProfileViewModel(
     private val accountService: AccountService,
     private val postService: PostService,
-    private val searchService: SearchService,
+    private val exploreService: ExploreService,
     private val platform: Platform,
     private val prefs: UserPreferences,
     private val collectionService: CollectionService,
@@ -90,7 +89,7 @@ class OtherProfileViewModel(
     }
 
     fun getRelationship(userId: String) {
-        searchService.getRelationships(List(1) { userId }).onEach { result ->
+        exploreService.getRelationships(List(1) { userId }).onEach { result ->
             relationshipState = when (result) {
                 is Resource.Success -> {
                     RelationshipState(

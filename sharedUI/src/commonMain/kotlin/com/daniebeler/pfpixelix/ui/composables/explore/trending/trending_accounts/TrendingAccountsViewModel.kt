@@ -7,13 +7,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.domain.model.Account
-import com.daniebeler.pfpixelix.domain.service.hashtag.SearchService
+import com.daniebeler.pfpixelix.domain.service.general.ExploreService
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import me.tatarka.inject.annotations.Inject
 
 class TrendingAccountsViewModel @Inject constructor(
-    private val searchService: SearchService
+    private val exploreService: ExploreService
 ) : ViewModel() {
     var trendingAccountsState by mutableStateOf(TrendingAccountsState())
     var accountRelationShipsState by mutableStateOf(AccountRelationshipsState())
@@ -24,7 +24,7 @@ class TrendingAccountsViewModel @Inject constructor(
 
     fun getTrendingAccountsState(refreshing: Boolean = false) {
         if (refreshing || trendingAccountsState.trendingAccounts.isEmpty()) {
-            searchService.getTrendingAccounts().onEach { result ->
+            exploreService.getTrendingAccounts().onEach { result ->
                 trendingAccountsState = when (result) {
                     is Resource.Success -> {
                         result.data?.let { getRelationships(it) }
@@ -52,7 +52,7 @@ class TrendingAccountsViewModel @Inject constructor(
     private fun getRelationships(accounts: List<Account>) {
         val accountIds: List<String> = accounts.map { account: Account -> account.id }
 
-        searchService.getRelationships(accountIds).onEach { result ->
+        exploreService.getRelationships(accountIds).onEach { result ->
             accountRelationShipsState = when (result) {
                 is Resource.Success -> {
                     AccountRelationshipsState(accountRelationships = result.data ?: emptyList())

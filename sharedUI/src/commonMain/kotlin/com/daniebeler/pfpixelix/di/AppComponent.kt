@@ -17,6 +17,8 @@ import com.daniebeler.pfpixelix.domain.repository.serializers.SavedSearchesSeria
 import com.daniebeler.pfpixelix.domain.service.account.AccountService
 import com.daniebeler.pfpixelix.domain.service.file.FileService
 import com.daniebeler.pfpixelix.domain.service.file.toOkIoPath
+import com.daniebeler.pfpixelix.domain.service.general.ExploreService
+import com.daniebeler.pfpixelix.domain.service.general.ExploreServiceDelegate
 import com.daniebeler.pfpixelix.domain.service.general.TimelineService
 import com.daniebeler.pfpixelix.domain.service.general.TimelineServiceDelegate
 import com.daniebeler.pfpixelix.domain.service.icon.AppIconManager
@@ -87,6 +89,8 @@ abstract class AppComponent(
 
     @Provides
     fun provideTimelineService(delegate: TimelineServiceDelegate): TimelineService = delegate
+    @Provides
+    fun provideExploreService(delegate: ExploreServiceDelegate): ExploreService = delegate
 
     @get:Provides
     @get:AppSingleton

@@ -7,13 +7,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.domain.model.Tag
-import com.daniebeler.pfpixelix.domain.service.hashtag.SearchService
+import com.daniebeler.pfpixelix.domain.service.general.ExploreService
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import me.tatarka.inject.annotations.Inject
 
 class FollowedHashtagsViewModel @Inject constructor(
-    private val searchService: SearchService
+    private val exploreService: ExploreService
 ) : ViewModel() {
 
     var followedHashtagsState by mutableStateOf(FollowedHashtagsState())
@@ -23,7 +23,7 @@ class FollowedHashtagsViewModel @Inject constructor(
     }
 
     fun getFollowedHashtags(refreshing: Boolean = false) {
-        searchService.getFollowedHashtags().onEach { result ->
+        exploreService.getFollowedHashtags().onEach { result ->
             when (result) {
                 is Resource.Success -> {
                     if (result.data?.isNotEmpty() == false) {
@@ -53,7 +53,7 @@ class FollowedHashtagsViewModel @Inject constructor(
     }
 
     private fun getFollowedHashtagSingle(tag: Tag) {
-        searchService.getHashtag(tag.name).onEach { result ->
+        exploreService.getHashtag(tag.name).onEach { result ->
             followedHashtagsState = when (result) {
                 is Resource.Success -> {
                     FollowedHashtagsState(followedHashtags = followedHashtagsState.followedHashtags + result.data)

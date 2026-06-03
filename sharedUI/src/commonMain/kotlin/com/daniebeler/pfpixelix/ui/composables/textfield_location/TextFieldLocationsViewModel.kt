@@ -8,13 +8,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.domain.model.Place
-import com.daniebeler.pfpixelix.domain.service.hashtag.SearchService
+import com.daniebeler.pfpixelix.domain.service.general.ExploreService
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import me.tatarka.inject.annotations.Inject
 
 class TextFieldLocationsViewModel @Inject constructor(
-    private val searchService: SearchService
+    private val exploreService: ExploreService
 ) : ViewModel() {
     var text by mutableStateOf(TextFieldValue(""))
     var locationsDropdownOpen by mutableStateOf(false)
@@ -36,7 +36,7 @@ class TextFieldLocationsViewModel @Inject constructor(
         if (location == null) {
             return
         }
-        searchService.searchLocations(location).onEach { result ->
+        exploreService.searchLocations(location).onEach { result ->
             locationsSuggestions = when (result) {
                 is Resource.Success -> {
                     LocationsState(locations = result.data)

@@ -9,8 +9,8 @@ import co.touchlab.kermit.Logger
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.model.RelatedHashtag
 import com.daniebeler.pfpixelix.domain.repository.PixelfedApi
+import com.daniebeler.pfpixelix.domain.service.general.ExploreService
 import com.daniebeler.pfpixelix.domain.service.general.TimelineService
-import com.daniebeler.pfpixelix.domain.service.hashtag.SearchService
 import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.ui.composables.profile.ViewEnum
@@ -21,7 +21,7 @@ import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 
 class HashtagTimelineViewModel @Inject constructor(
-    private val searchService: SearchService,
+    private val exploreService: ExploreService,
     private val timelineService: TimelineService,
     private val prefs: UserPreferences
 ) : ViewModel() {
@@ -135,7 +135,7 @@ class HashtagTimelineViewModel @Inject constructor(
     }
 
     fun getRelatedHashtags(hashtag: String) {
-        searchService.getRelatedHashtags(hashtag).onEach { result ->
+        exploreService.getRelatedHashtags(hashtag).onEach { result ->
             if (result is Resource.Success) {
                 relatedHashtags = result.data
                 Logger.v("juhuu" + result.data)
@@ -151,7 +151,7 @@ class HashtagTimelineViewModel @Inject constructor(
     }
 
     fun getHashtagInfo(hashtag: String) {
-        searchService.getHashtag(hashtag).onEach { result ->
+        exploreService.getHashtag(hashtag).onEach { result ->
             hashtagState = when (result) {
                 is Resource.Success -> {
                     HashtagState(hashtag = result.data)
@@ -169,7 +169,7 @@ class HashtagTimelineViewModel @Inject constructor(
     }
 
     fun followHashtag(hashtag: String) {
-        searchService.followHashtag(hashtag).onEach { result ->
+        exploreService.followHashtag(hashtag).onEach { result ->
             hashtagState = when (result) {
                 is Resource.Success -> {
                     val newHashtag = hashtagState.hashtag
@@ -192,7 +192,7 @@ class HashtagTimelineViewModel @Inject constructor(
     }
 
     fun unfollowHashtag(hashtag: String) {
-        searchService.unfollowHashtag(hashtag).onEach { result ->
+        exploreService.unfollowHashtag(hashtag).onEach { result ->
             hashtagState = when (result) {
                 is Resource.Success -> {
                     val newHashtag = hashtagState.hashtag

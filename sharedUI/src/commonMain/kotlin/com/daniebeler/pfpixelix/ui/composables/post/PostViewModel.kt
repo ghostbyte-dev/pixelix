@@ -13,6 +13,7 @@ import com.daniebeler.pfpixelix.domain.model.NewReport
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.model.ReportObjectType
 import com.daniebeler.pfpixelix.domain.service.account.AccountService
+import com.daniebeler.pfpixelix.domain.service.capabilities.Capabilities
 import com.daniebeler.pfpixelix.domain.service.editor.PostEditorService
 import com.daniebeler.pfpixelix.domain.service.file.FileService
 import com.daniebeler.pfpixelix.domain.service.instance.InstanceService
@@ -20,6 +21,7 @@ import com.daniebeler.pfpixelix.domain.service.platform.Platform
 import com.daniebeler.pfpixelix.domain.service.post.PostService
 import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
 import com.daniebeler.pfpixelix.domain.service.session.AuthService
+import com.daniebeler.pfpixelix.domain.service.session.Session
 import com.daniebeler.pfpixelix.domain.service.suggestions.HashtagMentionsSuggestionsManager
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.ui.composables.post.reply.OwnReplyState
@@ -42,9 +44,10 @@ class PostViewModel @Inject constructor(
     private val platform: Platform,
     private val fileService: FileService,
     private val instanceService: InstanceService,
+    private val session: Session,
     val hashtagMentionsSuggestionsManager: HashtagMentionsSuggestionsManager
 ) : ViewModel() {
-
+    val capabilities: Capabilities = session.capabilities.value
     var post: Post? by mutableStateOf(null)
 
     var repliesState by mutableStateOf(RepliesState())

@@ -2,8 +2,8 @@ package com.daniebeler.pfpixelix.domain.service.session
 
 import androidx.datastore.core.DataStore
 import co.touchlab.kermit.Logger
-import com.daniebeler.pfpixelix.domain.service.utils.GlobalNavigationEvent
-import com.daniebeler.pfpixelix.domain.service.utils.GlobalNavigator
+import com.daniebeler.pfpixelix.ui.events.GlobalNavigationEvent
+import com.daniebeler.pfpixelix.ui.events.GlobalNavigator
 import io.ktor.client.call.HttpClientCall
 import io.ktor.client.plugins.Sender
 import io.ktor.client.request.HttpRequestBuilder

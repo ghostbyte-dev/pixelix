@@ -1,4 +1,4 @@
-package com.daniebeler.pfpixelix.domain.service.timeline
+package com.daniebeler.pfpixelix.ui.events
 
 import com.daniebeler.pfpixelix.di.AppSingleton
 import kotlinx.coroutines.GlobalScope
@@ -9,10 +9,11 @@ import me.tatarka.inject.annotations.Inject
 
 @AppSingleton
 @Inject
-class BackToTopTrigger {
-    private val _event = MutableSharedFlow<Unit>()
-    val event = _event.asSharedFlow()
+class SearchFieldFocus {
+    private val eventsFlow = MutableSharedFlow<Boolean>()
+    val events = eventsFlow.asSharedFlow()
 
-    fun scrollToTop() {
-        GlobalScope.launch { _event.emit(Unit) }    }
+    fun focus() {
+        GlobalScope.launch { eventsFlow.emit(true) }
+    }
 }

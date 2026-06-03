@@ -1,4 +1,4 @@
-package com.daniebeler.pfpixelix.domain.service.utils
+package com.daniebeler.pfpixelix.ui.events
 
 import com.daniebeler.pfpixelix.di.AppSingleton
 import kotlinx.coroutines.flow.MutableSharedFlow

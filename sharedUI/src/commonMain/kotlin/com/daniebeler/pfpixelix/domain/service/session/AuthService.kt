@@ -3,6 +3,8 @@ package com.daniebeler.pfpixelix.domain.service.session
 import androidx.datastore.core.DataStore
 import co.touchlab.kermit.Logger
 import com.daniebeler.pfpixelix.di.AppSingleton
+import com.daniebeler.pfpixelix.domain.service.capabilities.PixelfedCapabilities
+import com.daniebeler.pfpixelix.domain.service.capabilities.VernissageCapabilities
 import com.daniebeler.pfpixelix.domain.service.platform.Platform
 import com.daniebeler.pfpixelix.domain.service.search.SavedSearchesService
 import de.jensklingenberg.ktorfit.Ktorfit
@@ -115,6 +117,7 @@ class AuthService(
             }
         }
         session.setCredentials(resolvedCredentials)
+        session.setBackendType(BackendType.PIXELFED)
     }
 
     fun isValidHost(host: String): Boolean = domainRegex.matches(host)

@@ -110,6 +110,13 @@ fun ShareBottomSheet(
 
             Text(text = stringResource(Res.string.visibility_x, humanReadableVisibility))
         }
+
+        if (viewModel.capabilities.post.showCameraMetadata) {
+            ButtonRowElement(
+                icon = Res.drawable.document_text, text = "Cam Metadata", onClick = {
+                })
+        }
+
         if (mediaAttachment?.license != null) {
             ButtonRowElement(
                 icon = Res.drawable.document_text, text = stringResource(
@@ -188,56 +195,56 @@ fun ShareBottomSheet(
             }
             if (relationship == null || !relationship.blocking) {
                 ButtonRowElement(
-                icon = Res.drawable.blocked, text = stringResource(
-                    Res.string.block_this_profile
-                ), onClick = {
-                    showBlockAlert = true
-                }, color = MaterialTheme.colorScheme.error
+                    icon = Res.drawable.blocked, text = stringResource(
+                        Res.string.block_this_profile
+                    ), onClick = {
+                        showBlockAlert = true
+                    }, color = MaterialTheme.colorScheme.error
+                )
+            }
+
+
+
+            ButtonRowElement(
+                icon = Res.drawable.warning,
+                text = stringResource(Res.string.report_this_post),
+                onClick = {
+                    isReportDialogOpen = true
+                },
+                color = MaterialTheme.colorScheme.error
             )
         }
+    }
 
-
-
-        ButtonRowElement(
-            icon = Res.drawable.warning,
-            text = stringResource(Res.string.report_this_post),
-            onClick = {
-                isReportDialogOpen = true
-            },
-            color = MaterialTheme.colorScheme.error
+    if (showMuteAlert) {
+        MuteAccountAlert(
+            onDismissRequest = { showMuteAlert = false }, onConfirmation = {
+                showMuteAlert = false
+                viewModel.post?.account?.let { viewModel.muteAccount(it.id) }
+                closeBottomSheet()
+            }, account = viewModel.post?.account
         )
     }
-}
-
-if (showMuteAlert) {
-    MuteAccountAlert(
-        onDismissRequest = { showMuteAlert = false }, onConfirmation = {
-            showMuteAlert = false
-            viewModel.post?.account?.let { viewModel.muteAccount(it.id) }
-            closeBottomSheet()
-        }, account = viewModel.post?.account
-    )
-}
-if (showBlockAlert) {
-    BlockAccountAlert(
-        onDismissRequest = { showBlockAlert = false }, onConfirmation = {
-            showBlockAlert = false
-            viewModel.post?.account?.let { viewModel.blockAccount(it.id) }
-            closeBottomSheet()
-        }, account = viewModel.post?.account
-    )
-}
-
-if (isReportDialogOpen) {
-    ReportDialog(
-        dismissDialog = {
-            isReportDialogOpen = false
-            viewModel.reportState = null
-        },
-        reportState = viewModel.reportState
-    ) { category ->
-        viewModel.reportPost(category)
-        viewModel.reportState = null
+    if (showBlockAlert) {
+        BlockAccountAlert(
+            onDismissRequest = { showBlockAlert = false }, onConfirmation = {
+                showBlockAlert = false
+                viewModel.post?.account?.let { viewModel.blockAccount(it.id) }
+                closeBottomSheet()
+            }, account = viewModel.post?.account
+        )
     }
-}
+
+    if (isReportDialogOpen) {
+        ReportDialog(
+            dismissDialog = {
+                isReportDialogOpen = false
+                viewModel.reportState = null
+            },
+            reportState = viewModel.reportState
+        ) { category ->
+            viewModel.reportPost(category)
+            viewModel.reportState = null
+        }
+    }
 }

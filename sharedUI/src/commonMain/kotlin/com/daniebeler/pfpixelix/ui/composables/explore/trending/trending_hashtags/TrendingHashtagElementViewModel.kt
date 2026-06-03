@@ -5,9 +5,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.daniebeler.pfpixelix.domain.service.general.TimelineService
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.domain.service.hashtag.SearchService
-import com.daniebeler.pfpixelix.domain.service.timeline.TimelineService
 import com.daniebeler.pfpixelix.ui.composables.timelines.hashtag_timeline.HashtagState
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach

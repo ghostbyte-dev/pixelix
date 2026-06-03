@@ -17,20 +17,22 @@ import com.daniebeler.pfpixelix.domain.repository.serializers.SavedSearchesSeria
 import com.daniebeler.pfpixelix.domain.service.account.AccountService
 import com.daniebeler.pfpixelix.domain.service.file.FileService
 import com.daniebeler.pfpixelix.domain.service.file.toOkIoPath
+import com.daniebeler.pfpixelix.domain.service.general.TimelineService
+import com.daniebeler.pfpixelix.domain.service.general.TimelineServiceDelegate
 import com.daniebeler.pfpixelix.domain.service.icon.AppIconManager
 import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
-import com.daniebeler.pfpixelix.domain.service.search.SearchFieldFocus
+import com.daniebeler.pfpixelix.ui.events.SearchFieldFocus
 import com.daniebeler.pfpixelix.domain.service.session.AuthInterceptor
 import com.daniebeler.pfpixelix.domain.service.session.AuthService
 import com.daniebeler.pfpixelix.domain.service.session.Session
 import com.daniebeler.pfpixelix.domain.service.session.SessionStorage
 import com.daniebeler.pfpixelix.domain.service.session.SessionStorageDataSerializer
 import com.daniebeler.pfpixelix.domain.service.session.SystemUrlHandler
-import com.daniebeler.pfpixelix.domain.service.share.AccountIntentHandler
-import com.daniebeler.pfpixelix.domain.service.share.SystemFileShare
-import com.daniebeler.pfpixelix.domain.service.timeline.BackToTopTrigger
-import com.daniebeler.pfpixelix.domain.service.utils.GlobalNavigator
-import com.daniebeler.pfpixelix.domain.service.utils.GlobalNavigatorImpl
+import com.daniebeler.pfpixelix.ui.events.AccountIntentHandler
+import com.daniebeler.pfpixelix.ui.events.SystemFileShare
+import com.daniebeler.pfpixelix.ui.events.BackToTopTrigger
+import com.daniebeler.pfpixelix.ui.events.GlobalNavigator
+import com.daniebeler.pfpixelix.ui.events.GlobalNavigatorImpl
 import com.daniebeler.pfpixelix.domain.service.widget.WidgetService
 import com.daniebeler.pfpixelix.utils.KmpContext
 import com.daniebeler.pfpixelix.utils.coilContext
@@ -82,6 +84,9 @@ abstract class AppComponent(
 
     @Provides
     fun bindGlobalNavigator(impl: GlobalNavigatorImpl): GlobalNavigator = impl
+
+    @Provides
+    fun provideTimelineService(delegate: TimelineServiceDelegate): TimelineService = delegate
 
     @get:Provides
     @get:AppSingleton

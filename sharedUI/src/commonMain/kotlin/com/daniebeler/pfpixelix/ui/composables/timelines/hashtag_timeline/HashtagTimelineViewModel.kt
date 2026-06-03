@@ -9,9 +9,9 @@ import co.touchlab.kermit.Logger
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.model.RelatedHashtag
 import com.daniebeler.pfpixelix.domain.repository.PixelfedApi
+import com.daniebeler.pfpixelix.domain.service.general.TimelineService
 import com.daniebeler.pfpixelix.domain.service.hashtag.SearchService
 import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
-import com.daniebeler.pfpixelix.domain.service.timeline.TimelineService
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.ui.composables.profile.ViewEnum
 import com.daniebeler.pfpixelix.ui.composables.timelines.TimelineState

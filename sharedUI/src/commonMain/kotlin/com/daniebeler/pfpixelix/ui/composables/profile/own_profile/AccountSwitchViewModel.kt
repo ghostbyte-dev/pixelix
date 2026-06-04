@@ -5,9 +5,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.daniebeler.pfpixelix.domain.service.session.AuthService
-import com.daniebeler.pfpixelix.domain.service.session.Credentials
-import com.daniebeler.pfpixelix.domain.service.session.SessionStorage
+import com.daniebeler.pfpixelix.domain.model.Credentials
+import com.daniebeler.pfpixelix.domain.model.SessionStorage
+import com.daniebeler.pfpixelix.domain.service.general.AuthService
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject

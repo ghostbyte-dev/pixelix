@@ -2,7 +2,7 @@ package com.daniebeler.pfpixelix.domain.service.editor
 
 import com.daniebeler.pfpixelix.domain.model.NewPost
 import com.daniebeler.pfpixelix.domain.model.UpdatePost
-import com.daniebeler.pfpixelix.domain.repository.PixelfedApi
+import com.daniebeler.pfpixelix.domain.repository.pixelfed.PixelfedApi
 import com.daniebeler.pfpixelix.domain.service.file.FileService
 import com.daniebeler.pfpixelix.domain.service.file.PlatformFile
 import com.daniebeler.pfpixelix.domain.service.utils.loadResource

@@ -1,6 +1,6 @@
 package com.daniebeler.pfpixelix.domain.service.instance
 
-import com.daniebeler.pfpixelix.domain.repository.PixelfedApi
+import com.daniebeler.pfpixelix.domain.repository.pixelfed.PixelfedApi
 import com.daniebeler.pfpixelix.domain.service.utils.loadResource
 import me.tatarka.inject.annotations.Inject
 

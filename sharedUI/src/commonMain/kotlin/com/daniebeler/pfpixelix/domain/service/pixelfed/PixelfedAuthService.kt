@@ -1,20 +1,21 @@
-package com.daniebeler.pfpixelix.domain.service.session
+package com.daniebeler.pfpixelix.domain.service.pixelfed
 
 import androidx.datastore.core.DataStore
-import co.touchlab.kermit.Logger
 import com.daniebeler.pfpixelix.di.AppSingleton
-import com.daniebeler.pfpixelix.domain.service.capabilities.PixelfedCapabilities
-import com.daniebeler.pfpixelix.domain.service.capabilities.VernissageCapabilities
+import com.daniebeler.pfpixelix.domain.model.Credentials
+import com.daniebeler.pfpixelix.domain.model.SessionStorage
+import com.daniebeler.pfpixelix.domain.repository.pixelfed.AuthApi.Companion.createAuthApi
+import com.daniebeler.pfpixelix.domain.service.general.AuthService
+import com.daniebeler.pfpixelix.domain.service.general.AuthService.Companion.clientName
+import com.daniebeler.pfpixelix.domain.service.general.AuthService.Companion.grantType
+import com.daniebeler.pfpixelix.domain.service.general.AuthService.Companion.redirectUrl
 import com.daniebeler.pfpixelix.domain.service.platform.Platform
 import com.daniebeler.pfpixelix.domain.service.search.SavedSearchesService
-import de.jensklingenberg.ktorfit.Ktorfit
-import io.ktor.client.HttpClient
-import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.client.plugins.logging.LogLevel
-import io.ktor.client.plugins.logging.Logging
+import com.daniebeler.pfpixelix.domain.service.general.BackendType
+import com.daniebeler.pfpixelix.domain.service.general.Session
+import com.daniebeler.pfpixelix.ui.events.SystemUrlHandler
 import io.ktor.http.URLBuilder
 import io.ktor.http.Url
-import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -23,25 +24,17 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 @AppSingleton
-class AuthService(
+class PixelfedAuthService(
     private val urlHandler: SystemUrlHandler,
     private val session: Session,
     private val sessionStorage: DataStore<SessionStorage>,
     private val savedSearchesService: SavedSearchesService,
     private val json: Json,
     private val platform: Platform
-) {
-    companion object {
-        private const val clientName = "pixelix"
-        private const val grantType = "authorization_code"
-        private const val redirectUrl = "dev.ghostbyte.pixelix://callback"
-        private val domainRegex: Regex =
-            "^((\\*)|((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)|((\\*\\.)?([a-zA-Z0-9-]+\\.){0,5}[a-zA-Z0-9-][a-zA-Z0-9-]+\\.[a-zA-Z]{2,63}?))\$".toRegex()
-    }
+): AuthService {
+    override val activeUser: Flow<String?> = session.credentials.map { it?.accountId }
 
-    val activeUser: Flow<String?> = session.credentials.map { it?.accountId }
-
-    suspend fun auth(host: String) {
+    override suspend fun auth(host: String) {
         val serverUrl = getServerUrl(host)
         val api = createAuthApi(serverUrl, json)
         val authData = api.getAuthData(clientName, redirectUrl)
@@ -101,7 +94,7 @@ class AuthService(
         session.setCredentials(newCred)
     }
 
-    suspend fun openSessionIfExist(key: String? = null) {
+    override suspend fun openSessionIfExist(key: String?) {
         var resolvedCredentials: Credentials? = null
         sessionStorage.updateData { data ->
             val cred = if (key == null) {
@@ -120,9 +113,8 @@ class AuthService(
         session.setBackendType(BackendType.PIXELFED)
     }
 
-    fun isValidHost(host: String): Boolean = domainRegex.matches(host)
 
-    suspend fun deleteSession(keyParam: String? = null) {
+    override suspend fun deleteSession(keyParam: String?) {
         sessionStorage.updateData { data ->
             val key = keyParam ?: data.activeKey
             val newSessions = data.sessions.filter { it.key != key }
@@ -139,11 +131,11 @@ class AuthService(
         }
     }
 
-    suspend fun getAvailableSessions(): SessionStorage {
+    override suspend fun getAvailableSessions(): SessionStorage {
         return sessionStorage.data.first()
     }
 
-    suspend fun updateSessionAvatar(accountId: String, avatarUrl: String) {
+    override suspend fun updateSessionAvatar(accountId: String, avatarUrl: String) {
         sessionStorage.updateData { data ->
             val updatedSessions = data.sessions.mapValues { (_, credentials) ->
                 if (credentials.accountId == accountId) {
@@ -158,32 +150,7 @@ class AuthService(
         openSessionIfExist()
     }
 
-    fun getCurrentSession(): Credentials? {
+    override fun getCurrentSession(): Credentials? {
         return session.credentials.value
     }
-
-    private fun getServerUrl(host: String): Url {
-        require(isValidHost(host)) { "The host is invalid '$host'" }
-        return Url("https://$host/")
-    }
-}
-fun createAuthApi(baseUrl: Url, json: Json): AuthApi {
-    val httpClient = HttpClient {
-        install(ContentNegotiation) { json(json) }
-        install(Logging) {
-            logger = object : io.ktor.client.plugins.logging.Logger {
-                override fun log(message: String) {
-                    Logger.v(tag = "Pixelix HttpAuth") {
-                        message.lines().joinToString { "\n\t\t$it" }
-                    }
-                }
-            }
-            level = LogLevel.INFO
-        }
-    }
-    val ktorfit = Ktorfit.Builder()
-        .httpClient(httpClient)
-        .baseUrl(baseUrl.toString())
-        .build()
-    return ktorfit.createAuthApi()
 }

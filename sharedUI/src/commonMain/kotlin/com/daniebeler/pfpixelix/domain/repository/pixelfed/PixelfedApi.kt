@@ -1,4 +1,4 @@
-package com.daniebeler.pfpixelix.domain.repository
+package com.daniebeler.pfpixelix.domain.repository.pixelfed
 
 import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.model.Chat

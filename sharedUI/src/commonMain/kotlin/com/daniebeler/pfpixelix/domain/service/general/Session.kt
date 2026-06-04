@@ -1,6 +1,7 @@
-package com.daniebeler.pfpixelix.domain.service.session
+package com.daniebeler.pfpixelix.domain.service.general
 
 import com.daniebeler.pfpixelix.di.AppSingleton
+import com.daniebeler.pfpixelix.domain.model.Credentials
 import com.daniebeler.pfpixelix.domain.service.capabilities.Capabilities
 import com.daniebeler.pfpixelix.domain.service.capabilities.NoCapabilities
 import com.daniebeler.pfpixelix.domain.service.capabilities.PixelfedCapabilities
@@ -10,12 +11,9 @@ import io.ktor.client.plugins.Sender
 import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.http.Url
 import io.ktor.http.set
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.map
 import me.tatarka.inject.annotations.Inject
 
 @Inject
@@ -23,7 +21,6 @@ import me.tatarka.inject.annotations.Inject
 class Session {
     private val credentialsState = MutableStateFlow<Credentials?>(null)
     val credentials: StateFlow<Credentials?> = credentialsState.asStateFlow()
-
 
     private val backendTypeState = MutableStateFlow(BackendType.PIXELFED)
     val backendType: StateFlow<BackendType> = backendTypeState.asStateFlow()

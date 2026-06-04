@@ -11,12 +11,15 @@ import coil3.disk.DiskCache
 import coil3.memory.MemoryCache
 import coil3.request.CachePolicy
 import com.daniebeler.pfpixelix.domain.model.SavedSearches
-import com.daniebeler.pfpixelix.domain.repository.PixelfedApi
-import com.daniebeler.pfpixelix.domain.repository.createPixelfedApi
+import com.daniebeler.pfpixelix.domain.model.SessionStorage
+import com.daniebeler.pfpixelix.domain.repository.pixelfed.PixelfedApi
+import com.daniebeler.pfpixelix.domain.repository.pixelfed.createPixelfedApi
 import com.daniebeler.pfpixelix.domain.repository.serializers.SavedSearchesSerializer
+import com.daniebeler.pfpixelix.domain.repository.serializers.SessionStorageSerializer
 import com.daniebeler.pfpixelix.domain.service.account.AccountService
 import com.daniebeler.pfpixelix.domain.service.file.FileService
 import com.daniebeler.pfpixelix.domain.service.file.toOkIoPath
+import com.daniebeler.pfpixelix.domain.service.general.AuthServiceDelegate
 import com.daniebeler.pfpixelix.domain.service.general.ExploreService
 import com.daniebeler.pfpixelix.domain.service.general.ExploreServiceDelegate
 import com.daniebeler.pfpixelix.domain.service.general.TimelineService
@@ -24,12 +27,10 @@ import com.daniebeler.pfpixelix.domain.service.general.TimelineServiceDelegate
 import com.daniebeler.pfpixelix.domain.service.icon.AppIconManager
 import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
 import com.daniebeler.pfpixelix.ui.events.SearchFieldFocus
-import com.daniebeler.pfpixelix.domain.service.session.AuthInterceptor
-import com.daniebeler.pfpixelix.domain.service.session.AuthService
-import com.daniebeler.pfpixelix.domain.service.session.Session
-import com.daniebeler.pfpixelix.domain.service.session.SessionStorage
-import com.daniebeler.pfpixelix.domain.service.session.SessionStorageDataSerializer
-import com.daniebeler.pfpixelix.domain.service.session.SystemUrlHandler
+import com.daniebeler.pfpixelix.domain.service.general.AuthInterceptor
+import com.daniebeler.pfpixelix.domain.service.general.AuthService
+import com.daniebeler.pfpixelix.domain.service.general.Session
+import com.daniebeler.pfpixelix.ui.events.SystemUrlHandler
 import com.daniebeler.pfpixelix.ui.events.AccountIntentHandler
 import com.daniebeler.pfpixelix.ui.events.SystemFileShare
 import com.daniebeler.pfpixelix.ui.events.BackToTopTrigger
@@ -89,8 +90,12 @@ abstract class AppComponent(
 
     @Provides
     fun provideTimelineService(delegate: TimelineServiceDelegate): TimelineService = delegate
+
     @Provides
     fun provideExploreService(delegate: ExploreServiceDelegate): ExploreService = delegate
+
+    @Provides
+    fun provideAuthService(delegate: AuthServiceDelegate): AuthService = delegate
 
     @get:Provides
     @get:AppSingleton
@@ -134,7 +139,7 @@ abstract class AppComponent(
         }.apply {
             plugin(HttpSend).intercept { request ->
                 with(session) { intercept(request) }
-                with(authInterceptor) {intercept(request)}
+                with(authInterceptor) { intercept(request) }
             }
         }
     }
@@ -180,9 +185,10 @@ abstract class AppComponent(
             storage = OkioStorage(
                 fileSystem = FileSystem.SYSTEM,
                 producePath = {
-                    FileService.dataStoreDir.resolve("session_storage_datastore.json").toOkIoPath()
+                    FileService.dataStoreDir.resolve("session_storage_datastore.json")
+                        .toOkIoPath()
                 },
-                serializer = SessionStorageDataSerializer,
+                serializer = SessionStorageSerializer,
             )
         )
 

@@ -1,11 +1,10 @@
-package com.daniebeler.pfpixelix.ui.composables.settings.preferences
+package com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs
 
-import androidx.compose.ui.platform.UriHandler
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.daniebeler.pfpixelix.domain.service.general.AuthService
 import com.daniebeler.pfpixelix.domain.service.icon.AppIconService
 import com.daniebeler.pfpixelix.domain.service.platform.Platform
-import com.daniebeler.pfpixelix.domain.service.session.AuthService
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 

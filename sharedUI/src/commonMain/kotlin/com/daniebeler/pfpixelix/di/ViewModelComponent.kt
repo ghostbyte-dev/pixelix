@@ -38,7 +38,7 @@ import com.daniebeler.pfpixelix.ui.composables.settings.followed_hashtags.Follow
 import com.daniebeler.pfpixelix.ui.composables.settings.icon_selection.IconSelectionViewModel
 import com.daniebeler.pfpixelix.ui.composables.settings.liked_posts.LikedPostsViewModel
 import com.daniebeler.pfpixelix.ui.composables.settings.muted_accounts.MutedAccountsViewModel
-import com.daniebeler.pfpixelix.ui.composables.settings.preferences.PreferencesViewModel
+import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.PreferencesViewModel
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.ClearCacheViewModel
 import com.daniebeler.pfpixelix.ui.composables.single_post.SinglePostViewModel
 import com.daniebeler.pfpixelix.ui.composables.textfield_location.TextFieldLocationsViewModel

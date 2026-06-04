@@ -1,7 +1,7 @@
 package com.daniebeler.pfpixelix.ui.composables.hashtagMentionText
 
 import androidx.lifecycle.ViewModel
-import com.daniebeler.pfpixelix.domain.service.session.AuthService
+import com.daniebeler.pfpixelix.domain.service.general.AuthService
 import me.tatarka.inject.annotations.Inject
 
 class TextWithClickableHashtagsAndMentionsViewModel @Inject constructor(

@@ -1,7 +1,6 @@
 package com.daniebeler.pfpixelix.domain.model
 
 import com.daniebeler.pfpixelix.domain.repository.serializers.HtmlAsTextSerializer
-import com.daniebeler.pfpixelix.domain.service.session.Credentials
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 

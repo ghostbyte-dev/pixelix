@@ -1,42 +1,15 @@
-package com.daniebeler.pfpixelix.domain.service.session
+package com.daniebeler.pfpixelix.domain.repository.serializers
 
 import androidx.datastore.core.okio.OkioSerializer
+import com.daniebeler.pfpixelix.domain.model.Credentials
+import com.daniebeler.pfpixelix.domain.model.SessionStorage
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
 import okio.BufferedSink
 import okio.BufferedSource
 
-@Serializable
-data class Credentials(
-    val accountId: String,
-    val username: String,
-    val displayName: String,
-    val avatar: String,
-    val serverUrl: String,
-    val token: String,
-    val refreshToken: String,
-    val clientId: String,
-    val clientSecret: String,
-    val createdAt: String
-) {
-    fun key(): String {
-        val cleanUrl =
-            serverUrl.removePrefix("https://").removePrefix("http://").removeSuffix("/")
-        return "$cleanUrl:$accountId".lowercase()
-    }
-}
-
-@Serializable
-data class SessionStorage(
-    val sessions: Map<String, Credentials>,
-    val activeKey: String?
-) {
-    fun getActiveSession() = activeKey?.let { sessions[it] }
-
-}
-
-object SessionStorageDataSerializer : OkioSerializer<SessionStorage> {
+object SessionStorageSerializer : OkioSerializer<SessionStorage> {
     override val defaultValue: SessionStorage
         get() = SessionStorage(emptyMap(), null)
 

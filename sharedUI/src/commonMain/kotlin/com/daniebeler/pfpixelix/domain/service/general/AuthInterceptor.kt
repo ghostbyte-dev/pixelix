@@ -1,7 +1,10 @@
-package com.daniebeler.pfpixelix.domain.service.session
+package com.daniebeler.pfpixelix.domain.service.general
 
 import androidx.datastore.core.DataStore
 import co.touchlab.kermit.Logger
+import com.daniebeler.pfpixelix.domain.model.Credentials
+import com.daniebeler.pfpixelix.domain.model.SessionStorage
+import com.daniebeler.pfpixelix.domain.repository.pixelfed.AuthApi
 import com.daniebeler.pfpixelix.ui.events.GlobalNavigationEvent
 import com.daniebeler.pfpixelix.ui.events.GlobalNavigator
 import io.ktor.client.call.HttpClientCall
@@ -17,7 +20,6 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 
-
 class AuthInterceptor(
     private val session: Session,
     private val json: Json,
@@ -32,13 +34,13 @@ class AuthInterceptor(
         }
         val executedRequest = execute(request)
 
-        if (executedRequest.response.status == HttpStatusCode.InternalServerError) {
-            Logger.i(tag = "Unauthorized") {
+        if (executedRequest.response.status == HttpStatusCode.Companion.InternalServerError) {
+            Logger.Companion.i(tag = "Unauthorized") {
                 "try refreshing token"
             }
             val errorBodyText = executedRequest.response.bodyAsText()
             val isUnauthenticated = try {
-                val json = Json.parseToJsonElement(errorBodyText).jsonObject
+                val json = Json.Default.parseToJsonElement(errorBodyText).jsonObject
                 json["error"]?.jsonPrimitive?.content == "Unauthenticated."
             } catch (e: Exception) {
                 false
@@ -55,7 +57,7 @@ class AuthInterceptor(
                         executedRequest
                     }
                 } catch (e: Exception) {
-                    Logger.e(tag = "Unauthorized") {
+                    Logger.Companion.e(tag = "Unauthorized") {
                         "error refreshing token" + e.message
                     }
                     globalNavigator.emit(GlobalNavigationEvent.NavigateToLogin)
@@ -81,7 +83,8 @@ class AuthInterceptor(
                 return
             }
 
-            val authApi = createAuthApi(Url(currentCredentials.serverUrl), json)
+            //TODO: make authApi.createAuthApi return vernissageAuthApi or pixelfedAuthApi, or fix it differently
+            val authApi = AuthApi.createAuthApi(Url(currentCredentials.serverUrl), json)
 
             val token = authApi.getTokenRefresh(
                 clientId = currentCredentials.clientId,
@@ -111,4 +114,3 @@ class AuthInterceptor(
         session.setCredentials(newCred)
     }
 }
-

@@ -1,4 +1,4 @@
-package com.daniebeler.pfpixelix.domain.service.session
+package com.daniebeler.pfpixelix.ui.events
 
 import androidx.compose.ui.platform.UriHandler
 import com.daniebeler.pfpixelix.di.AppSingleton

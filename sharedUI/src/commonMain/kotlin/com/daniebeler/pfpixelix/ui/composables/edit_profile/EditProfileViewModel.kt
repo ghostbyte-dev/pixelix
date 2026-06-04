@@ -8,8 +8,8 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.daniebeler.pfpixelix.domain.service.general.AccountService
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
-import com.daniebeler.pfpixelix.domain.service.account.AccountService
 import com.daniebeler.pfpixelix.domain.service.suggestions.HashtagMentionsSuggestionsManager
 import com.daniebeler.pfpixelix.utils.EmptyKmpUri
 import com.daniebeler.pfpixelix.utils.toKmpUri

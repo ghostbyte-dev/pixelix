@@ -9,8 +9,8 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.repository.pixelfed.PixelfedApi
-import com.daniebeler.pfpixelix.domain.service.account.AccountService
-import com.daniebeler.pfpixelix.domain.service.collection.CollectionService
+import com.daniebeler.pfpixelix.domain.service.general.CollectionService
+import com.daniebeler.pfpixelix.domain.service.general.AccountService
 import com.daniebeler.pfpixelix.domain.service.general.AuthService
 import com.daniebeler.pfpixelix.domain.service.general.ExploreService
 import com.daniebeler.pfpixelix.domain.service.platform.Platform

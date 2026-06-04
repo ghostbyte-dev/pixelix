@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.repository.pixelfed.PixelfedApi
-import com.daniebeler.pfpixelix.domain.service.collection.CollectionService
+import com.daniebeler.pfpixelix.domain.service.general.CollectionService
 import com.daniebeler.pfpixelix.domain.service.general.AuthService
 import com.daniebeler.pfpixelix.domain.service.platform.Platform
 import com.daniebeler.pfpixelix.domain.service.post.PostService

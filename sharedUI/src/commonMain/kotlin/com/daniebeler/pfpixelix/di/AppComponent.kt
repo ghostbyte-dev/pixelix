@@ -16,9 +16,10 @@ import com.daniebeler.pfpixelix.domain.repository.pixelfed.PixelfedApi
 import com.daniebeler.pfpixelix.domain.repository.pixelfed.createPixelfedApi
 import com.daniebeler.pfpixelix.domain.repository.serializers.SavedSearchesSerializer
 import com.daniebeler.pfpixelix.domain.repository.serializers.SessionStorageSerializer
-import com.daniebeler.pfpixelix.domain.service.account.AccountService
 import com.daniebeler.pfpixelix.domain.service.file.FileService
 import com.daniebeler.pfpixelix.domain.service.file.toOkIoPath
+import com.daniebeler.pfpixelix.domain.service.general.AccountService
+import com.daniebeler.pfpixelix.domain.service.general.AccountServiceDelegate
 import com.daniebeler.pfpixelix.domain.service.general.AuthServiceDelegate
 import com.daniebeler.pfpixelix.domain.service.general.ExploreService
 import com.daniebeler.pfpixelix.domain.service.general.ExploreServiceDelegate
@@ -29,6 +30,10 @@ import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
 import com.daniebeler.pfpixelix.ui.events.SearchFieldFocus
 import com.daniebeler.pfpixelix.domain.service.general.AuthInterceptor
 import com.daniebeler.pfpixelix.domain.service.general.AuthService
+import com.daniebeler.pfpixelix.domain.service.general.CollectionService
+import com.daniebeler.pfpixelix.domain.service.general.CollectionServiceDelegate
+import com.daniebeler.pfpixelix.domain.service.general.DirectMessagesService
+import com.daniebeler.pfpixelix.domain.service.general.DirectMessagesServiceDelegate
 import com.daniebeler.pfpixelix.domain.service.general.Session
 import com.daniebeler.pfpixelix.ui.events.SystemUrlHandler
 import com.daniebeler.pfpixelix.ui.events.AccountIntentHandler
@@ -96,6 +101,14 @@ abstract class AppComponent(
 
     @Provides
     fun provideAuthService(delegate: AuthServiceDelegate): AuthService = delegate
+
+    @Provides
+    fun provideAccountService(delegate: AccountServiceDelegate): AccountService = delegate
+
+    @Provides
+    fun provideCollectionService(delegate: CollectionServiceDelegate): CollectionService = delegate
+    @Provides
+    fun provideDirectMessagesService(delegate: DirectMessagesServiceDelegate): DirectMessagesService = delegate
 
     @get:Provides
     @get:AppSingleton

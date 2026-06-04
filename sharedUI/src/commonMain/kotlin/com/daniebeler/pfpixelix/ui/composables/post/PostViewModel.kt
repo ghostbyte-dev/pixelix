@@ -12,10 +12,10 @@ import com.daniebeler.pfpixelix.domain.model.LikedBy
 import com.daniebeler.pfpixelix.domain.model.NewReport
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.model.ReportObjectType
-import com.daniebeler.pfpixelix.domain.service.account.AccountService
 import com.daniebeler.pfpixelix.domain.service.capabilities.Capabilities
 import com.daniebeler.pfpixelix.domain.service.editor.PostEditorService
 import com.daniebeler.pfpixelix.domain.service.file.FileService
+import com.daniebeler.pfpixelix.domain.service.general.AccountService
 import com.daniebeler.pfpixelix.domain.service.general.AuthService
 import com.daniebeler.pfpixelix.domain.service.instance.InstanceService
 import com.daniebeler.pfpixelix.domain.service.platform.Platform

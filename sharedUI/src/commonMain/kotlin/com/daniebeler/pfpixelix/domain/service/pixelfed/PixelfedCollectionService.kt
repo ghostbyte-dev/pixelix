@@ -1,36 +1,37 @@
-package com.daniebeler.pfpixelix.domain.service.collection
+package com.daniebeler.pfpixelix.domain.service.pixelfed
 
 import com.daniebeler.pfpixelix.domain.repository.pixelfed.PixelfedApi
+import com.daniebeler.pfpixelix.domain.service.general.CollectionService
 import com.daniebeler.pfpixelix.domain.service.utils.loadListResources
 import com.daniebeler.pfpixelix.domain.service.utils.loadResource
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class CollectionService(
+class PixelfedCollectionService(
     private val api: PixelfedApi
-) {
+): CollectionService {
 
-    fun getCollections(userId: String, page: Int) = loadListResources {
+    override fun getCollections(userId: String, page: Int) = loadListResources {
         api.getCollectionsByUserId(userId, page)
     }
 
-    fun getCollection(collectionId: String) = loadResource {
+    override fun getCollection(collectionId: String) = loadResource {
         api.getCollection(collectionId)
     }
 
-    fun getPostsOfCollection(collectionId: String, page: Int = 1) = loadListResources {
+    override fun getPostsOfCollection(collectionId: String, page: Int) = loadListResources {
         api.getPostsOfCollection(collectionId, page)
     }
 
-    fun removePostOfCollection(collectionId: String, postId: String) = loadResource {
+    override fun removePostOfCollection(collectionId: String, postId: String) = loadResource {
         api.removePostOfCollection(collectionId, postId)
     }
 
-    fun addPostOfCollection(collectionId: String, postId: String) = loadResource {
+    override fun addPostOfCollection(collectionId: String, postId: String) = loadResource {
         api.addPostOfCollection(collectionId, postId)
     }
 
-    fun updateCollection(
+    override fun updateCollection(
         collectionId: String,
         title: String,
         description: String,

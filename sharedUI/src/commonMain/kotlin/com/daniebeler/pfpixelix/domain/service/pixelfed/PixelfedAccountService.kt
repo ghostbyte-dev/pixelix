@@ -1,12 +1,13 @@
-package com.daniebeler.pfpixelix.domain.service.account
+package com.daniebeler.pfpixelix.domain.service.pixelfed
 
 import androidx.compose.ui.graphics.ImageBitmap
 import co.touchlab.kermit.Logger
 import com.daniebeler.pfpixelix.di.AppSingleton
-import com.daniebeler.pfpixelix.domain.service.utils.Resource
-import com.daniebeler.pfpixelix.domain.repository.pixelfed.PixelfedApi
 import com.daniebeler.pfpixelix.domain.model.Account
+import com.daniebeler.pfpixelix.domain.repository.pixelfed.PixelfedApi
+import com.daniebeler.pfpixelix.domain.service.general.AccountService
 import com.daniebeler.pfpixelix.domain.service.general.AuthService
+import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.domain.service.utils.loadListResources
 import com.daniebeler.pfpixelix.domain.service.utils.loadResource
 import com.daniebeler.pfpixelix.utils.encodeToPngBytes
@@ -29,14 +30,14 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 @AppSingleton
-class AccountService(
+class PixelfedAccountService(
     private val authService: AuthService,
     private val api: PixelfedApi,
-) {
-    private val refreshSignal = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
+): AccountService {
+    override val refreshSignal = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    fun getOwnAccount(): Flow<Resource<Account>> {
+    override fun getOwnAccount(): Flow<Resource<Account>> {
         val current =
             authService.getCurrentSession() ?: return flowOf(Resource.Error("No account found"))
 
@@ -51,7 +52,7 @@ class AccountService(
             }
     }
 
-    fun updateAccount(
+    override fun updateAccount(
         displayName: String,
         note: String,
         website: String,
@@ -66,12 +67,12 @@ class AccountService(
                 try {
                     val fileName = "filename=avatar"
                     val fileType = "image/png"
-                    append("avatar", bytes, Headers.build {
+                    append("avatar", bytes, Headers.Companion.build {
                         append(HttpHeaders.ContentType, fileType)
                         append(HttpHeaders.ContentDisposition, fileName)
                     })
                 } catch (e: Exception) {
-                    Logger.e("AccountService.updateAccount error", e)
+                    Logger.Companion.e("AccountService.updateAccount error", e)
                 }
             }
 
@@ -85,26 +86,21 @@ class AccountService(
         result
     }
 
-    fun getAccount(accountId: String) = loadResource { api.getAccount(accountId) }
-    fun getAccountByUsername(username: String) = loadResource { api.getAccountByUsername(username) }
-    fun getMutualFollowers(userId: String) = loadListResources { api.getMutalFollowers(userId) }
-    fun getAccountSettings() = loadResource { api.getSettings() }
-    fun followAccount(accountId: String) = loadResource { api.followAccount(accountId) }
-    fun unfollowAccount(accountId: String) = loadResource { api.unfollowAccount(accountId) }
-    fun muteAccount(accountId: String) = loadResource { api.muteAccount(accountId) }
-    fun unMuteAccount(accountId: String) = loadResource { api.unmuteAccount(accountId) }
-    fun blockAccount(accountId: String) = loadResource { api.blockAccount(accountId) }
-    fun unblockAccount(accountId: String) = loadResource { api.unblockAccount(accountId) }
-    fun getMutedAccounts() = loadListResources { api.getMutedAccounts() }
-    fun getBlockedAccounts() = loadListResources { api.getBlockedAccounts() }
-    fun getLikedBy(postId: String) = loadListResources { api.getAccountsWhoLikedPost(postId) }
+    override fun getAccount(accountId: String) = loadResource { api.getAccount(accountId) }
+    override fun getAccountByUsername(username: String) = loadResource { api.getAccountByUsername(username) }
+    override fun getMutualFollowers(userId: String) = loadListResources { api.getMutalFollowers(userId) }
+    override fun getAccountSettings() = loadResource { api.getSettings() }
+    override fun followAccount(accountId: String) = loadResource { api.followAccount(accountId) }
+    override fun unfollowAccount(accountId: String) = loadResource { api.unfollowAccount(accountId) }
+    override fun muteAccount(accountId: String) = loadResource { api.muteAccount(accountId) }
+    override fun unMuteAccount(accountId: String) = loadResource { api.unmuteAccount(accountId) }
+    override fun blockAccount(accountId: String) = loadResource { api.blockAccount(accountId) }
+    override fun unblockAccount(accountId: String) = loadResource { api.unblockAccount(accountId) }
+    override fun getMutedAccounts() = loadListResources { api.getMutedAccounts() }
+    override fun getBlockedAccounts() = loadListResources { api.getBlockedAccounts() }
+    override fun getLikedBy(postId: String) = loadListResources { api.getAccountsWhoLikedPost(postId) }
 
-    /*
-    fun getAccountsFollowers(accountId: String, maxId: String? = null) = loadListResources {
-        api.getAccountsFollowers(accountId, maxId)
-    }*/
-
-    fun getAccountsFollowers(accountId: String, cursor: String? = null) = flow {
+    override fun getAccountsFollowers(accountId: String, cursor: String?) = flow {
         emit(Resource.Loading())
 
         try {
@@ -116,7 +112,7 @@ class AccountService(
         }
     }
 
-    fun getAccountsFollowing(accountId: String, cursor: String? = null) = flow {
+    override fun getAccountsFollowing(accountId: String, cursor: String?) = flow {
         emit(Resource.Loading())
 
         try {

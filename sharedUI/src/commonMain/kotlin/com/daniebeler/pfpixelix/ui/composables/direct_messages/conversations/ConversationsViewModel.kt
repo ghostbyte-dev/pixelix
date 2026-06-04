@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.domain.model.Account
-import com.daniebeler.pfpixelix.domain.service.dm.DirectMessagesService
+import com.daniebeler.pfpixelix.domain.service.general.DirectMessagesService
 import com.daniebeler.pfpixelix.domain.service.general.ExploreService
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach

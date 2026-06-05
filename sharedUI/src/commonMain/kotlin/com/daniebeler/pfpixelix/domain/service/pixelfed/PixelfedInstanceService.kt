@@ -17,16 +17,4 @@ class PixelfedInstanceService(
     override fun getNodeInfo(domain: String) = loadResource {
         api.getNodeInfo(domain)
     }
-
-    override fun getSoftwareFromFedisea(slug: String) = loadResource {
-        api.getSoftwareFromFedisea(slug)
-    }
-
-    override fun getServerFromFedisea(slug: String) = loadResource {
-        api.getServerFromFedisea(domain = slug)
-    }
-
-    override fun getOpenServers(search: String, limit: Int) = loadResource {
-        api.getOpenServers(search, limit)
-    }
 }

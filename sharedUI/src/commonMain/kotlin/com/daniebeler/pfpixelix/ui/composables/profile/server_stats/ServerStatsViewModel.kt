@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.daniebeler.pfpixelix.domain.service.general.FediseaService
 import com.daniebeler.pfpixelix.domain.service.general.InstanceService
 import com.daniebeler.pfpixelix.domain.service.platform.Platform
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
@@ -15,7 +16,7 @@ import me.tatarka.inject.annotations.Inject
 
 class ServerStatsViewModel @Inject constructor(
     private val platform: Platform,
-    private val instanceService: InstanceService,
+    private val fediseaService: FediseaService,
 ) : ViewModel() {
 
     var statsState by mutableStateOf(DomainSoftwareState())
@@ -26,7 +27,7 @@ class ServerStatsViewModel @Inject constructor(
 
     private fun getFediServer(domain: String) {
         val formattedDomain = formatDomain(domain)
-        instanceService.getServerFromFedisea(formattedDomain).onEach { result ->
+        fediseaService.getServerFromFedisea(formattedDomain).onEach { result ->
             when (result) {
                 is Resource.Success -> {
                     statsState = DomainSoftwareState(
@@ -61,7 +62,7 @@ class ServerStatsViewModel @Inject constructor(
     }
 
     private fun getFediSoftware(softwareSlug: String) {
-        instanceService.getSoftwareFromFedisea(softwareSlug).onEach { result ->
+        fediseaService.getSoftwareFromFedisea(softwareSlug).onEach { result ->
             statsState = when (result) {
                 is Resource.Success -> {
                     DomainSoftwareState(

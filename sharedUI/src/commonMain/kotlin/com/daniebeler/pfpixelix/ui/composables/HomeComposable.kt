@@ -97,7 +97,7 @@ fun HomeComposable(
                         }) {
                             Icon(
                                 imageVector = vectorResource(Res.drawable.coffee),
-                                contentDescription = "Conversations"
+                                contentDescription = "Coffee"
                             )
                         }
 

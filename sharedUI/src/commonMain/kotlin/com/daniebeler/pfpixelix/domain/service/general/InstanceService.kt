@@ -17,12 +17,6 @@ interface InstanceService {
     fun getInstance(): Flow<Resource<Instance>>
 
     fun getNodeInfo(domain: String): Flow<Resource<NodeInfo>>
-
-    fun getSoftwareFromFedisea(slug: String): Flow<Resource<FediseaSoftware>>
-
-    fun getServerFromFedisea(slug: String): Flow<Resource<FediseaInstance>>
-
-    fun getOpenServers(search: String, limit: Int): Flow<Resource<FediseaServersResponse>>
 }
 
 @Inject
@@ -42,15 +36,4 @@ class InstanceServiceDelegate(
     override fun getInstance(): Flow<Resource<Instance>> = current.getInstance()
 
     override fun getNodeInfo(domain: String): Flow<Resource<NodeInfo>> = current.getNodeInfo(domain)
-
-    override fun getSoftwareFromFedisea(slug: String): Flow<Resource<FediseaSoftware>> =
-        current.getSoftwareFromFedisea(slug)
-
-    override fun getServerFromFedisea(slug: String): Flow<Resource<FediseaInstance>> =
-        current.getServerFromFedisea(slug)
-
-    override fun getOpenServers(
-        search: String, limit: Int
-    ): Flow<Resource<FediseaServersResponse>> = current.getOpenServers(search, limit)
-
 }

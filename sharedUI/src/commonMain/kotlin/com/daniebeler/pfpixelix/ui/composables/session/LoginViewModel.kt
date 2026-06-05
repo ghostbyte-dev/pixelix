@@ -12,12 +12,26 @@ import com.daniebeler.pfpixelix.domain.service.suggestions.ServersSuggestionsMan
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 
+enum class LoginStep {
+    PLATFORM_SELECTION, SERVER_INPUT
+}
+
+enum class PlatformType {
+    PIXELFED, VERNISSAGE
+}
+
 @Inject
 class LoginViewModel(
     private val authService: AuthService,
     val serversSuggestionsManager: ServersSuggestionsManager,
     private val platform: Platform
 ) : ViewModel() {
+
+    var currentStep by mutableStateOf(LoginStep.PLATFORM_SELECTION)
+        private set
+
+    var selectedPlatform by mutableStateOf<PlatformType?>(null)
+        private set
 
     var serverHost by mutableStateOf(TextFieldValue())
         private set
@@ -30,10 +44,24 @@ class LoginViewModel(
     var error by mutableStateOf<String?>(null)
         private set
 
+    fun selectPlatform(type: PlatformType) {
+        selectedPlatform = type
+        currentStep = LoginStep.SERVER_INPUT
+    }
+
+    fun goBackToPlatformSelection() {
+        currentStep = LoginStep.PLATFORM_SELECTION
+
+        serverHost = TextFieldValue()
+        isValidHost = false
+
+        error = null
+    }
+
     fun updateServerHost(host: TextFieldValue) {
         serverHost = host
         isValidHost = authService.isValidHost(serverHost.text)
-        serversSuggestionsManager.changeText(host, viewModelScope)
+        serversSuggestionsManager.changeText(host, selectedPlatform, viewModelScope)
     }
 
     fun selectSuggestion(newHost: TextFieldValue) {
@@ -56,6 +84,11 @@ class LoginViewModel(
     }
 
     fun showAvailableServers() {
-        platform.openUrl("https://pixelfed.org/servers")
+        val url = when (selectedPlatform) {
+            PlatformType.PIXELFED -> "https://pixelfed.org/servers"
+            PlatformType.VERNISSAGE -> "https://joinvernissage.org/servers"
+            null -> "https://pixelfed.org/servers"
+        }
+        platform.openUrl(url)
     }
 }

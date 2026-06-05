@@ -1,4 +1,4 @@
-package com.daniebeler.pfpixelix.domain.service.post
+package com.daniebeler.pfpixelix.domain.service.pixelfed
 
 import com.daniebeler.pfpixelix.domain.model.NewReply
 import com.daniebeler.pfpixelix.domain.model.NewReport
@@ -6,6 +6,7 @@ import com.daniebeler.pfpixelix.domain.model.PaginatedResponse
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.repository.pixelfed.PixelfedApi
 import com.daniebeler.pfpixelix.domain.service.general.AuthService
+import com.daniebeler.pfpixelix.domain.service.general.PostService
 import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.domain.service.utils.loadListResources
@@ -19,18 +20,18 @@ import kotlinx.serialization.json.Json
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class PostService(
+class PixelfedPostService(
     private val api: PixelfedApi,
     private val prefs: UserPreferences,
     private val authService: AuthService,
     private val json: Json
-) {
-    fun getPostById(postId: String) = loadResource {
+) : PostService {
+    override fun getPostById(postId: String) = loadResource {
         api.getPostById(postId)
     }
 
-    fun getOwnPosts(
-        maxPostId: String? = null, limit: Int = PixelfedApi.PROFILE_POSTS_LIMIT
+    override fun getOwnPosts(
+        maxPostId: String?, limit: Int
     ): Flow<Resource<List<Post>>> {
         val current = authService.getCurrentSession()
         return if (current == null) {
@@ -40,8 +41,8 @@ class PostService(
         }
     }
 
-    fun getPostsOfAccount(
-        accountId: String, maxPostId: String? = null, limit: Int = PixelfedApi.PROFILE_POSTS_LIMIT
+    override fun getPostsOfAccount(
+        accountId: String, maxPostId: String?, limit: Int
     ) = getPostsByAccountId(accountId, maxPostId, limit).filterSensitive()
 
     private fun getPostsByAccountId(
@@ -50,7 +51,7 @@ class PostService(
         api.getPostsByAccountId(accountId, maxPostId, limit)
     }
 
-    fun getLikedPosts(maxId: String? = null) = flow {
+    override fun getLikedPosts(maxId: String?) = flow {
         emit(Resource.Loading())
 
         try {
@@ -65,45 +66,40 @@ class PostService(
 
     }
 
-    fun createReply(postId: String, content: String) = loadResource {
+    override fun createReply(postId: String, content: String) = loadResource {
         val dto = NewReply(status = content, toId = postId)
         api.createReply(json.encodeToString(dto))
     }
 
-    fun getReplies(postId: String) = loadResource {
+    override fun getReplies(postId: String) = loadResource {
         api.getReplies(postId)
     }
 
-    fun likePost(postId: String) = loadResource {
+    override fun likePost(postId: String) = loadResource {
         api.likePost(postId)
     }
 
-    fun unlikePost(postId: String) = loadResource {
+    override fun unlikePost(postId: String) = loadResource {
         api.unlikePost(postId)
     }
 
-    fun reblogPost(postId: String) = loadResource {
+    override fun reblogPost(postId: String) = loadResource {
         api.reblogPost(postId)
     }
 
-    fun unreblogPost(postId: String) = loadResource {
+    override fun unreblogPost(postId: String) = loadResource {
         api.unreblogPost(postId)
     }
 
-    fun bookmarkPost(postId: String) = loadResource {
+    override fun bookmarkPost(postId: String) = loadResource {
         api.bookmarkPost(postId)
     }
 
-    fun unBookmarkPost(postId: String) = loadResource {
+    override fun unBookmarkPost(postId: String) = loadResource {
         api.unbookmarkPost(postId)
     }
 
-    /*fun getBookmarkedPosts() = loadListResources {
-        api.getBookmarkedPosts()
-    }*/
-
-
-    fun getBookmarkedPosts(cursor: String? = null) = flow {
+    override fun getBookmarkedPosts(cursor: String?) = flow {
         emit(Resource.Loading())
 
         try {
@@ -117,11 +113,11 @@ class PostService(
         }
     }
 
-    fun reportPost(reportBody: NewReport) = loadResource {
+    override fun reportPost(reportBody: NewReport) = loadResource {
         api.reportPost(json.encodeToString(reportBody))
     }
 
-    fun getTrendingPosts(range: String) = loadListResources {
+    override fun getTrendingPosts(range: String) = loadListResources {
         api.getTrendingPosts(range)
     }.filterSensitive()
 

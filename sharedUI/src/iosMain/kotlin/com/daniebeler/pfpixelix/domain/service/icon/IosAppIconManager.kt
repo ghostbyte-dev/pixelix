@@ -1,5 +1,6 @@
 package com.daniebeler.pfpixelix.domain.service.icon
 
+import com.daniebeler.pfpixelix.domain.service.general.AppIconManager
 import org.jetbrains.compose.resources.DrawableResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.app_icon_00

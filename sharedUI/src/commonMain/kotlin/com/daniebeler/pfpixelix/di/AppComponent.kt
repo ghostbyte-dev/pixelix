@@ -25,7 +25,9 @@ import com.daniebeler.pfpixelix.domain.service.general.ExploreService
 import com.daniebeler.pfpixelix.domain.service.general.ExploreServiceDelegate
 import com.daniebeler.pfpixelix.domain.service.general.TimelineService
 import com.daniebeler.pfpixelix.domain.service.general.TimelineServiceDelegate
-import com.daniebeler.pfpixelix.domain.service.icon.AppIconManager
+import com.daniebeler.pfpixelix.domain.service.general.AppIconManager
+import com.daniebeler.pfpixelix.domain.service.general.AppIconService
+import com.daniebeler.pfpixelix.domain.service.general.AppIconServiceDelegate
 import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
 import com.daniebeler.pfpixelix.ui.events.SearchFieldFocus
 import com.daniebeler.pfpixelix.domain.service.general.AuthInterceptor
@@ -34,6 +36,12 @@ import com.daniebeler.pfpixelix.domain.service.general.CollectionService
 import com.daniebeler.pfpixelix.domain.service.general.CollectionServiceDelegate
 import com.daniebeler.pfpixelix.domain.service.general.DirectMessagesService
 import com.daniebeler.pfpixelix.domain.service.general.DirectMessagesServiceDelegate
+import com.daniebeler.pfpixelix.domain.service.general.InstanceService
+import com.daniebeler.pfpixelix.domain.service.general.InstanceServiceDelegate
+import com.daniebeler.pfpixelix.domain.service.general.PostEditorService
+import com.daniebeler.pfpixelix.domain.service.general.PostEditorServiceDelegate
+import com.daniebeler.pfpixelix.domain.service.general.PostService
+import com.daniebeler.pfpixelix.domain.service.general.PostServiceDelegate
 import com.daniebeler.pfpixelix.domain.service.general.Session
 import com.daniebeler.pfpixelix.ui.events.SystemUrlHandler
 import com.daniebeler.pfpixelix.ui.events.AccountIntentHandler
@@ -41,7 +49,8 @@ import com.daniebeler.pfpixelix.ui.events.SystemFileShare
 import com.daniebeler.pfpixelix.ui.events.BackToTopTrigger
 import com.daniebeler.pfpixelix.ui.events.GlobalNavigator
 import com.daniebeler.pfpixelix.ui.events.GlobalNavigatorImpl
-import com.daniebeler.pfpixelix.domain.service.widget.WidgetService
+import com.daniebeler.pfpixelix.domain.service.general.WidgetService
+import com.daniebeler.pfpixelix.domain.service.general.WidgetServiceDelegate
 import com.daniebeler.pfpixelix.utils.KmpContext
 import com.daniebeler.pfpixelix.utils.coilContext
 import com.russhwolf.settings.ExperimentalSettingsApi
@@ -98,6 +107,21 @@ abstract class AppComponent(
 
     @Provides
     fun provideExploreService(delegate: ExploreServiceDelegate): ExploreService = delegate
+
+    @Provides
+    fun provideAppIconService(delegate: AppIconServiceDelegate): AppIconService = delegate
+
+    @Provides
+    fun providePostEditorService(delegate: PostEditorServiceDelegate): PostEditorService = delegate
+
+    @Provides
+    fun providePostService(delegate: PostServiceDelegate): PostService = delegate
+
+    @Provides
+    fun provideWidgetService(delegate: WidgetServiceDelegate): WidgetService = delegate
+
+    @Provides
+    fun provideInstanceService(delegate: InstanceServiceDelegate): InstanceService = delegate
 
     @Provides
     fun provideAuthService(delegate: AuthServiceDelegate): AuthService = delegate

@@ -1,10 +1,11 @@
-package com.daniebeler.pfpixelix.domain.service.editor
+package com.daniebeler.pfpixelix.domain.service.pixelfed
 
 import com.daniebeler.pfpixelix.domain.model.NewPost
 import com.daniebeler.pfpixelix.domain.model.UpdatePost
 import com.daniebeler.pfpixelix.domain.repository.pixelfed.PixelfedApi
 import com.daniebeler.pfpixelix.domain.service.file.FileService
 import com.daniebeler.pfpixelix.domain.service.file.PlatformFile
+import com.daniebeler.pfpixelix.domain.service.general.PostEditorService
 import com.daniebeler.pfpixelix.domain.service.utils.loadResource
 import com.daniebeler.pfpixelix.utils.KmpUri
 import io.github.vinceglb.filekit.FileKit
@@ -21,13 +22,11 @@ import kotlinx.serialization.json.Json
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class PostEditorService(
-    private val api: PixelfedApi,
-    private val fileService: FileService,
-    private val json: Json
-) {
+class PixelfedPostEditorService(
+    private val api: PixelfedApi, private val fileService: FileService, private val json: Json
+) : PostEditorService {
 
-    fun uploadMedia(uri: KmpUri, description: String) = loadResource {
+    override fun uploadMedia(uri: KmpUri, description: String) = loadResource {
         val file = PlatformFile(uri)
         if (!file.exists()) error("File doesn't exist")
         val bytes = file.readBytes()
@@ -55,25 +54,24 @@ class PostEditorService(
                         append(HttpHeaders.ContentType, "image/png")
                     })
                 }
-            }
-        )
+            })
 
         api.uploadMedia(data)
     }
 
-    fun updateMedia(id: String, description: String) = loadResource {
+    override fun updateMedia(id: String, description: String) = loadResource {
         api.updateMedia(id, description)
     }
 
-    fun createPost(createPostDto: NewPost) = loadResource {
+    override fun createPost(createPostDto: NewPost) = loadResource {
         api.createPost(json.encodeToString(createPostDto))
     }
 
-    fun updatePost(postId: String, updatePostDto: UpdatePost) = loadResource {
+    override fun updatePost(postId: String, updatePostDto: UpdatePost) = loadResource {
         api.updatePost(postId, json.encodeToString(updatePostDto))
     }
 
-    fun deletePost(postId: String) = loadResource {
+    override fun deletePost(postId: String) = loadResource {
         api.deletePost(postId)
     }
 }

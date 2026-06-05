@@ -1,6 +1,8 @@
-package com.daniebeler.pfpixelix.domain.service.icon
+package com.daniebeler.pfpixelix.domain.service.pixelfed
 
 import com.daniebeler.pfpixelix.di.AppSingleton
+import com.daniebeler.pfpixelix.domain.service.general.AppIconManager
+import com.daniebeler.pfpixelix.domain.service.general.AppIconService
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import me.tatarka.inject.annotations.Inject
@@ -18,10 +20,10 @@ import pixelix.app.generated.resources.app_icon_09
 
 @AppSingleton
 @Inject
-class AppIconService(
+class PixelfedAppIconService(
     private val iconManager: AppIconManager
-) {
-    val icons = listOf(
+) : AppIconService {
+    override val icons = listOf(
         Res.drawable.app_icon_00,
         Res.drawable.app_icon_01,
         Res.drawable.app_icon_02,
@@ -34,15 +36,11 @@ class AppIconService(
     )
 
     private val currentIconFlow = MutableStateFlow(iconManager.getCurrentIcon())
-    val currentIcon: StateFlow<DrawableResource> = currentIconFlow
+    override val currentIcon: StateFlow<DrawableResource> = currentIconFlow
 
-    fun selectIcon(icon: DrawableResource) {
+    override fun selectIcon(icon: DrawableResource) {
         iconManager.setCustomIcon(icon)
         currentIconFlow.value = icon
     }
 }
 
-interface AppIconManager {
-    fun getCurrentIcon(): DrawableResource
-    fun setCustomIcon(icon: DrawableResource)
-}

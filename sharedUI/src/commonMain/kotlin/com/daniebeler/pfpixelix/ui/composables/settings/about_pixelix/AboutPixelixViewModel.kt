@@ -1,7 +1,7 @@
 package com.daniebeler.pfpixelix.ui.composables.settings.about_pixelix
 
 import androidx.lifecycle.ViewModel
-import com.daniebeler.pfpixelix.domain.service.icon.AppIconService
+import com.daniebeler.pfpixelix.domain.service.general.AppIconService
 import com.daniebeler.pfpixelix.domain.service.platform.Platform
 import me.tatarka.inject.annotations.Inject
 

@@ -1,7 +1,7 @@
 package com.daniebeler.pfpixelix.ui.composables.settings.icon_selection
 
 import androidx.lifecycle.ViewModel
-import com.daniebeler.pfpixelix.domain.service.icon.AppIconService
+import com.daniebeler.pfpixelix.domain.service.general.AppIconService
 import me.tatarka.inject.annotations.Inject
 import org.jetbrains.compose.resources.DrawableResource
 

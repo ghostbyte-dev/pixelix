@@ -4,6 +4,7 @@ import com.daniebeler.pfpixelix.di.AppSingleton
 import com.daniebeler.pfpixelix.domain.model.Credentials
 import com.daniebeler.pfpixelix.domain.model.SessionStorage
 import com.daniebeler.pfpixelix.domain.service.pixelfed.PixelfedAuthService
+import com.daniebeler.pfpixelix.domain.service.vernissage.VernissageAuthService
 import io.ktor.http.Url
 import kotlinx.coroutines.flow.Flow
 import me.tatarka.inject.annotations.Inject
@@ -44,12 +45,12 @@ interface AuthService {
 class AuthServiceDelegate(
     private val session: Session,
     private val pixelfed: PixelfedAuthService,
-    //private val vernissage: VernissageTimelineService
+    private val vernissage: VernissageAuthService
 ) : AuthService {
 
     private val current: AuthService
-        get() = when (session.backendType) {
-            // BackendType.VERNISSAGE -> vernissage
+        get() = when (session.backendType.value) {
+            BackendType.VERNISSAGE -> vernissage
             else -> pixelfed
         }
     override val activeUser: Flow<String?> = current.activeUser
@@ -62,7 +63,8 @@ class AuthServiceDelegate(
 
     override suspend fun getAvailableSessions(): SessionStorage = current.getAvailableSessions()
 
-    override suspend fun updateSessionAvatar(accountId: String, avatarUrl: String) = current.updateSessionAvatar(accountId, avatarUrl)
+    override suspend fun updateSessionAvatar(accountId: String, avatarUrl: String) =
+        current.updateSessionAvatar(accountId, avatarUrl)
 
     override fun getCurrentSession(): Credentials? = current.getCurrentSession()
 }

@@ -1,30 +1,32 @@
-package com.daniebeler.pfpixelix.domain.service.pixelfed
+package com.daniebeler.pfpixelix.domain.service.vernissage
 
 import androidx.datastore.core.DataStore
 import com.daniebeler.pfpixelix.di.AppSingleton
 import com.daniebeler.pfpixelix.domain.model.Credentials
 import com.daniebeler.pfpixelix.domain.model.SessionStorage
-import com.daniebeler.pfpixelix.domain.repository.pixelfed.PixelfedAuthApi.Companion.createPixelfedAuthApi
+import com.daniebeler.pfpixelix.domain.repository.vernissage.VernissageAuthApi.Companion.createVernissageAuthApi
 import com.daniebeler.pfpixelix.domain.service.general.AuthService
-import com.daniebeler.pfpixelix.domain.service.general.AuthService.Companion.clientName
 import com.daniebeler.pfpixelix.domain.service.general.AuthService.Companion.grantType
 import com.daniebeler.pfpixelix.domain.service.general.AuthService.Companion.redirectUrl
-import com.daniebeler.pfpixelix.domain.service.platform.Platform
-import com.daniebeler.pfpixelix.domain.service.search.SavedSearchesService
 import com.daniebeler.pfpixelix.domain.service.general.BackendType
 import com.daniebeler.pfpixelix.domain.service.general.Session
+import com.daniebeler.pfpixelix.domain.service.platform.Platform
+import com.daniebeler.pfpixelix.domain.service.search.SavedSearchesService
 import com.daniebeler.pfpixelix.ui.events.SystemUrlHandler
 import io.ktor.http.URLBuilder
 import io.ktor.http.Url
+import io.ktor.http.encodedPath
+import io.ktor.http.takeFrom
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.json.Json
 import me.tatarka.inject.annotations.Inject
+import kotlin.random.Random
 
 @Inject
 @AppSingleton
-class PixelfedAuthService(
+class VernissageAuthService(
     private val urlHandler: SystemUrlHandler,
     private val session: Session,
     private val sessionStorage: DataStore<SessionStorage>,
@@ -36,14 +38,25 @@ class PixelfedAuthService(
 
     override suspend fun auth(host: String) {
         val serverUrl = getServerUrl(host)
-        val api = createPixelfedAuthApi(serverUrl, json)
-        val authData = api.getAuthData(clientName, redirectUrl)
+        val api = createVernissageAuthApi(serverUrl, json)
 
-        val authUrl = URLBuilder("${serverUrl}oauth/authorize").apply {
+        val authData = api.getAuthData("Pixelix", listOf("dev.ghostbyte.pixelix://callback"))
+
+        val state = Random.nextInt(100000, 999999).toString()
+        val nonce = Random.nextInt(100000, 999999).toString()
+        val scope = "read write"
+
+        val authUrl = URLBuilder().apply {
+            takeFrom(serverUrl)
+            encodedPath = "/api/v1/oauth/authorize"
+
             parameters.apply {
                 append("response_type", "code")
-                append("redirect_uri", redirectUrl)
                 append("client_id", authData.clientId)
+                append("redirect_uri", redirectUrl)
+                append("scope", scope)
+                append("state", state)
+                append("nonce", nonce)
             }
         }.build()
 
@@ -58,15 +71,19 @@ class PixelfedAuthService(
         val redirect = Url(redirectString)
         val code = redirect.parameters["code"] ?: error("Redirect doesn't have a code")
 
-        val token = api.getToken(
-            authData.clientId,
-            authData.clientSecret,
-            code,
-            redirectUrl,
-            grantType
+        val clientId = authData.clientId
+        //val clientSecret = authData.clientSecret // This could be null depending on server config
+
+// 2. Invoke the token exchange method
+        val tokenResponse = api.getToken(
+            clientId = clientId,
+            clientSecret = "", // Safely pass empty string if the server skipped issuing a secret
+            code = code,                       // The temporary code extracted out of your browser redirect URL callback
+            redirectUri = redirectUrl,         // Must explicitly match the URI string used in Step 1
+            grantType = "authorization_code"   // String constant literal defined by standard OAuth spec
         )
 
-        val account = api.verify("Bearer ${token.accessToken}")
+        val account = api.verify("Bearer ${tokenResponse.accessToken}")
 
         val newCred = Credentials(
             accountId = requireNotNull(account.id),
@@ -74,11 +91,11 @@ class PixelfedAuthService(
             displayName = account.displayname ?: account.username,
             avatar = account.avatar,
             serverUrl = serverUrl.toString(),
-            token = token.accessToken,
-            refreshToken = token.refreshToken,
+            token = tokenResponse.accessToken,
+            refreshToken = tokenResponse.refreshToken,
             clientId = authData.clientId,
-            clientSecret = authData.clientSecret,
-            createdAt = token.createdAt
+            clientSecret = "authData.clientSecret",
+            createdAt = "tokenResponse.createdAt"
         )
         updateSession(newCred)
     }

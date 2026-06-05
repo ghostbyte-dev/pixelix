@@ -7,6 +7,8 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.domain.service.general.AuthService
+import com.daniebeler.pfpixelix.domain.service.general.BackendType
+import com.daniebeler.pfpixelix.domain.service.general.Session
 import com.daniebeler.pfpixelix.domain.service.platform.Platform
 import com.daniebeler.pfpixelix.domain.service.suggestions.ServersSuggestionsManager
 import kotlinx.coroutines.launch
@@ -16,21 +18,18 @@ enum class LoginStep {
     PLATFORM_SELECTION, SERVER_INPUT
 }
 
-enum class PlatformType {
-    PIXELFED, VERNISSAGE
-}
-
 @Inject
 class LoginViewModel(
     private val authService: AuthService,
     val serversSuggestionsManager: ServersSuggestionsManager,
-    private val platform: Platform
+    private val platform: Platform,
+    private val session: Session,
 ) : ViewModel() {
 
     var currentStep by mutableStateOf(LoginStep.PLATFORM_SELECTION)
         private set
 
-    var selectedPlatform by mutableStateOf<PlatformType?>(null)
+    var selectedPlatform by mutableStateOf<BackendType?>(null)
         private set
 
     var serverHost by mutableStateOf(TextFieldValue())
@@ -44,7 +43,8 @@ class LoginViewModel(
     var error by mutableStateOf<String?>(null)
         private set
 
-    fun selectPlatform(type: PlatformType) {
+    fun selectPlatform(type: BackendType) {
+        session.setBackendType(type)
         selectedPlatform = type
         currentStep = LoginStep.SERVER_INPUT
     }
@@ -85,8 +85,8 @@ class LoginViewModel(
 
     fun showAvailableServers() {
         val url = when (selectedPlatform) {
-            PlatformType.PIXELFED -> "https://pixelfed.org/servers"
-            PlatformType.VERNISSAGE -> "https://joinvernissage.org/servers"
+            BackendType.PIXELFED -> "https://pixelfed.org/servers"
+            BackendType.VERNISSAGE -> "https://joinvernissage.org/servers"
             null -> "https://pixelfed.org/servers"
         }
         platform.openUrl(url)

@@ -13,8 +13,21 @@ data class AuthData(
 )
 
 @Serializable
+data class AuthDataVernissage(
+    @SerialName("client_id") val clientId: String,
+    @SerialName("redirect_uris") val redirectUris: List<String>
+)
+
+
+@Serializable
 data class AuthToken(
     @SerialName("access_token") val accessToken: String,
     @SerialName("created_at") val createdAt: String,
+    @SerialName("refresh_token") val refreshToken: String
+)
+
+@Serializable
+data class AuthTokenVernissage(
+    @SerialName("access_token") val accessToken: String,
     @SerialName("refresh_token") val refreshToken: String
 )

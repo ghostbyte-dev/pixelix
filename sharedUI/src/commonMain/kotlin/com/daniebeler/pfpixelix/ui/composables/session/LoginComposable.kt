@@ -58,6 +58,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.di.injectViewModel
+import com.daniebeler.pfpixelix.domain.service.general.BackendType
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pfpixelix.ui.composables.widgets.SuggestionsBar
 import org.jetbrains.compose.resources.painterResource
@@ -319,7 +320,7 @@ fun ServerInputLayout(
 
 @Composable
 fun PlatformSelectionLayout(
-    onPlatformSelected: (PlatformType) -> Unit, modifier: Modifier = Modifier
+    onPlatformSelected: (BackendType) -> Unit, modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier.padding(horizontal = 24.dp, vertical = 16.dp).fillMaxWidth(),
@@ -343,7 +344,7 @@ fun PlatformSelectionLayout(
 
         // --- Pixelfed Button ---
         Button(
-            onClick = { onPlatformSelected(PlatformType.PIXELFED) },
+            onClick = { onPlatformSelected(BackendType.PIXELFED) },
             modifier = Modifier.fillMaxWidth().height(56.dp),
             shape = RoundedCornerShape(16.dp),
             colors = ButtonDefaults.buttonColors(
@@ -360,7 +361,7 @@ fun PlatformSelectionLayout(
 
         // --- Vernissage Button ---
         Button(
-            onClick = { onPlatformSelected(PlatformType.VERNISSAGE) },
+            onClick = { onPlatformSelected(BackendType.VERNISSAGE) },
             modifier = Modifier.fillMaxWidth().height(56.dp),
             shape = RoundedCornerShape(16.dp),
             colors = ButtonDefaults.buttonColors(

@@ -4,7 +4,8 @@ import androidx.datastore.core.DataStore
 import co.touchlab.kermit.Logger
 import com.daniebeler.pfpixelix.domain.model.Credentials
 import com.daniebeler.pfpixelix.domain.model.SessionStorage
-import com.daniebeler.pfpixelix.domain.repository.pixelfed.AuthApi
+import com.daniebeler.pfpixelix.domain.repository.pixelfed.PixelfedAuthApi
+import com.daniebeler.pfpixelix.domain.repository.vernissage.VernissageAuthApi
 import com.daniebeler.pfpixelix.ui.events.GlobalNavigationEvent
 import com.daniebeler.pfpixelix.ui.events.GlobalNavigator
 import io.ktor.client.call.HttpClientCall
@@ -69,12 +70,12 @@ class AuthInterceptor(
     }
 
     suspend fun refreshToken() {
-        val localTokenSnapshot = session.credentials.value?.token
-            ?: throw NullPointerException("Credentials are null")
+        val localTokenSnapshot =
+            session.credentials.value?.token ?: throw NullPointerException("Credentials are null")
 
         refreshMutex.withLock {
-            val currentCredentials = session.credentials.value
-                ?: throw NullPointerException("Credentials are null")
+            val currentCredentials =
+                session.credentials.value ?: throw NullPointerException("Credentials are null")
 
             if (currentCredentials.token != localTokenSnapshot) {
                 Logger.v(tag = "Pixelix Auth") {
@@ -84,22 +85,46 @@ class AuthInterceptor(
             }
 
             //TODO: make authApi.createAuthApi return vernissageAuthApi or pixelfedAuthApi, or fix it differently
-            val authApi = AuthApi.createAuthApi(Url(currentCredentials.serverUrl), json)
+            if (session.backendType.value == BackendType.PIXELFED) {
+                val authApi =
+                    PixelfedAuthApi.createPixelfedAuthApi(Url(currentCredentials.serverUrl), json)
 
-            val token = authApi.getTokenRefresh(
-                clientId = currentCredentials.clientId,
-                clientSecret = currentCredentials.clientSecret,
-                refreshToken = currentCredentials.refreshToken,
-                grantType = "refresh_token"
-            )
-
-            updateSession(
-                currentCredentials.copy(
-                    token = token.accessToken,
-                    refreshToken = token.refreshToken,
-                    createdAt = token.createdAt
+                val token = authApi.getTokenRefresh(
+                    clientId = currentCredentials.clientId,
+                    clientSecret = currentCredentials.clientSecret,
+                    refreshToken = currentCredentials.refreshToken,
+                    grantType = "refresh_token"
                 )
-            )
+
+                updateSession(
+                    currentCredentials.copy(
+                        token = token.accessToken,
+                        refreshToken = token.refreshToken,
+                        createdAt = token.createdAt
+                    )
+                )
+            } else {
+                val authApi = VernissageAuthApi.createVernissageAuthApi(
+                    Url(currentCredentials.serverUrl), json
+                )
+
+                val token = authApi.getTokenRefresh(
+                    clientId = currentCredentials.clientId,
+                    clientSecret = currentCredentials.clientSecret,
+                    refreshToken = currentCredentials.refreshToken,
+                    grantType = "refresh_token"
+                )
+
+                updateSession(
+                    currentCredentials.copy(
+                        token = token.accessToken,
+                        refreshToken = token.refreshToken,
+                        createdAt = token.createdAt
+                    )
+                )
+            }
+
+
         }
     }
 
@@ -107,8 +132,7 @@ class AuthInterceptor(
         val targetKey = newCred.key()
         sessionStorage.updateData { data ->
             data.copy(
-                sessions = data.sessions + (targetKey to newCred),
-                activeKey = targetKey
+                sessions = data.sessions + (targetKey to newCred), activeKey = targetKey
             )
         }
         session.setCredentials(newCred)

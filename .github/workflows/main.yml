@@ -1,0 +1,42 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Version tag for APK name'
+        default: 'v4.4.1'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Build
+        run: cd androidApp && ../gradlew assembleRelease
+
+      - name: Sign
+        run: |
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > keystore.jks
+          $ANDROID_HOME/build-tools/36.0.0/apksigner sign \
+            --ks keystore.jks \
+            --ks-pass "pass:${{ secrets.KEYSTORE_PASSWORD }}" \
+            --key-pass "pass:${{ secrets.KEY_PASSWORD }}" \
+            --ks-key-alias "${{ secrets.KEY_ALIAS }}" \
+            --out pixelix_v${{ github.ref_name }}.apk \
+            androidApp/build/outputs/apk/release/androidApp-release-unsigned.apk
+
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: pixelix_v${{ github.ref_name }}.apk

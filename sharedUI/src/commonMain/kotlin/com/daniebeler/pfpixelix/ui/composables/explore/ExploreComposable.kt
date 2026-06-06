@@ -63,6 +63,7 @@ import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.model.SavedSearchItem
 import com.daniebeler.pfpixelix.domain.model.SavedSearchType
+import com.daniebeler.pfpixelix.domain.model.toDomain
 import com.daniebeler.pfpixelix.ui.composables.widgets.CustomHashtag
 import com.daniebeler.pfpixelix.ui.composables.custom_account.CustomAccount
 import com.daniebeler.pfpixelix.ui.composables.explore.trending.TrendingComposable
@@ -170,7 +171,7 @@ fun ExploreComposable(
                         if (it.savedSearchType == SavedSearchType.Account) {
                             Row {
                                 CustomAccount(
-                                    account = it.account!!,
+                                    account = it.account!!.toDomain(),
                                     relationship = null,
                                     navController = navController,
                                     removeSavedSearch = { viewModel.deleteSavedSearch(it) }

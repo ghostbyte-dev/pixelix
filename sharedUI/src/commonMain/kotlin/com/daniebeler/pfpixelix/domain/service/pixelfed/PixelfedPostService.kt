@@ -7,6 +7,7 @@ import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.repository.pixelfed.PixelfedApi
 import com.daniebeler.pfpixelix.domain.service.general.AuthService
 import com.daniebeler.pfpixelix.domain.service.general.PostService
+import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedPostDto
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.toDomain
 import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
@@ -48,8 +49,8 @@ class PixelfedPostService(
 
     private fun getPostsByAccountId(
         accountId: String, maxPostId: String?, limit: Int
-    ) = loadListResources {
-        api.getPostsByAccountId(accountId, maxPostId, limit)
+    ) = loadListResources<Post> {
+        api.getPostsByAccountId(accountId, maxPostId, limit).map { it.toDomain() }
     }
 
     override fun getLikedPosts(maxId: String?) = flow {
@@ -57,7 +58,11 @@ class PixelfedPostService(
 
         try {
             val response: PaginatedResponse<List<Post>> =
-                api.getLikedPosts(maxId).executeAndParsePagination(true, "max_id")
+                api.getLikedPosts(maxId).executeAndParsePagination(
+                    true,
+                    "max_id",
+                    transform = { dtoList -> dtoList.map { it.toDomain() } }
+                )
             val filteredPosts = response.data.filter { it.mediaAttachments.isNotEmpty() }
             val filteredResponse = response.copy(data = filteredPosts)
             emit(Resource.Success(filteredResponse))
@@ -105,7 +110,11 @@ class PixelfedPostService(
 
         try {
             val response: PaginatedResponse<List<Post>> =
-                api.getBookmarkedPosts(cursor = cursor).executeAndParsePagination(true, "max_id")
+                api.getBookmarkedPosts(cursor = cursor).executeAndParsePagination(
+                    true,
+                    "max_id",
+                    transform = { dtoList -> dtoList.map { it.toDomain() } }
+                )
             val filteredPosts = response.data.filter { it.mediaAttachments.isNotEmpty() }
             val filteredResponse = response.copy(data = filteredPosts)
             emit(Resource.Success(filteredResponse))

@@ -223,7 +223,7 @@ class NewPostViewModel @Inject constructor(
             val imageBytes = file.readBytes()
             val compressedBytes = compressToLimit(
                 imageBytes,
-                instance!!.configuration.mediaAttachmentConfig.imageSizeLimit,
+                instance!!.configuration.mediaAttachmentConfig.imageSizeLimit.toInt(),
                 file.toImageBitmap()
             )
             val timestamp = Clock.System.now().toEpochMilliseconds()

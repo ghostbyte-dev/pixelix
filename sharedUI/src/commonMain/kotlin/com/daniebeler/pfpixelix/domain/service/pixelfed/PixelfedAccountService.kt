@@ -7,6 +7,7 @@ import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.repository.pixelfed.PixelfedApi
 import com.daniebeler.pfpixelix.domain.service.general.AccountService
 import com.daniebeler.pfpixelix.domain.service.general.AuthService
+import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedAccountDto
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.toDomain
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.domain.service.utils.loadListResources
@@ -34,7 +35,7 @@ import me.tatarka.inject.annotations.Inject
 class PixelfedAccountService(
     private val authService: AuthService,
     private val api: PixelfedApi,
-): AccountService {
+) : AccountService {
     override val refreshSignal = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -87,26 +88,53 @@ class PixelfedAccountService(
         result
     }
 
-    override fun getAccount(accountId: String) = loadResource { api.getAccount(accountId).toDomain() }
-    override fun getAccountByUsername(username: String) = loadResource { api.getAccountByUsername(username).toDomain() }
-    override fun getMutualFollowers(userId: String) = loadListResources { api.getMutalFollowers(userId).map { it.toDomain() } }
+    override fun getAccount(accountId: String) =
+        loadResource { api.getAccount(accountId).toDomain() }
+
+    override fun getAccountByUsername(username: String) =
+        loadResource { api.getAccountByUsername(username).toDomain() }
+
+    override fun getMutualFollowers(userId: String) =
+        loadListResources { api.getMutalFollowers(userId).map { it.toDomain() } }
+
     override fun getAccountSettings() = loadResource { api.getSettings().toDomain() }
-    override fun followAccount(accountId: String) = loadResource { api.followAccount(accountId).toDomain() }
-    override fun unfollowAccount(accountId: String) = loadResource { api.unfollowAccount(accountId).toDomain() }
-    override fun muteAccount(accountId: String) = loadResource { api.muteAccount(accountId).toDomain() }
-    override fun unMuteAccount(accountId: String) = loadResource { api.unmuteAccount(accountId).toDomain() }
-    override fun blockAccount(accountId: String) = loadResource { api.blockAccount(accountId).toDomain() }
-    override fun unblockAccount(accountId: String) = loadResource { api.unblockAccount(accountId).toDomain() }
-    override fun getMutedAccounts() = loadListResources { api.getMutedAccounts().map { it.toDomain() } }
-    override fun getBlockedAccounts() = loadListResources { api.getBlockedAccounts().map { it.toDomain() } }
-    override fun getLikedBy(postId: String) = loadListResources { api.getAccountsWhoLikedPost(postId).map { it.toDomain() } }
+    override fun followAccount(accountId: String) =
+        loadResource { api.followAccount(accountId).toDomain() }
+
+    override fun unfollowAccount(accountId: String) =
+        loadResource { api.unfollowAccount(accountId).toDomain() }
+
+    override fun muteAccount(accountId: String) =
+        loadResource { api.muteAccount(accountId).toDomain() }
+
+    override fun unMuteAccount(accountId: String) =
+        loadResource { api.unmuteAccount(accountId).toDomain() }
+
+    override fun blockAccount(accountId: String) =
+        loadResource { api.blockAccount(accountId).toDomain() }
+
+    override fun unblockAccount(accountId: String) =
+        loadResource { api.unblockAccount(accountId).toDomain() }
+
+    override fun getMutedAccounts() =
+        loadListResources { api.getMutedAccounts().map { it.toDomain() } }
+
+    override fun getBlockedAccounts() =
+        loadListResources { api.getBlockedAccounts().map { it.toDomain() } }
+
+    override fun getLikedBy(postId: String) =
+        loadListResources { api.getAccountsWhoLikedPost(postId).map { it.toDomain() } }
 
     override fun getAccountsFollowers(accountId: String, cursor: String?) = flow {
         emit(Resource.Loading())
 
         try {
             val response = api.getAccountsFollowers(accountId, cursor)
-                .executeAndParsePagination(false, "cursor")
+                .executeAndParsePagination(
+                    directionNext = false,
+                    paginationName = "cursor",
+                    transform = { dtoList -> dtoList.map { it.toDomain() } }
+                )
             emit(Resource.Success(response))
         } catch (e: Exception) {
             emit(Resource.Error(e.message ?: "Unknown error"))
@@ -117,8 +145,12 @@ class PixelfedAccountService(
         emit(Resource.Loading())
 
         try {
-            val response = api.getAccountsFollowing(accountId, cursor)
-                .executeAndParsePagination(false, "cursor")
+            val response = api.getAccountsFollowers(accountId, cursor)
+                .executeAndParsePagination(
+                    directionNext = false,
+                    paginationName = "cursor",
+                    transform = { dtoList -> dtoList.map { it.toDomain() } }
+                )
 
             emit(Resource.Success(response))
         } catch (e: Exception) {

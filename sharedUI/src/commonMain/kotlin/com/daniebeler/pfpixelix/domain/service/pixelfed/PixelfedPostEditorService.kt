@@ -6,6 +6,7 @@ import com.daniebeler.pfpixelix.domain.repository.pixelfed.PixelfedApi
 import com.daniebeler.pfpixelix.domain.service.file.FileService
 import com.daniebeler.pfpixelix.domain.service.file.PlatformFile
 import com.daniebeler.pfpixelix.domain.service.general.PostEditorService
+import com.daniebeler.pfpixelix.domain.service.pixelfed.model.toDomain
 import com.daniebeler.pfpixelix.domain.service.utils.loadResource
 import com.daniebeler.pfpixelix.utils.KmpUri
 import io.github.vinceglb.filekit.FileKit
@@ -56,15 +57,15 @@ class PixelfedPostEditorService(
                 }
             })
 
-        api.uploadMedia(data)
+        api.uploadMedia(data).toDomain()
     }
 
     override fun updateMedia(id: String, description: String) = loadResource {
-        api.updateMedia(id, description)
+        api.updateMedia(id, description).toDomain()
     }
 
     override fun createPost(createPostDto: NewPost) = loadResource {
-        api.createPost(json.encodeToString(createPostDto))
+        api.createPost(json.encodeToString(createPostDto)).toDomain()
     }
 
     override fun updatePost(postId: String, updatePostDto: UpdatePost) = loadResource {
@@ -72,6 +73,6 @@ class PixelfedPostEditorService(
     }
 
     override fun deletePost(postId: String) = loadResource {
-        api.deletePost(postId)
+        api.deletePost(postId).toDomain()
     }
 }

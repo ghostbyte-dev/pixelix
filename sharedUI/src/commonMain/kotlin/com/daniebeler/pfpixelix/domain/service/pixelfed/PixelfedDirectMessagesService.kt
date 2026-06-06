@@ -3,6 +3,7 @@ package com.daniebeler.pfpixelix.domain.service.pixelfed
 import com.daniebeler.pfpixelix.domain.model.NewMessage
 import com.daniebeler.pfpixelix.domain.repository.pixelfed.PixelfedApi
 import com.daniebeler.pfpixelix.domain.service.general.DirectMessagesService
+import com.daniebeler.pfpixelix.domain.service.pixelfed.model.toDomain
 import com.daniebeler.pfpixelix.domain.service.utils.loadListResources
 import com.daniebeler.pfpixelix.domain.service.utils.loadResource
 import kotlinx.serialization.json.Json
@@ -14,15 +15,15 @@ class PixelfedDirectMessagesService(
     private val json: Json
 ): DirectMessagesService {
     override fun getConversations() = loadListResources {
-        api.getConversations()
+        api.getConversations().map { it.toDomain() }
     }
 
     override fun getChat(accountId: String, maxId: String?) = loadResource {
-        api.getChat(accountId, maxId)
+        api.getChat(accountId, maxId).toDomain()
     }
 
     override fun sendMessage(createMessageDto: NewMessage) = loadResource {
-        api.sendMessage(json.encodeToString(createMessageDto))
+        api.sendMessage(json.encodeToString(createMessageDto)).toDomain()
     }
 
     override fun deleteMessage(id: String) = loadResource {

@@ -7,6 +7,7 @@ import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.repository.pixelfed.PixelfedApi
 import com.daniebeler.pfpixelix.domain.service.general.AccountService
 import com.daniebeler.pfpixelix.domain.service.general.AuthService
+import com.daniebeler.pfpixelix.domain.service.pixelfed.model.toDomain
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.domain.service.utils.loadListResources
 import com.daniebeler.pfpixelix.domain.service.utils.loadResource
@@ -81,24 +82,24 @@ class PixelfedAccountService(
             append("website", website)
             append("locked", privateProfile.toString())
         })
-        val result = api.updateAccount(body)
+        val result = api.updateAccount(body).toDomain()
         refreshSignal.emit(Unit)
         result
     }
 
-    override fun getAccount(accountId: String) = loadResource { api.getAccount(accountId) }
-    override fun getAccountByUsername(username: String) = loadResource { api.getAccountByUsername(username) }
-    override fun getMutualFollowers(userId: String) = loadListResources { api.getMutalFollowers(userId) }
-    override fun getAccountSettings() = loadResource { api.getSettings() }
-    override fun followAccount(accountId: String) = loadResource { api.followAccount(accountId) }
-    override fun unfollowAccount(accountId: String) = loadResource { api.unfollowAccount(accountId) }
-    override fun muteAccount(accountId: String) = loadResource { api.muteAccount(accountId) }
-    override fun unMuteAccount(accountId: String) = loadResource { api.unmuteAccount(accountId) }
-    override fun blockAccount(accountId: String) = loadResource { api.blockAccount(accountId) }
-    override fun unblockAccount(accountId: String) = loadResource { api.unblockAccount(accountId) }
-    override fun getMutedAccounts() = loadListResources { api.getMutedAccounts() }
-    override fun getBlockedAccounts() = loadListResources { api.getBlockedAccounts() }
-    override fun getLikedBy(postId: String) = loadListResources { api.getAccountsWhoLikedPost(postId) }
+    override fun getAccount(accountId: String) = loadResource { api.getAccount(accountId).toDomain() }
+    override fun getAccountByUsername(username: String) = loadResource { api.getAccountByUsername(username).toDomain() }
+    override fun getMutualFollowers(userId: String) = loadListResources { api.getMutalFollowers(userId).map { it.toDomain() } }
+    override fun getAccountSettings() = loadResource { api.getSettings().toDomain() }
+    override fun followAccount(accountId: String) = loadResource { api.followAccount(accountId).toDomain() }
+    override fun unfollowAccount(accountId: String) = loadResource { api.unfollowAccount(accountId).toDomain() }
+    override fun muteAccount(accountId: String) = loadResource { api.muteAccount(accountId).toDomain() }
+    override fun unMuteAccount(accountId: String) = loadResource { api.unmuteAccount(accountId).toDomain() }
+    override fun blockAccount(accountId: String) = loadResource { api.blockAccount(accountId).toDomain() }
+    override fun unblockAccount(accountId: String) = loadResource { api.unblockAccount(accountId).toDomain() }
+    override fun getMutedAccounts() = loadListResources { api.getMutedAccounts().map { it.toDomain() } }
+    override fun getBlockedAccounts() = loadListResources { api.getBlockedAccounts().map { it.toDomain() } }
+    override fun getLikedBy(postId: String) = loadListResources { api.getAccountsWhoLikedPost(postId).map { it.toDomain() } }
 
     override fun getAccountsFollowers(accountId: String, cursor: String?) = flow {
         emit(Resource.Loading())

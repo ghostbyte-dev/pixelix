@@ -7,6 +7,7 @@ import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.repository.pixelfed.PixelfedApi
 import com.daniebeler.pfpixelix.domain.service.general.AuthService
 import com.daniebeler.pfpixelix.domain.service.general.PostService
+import com.daniebeler.pfpixelix.domain.service.pixelfed.model.toDomain
 import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.domain.service.utils.loadListResources
@@ -27,7 +28,7 @@ class PixelfedPostService(
     private val json: Json
 ) : PostService {
     override fun getPostById(postId: String) = loadResource {
-        api.getPostById(postId)
+        api.getPostById(postId).toDomain()
     }
 
     override fun getOwnPosts(
@@ -68,35 +69,35 @@ class PixelfedPostService(
 
     override fun createReply(postId: String, content: String) = loadResource {
         val dto = NewReply(status = content, toId = postId)
-        api.createReply(json.encodeToString(dto))
+        api.createReply(json.encodeToString(dto)).toDomain()
     }
 
     override fun getReplies(postId: String) = loadResource {
-        api.getReplies(postId)
+        api.getReplies(postId).toDomain()
     }
 
     override fun likePost(postId: String) = loadResource {
-        api.likePost(postId)
+        api.likePost(postId).toDomain()
     }
 
     override fun unlikePost(postId: String) = loadResource {
-        api.unlikePost(postId)
+        api.unlikePost(postId).toDomain()
     }
 
     override fun reblogPost(postId: String) = loadResource {
-        api.reblogPost(postId)
+        api.reblogPost(postId).toDomain()
     }
 
     override fun unreblogPost(postId: String) = loadResource {
-        api.unreblogPost(postId)
+        api.unreblogPost(postId).toDomain()
     }
 
     override fun bookmarkPost(postId: String) = loadResource {
-        api.bookmarkPost(postId)
+        api.bookmarkPost(postId).toDomain()
     }
 
     override fun unBookmarkPost(postId: String) = loadResource {
-        api.unbookmarkPost(postId)
+        api.unbookmarkPost(postId).toDomain()
     }
 
     override fun getBookmarkedPosts(cursor: String?) = flow {
@@ -114,11 +115,11 @@ class PixelfedPostService(
     }
 
     override fun reportPost(reportBody: NewReport) = loadResource {
-        api.reportPost(json.encodeToString(reportBody))
+        api.reportPost(json.encodeToString(reportBody)).toDomain()
     }
 
     override fun getTrendingPosts(range: String) = loadListResources {
-        api.getTrendingPosts(range)
+        api.getTrendingPosts(range).map { it.toDomain() }
     }.filterSensitive()
 
     private fun Flow<Resource<List<Post>>>.filterSensitive() = this.map { event ->

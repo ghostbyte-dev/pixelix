@@ -1,17 +1,13 @@
 package com.daniebeler.pfpixelix.domain.model
 
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
-
-@Serializable
-data class Chat (
-    @SerialName("avatar") val avatar: String,
-    @SerialName("id") val id: String,
-    @SerialName("isLocal") val isLocal: Boolean,
-    @SerialName("messages") var messages: List<Message>,
-    @SerialName("muted") val muted: Boolean,
-    @SerialName("name") val name: String,
-    @SerialName("timeAgo") val timeAgo: String,
-    @SerialName("url") val url: String,
-    @SerialName("username") val username: String
+data class Chat(
+    val avatar: String,
+    val id: String,
+    val isLocal: Boolean,
+    val messages: List<Message>,
+    val muted: Boolean,
+    val name: String,
+    val timeAgo: String,
+    val url: String,
+    val username: String
 )

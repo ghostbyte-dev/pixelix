@@ -1,9 +1,5 @@
 package com.daniebeler.pfpixelix.domain.model
 
-import com.daniebeler.pfpixelix.domain.repository.serializers.PostSerializer
-import kotlinx.serialization.Serializable
-
-@Serializable(with = PostSerializer::class)
 data class Post(
     val id: String,
     val mediaAttachments: List<MediaAttachment>,

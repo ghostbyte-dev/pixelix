@@ -2,6 +2,7 @@ package com.daniebeler.pfpixelix.domain.service.pixelfed
 
 import com.daniebeler.pfpixelix.domain.repository.pixelfed.PixelfedApi
 import com.daniebeler.pfpixelix.domain.service.general.InstanceService
+import com.daniebeler.pfpixelix.domain.service.pixelfed.model.toDomain
 import com.daniebeler.pfpixelix.domain.service.utils.loadResource
 import me.tatarka.inject.annotations.Inject
 
@@ -15,6 +16,6 @@ class PixelfedInstanceService(
     }
 
     override fun getNodeInfo(domain: String) = loadResource {
-        api.getNodeInfo(domain)
+        api.getNodeInfo(domain).toDomain()
     }
 }

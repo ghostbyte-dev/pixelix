@@ -28,10 +28,9 @@ jobs:
       - name: Sign
         run: |
           echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > keystore.jks
-          $ANDROID_HOME/build-tools/36.0.0/apksigner sign \
+          $ANDROID_HOME/build-tools/34.0.0/apksigner sign \
             --ks keystore.jks \
             --ks-pass "pass:${{ secrets.KEYSTORE_PASSWORD }}" \
-            --key-pass "pass:${{ secrets.KEY_PASSWORD }}" \
             --ks-key-alias "${{ secrets.KEY_ALIAS }}" \
             --out pixelix_v${{ github.ref_name }}.apk \
             androidApp/build/outputs/apk/release/androidApp-release-unsigned.apk

@@ -38,4 +38,7 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
-          files: pixelix_v${{ github.ref_name }}.apk
+          files: pixelix_${{ github.event.inputs.tag || github.ref_name }}.apk
+          draft: true
+          tag_name: ${{ github.event.inputs.tag || github.ref_name }}
+          fail_on_unmatched_files: false

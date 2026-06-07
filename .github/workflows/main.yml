@@ -36,21 +36,22 @@ jobs:
       - name: Sign
         run: |
           echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > keystore.jks
-           ls /opt/android-sdk/build-tools/
+          TAG=${{ github.event.inputs.tag || github.ref_name }}
           /opt/android-sdk/build-tools/$(ls /opt/android-sdk/build-tools/ | tail -1)/apksigner sign \
             --ks keystore.jks \
             --ks-pass "pass:${{ secrets.KEYSTORE_PASSWORD }}" \
             --key-pass "pass:${{ secrets.KEYSTORE_PASSWORD }}" \
             --ks-key-alias "${{ secrets.KEY_ALIAS }}" \
-            --out pixelix_v${{github.event.inputs.tag}}.apk \
+            --out pixelix_${TAG}.apk \
             androidApp/build/outputs/apk/release/androidApp-release-unsigned.apk
+          rm keystore.jks
         env:
           ANDROID_HOME: /opt/android-sdk
           
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
-          files: pixelix_v${{github.event.inputs.tag}}.apk
+          files: pixelix_${{ github.event.inputs.tag || github.ref_name }}.apk
           draft: true
           tag_name: ${{ github.event.inputs.tag || github.ref_name }}
           fail_on_unmatched_files: false

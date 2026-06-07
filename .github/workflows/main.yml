@@ -30,6 +30,8 @@ jobs:
 
       - name: Build
         run: cd androidApp && ../gradlew assembleRelease
+        env:
+          ANDROID_HOME: /opt/android-sdk
 
       - name: Sign
         run: |

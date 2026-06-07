@@ -42,7 +42,7 @@ jobs:
             --ks-pass "pass:${{ secrets.KEYSTORE_PASSWORD }}" \
             --key-pass "pass:${{ secrets.KEYSTORE_PASSWORD }}" \
             --ks-key-alias "${{ secrets.KEY_ALIAS }}" \
-            --out pixelix.apk \
+            --out pixelix_v${{github.event.inputs.tag}}.apk \
             androidApp/build/outputs/apk/release/androidApp-release-unsigned.apk
         env:
           ANDROID_HOME: /opt/android-sdk
@@ -50,7 +50,7 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
-          files: pixelix_v${{ github.ref_name }}.apk
+          files: pixelix_v${{github.event.inputs.tag}}.apk
           draft: true
           tag_name: ${{ github.event.inputs.tag || github.ref_name }}
           fail_on_unmatched_files: false

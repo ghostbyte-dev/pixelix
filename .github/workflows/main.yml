@@ -30,19 +30,21 @@ jobs:
 
       - name: Build
         run: cd androidApp && ../gradlew assembleRelease
-        env:
-          ANDROID_HOME: /opt/android-sdk
 
       - name: Sign
         run: |
           echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > keystore.jks
-          $ANDROID_HOME/build-tools/34.0.0/apksigner sign \
+           ls /opt/android-sdk/build-tools/
+          /opt/android-sdk/build-tools/$(ls /opt/android-sdk/build-tools/ | tail -1)/apksigner sign \
             --ks keystore.jks \
             --ks-pass "pass:${{ secrets.KEYSTORE_PASSWORD }}" \
+            --key-pass "pass:${{ secrets.KEYSTORE_PASSWORD }}" \
             --ks-key-alias "${{ secrets.KEY_ALIAS }}" \
-            --out pixelix_v${{ github.ref_name }}.apk \
+            --out pixelix.apk \
             androidApp/build/outputs/apk/release/androidApp-release-unsigned.apk
-
+        env:
+          ANDROID_HOME: /opt/android-sdk
+          
       - name: Release
         uses: softprops/action-gh-release@v2
         with:

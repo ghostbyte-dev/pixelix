@@ -13,19 +13,25 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    container:
+      image: registry.gitlab.com/fdroid/fdroidserver:buildserver-trixie
     permissions:
       contents: write
 
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-java@v4
-        with:
-          java-version: '21'
-          distribution: 'temurin'
+      - name: Setup
+        run: |
+          apt-get update -q
+          apt-get install -y openjdk-21-jdk-headless
+          update-alternatives --set java /usr/lib/jvm/java-21-openjdk-amd64/bin/java
+          sed -i -e '/jetbrains/d' -e '/foojay/d' settings.gradle.kts
 
       - name: Build
         run: cd androidApp && ../gradlew assembleRelease
+        env:
+          ANDROID_HOME: /opt/android-sdk
 
       - name: Sign
         run: |

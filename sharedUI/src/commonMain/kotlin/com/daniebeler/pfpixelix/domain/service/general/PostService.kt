@@ -9,6 +9,8 @@ import com.daniebeler.pfpixelix.domain.model.ReportResponse
 import com.daniebeler.pfpixelix.domain.repository.pixelfed.PixelfedApi
 import com.daniebeler.pfpixelix.domain.service.pixelfed.PixelfedPostService
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
+import com.daniebeler.pfpixelix.domain.service.vernissage.VernissagePostService
+import com.daniebeler.pfpixelix.domain.service.vernissage.VernissageTimelineService
 import kotlinx.coroutines.flow.Flow
 import me.tatarka.inject.annotations.Inject
 
@@ -55,12 +57,12 @@ interface PostService {
 class PostServiceDelegate(
     private val session: Session,
     private val pixelfed: PixelfedPostService,
-    //private val vernissage: VernissageTimelineService
+    private val vernissage: VernissagePostService
 ) : PostService {
 
     private val current: PostService
-        get() = when (session.backendType) {
-            // BackendType.VERNISSAGE -> vernissage
+        get() = when (session.backendType.value) {
+            BackendType.VERNISSAGE -> vernissage
             else -> pixelfed
         }
 

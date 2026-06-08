@@ -1,14 +1,11 @@
 package com.daniebeler.pfpixelix.domain.service.vernissage.model
 
 import com.daniebeler.pfpixelix.domain.model.MediaAttachment
-import com.daniebeler.pfpixelix.domain.model.Meta
-import com.daniebeler.pfpixelix.domain.model.Original
-import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedLicenseDto
-import com.daniebeler.pfpixelix.domain.service.pixelfed.model.toDomain
+import com.daniebeler.pfpixelix.domain.model.MediaMetadata
+import com.daniebeler.pfpixelix.domain.model.Place
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-//TODO: add location
 @Serializable
 data class VernissageMediaAttachmentDto(
     @SerialName("id") val id: String,
@@ -17,9 +14,27 @@ data class VernissageMediaAttachmentDto(
     @SerialName("metadata") val metadata: VernissageMetaDto?,
     @SerialName("blurhash") val blurHash: String?,
     @SerialName("description") val description: String?,
+    @SerialName("location") val location: VernissageLocationDto?
 )
 
-@Serializable data class VernissageFileDto(
+@Serializable
+data class VernissageLocationDto(
+    @SerialName("country") val country: VernissageCountryDto,
+    @SerialName("id") val id: String,
+    @SerialName("name") val name: String,
+    @SerialName("latitude") val lat: String,
+    @SerialName("longitude") val long: String,
+)
+
+@Serializable
+data class VernissageCountryDto(
+    @SerialName("name") val name: String,
+    @SerialName("code") val code: String,
+    @SerialName("id") val id: String
+)
+
+@Serializable
+data class VernissageFileDto(
     @SerialName("aspect") val aspect: Double,
     @SerialName("url") val url: String
 )
@@ -44,21 +59,43 @@ data class VernissageExifDto(
     @SerialName("software") val software: String? = null
 )
 
-// --- MAPPING EXTENSIONS ---
-
 fun VernissageMediaAttachmentDto.toDomain(): MediaAttachment {
     return MediaAttachment(
         id = this.id,
         url = this.smallFile.url,
         previewUrl = this.smallFile.url,
-        meta = Meta(
-            original = Original(
-                aspect = this.smallFile.aspect
-            )
-        ),
+        metadata = this.metadata?.toDomain(),
         blurHash = this.blurHash,
         type = "",
         description = this.description,
-        license = null
+        license = null,
+        aspectRatio = this.smallFile.aspect,
+        location = this.location?.toDomain()
+    )
+}
+
+fun VernissageLocationDto.toDomain(): Place {
+    return Place(
+        country = this.country.name,
+        id = this.id,
+        name = this.name + " " + this.country.name,
+        slug = this.name + " " + this.country.name,
+        url = null
+    )
+}
+
+fun VernissageMetaDto.toDomain(): MediaMetadata {
+    return MediaMetadata(
+        createDate = this.exif?.createDate,
+        exposureTime = this.exif?.exposureTime,
+        fNumber = this.exif?.fNumber,
+        flash = this.exif?.flash,
+        focalLenIn35mmFilm = this.exif?.focalLenIn35mmFilm,
+        lens = this.exif?.lens,
+        make = this.exif?.make,
+        model = this.exif?.model,
+        photographicSensitivity = this.exif?.photographicSensitivity,
+        software = this.exif?.software,
+        focalLength = this.exif?.focalLength
     )
 }

@@ -1,8 +1,6 @@
 package com.daniebeler.pfpixelix.domain.service.pixelfed.model
 
 import com.daniebeler.pfpixelix.domain.model.MediaAttachment
-import com.daniebeler.pfpixelix.domain.model.Meta
-import com.daniebeler.pfpixelix.domain.model.Original
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -28,29 +26,17 @@ data class PixelfedOriginalDto(
     @SerialName("aspect") val aspect: Double
 )
 
-// --- MAPPING EXTENSIONS ---
-
 fun PixelfedMediaAttachmentDto.toDomain(): MediaAttachment {
     return MediaAttachment(
         id = this.id,
         url = this.url,
         previewUrl = this.previewUrl,
-        meta = this.meta?.toDomain(),
+        metadata = null,
         blurHash = this.blurHash,
         type = this.type,
         description = this.description,
-        license = this.license?.toDomain()
-    )
-}
-
-fun PixelfedMetaDto.toDomain(): Meta {
-    return Meta(
-        original = this.original?.toDomain()
-    )
-}
-
-fun PixelfedOriginalDto.toDomain(): Original {
-    return Original(
-        aspect = this.aspect
+        license = this.license?.toDomain(),
+        aspectRatio = this.meta?.original?.aspect,
+        location = null
     )
 }

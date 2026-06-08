@@ -73,7 +73,7 @@ fun VideoAttachment(
             player.toggleFullscreen()
         }) {
             VideoPlayerSurface(playerState = player, modifier = Modifier.fillMaxWidth().run {
-                val aspect = attachment.meta?.original?.aspect?.toFloat()
+                val aspect = attachment.aspectRatio?.toFloat()
                 if (aspect != null) aspectRatio(aspect) else this
             }.isVisible(threshold = 50) { videoFrameIsVisible = it }) {
                 Box(modifier = Modifier.fillMaxSize()) {

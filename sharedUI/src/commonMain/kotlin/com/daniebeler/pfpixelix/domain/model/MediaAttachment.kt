@@ -4,17 +4,25 @@ data class MediaAttachment(
     val id: String,
     val url: String?,
     val previewUrl: String,
-    val meta: Meta?,
+    val aspectRatio: Double?,
+    val metadata: MediaMetadata?,
     val blurHash: String?,
-    val type: String,
+    val type: String?,
     val description: String?,
-    val license: License?
+    val license: License?,
+    val location: Place?
 )
 
-data class Meta(
-    val original: Original?
-)
-
-data class Original(
-    val aspect: Double
+data class MediaMetadata(
+    val createDate: String?,
+    val exposureTime: String?,
+    val fNumber: String?,
+    val flash: String?,
+    val focalLenIn35mmFilm: String?,
+    val focalLength: String?,
+    val lens: String?,
+    val make: String?,
+    val model: String?,
+    val photographicSensitivity: String?,
+    val software: String?
 )

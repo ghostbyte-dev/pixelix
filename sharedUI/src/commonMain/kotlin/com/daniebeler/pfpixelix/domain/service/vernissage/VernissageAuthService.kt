@@ -12,6 +12,7 @@ import com.daniebeler.pfpixelix.domain.service.general.Session
 import com.daniebeler.pfpixelix.domain.service.platform.Platform
 import com.daniebeler.pfpixelix.domain.service.search.SavedSearchesService
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.JwtClaims
+import com.daniebeler.pfpixelix.domain.service.vernissage.model.toDomain
 import com.daniebeler.pfpixelix.ui.events.SystemUrlHandler
 import io.ktor.http.URLBuilder
 import io.ktor.http.Url
@@ -89,14 +90,14 @@ class VernissageAuthService(
             error("Invalid Token")
         }
 
-        val account = api.verify("Bearer ${tokenResponse.accessToken}", username)
-
+        val accountDto = api.verify("Bearer ${tokenResponse.accessToken}", username)
+        val account = accountDto.toDomain()
 
         val newCred = Credentials(
             accountId = requireNotNull(account.id),
             username = requireNotNull(account.username),
             displayName = account.displayname ?: account.username,
-            avatar = account.avatar ?: "",
+            avatar = account.avatar,
             serverUrl = serverUrl.toString(),
             token = tokenResponse.accessToken,
             refreshToken = tokenResponse.refreshToken,

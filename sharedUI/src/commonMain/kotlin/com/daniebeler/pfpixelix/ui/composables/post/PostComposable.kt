@@ -400,7 +400,7 @@ private fun PostSensitiveOverlay(post: Post, viewModel: PostViewModel, isMasonry
         modifier = Modifier.fillMaxWidth().zIndex(80f).clip(RoundedCornerShape(16.dp))
     ) {
         val blurHashBitmap = BlurHashDecoder.decode(post.mediaAttachments[0].blurHash)
-        val aspectRatio = post.mediaAttachments[0].meta?.original?.aspect?.toFloat() ?: 1.5f
+        val aspectRatio = post.mediaAttachments[0].aspectRatio?.toFloat() ?: 1.5f
 
         if (blurHashBitmap != null) {
             Image(
@@ -446,12 +446,12 @@ private fun PostMediaContent(
 ) {
     if (post.mediaAttachments.count() > 1) {
         val smallestAspectRatio = post.mediaAttachments.minByOrNull {
-            it.meta?.original?.aspect ?: 1.0
+            it.aspectRatio ?: 1.0
         }
         Box {
             HorizontalPager(
                 state = pagerState, pageSpacing = if (isMasonry) {4.dp} else {16.dp}, modifier = Modifier.zIndex(50f).aspectRatio(
-                    smallestAspectRatio?.meta?.original?.aspect?.toFloat() ?: 1f
+                    smallestAspectRatio?.aspectRatio?.toFloat() ?: 1f
                 )
             ) { page ->
                 Box(modifier = Modifier.zIndex(10f)) {
@@ -799,7 +799,7 @@ fun PostImage(
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier.aspectRatio(
-                    mediaAttachment.meta?.original?.aspect?.toFloat() ?: 1f
+                    mediaAttachment.aspectRatio?.toFloat() ?: 1f
                 )
             )
         }

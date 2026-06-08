@@ -5,6 +5,7 @@ import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedPostDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissagePostDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageResponse
 import de.jensklingenberg.ktorfit.http.GET
+import de.jensklingenberg.ktorfit.http.POST
 import de.jensklingenberg.ktorfit.http.Path
 import de.jensklingenberg.ktorfit.http.Query
 
@@ -29,22 +30,48 @@ interface VernissageApi {
     ): VernissageResponse<List<VernissagePostDto>>
 
     // Timelines
-    @GET("api/v1/timelines/tag/{tag}?_pe=1")
+    @GET("api/v1/timelines/tag/{tag}")
     suspend fun getHashtagTimeline(
         @Path("tag") tag: String,
         @Query("maxId") maxPostId: String? = null,
         @Query("limit") limit: Int
     ): VernissageResponse<List<VernissagePostDto>>
 
-    @GET("api/v1/timelines/public?local=true&_pe=1")
+    @GET("api/v1/timelines/public?onlyLocal=true")
     suspend fun getLocalTimeline(
         @Query("maxId") maxPostId: String? = null,
         @Query("limit") limit: Int = PixelfedApi.Companion.LOCAL_TIMELINE_POSTS_LIMIT
     ): VernissageResponse<List<VernissagePostDto>>
 
-    @GET("api/v1/timelines/public?remote=true&_pe=1")
+    @GET("api/v1/timelines/public?onlyLocal=false")
     suspend fun getGlobalTimeline(
         @Query("maxId") maxPostId: String? = null,
         @Query("limit") limit: Int = PixelfedApi.Companion.GLOBAL_TIMELINE_POSTS_LIMIT
     ): VernissageResponse<List<VernissagePostDto>>
+
+    @POST("api/v1/statuses/{id}/favourite")
+    suspend fun likePost(@Path("id") userId: String): VernissagePostDto
+
+    @POST("api/v1/statuses/{id}/unfavourite")
+    suspend fun unlikePost(
+        @Path("id") userId: String
+    ): VernissagePostDto
+
+    @POST("api/v1/statuses/{id}/bookmark")
+    suspend fun bookmarkPost(
+        @Path("id") userId: String
+    ): VernissagePostDto
+
+    @POST("api/v1/statuses/{id}/unbookmark")
+    suspend fun unbookmarkPost(
+        @Path("id") userId: String
+    ): VernissagePostDto
+
+    @POST("api/v1/statuses/{id}/reblog")
+    suspend fun reblogPost(@Path("id") userId: String): VernissagePostDto
+
+    @POST("api/v1/statuses/{id}/unreblog")
+    suspend fun unreblogPost(
+        @Path("id") userId: String
+    ): VernissagePostDto
 }

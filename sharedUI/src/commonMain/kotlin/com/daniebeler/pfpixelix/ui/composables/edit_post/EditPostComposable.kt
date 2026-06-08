@@ -438,7 +438,7 @@ fun ImagesPagerEditPost(
                     val type = image.type
 
                     if (image.url != null) {
-                        if (type.take(5) == "video") {
+                        if (type?.take(5) == "video") {
                             //todo KMP video
                             AsyncImage(
                                 model = image.url.toKmpUri().getPlatformUriObject(),

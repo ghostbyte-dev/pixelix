@@ -5,12 +5,14 @@ import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.model.AuthDataVernissage
 import com.daniebeler.pfpixelix.domain.model.AuthToken
 import com.daniebeler.pfpixelix.domain.model.AuthTokenVernissage
+import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageAccountDto
 import de.jensklingenberg.ktorfit.Ktorfit
 import de.jensklingenberg.ktorfit.http.Field
 import de.jensklingenberg.ktorfit.http.FormUrlEncoded
 import de.jensklingenberg.ktorfit.http.GET
 import de.jensklingenberg.ktorfit.http.Header
 import de.jensklingenberg.ktorfit.http.POST
+import de.jensklingenberg.ktorfit.http.Path
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.logging.LogLevel
@@ -72,8 +74,9 @@ interface VernissageAuthApi {
         @Field("grant_type") grantType: String
     ): AuthToken
 
-    @GET("api/v1/accounts/verify_credentials")
+    @GET("api/v1/users/{username}")
     suspend fun verify(
-        @Header("Authorization") token: String
-    ): Account
+        @Header("Authorization") token: String,
+        @Path("username") username: String
+    ): VernissageAccountDto
 }

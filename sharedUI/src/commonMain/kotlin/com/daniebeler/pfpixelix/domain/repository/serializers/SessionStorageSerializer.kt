@@ -3,6 +3,7 @@ package com.daniebeler.pfpixelix.domain.repository.serializers
 import androidx.datastore.core.okio.OkioSerializer
 import com.daniebeler.pfpixelix.domain.model.Credentials
 import com.daniebeler.pfpixelix.domain.model.SessionStorage
+import com.daniebeler.pfpixelix.domain.service.general.BackendType
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
@@ -59,7 +60,8 @@ object SessionStorageSerializer : OkioSerializer<SessionStorage> {
                         refreshToken = "",
                         clientId = "",
                         clientSecret = "",
-                        createdAt = ""
+                        createdAt = "",
+                        backendType = BackendType.PIXELFED
                     ))
                 }
                 val oldDataWithNewCredentials = OldSessionStorageWithNewCredentials(

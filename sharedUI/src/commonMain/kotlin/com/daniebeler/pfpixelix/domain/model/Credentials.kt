@@ -1,5 +1,6 @@
 package com.daniebeler.pfpixelix.domain.model
 
+import com.daniebeler.pfpixelix.domain.service.general.BackendType
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -13,7 +14,8 @@ data class Credentials(
     val refreshToken: String,
     val clientId: String,
     val clientSecret: String,
-    val createdAt: String
+    val createdAt: String,
+    val backendType: BackendType
 ) {
     fun key(): String {
         val cleanUrl =

@@ -12,6 +12,7 @@ import com.daniebeler.pfpixelix.domain.service.general.BackendType
 import com.daniebeler.pfpixelix.domain.service.general.Session
 import com.daniebeler.pfpixelix.domain.service.platform.Platform
 import com.daniebeler.pfpixelix.domain.service.search.SavedSearchesService
+import com.daniebeler.pfpixelix.domain.service.vernissage.model.JwtClaims
 import com.daniebeler.pfpixelix.ui.events.SystemUrlHandler
 import io.ktor.http.URLBuilder
 import io.ktor.http.Url
@@ -22,6 +23,8 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.json.Json
 import me.tatarka.inject.annotations.Inject
+import kotlin.io.encoding.Base64
+import kotlin.io.encoding.ExperimentalEncodingApi
 import kotlin.random.Random
 
 @Inject
@@ -33,7 +36,7 @@ class VernissageAuthService(
     private val savedSearchesService: SavedSearchesService,
     private val json: Json,
     private val platform: Platform
-): AuthService {
+) : AuthService {
     override val activeUser: Flow<String?> = session.credentials.map { it?.accountId }
 
     override suspend fun auth(host: String) {
@@ -72,30 +75,36 @@ class VernissageAuthService(
         val code = redirect.parameters["code"] ?: error("Redirect doesn't have a code")
 
         val clientId = authData.clientId
-        //val clientSecret = authData.clientSecret // This could be null depending on server config
 
-// 2. Invoke the token exchange method
         val tokenResponse = api.getToken(
             clientId = clientId,
-            clientSecret = "", // Safely pass empty string if the server skipped issuing a secret
-            code = code,                       // The temporary code extracted out of your browser redirect URL callback
-            redirectUri = redirectUrl,         // Must explicitly match the URI string used in Step 1
-            grantType = "authorization_code"   // String constant literal defined by standard OAuth spec
+            clientSecret = "",
+            code = code,
+            redirectUri = redirectUrl,
+            grantType = "authorization_code"
         )
 
-        val account = api.verify("Bearer ${tokenResponse.accessToken}")
+        val username = getUsernameFromToken(tokenResponse.accessToken)
+
+        if (username.isNullOrEmpty()) {
+            error("Invalid Token")
+        }
+
+        val account = api.verify("Bearer ${tokenResponse.accessToken}", username)
+
 
         val newCred = Credentials(
             accountId = requireNotNull(account.id),
             username = requireNotNull(account.username),
             displayName = account.displayname ?: account.username,
-            avatar = account.avatar,
+            avatar = account.avatar ?: "",
             serverUrl = serverUrl.toString(),
             token = tokenResponse.accessToken,
             refreshToken = tokenResponse.refreshToken,
             clientId = authData.clientId,
             clientSecret = "authData.clientSecret",
-            createdAt = "tokenResponse.createdAt"
+            createdAt = "tokenResponse.createdAt",
+            backendType = BackendType.VERNISSAGE
         )
         updateSession(newCred)
     }
@@ -127,7 +136,6 @@ class VernissageAuthService(
             }
         }
         session.setCredentials(resolvedCredentials)
-        session.setBackendType(BackendType.PIXELFED)
     }
 
 
@@ -169,5 +177,38 @@ class VernissageAuthService(
 
     override fun getCurrentSession(): Credentials? {
         return session.credentials.value
+    }
+
+
+    @OptIn(ExperimentalEncodingApi::class)
+    private fun decodeJwtClaims(token: String): JwtClaims? {
+        return try {
+            val parts = token.split(".")
+            if (parts.size != 3) return null
+
+            // JWT uses URL-safe Base64 without padding — fix it
+            val payload = parts[1]
+                .replace('-', '+')
+                .replace('_', '/')
+                .let {
+                    // Add padding if needed
+                    val pad = it.length % 4
+                    if (pad > 0) it + "=".repeat(4 - pad) else it
+                }
+
+            val decoded = Base64.decode(payload).decodeToString()
+
+            Json { ignoreUnknownKeys = true }.decodeFromString<JwtClaims>(decoded)
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    private fun getUsernameFromToken(token: String): String? {
+        val claims = decodeJwtClaims(token) ?: return null
+        return claims.userName
+            ?: claims.sub
+            ?: claims.email
+            ?: claims.name
     }
 }

@@ -4,6 +4,7 @@ import co.touchlab.kermit.Logger
 import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.model.AuthData
 import com.daniebeler.pfpixelix.domain.model.AuthToken
+import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedAccountDto
 import de.jensklingenberg.ktorfit.Ktorfit
 import de.jensklingenberg.ktorfit.http.Field
 import de.jensklingenberg.ktorfit.http.FormUrlEncoded
@@ -72,5 +73,5 @@ interface PixelfedAuthApi {
     @GET("api/v1/accounts/verify_credentials")
     suspend fun verify(
         @Header("Authorization") token: String
-    ): Account
+    ): PixelfedAccountDto
 }

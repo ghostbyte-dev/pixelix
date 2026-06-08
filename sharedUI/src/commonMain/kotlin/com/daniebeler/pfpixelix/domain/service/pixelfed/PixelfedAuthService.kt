@@ -13,6 +13,7 @@ import com.daniebeler.pfpixelix.domain.service.platform.Platform
 import com.daniebeler.pfpixelix.domain.service.search.SavedSearchesService
 import com.daniebeler.pfpixelix.domain.service.general.BackendType
 import com.daniebeler.pfpixelix.domain.service.general.Session
+import com.daniebeler.pfpixelix.domain.service.pixelfed.model.toDomain
 import com.daniebeler.pfpixelix.ui.events.SystemUrlHandler
 import io.ktor.http.URLBuilder
 import io.ktor.http.Url
@@ -66,8 +67,8 @@ class PixelfedAuthService(
             grantType
         )
 
-        val account = api.verify("Bearer ${token.accessToken}")
-
+        val accountDto = api.verify("Bearer ${token.accessToken}")
+        val account = accountDto.toDomain()
         val newCred = Credentials(
             accountId = requireNotNull(account.id),
             username = requireNotNull(account.username),
@@ -78,7 +79,8 @@ class PixelfedAuthService(
             refreshToken = token.refreshToken,
             clientId = authData.clientId,
             clientSecret = authData.clientSecret,
-            createdAt = token.createdAt
+            createdAt = token.createdAt,
+            backendType = BackendType.PIXELFED
         )
         updateSession(newCred)
     }
@@ -110,7 +112,6 @@ class PixelfedAuthService(
             }
         }
         session.setCredentials(resolvedCredentials)
-        session.setBackendType(BackendType.PIXELFED)
     }
 
 

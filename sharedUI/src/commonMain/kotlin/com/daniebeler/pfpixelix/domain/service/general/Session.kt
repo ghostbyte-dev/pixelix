@@ -30,6 +30,9 @@ class Session {
 
     fun setCredentials(credentials: Credentials?) {
         credentialsState.value = credentials
+        if (credentials != null) {
+            setBackendType(credentials.backendType)
+        }
     }
 
     fun setBackendType(backendType: BackendType) {

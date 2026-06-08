@@ -1,6 +1,7 @@
 package com.daniebeler.pfpixelix.domain.service.file
 
 import co.touchlab.kermit.Logger
+import com.daniebeler.pfpixelix.di.AppComponent
 import com.daniebeler.pfpixelix.utils.KmpContext
 import com.daniebeler.pfpixelix.utils.KmpUri
 import com.daniebeler.pfpixelix.utils.toPlatformFile
@@ -26,9 +27,11 @@ import me.tatarka.inject.annotations.Inject
 import okio.Path
 import okio.Path.Companion.toPath
 
+
+//TODO: Use other HttpClient (simple http client)
 @Inject
 class FileService(
-    private val httpClient: HttpClient
+    @AppComponent.PixelfedClient private val httpClient: HttpClient
 ) {
     companion object {
         val dataStoreDir = FileKit.filesDir.resolve("datastore")

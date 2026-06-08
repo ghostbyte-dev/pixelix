@@ -5,6 +5,7 @@ import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.repository.pixelfed.PixelfedApi
 import com.daniebeler.pfpixelix.domain.service.pixelfed.PixelfedTimelineService
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
+import com.daniebeler.pfpixelix.domain.service.vernissage.VernissageTimelineService
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import me.tatarka.inject.annotations.Inject
@@ -38,12 +39,12 @@ interface TimelineService {
 class TimelineServiceDelegate(
     private val session: Session,
     private val pixelfed: PixelfedTimelineService,
-    //private val vernissage: VernissageTimelineService
+    private val vernissage: VernissageTimelineService
 ) : TimelineService {
 
     private val current: TimelineService
-        get() = when (session.backendType) {
-           // BackendType.VERNISSAGE -> vernissage
+        get() = when (session.backendType.value) {
+            BackendType.VERNISSAGE -> vernissage
             else -> pixelfed
         }
 

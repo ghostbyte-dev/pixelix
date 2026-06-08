@@ -17,6 +17,9 @@ import kotlin.time.Instant
 object TimeAgo {
 
     suspend fun convertTimeToText(dataDate: String): String {
+        if (dataDate.isEmpty()) {
+            return ""
+        }
         var convTime = ""
         val suffix = getString(Res.string.ago)
 

@@ -12,7 +12,9 @@ import me.tatarka.inject.annotations.Inject
 
 
 interface TimelineService {
-    fun getHomeTimeline(maxPostId: String? = null, enableReblogs: Boolean = false): Flow<Resource<List<Post>>>
+    fun getHomeTimeline(
+        maxPostId: String? = null, enableReblogs: Boolean = false
+    ): Flow<Resource<List<Post>>>
 
     fun getLocalTimeline(maxPostId: String? = null): Flow<Resource<List<Post>>>
 
@@ -24,14 +26,15 @@ interface TimelineService {
         limit: Int = PixelfedApi.HASHTAG_TIMELINE_POSTS_LIMIT
     ): Flow<Resource<List<Post>>>
 
-    fun Flow<Resource<List<Post>>>.filterSensitive(hideSensitiveContent: Boolean) = this.map { event ->
-        if (event is Resource.Success<List<Post>>) {
-            val filtered = event.data.filter { !(hideSensitiveContent && it.sensitive) }
-            Resource.Success(filtered)
-        } else {
-            event
+    fun Flow<Resource<List<Post>>>.filterSensitive(hideSensitiveContent: Boolean) =
+        this.map { event ->
+            if (event is Resource.Success<List<Post>>) {
+                val filtered = event.data.filter { !(hideSensitiveContent && it.sensitive) }
+                Resource.Success(filtered)
+            } else {
+                event
+            }
         }
-    }
 }
 
 @Inject
@@ -48,15 +51,14 @@ class TimelineServiceDelegate(
             else -> pixelfed
         }
 
-    override fun getHomeTimeline(maxPostId: String?, enableReblogs: Boolean) = current.getHomeTimeline(maxPostId, enableReblogs)
+    override fun getHomeTimeline(maxPostId: String?, enableReblogs: Boolean) =
+        current.getHomeTimeline(maxPostId, enableReblogs)
 
     override fun getLocalTimeline(maxPostId: String?) = current.getLocalTimeline(maxPostId)
 
     override fun getGlobalTimeline(maxPostId: String?) = current.getGlobalTimeline(maxPostId)
 
     override fun getHashtagTimeline(
-        hashtag: String,
-        maxId: String?,
-        limit: Int
+        hashtag: String, maxId: String?, limit: Int
     ) = current.getHashtagTimeline(hashtag, maxId, limit)
 }

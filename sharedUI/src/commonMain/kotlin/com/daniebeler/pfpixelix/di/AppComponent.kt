@@ -204,6 +204,18 @@ abstract class AppComponent(
             .build()
             .createPixelfedApi()
 
+
+    // TODO eigener http client für vernissage
+    @Provides
+    @AppSingleton
+    fun provideVernissageApi(client: HttpClient): VernissageApi =
+        Ktorfit.Builder()
+            .converterFactories(CallConverterFactory())
+            .httpClient(client)
+            .baseUrl("https://err.or/")
+            .build()
+            .createVernissageApi()
+
     @Provides
     @AppSingleton
     @VernissageClient

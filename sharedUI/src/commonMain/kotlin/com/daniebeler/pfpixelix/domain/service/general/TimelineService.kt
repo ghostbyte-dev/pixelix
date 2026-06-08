@@ -5,13 +5,16 @@ import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.repository.pixelfed.PixelfedApi
 import com.daniebeler.pfpixelix.domain.service.pixelfed.PixelfedTimelineService
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
+import com.daniebeler.pfpixelix.domain.service.vernissage.VernissageTimelineService
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import me.tatarka.inject.annotations.Inject
 
 
 interface TimelineService {
-    fun getHomeTimeline(maxPostId: String? = null, enableReblogs: Boolean = false): Flow<Resource<List<Post>>>
+    fun getHomeTimeline(
+        maxPostId: String? = null, enableReblogs: Boolean = false
+    ): Flow<Resource<List<Post>>>
 
     fun getLocalTimeline(maxPostId: String? = null): Flow<Resource<List<Post>>>
 
@@ -23,14 +26,15 @@ interface TimelineService {
         limit: Int = PixelfedApi.HASHTAG_TIMELINE_POSTS_LIMIT
     ): Flow<Resource<List<Post>>>
 
-    fun Flow<Resource<List<Post>>>.filterSensitive(hideSensitiveContent: Boolean) = this.map { event ->
-        if (event is Resource.Success<List<Post>>) {
-            val filtered = event.data.filter { !(hideSensitiveContent && it.sensitive) }
-            Resource.Success(filtered)
-        } else {
-            event
+    fun Flow<Resource<List<Post>>>.filterSensitive(hideSensitiveContent: Boolean) =
+        this.map { event ->
+            if (event is Resource.Success<List<Post>>) {
+                val filtered = event.data.filter { !(hideSensitiveContent && it.sensitive) }
+                Resource.Success(filtered)
+            } else {
+                event
+            }
         }
-    }
 }
 
 @Inject
@@ -38,24 +42,23 @@ interface TimelineService {
 class TimelineServiceDelegate(
     private val session: Session,
     private val pixelfed: PixelfedTimelineService,
-    //private val vernissage: VernissageTimelineService
+    private val vernissage: VernissageTimelineService
 ) : TimelineService {
 
     private val current: TimelineService
-        get() = when (session.backendType) {
-           // BackendType.VERNISSAGE -> vernissage
+        get() = when (session.backendType.value) {
+            BackendType.VERNISSAGE -> vernissage
             else -> pixelfed
         }
 
-    override fun getHomeTimeline(maxPostId: String?, enableReblogs: Boolean) = current.getHomeTimeline(maxPostId, enableReblogs)
+    override fun getHomeTimeline(maxPostId: String?, enableReblogs: Boolean) =
+        current.getHomeTimeline(maxPostId, enableReblogs)
 
     override fun getLocalTimeline(maxPostId: String?) = current.getLocalTimeline(maxPostId)
 
     override fun getGlobalTimeline(maxPostId: String?) = current.getGlobalTimeline(maxPostId)
 
     override fun getHashtagTimeline(
-        hashtag: String,
-        maxId: String?,
-        limit: Int
+        hashtag: String, maxId: String?, limit: Int
     ) = current.getHashtagTimeline(hashtag, maxId, limit)
 }

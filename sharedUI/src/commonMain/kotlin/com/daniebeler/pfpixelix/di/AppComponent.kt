@@ -16,6 +16,8 @@ import com.daniebeler.pfpixelix.domain.repository.pixelfed.PixelfedApi
 import com.daniebeler.pfpixelix.domain.repository.pixelfed.createPixelfedApi
 import com.daniebeler.pfpixelix.domain.repository.serializers.SavedSearchesSerializer
 import com.daniebeler.pfpixelix.domain.repository.serializers.SessionStorageSerializer
+import com.daniebeler.pfpixelix.domain.repository.vernissage.VernissageApi
+import com.daniebeler.pfpixelix.domain.repository.vernissage.createVernissageApi
 import com.daniebeler.pfpixelix.domain.service.file.FileService
 import com.daniebeler.pfpixelix.domain.service.file.toOkIoPath
 import com.daniebeler.pfpixelix.domain.service.general.AccountService
@@ -190,6 +192,18 @@ abstract class AppComponent(
             .baseUrl("https://err.or/")
             .build()
             .createPixelfedApi()
+
+
+    // TODO eigener http client für vernissage
+    @Provides
+    @AppSingleton
+    fun provideVernissageApi(client: HttpClient): VernissageApi =
+        Ktorfit.Builder()
+            .converterFactories(CallConverterFactory())
+            .httpClient(client)
+            .baseUrl("https://err.or/")
+            .build()
+            .createVernissageApi()
 
     @Provides
     @AppSingleton

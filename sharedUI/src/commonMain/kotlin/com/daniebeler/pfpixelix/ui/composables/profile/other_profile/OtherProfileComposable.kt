@@ -128,9 +128,9 @@ import pixelix.app.generated.resources.unmute_this_profile
 @Composable
 fun OtherProfileComposable(
     navController: NavController,
-    userId: String,
-    byUsername: String?,
-    viewModel: OtherProfileViewModel = injectViewModel(key = "other-profile$userId$byUsername") { otherProfileViewModel }
+    userId: String?,
+    username: String?,
+    viewModel: OtherProfileViewModel = injectViewModel(key = "other-profile$userId$username") { otherProfileViewModel }
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
@@ -145,12 +145,8 @@ fun OtherProfileComposable(
     var showBlockAlert by remember { mutableStateOf(false) }
     var showUnBlockAlert by remember { mutableStateOf(false) }
 
-    LaunchedEffect(userId) {
-        if (userId != "") {
-            viewModel.loadData(userId, false, navController)
-        } else {
-            viewModel.loadDataByUsername(byUsername!!, false, navController)
-        }
+    LaunchedEffect(userId, username) {
+        viewModel.loadData(userId, username, false, navController)
     }
 
     Scaffold(
@@ -207,7 +203,7 @@ fun OtherProfileComposable(
         Box(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
             CustomPullToRefreshBox(
                 isRefreshing = viewModel.accountState.refreshing || viewModel.postsState.refreshing,
-                onRefresh = { viewModel.loadData(userId, true, navController) },
+                onRefresh = { viewModel.loadData(userId, username,true, navController) },
                 modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)
             ) {
 
@@ -516,7 +512,6 @@ fun OtherProfileComposable(
             ErrorComposableDialog(
                 errorMessage = viewModel.relationshipState.error, onDismiss = {
                     viewModel.relationshipState = viewModel.relationshipState.copy(error = "")
-                    viewModel.getRelationship(userId)
                     showBottomSheet = false
                 })
             ErrorComposableDialog(

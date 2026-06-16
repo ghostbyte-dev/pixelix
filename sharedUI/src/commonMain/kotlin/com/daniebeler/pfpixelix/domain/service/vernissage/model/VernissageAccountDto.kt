@@ -7,8 +7,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class VernissageAccountDto(
-    @SerialName("id") val id: String = "",
-    @SerialName("username") val username: String = "",
+    @SerialName("id") val id: String,
+    @SerialName("userName") val username: String,
     @SerialName("account") val account: String = "",
     @SerialName("name") val displayname: String? = null,
     @SerialName("avatar") val avatar: String? = "",

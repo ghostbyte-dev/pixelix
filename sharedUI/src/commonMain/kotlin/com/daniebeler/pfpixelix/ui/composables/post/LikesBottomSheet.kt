@@ -89,7 +89,7 @@ private fun LikedByAccountElement(account: Account, navController: NavController
             .padding(horizontal = 12.dp, vertical = 8.dp)
             .fillMaxWidth()
             .clickable {
-                navController.navigate(Destination.Profile(account.id))
+                navController.navigate(Destination.Profile(account.id, account.username))
             }, verticalAlignment = Alignment.CenterVertically
     ) {
         AsyncImage(

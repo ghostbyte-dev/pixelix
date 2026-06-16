@@ -120,7 +120,7 @@ fun AboutInstanceComposable(
 
                         Row(
                             modifier = Modifier.clickable {
-                                navController.navigate(Destination.Profile(account.id))
+                                navController.navigate(Destination.Profile(account.id, account.username))
                             }.padding(horizontal = 12.dp, vertical = 8.dp).fillMaxWidth(),
                             verticalAlignment = Alignment.CenterVertically
                         ) {

@@ -39,7 +39,7 @@ fun CustomBlockedAccountRow(
     ) {
 
         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.clickable {
-            navController.navigate(Destination.Profile(account.id))
+            navController.navigate(Destination.Profile(account.id, account.username))
         }) {
             AsyncImage(
                 model = account.avatar,

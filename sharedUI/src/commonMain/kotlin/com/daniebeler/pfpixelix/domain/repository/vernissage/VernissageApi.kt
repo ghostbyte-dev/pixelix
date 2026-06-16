@@ -73,4 +73,11 @@ interface VernissageApi {
     suspend fun unreblogPost(
         @Path("id") userId: String
     ): VernissagePostDto
+
+    @GET("api/v1/users/{userName}/statuses")
+    suspend fun getPostsByAccount(
+        @Path("userName") userName: String,
+        @Query("maxId") maxPostId: String? = null,
+        @Query("limit") limit: Int = PixelfedApi.Companion.GLOBAL_TIMELINE_POSTS_LIMIT
+    ): VernissagePaginatedResponse<List<VernissagePostDto>>
 }

@@ -75,7 +75,7 @@ sealed interface Destination {
     @Serializable data object FollowedHashtags : Destination
     @Serializable data object AboutInstance : Destination
     @Serializable data object AboutPixelix : Destination
-    @Serializable data class Profile(val userId: String) : Destination
+    @Serializable data class Profile(val userId: String?, val username: String?) : Destination
     @Serializable data class ProfileByUsername(val userName: String) : Destination
     @Serializable data object FirstLogin : Destination
     @Serializable data object NewLogin : Destination
@@ -195,12 +195,12 @@ private fun NavGraphBuilder.tabGraph(
 
     composable<Destination.Profile> { navBackStackEntry ->
         val args = navBackStackEntry.toRoute<Destination.Profile>()
-        OtherProfileComposable(navController, userId = args.userId, byUsername = null)
+        OtherProfileComposable(navController, userId = args.userId, username = args.username)
     }
 
     composable<Destination.ProfileByUsername> { navBackStackEntry ->
         val args = navBackStackEntry.toRoute<Destination.ProfileByUsername>()
-        OtherProfileComposable(navController, userId = "", byUsername = args.userName)
+        OtherProfileComposable(navController, userId = null, username = args.userName)
     }
 
     composable<Destination.Hashtag> { navBackStackEntry ->

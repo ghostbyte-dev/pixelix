@@ -17,6 +17,7 @@ import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.domain.service.utils.loadListResources
 import com.daniebeler.pfpixelix.domain.service.utils.loadResource
+import com.daniebeler.pfpixelix.domain.service.utils.loadVernissagePaginatedListResources
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.toDomain
 import com.daniebeler.pfpixelix.utils.executeAndParsePagination
 import kotlinx.coroutines.flow.Flow
@@ -67,24 +68,23 @@ class VernissagePostService(
 
     override fun getOwnPosts(
         maxPostId: String?, limit: Int
-    ): Flow<Resource<List<Post>>> {
+    ): Flow<Resource<PaginatedResponse<List<Post>>>> {
         val current = authService.getCurrentSession()
         return if (current == null) {
             flowOf(Resource.Error("No account found"))
         } else {
-            getPostsByAccountId(current.accountId, maxPostId, limit)
+            getPostsByAccountId(current.username, maxPostId, limit)
         }
     }
 
     override fun getPostsOfAccount(
-        accountId: String, maxPostId: String?, limit: Int
-    ) = getPostsByAccountId(accountId, maxPostId, limit).filterSensitive()
+        accountId: String, username: String, maxPostId: String?, limit: Int
+    ) = getPostsByAccountId(username, maxPostId, limit).filterSensitive(prefs.hideSensitiveContent)
 
     private fun getPostsByAccountId(
-        accountId: String, maxPostId: String?, limit: Int
-    ) = loadListResources<Post> {
-        //api.getPostsByAccountId(accountId, maxPostId, limit).map { it.toDomain() }
-        emptyList()
+        identifier: String, maxPostId: String?, limit: Int
+    ) = loadVernissagePaginatedListResources {
+        api.getPostsByAccount(identifier, maxPostId, limit)
     }
 
     override fun getLikedPosts(maxId: String?) = flow {
@@ -168,16 +168,8 @@ class VernissagePostService(
     override fun getTrendingPosts(range: String) = loadListResources {
         //api.getTrendingPosts(range).map { it.toDomain() }
         emptyList<Post>()
-    }.filterSensitive()
-
-    private fun Flow<Resource<List<Post>>>.filterSensitive() = this.map { event ->
-        if (event is Resource.Success<List<Post>>) {
-            val hideSensitiveContent = prefs.hideSensitiveContent
-            val filtered = event.data.filter { !(hideSensitiveContent && it.sensitive) }
-            Resource.Success(filtered)
-        } else {
-            event
-        }
     }
+    // }.filterSensitive()
+
 
 }

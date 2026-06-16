@@ -273,7 +273,7 @@ private fun ReplyElement(
                 model = reply.account.avatar,
                 contentDescription = "",
                 modifier = Modifier.height(42.dp).width(42.dp).clip(CircleShape).clickable {
-                    navController.navigate(Destination.Profile(reply.account.id))
+                    navController.navigate(Destination.Profile(reply.account.id, reply.account.username))
                 })
 
             Spacer(modifier = Modifier.width(12.dp))
@@ -287,7 +287,7 @@ private fun ReplyElement(
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         modifier = Modifier.clickable {
-                            navController.navigate(Destination.Profile(reply.account.id))
+                            navController.navigate(Destination.Profile(reply.account.id, reply.account.username))
                         })
 
                     Text(

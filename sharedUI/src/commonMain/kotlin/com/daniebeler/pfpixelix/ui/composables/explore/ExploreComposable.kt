@@ -318,7 +318,7 @@ private fun PastSearchItem(
             .fillMaxWidth()
             .clickable {
                 when (item.savedSearchType) {
-                    SavedSearchType.Account -> navController.navigate(Destination.Profile(item.account!!.id))
+                    SavedSearchType.Account -> navController.navigate(Destination.Profile(item.account?.id, item.account?.username))
 
                     SavedSearchType.Hashtag -> navController.navigate(Destination.HashtagTimeline(item.value))
 

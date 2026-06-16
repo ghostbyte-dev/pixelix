@@ -12,6 +12,7 @@ import com.daniebeler.pfpixelix.domain.service.pixelfed.model.toDomain
 import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.domain.service.utils.loadListResources
+import com.daniebeler.pfpixelix.domain.service.utils.loadPaginatedListResources
 import com.daniebeler.pfpixelix.domain.service.utils.loadResource
 import com.daniebeler.pfpixelix.utils.executeAndParsePagination
 import kotlinx.coroutines.flow.Flow
@@ -34,7 +35,7 @@ class PixelfedPostService(
 
     override fun getOwnPosts(
         maxPostId: String?, limit: Int
-    ): Flow<Resource<List<Post>>> {
+    ): Flow<Resource<PaginatedResponse<List<Post>>>> {
         val current = authService.getCurrentSession()
         return if (current == null) {
             flowOf(Resource.Error("No account found"))
@@ -44,12 +45,12 @@ class PixelfedPostService(
     }
 
     override fun getPostsOfAccount(
-        accountId: String, maxPostId: String?, limit: Int
-    ) = getPostsByAccountId(accountId, maxPostId, limit).filterSensitive()
+        accountId: String, username: String, maxPostId: String?, limit: Int
+    ) = getPostsByAccountId(accountId, maxPostId, limit).filterSensitive(prefs.hideSensitiveContent)
 
     private fun getPostsByAccountId(
         accountId: String, maxPostId: String?, limit: Int
-    ) = loadListResources<Post> {
+    ) = loadPaginatedListResources<Post> {
         api.getPostsByAccountId(accountId, maxPostId, limit).map { it.toDomain() }
     }
 

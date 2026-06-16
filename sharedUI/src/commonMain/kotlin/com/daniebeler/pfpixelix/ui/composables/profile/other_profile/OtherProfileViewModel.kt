@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.repository.pixelfed.PixelfedApi
+import com.daniebeler.pfpixelix.domain.service.capabilities.Capabilities
 import com.daniebeler.pfpixelix.domain.service.general.CollectionService
 import com.daniebeler.pfpixelix.domain.service.general.AccountService
 import com.daniebeler.pfpixelix.domain.service.general.AuthService
@@ -40,6 +41,7 @@ class OtherProfileViewModel(
     private val authService: AuthService
 ) : ViewModel() {
     var userId: String = ""
+    var username: String = ""
     var accountState by mutableStateOf(AccountState())
     var relationshipState by mutableStateOf(RelationshipState())
     var mutualFollowersState by mutableStateOf(MutualFollowersState())
@@ -50,22 +52,40 @@ class OtherProfileViewModel(
     var domain by mutableStateOf("")
     var view by mutableStateOf(ViewEnum.Grid)
 
-    fun loadData(_userId: String, refreshing: Boolean, navController: NavController) {
-        val myAccountId = authService.getCurrentSession()!!.accountId
+    fun loadData(
+        userId: String?,
+        username: String?,
+        refreshing: Boolean,
+        navController: NavController
+    ) {
+        if (username == null) {
+            //TODO: only return if pixelfed
+            return
+        }
+        if (userId == null) {
+            loadDataByUsername(username, false, navController)
+            //TODO: if vernissage, just do normal (normal for getting account and posts)
+            return
+        }
+        val credentials = authService.getCurrentSession()
 
-        if (_userId == myAccountId) {
+        val myAccountId = credentials?.accountId
+        val myUsername = credentials?.username
+
+        if (userId == myAccountId || userId == myUsername) {
             navController.popBackStack()
             navController.navigate(Destination.OwnProfile)
         }
 
-        userId = _userId
-        getAccount(userId, refreshing)
+        this.userId = userId
+        this.username = username
+        getAccount(userId, username, refreshing)
         loadDataExceptAccount(refreshing)
 
     }
 
     private fun loadDataExceptAccount(refreshing: Boolean) {
-        getPostsFirstLoad(userId, refreshing)
+        getPostsFirstLoad(userId, username, refreshing)
 
         getRelationship(userId)
 
@@ -135,7 +155,7 @@ class OtherProfileViewModel(
         }.launchIn(viewModelScope)
     }
 
-    private fun getAccount(userId: String, refreshing: Boolean) {
+    private fun getAccount(userId: String, username: String, refreshing: Boolean) {
         accountService.getAccount(userId).onEach { result ->
             accountState = when (result) {
                 is Resource.Success -> {
@@ -228,15 +248,19 @@ class OtherProfileViewModel(
         }.launchIn(viewModelScope)
     }
 
-    private fun getPostsFirstLoad(userId: String, refreshing: Boolean) {
+    private fun getPostsFirstLoad(userId: String, username: String, refreshing: Boolean) {
         if (postsState.posts.isNotEmpty() && !refreshing) {
             return
         }
-        postService.getPostsOfAccount(userId).onEach { result ->
+        postService.getPostsOfAccount(userId, username).onEach { result ->
             postsState = when (result) {
                 is Resource.Success -> {
-                    val endReached = (result.data?.size ?: 0) < PixelfedApi.PROFILE_POSTS_LIMIT
-                    PostsState(posts = result.data ?: emptyList(), endReached = endReached)
+                    val endReached = (result.data.data.size) < PixelfedApi.PROFILE_POSTS_LIMIT
+                    PostsState(
+                        posts = result.data.data,
+                        endReached = endReached,
+                        nextId = result.data.next
+                    )
                 }
 
                 is Resource.Error -> {
@@ -244,7 +268,12 @@ class OtherProfileViewModel(
                 }
 
                 is Resource.Loading -> {
-                    PostsState(isLoading = true, posts = postsState.posts, refreshing = refreshing)
+                    PostsState(
+                        isLoading = true,
+                        posts = postsState.posts,
+                        refreshing = refreshing,
+                        nextId = postsState.nextId
+                    )
                 }
             }
         }.launchIn(viewModelScope)
@@ -252,22 +281,27 @@ class OtherProfileViewModel(
 
     fun getPostsPaginated(userId: String) {
         if (postsState.posts.isNotEmpty() && !postsState.isLoading && !postsState.endReached) {
-            postService.getPostsOfAccount(userId, postsState.posts.last().id).onEach { result ->
+            postService.getPostsOfAccount(userId, username, postsState.nextId).onEach { result ->
                 postsState = when (result) {
                     is Resource.Success -> {
-                        val endReached = (result.data?.size ?: 0) < PixelfedApi.PROFILE_POSTS_LIMIT
+                        val endReached = (result.data.data.size) < PixelfedApi.PROFILE_POSTS_LIMIT
                         PostsState(
-                            posts = postsState.posts + (result.data ?: emptyList()),
-                            endReached = endReached
+                            posts = postsState.posts + (result.data.data),
+                            endReached = endReached,
+                            nextId = result.data.next
                         )
                     }
 
                     is Resource.Error -> {
-                        PostsState(error = result.message ?: "An unexpected error occurred")
+                        PostsState(error = result.message)
                     }
 
                     is Resource.Loading -> {
-                        PostsState(isLoading = true, posts = postsState.posts)
+                        PostsState(
+                            isLoading = true,
+                            posts = postsState.posts,
+                            nextId = postsState.nextId
+                        )
                     }
                 }
             }.launchIn(viewModelScope)

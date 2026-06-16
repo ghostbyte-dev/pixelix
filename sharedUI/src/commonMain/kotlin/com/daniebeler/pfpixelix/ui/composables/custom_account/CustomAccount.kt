@@ -56,7 +56,7 @@ fun CustomAccount(
         showFollowers = showFollowers,
         modifier = Modifier.clickable {
             onClick()
-            navController.navigate(Destination.Profile(account.id))
+            navController.navigate(Destination.Profile(account.id, account.username))
         }
     ) {
         FollowButton(

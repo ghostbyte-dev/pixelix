@@ -164,12 +164,13 @@ class CollectionViewModel @Inject constructor(
         postService.getOwnPosts().onEach { result ->
             when (result) {
                 is Resource.Success -> {
-                    val endReached = (result.data.size) < PixelfedApi.PROFILE_POSTS_LIMIT
+                    val endReached = (result.data.data.size) < PixelfedApi.PROFILE_POSTS_LIMIT
 
                     editState = editState.copy(
-                        allPosts = result.data,
+                        allPosts = result.data.data,
                         isAllPostsEndReached = endReached,
-                        isAllPostsLoading = false
+                        isAllPostsLoading = false,
+                        nextId = result.data.next
                     )
                 }
 
@@ -186,16 +187,17 @@ class CollectionViewModel @Inject constructor(
 
     fun getPostsExceptCollectionPaginated() {
         if (!editState.isAllPostsLoading && editState.allPosts.isNotEmpty() && !editState.isAllPostsEndReached) {
-            postService.getOwnPosts(editState.allPosts.last().id).onEach { result ->
+            postService.getOwnPosts(editState.nextId).onEach { result ->
                 when (result) {
                     is Resource.Success -> {
-                        val endReached = (result.data.size) < PixelfedApi.PROFILE_POSTS_LIMIT
+                        val endReached = (result.data.data.size) < PixelfedApi.PROFILE_POSTS_LIMIT
 
                         editState = editState.copy(
-                            allPosts = editState.allPosts + result.data,
+                            allPosts = editState.allPosts + result.data.data,
                             isAllPostsEndReached = endReached,
                             isAllPostsLoading = false,
-                            errorAllPosts = ""
+                            errorAllPosts = "",
+                            nextId = result.data.next
                         )
                     }
 

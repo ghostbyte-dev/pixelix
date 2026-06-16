@@ -283,7 +283,7 @@ private fun PostHeader(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(6.dp),
             modifier = Modifier.padding(start = 16.dp, end = 12.dp).clickable {
-                navController.navigate(Destination.Profile(reblogAccount.id))
+                navController.navigate(Destination.Profile(reblogAccount.id, reblogAccount.username))
             }) {
             Icon(
                 vectorResource(Res.drawable.repost),
@@ -301,7 +301,7 @@ private fun PostHeader(
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.padding(start = 16.dp, end = 12.dp).clickable {
-            navController.navigate(Destination.Profile(post.account.id))
+            navController.navigate(Destination.Profile(post.account.id, post.account.username))
         }) {
         AsyncImage(
             model = post.account.avatar,
@@ -691,7 +691,7 @@ private fun PostLikedByRow(
             fontSize = 14.sp,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.clickable {
-                navController.navigate(Destination.Profile(post.likedBy.id))
+                navController.navigate(Destination.Profile(post.likedBy.id, post.likedBy.username))
             })
         if (post.favouritesCount > 1) {
             Text(text = " ${stringResource(Res.string.and)} ", fontSize = 14.sp)

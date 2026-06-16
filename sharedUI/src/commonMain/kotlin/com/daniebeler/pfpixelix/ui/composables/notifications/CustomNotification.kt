@@ -96,7 +96,7 @@ fun CustomNotification(
                 } else if (notification.post != null && notification.post.mediaAttachments.isNotEmpty()) {
                     navController.navigate(Destination.Post(notification.post.id))
                 } else if (notification.post == null) {
-                    navController.navigate(Destination.Profile(notification.account.id))
+                    navController.navigate(Destination.Profile(notification.account.id, notification.account.username))
                 }
             }, verticalAlignment = Alignment.CenterVertically
     ) {
@@ -105,7 +105,7 @@ fun CustomNotification(
             error = painterResource(Res.drawable.default_avatar),
             contentDescription = "",
             modifier = Modifier.height(46.dp).width(46.dp).clip(CircleShape).clickable {
-                    navController.navigate(Destination.Profile(notification.account.id))
+                    navController.navigate(Destination.Profile(notification.account.id, notification.account.username))
                 })
         Spacer(modifier = Modifier.width(10.dp))
         Column(Modifier.weight(1f)) {
@@ -133,7 +133,8 @@ fun CustomNotification(
                         tag = "username", start = offset, end = offset
                     ).firstOrNull()?.let { annotation ->
                             if (annotation.tag == "username") {
-                                navController.navigate(Destination.Profile(annotation.item))
+                                //TODO: check if this is correct
+                                navController.navigate(Destination.Profile(annotation.item, notification.account.username))
                             }
                         } ?: kotlin.run {
                         if (notification.post != null && notification.post.mediaAttachments.isEmpty()) {
@@ -141,7 +142,7 @@ fun CustomNotification(
                         } else if (notification.post != null && notification.post.mediaAttachments.isNotEmpty()) {
                             navController.navigate(Destination.Post(notification.post.id))
                         } else if (notification.post == null) {
-                            navController.navigate(Destination.Profile(notification.account.id))
+                            navController.navigate(Destination.Profile(notification.account.id, notification.account.username))
                         }
                     }
                 })

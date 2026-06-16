@@ -12,6 +12,7 @@ import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.domain.service.vernissage.VernissagePostService
 import com.daniebeler.pfpixelix.domain.service.vernissage.VernissageTimelineService
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import me.tatarka.inject.annotations.Inject
 
 interface PostService {
@@ -19,11 +20,24 @@ interface PostService {
 
     fun getOwnPosts(
         maxPostId: String? = null, limit: Int = PixelfedApi.PROFILE_POSTS_LIMIT
-    ): Flow<Resource<List<Post>>>
+    ): Flow<Resource<PaginatedResponse<List<Post>>>>
 
+    /**
+     * Fetches a paginated list of posts belonging to a specific account.
+     *
+     * @param identifier The account identifier. For **Vernissage**, this must be the account's
+     * **username** (e.g., "username"). For **Pixelfed**, this must be the
+     * unique **account ID** (e.g., "12345").
+     * @param maxPostId Optional ID cursor used to fetch the next page of results for pagination.
+     * If null, fetches the most recent posts (first page).
+     * @param limit The maximum number of posts to retrieve in a single network request.
+     * Defaults to [PixelfedApi.PROFILE_POSTS_LIMIT].
+     * @return A [Flow] streaming the [Resource] state, wrapping a [PaginatedResponse]
+     * containing the list of domain [Post] objects.
+     */
     fun getPostsOfAccount(
-        accountId: String, maxPostId: String? = null, limit: Int = PixelfedApi.PROFILE_POSTS_LIMIT
-    ): Flow<Resource<List<Post>>>
+        accountId: String, username: String, maxPostId: String? = null, limit: Int = PixelfedApi.PROFILE_POSTS_LIMIT
+    ): Flow<Resource<PaginatedResponse<List<Post>>>>
 
     fun getLikedPosts(maxId: String? = null): Flow<Resource<PaginatedResponse<List<Post>>>>
 
@@ -50,6 +64,15 @@ interface PostService {
 
     fun getTrendingPosts(range: String): Flow<Resource<List<Post>>>
 
+    fun Flow<Resource<PaginatedResponse<List<Post>>>>.filterSensitive(hideSensitiveContent: Boolean) =
+        this.map { event ->
+            if (event is Resource.Success<PaginatedResponse<List<Post>>>) {
+                val filtered = event.data.data.filter { !(hideSensitiveContent && it.sensitive) }
+                Resource.Success(event.data.copy(data = filtered))
+            } else {
+                event
+            }
+        }
 }
 
 @Inject
@@ -70,11 +93,11 @@ class PostServiceDelegate(
 
     override fun getOwnPosts(
         maxPostId: String?, limit: Int
-    ): Flow<Resource<List<Post>>> = current.getOwnPosts(maxPostId, limit)
+    ): Flow<Resource<PaginatedResponse<List<Post>>>> = current.getOwnPosts(maxPostId, limit)
 
     override fun getPostsOfAccount(
-        accountId: String, maxPostId: String?, limit: Int
-    ): Flow<Resource<List<Post>>> = current.getPostsOfAccount(accountId, maxPostId, limit)
+        accountId: String, username: String, maxPostId: String?, limit: Int
+    ): Flow<Resource<PaginatedResponse<List<Post>>>> = current.getPostsOfAccount(accountId, username, maxPostId, limit)
 
     override fun getLikedPosts(maxId: String?): Flow<Resource<PaginatedResponse<List<Post>>>> =
         current.getLikedPosts(maxId)

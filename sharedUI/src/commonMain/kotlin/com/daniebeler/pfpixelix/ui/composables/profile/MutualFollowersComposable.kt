@@ -65,57 +65,66 @@ fun MutualFollowersComposable(
         val annotatedString = buildAnnotatedString {
             withStyle(style = normalStyle) {
                 append(stringResource(Res.string.followed_by) + " ")
+                val firstFollower = mutualFollowersState.mutualFollowers.first()
                 withStyle(style = boldStyle) {
                     pushStringAnnotation(
                         tag = "account",
-                        annotation = mutualFollowersState.mutualFollowers.first().id
+                        annotation = "${firstFollower.id}|${firstFollower.username}"
                     )
-                    append(mutualFollowersState.mutualFollowers.first().username)
+                    append(firstFollower.username)
                     pop()
                 }
 
                 if (listSize == 2) {
+                    val secondFollower = mutualFollowersState.mutualFollowers[1]
+
                     append(" " + stringResource(Res.string.and) + " ")
                     withStyle(style = boldStyle) {
                         pushStringAnnotation(
                             tag = "account",
-                            annotation = mutualFollowersState.mutualFollowers[1].id
+                            annotation = "${secondFollower.id}|${secondFollower.username}"
                         )
-                        append(mutualFollowersState.mutualFollowers[1].username)
+                        append(secondFollower.username)
                         pop()
                     }
                 }
                 if (listSize > 2) {
+                    val secondFollower = mutualFollowersState.mutualFollowers[1]
+
                     append(", ")
                     withStyle(style = boldStyle) {
                         pushStringAnnotation(
                             tag = "account",
-                            annotation = mutualFollowersState.mutualFollowers[1].id
+                            annotation = "${secondFollower.id}|${secondFollower.username}"
                         )
-                        append(mutualFollowersState.mutualFollowers[1].username)
+                        append(secondFollower.username)
                         pop()
                     }
                 }
 
                 if (listSize == 3) {
+                    val thirdFollower = mutualFollowersState.mutualFollowers[2]
+
                     append(" " + stringResource(Res.string.and) + " ")
                     withStyle(style = boldStyle) {
                         pushStringAnnotation(
                             tag = "account",
-                            annotation = mutualFollowersState.mutualFollowers[2].id
+                            annotation = "${thirdFollower.id}|${thirdFollower.username}"
                         )
-                        append(mutualFollowersState.mutualFollowers[2].username)
+                        append(thirdFollower.username)
                         pop()
                     }
                 }
                 if (listSize > 3) {
+                    val thirdFollower = mutualFollowersState.mutualFollowers[2]
+
                     append(", ")
                     withStyle(style = boldStyle) {
                         pushStringAnnotation(
                             tag = "account",
-                            annotation = mutualFollowersState.mutualFollowers[2].id
+                            annotation = "${thirdFollower.id}|${thirdFollower.username}"
                         )
-                        append(mutualFollowersState.mutualFollowers[2].username)
+                        append(thirdFollower.username)
                         pop()
                     }
                     append(" " + stringResource(Res.string.and) + " ")
@@ -194,7 +203,8 @@ fun MutualFollowersComposable(
 
             Spacer(modifier = Modifier.width(10.dp))
 
-            ClickableText(text = annotatedString,
+            ClickableText(
+                text = annotatedString,
                 style = MaterialTheme.typography.bodyMedium,
                 onClick = {
                     annotatedString.getStringAnnotations("others", it, it).firstOrNull()?.let {
@@ -203,7 +213,12 @@ fun MutualFollowersComposable(
 
                     annotatedString.getStringAnnotations("account", it, it)
                         .firstOrNull()?.let { annotation ->
-                            navController.navigate(Destination.Profile(annotation.item))
+                            val parts = annotation.item.split("|")
+                            if (parts.size == 2) {
+                                val accountId = parts[0]
+                                val username = parts[1]
+                                navController.navigate(Destination.Profile(accountId, username))
+                            }
                         }
                 })
         }

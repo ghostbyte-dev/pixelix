@@ -93,6 +93,10 @@ class VernissageAuthService(
         val accountDto = api.verify("Bearer ${tokenResponse.accessToken}", username)
         val account = accountDto.toDomain()
 
+        if (account.id.isEmpty() || account.id.isEmpty()) {
+            error("Invalid Account")
+        }
+
         val newCred = Credentials(
             accountId = requireNotNull(account.id),
             username = requireNotNull(account.username),

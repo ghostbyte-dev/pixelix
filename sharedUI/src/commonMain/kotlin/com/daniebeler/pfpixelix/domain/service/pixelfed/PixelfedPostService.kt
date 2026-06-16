@@ -128,18 +128,11 @@ class PixelfedPostService(
         api.reportPost(json.encodeToString(reportBody)).toDomain()
     }
 
-    override fun getTrendingPosts(range: String) = loadListResources {
-        api.getTrendingPosts(range).map { it.toDomain() }
-    }.filterSensitive()
-
-    private fun Flow<Resource<List<Post>>>.filterSensitive() = this.map { event ->
-        if (event is Resource.Success<List<Post>>) {
-            val hideSensitiveContent = prefs.hideSensitiveContent
-            val filtered = event.data.filter { !(hideSensitiveContent && it.sensitive) }
-            Resource.Success(filtered)
+    override fun getTrendingPosts(range: String, maxId: String?) = loadPaginatedListResources {
+        if (maxId == null) {
+            api.getTrendingPosts(range).map { it.toDomain() }
         } else {
-            event
+            emptyList()
         }
-    }
-
+    }.filterSensitive(prefs.hideSensitiveContent)
 }

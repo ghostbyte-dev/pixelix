@@ -62,8 +62,7 @@ class VernissagePostService(
     )
 
     override fun getPostById(postId: String) = loadResource {
-        // api.getPostById(postId).toDomain()
-        emptyPost
+        api.getPostById(postId).toDomain()
     }
 
     override fun getOwnPosts(
@@ -87,24 +86,8 @@ class VernissagePostService(
         api.getPostsByAccount(identifier, maxPostId, limit)
     }
 
-    override fun getLikedPosts(maxId: String?) = flow {
-        emit(Resource.Loading<PaginatedResponse<List<Post>>>())
-        /*
-               try {
-                   val response: PaginatedResponse<List<Post>> =
-                       api.getLikedPosts(maxId).executeAndParsePagination(
-                           true,
-                           "max_id",
-                           transform = { dtoList -> dtoList.map { it.toDomain() } }
-                       )
-                   val filteredPosts = response.data.filter { it.mediaAttachments.isNotEmpty() }
-                   val filteredResponse = response.copy(data = filteredPosts)
-                   emit(Resource.Success(filteredResponse))
-               } catch (e: Exception) {
-                   emit(Resource.Error(e.message ?: "Unknown error"))
-               }*/
-        //TODO: get liked posts
-
+    override fun getLikedPosts(maxId: String?) = loadVernissagePaginatedListResources {
+        api.getLikedPosts(maxId)
     }
 
     override fun createReply(postId: String, content: String) = loadResource {
@@ -115,7 +98,7 @@ class VernissagePostService(
 
     override fun getReplies(postId: String) = loadResource {
         PostContext(emptyList(), emptyList())
-    // api.getReplies(postId).toDomain()
+        // api.getReplies(postId).toDomain()
     }
 
     override fun likePost(postId: String) = loadResource {
@@ -142,34 +125,17 @@ class VernissagePostService(
         api.unbookmarkPost(postId).toDomain()
     }
 
-    override fun getBookmarkedPosts(cursor: String?) = flow {
-        emit(Resource.Loading< PaginatedResponse<List<Post>>>())
-
-       /* try {
-            val response: PaginatedResponse<List<Post>> =
-                api.getBookmarkedPosts(cursor = cursor).executeAndParsePagination(
-                    true,
-                    "max_id",
-                    transform = { dtoList -> dtoList.map { it.toDomain() } }
-                )
-            val filteredPosts = response.data.filter { it.mediaAttachments.isNotEmpty() }
-            val filteredResponse = response.copy(data = filteredPosts)
-            emit(Resource.Success(filteredResponse))
-        } catch (e: Exception) {
-            emit(Resource.Error(e.message ?: "Unknown error"))
-        }*/
+    override fun getBookmarkedPosts(cursor: String?) = loadVernissagePaginatedListResources {
+        api.getBookmarkedPosts(cursor)
     }
+
 
     override fun reportPost(reportBody: NewReport) = loadResource {
         ReportResponse("", 0)
-       // api.reportPost(json.encodeToString(reportBody)).toDomain()
+        // api.reportPost(json.encodeToString(reportBody)).toDomain()
     }
 
-    override fun getTrendingPosts(range: String) = loadListResources {
-        //api.getTrendingPosts(range).map { it.toDomain() }
-        emptyList<Post>()
-    }
-    // }.filterSensitive()
-
-
+    override fun getTrendingPosts(range: String, maxId: String?) = loadVernissagePaginatedListResources {
+        api.getTrendingPosts(range, maxId = maxId)
+    }.filterSensitive(prefs.hideSensitiveContent)
 }

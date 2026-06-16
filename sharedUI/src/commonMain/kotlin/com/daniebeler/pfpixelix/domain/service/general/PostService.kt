@@ -62,7 +62,7 @@ interface PostService {
 
     fun reportPost(reportBody: NewReport): Flow<Resource<ReportResponse>>
 
-    fun getTrendingPosts(range: String): Flow<Resource<List<Post>>>
+    fun getTrendingPosts(range: String, maxId: String? = null): Flow<Resource<PaginatedResponse<List<Post>>>>
 
     fun Flow<Resource<PaginatedResponse<List<Post>>>>.filterSensitive(hideSensitiveContent: Boolean) =
         this.map { event ->
@@ -128,7 +128,7 @@ class PostServiceDelegate(
     override fun reportPost(reportBody: NewReport): Flow<Resource<ReportResponse>> =
         current.reportPost(reportBody)
 
-    override fun getTrendingPosts(range: String): Flow<Resource<List<Post>>> =
-        current.getTrendingPosts(range)
+    override fun getTrendingPosts(range: String, maxId: String?): Flow<Resource<PaginatedResponse<List<Post>>>> =
+        current.getTrendingPosts(range, maxId)
 
 }

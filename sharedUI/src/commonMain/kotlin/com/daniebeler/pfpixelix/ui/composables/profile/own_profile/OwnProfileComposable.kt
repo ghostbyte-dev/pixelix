@@ -182,7 +182,7 @@ fun OwnProfileComposable(
                                 }.fillMaxWidth().clip(
                                     RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)
                                 ).background(MaterialTheme.colorScheme.surfaceContainer)
-                                    .padding(top = 24.dp, bottom = 12.dp)
+                                    .padding(bottom = 12.dp)
                             ) {
                                 if (viewModel.accountState.account != null) {
                                     ProfileTopSection(
@@ -210,20 +210,21 @@ fun OwnProfileComposable(
                                         }
                                     }
                                 }
-
-                                CollectionsComposable(
-                                    collectionsState = viewModel.collectionsState,
-                                    getMoreCollections = {
-                                        viewModel.accountState.account?.let {
-                                            viewModel.getCollections(
-                                                it.id, true
-                                            )
-                                        }
-                                    },
-                                    navController = navController,
-                                    addNewButton = PlatformFeatures.addCollection,
-                                    instanceDomain = viewModel.ownDomain,
-                                ) { url -> viewModel.openUrl(url) }
+                                if (viewModel.capabilities.profile.showCollectionsOwnProfile) {
+                                    CollectionsComposable(
+                                        collectionsState = viewModel.collectionsState,
+                                        getMoreCollections = {
+                                            viewModel.accountState.account?.let {
+                                                viewModel.getCollections(
+                                                    it.id, true
+                                                )
+                                            }
+                                        },
+                                        navController = navController,
+                                        addNewButton = PlatformFeatures.addCollection,
+                                        instanceDomain = viewModel.ownDomain,
+                                    ) { url -> viewModel.openUrl(url) }
+                                }
                             }
                         }
 

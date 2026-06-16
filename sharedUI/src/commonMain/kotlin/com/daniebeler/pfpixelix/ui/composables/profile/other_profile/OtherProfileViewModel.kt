@@ -156,7 +156,7 @@ class OtherProfileViewModel(
     }
 
     private fun getAccount(userId: String, username: String, refreshing: Boolean) {
-        accountService.getAccount(userId).onEach { result ->
+        accountService.getAccount(userId, username).onEach { result ->
             accountState = when (result) {
                 is Resource.Success -> {
                     AccountState(account = result.data)

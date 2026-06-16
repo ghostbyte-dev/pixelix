@@ -247,7 +247,7 @@ fun OtherProfileComposable(
                                 }.fillMaxWidth().clip(
                                     RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)
                                 ).background(MaterialTheme.colorScheme.surfaceContainer)
-                                    .padding(top = 24.dp, bottom = 12.dp)
+                                    .padding(bottom = 12.dp)
                             ) {
                                 if (viewModel.accountState.account != null) {
                                     ProfileTopSection(

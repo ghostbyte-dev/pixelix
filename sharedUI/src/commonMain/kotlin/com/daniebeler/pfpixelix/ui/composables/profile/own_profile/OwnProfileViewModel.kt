@@ -8,12 +8,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.repository.pixelfed.PixelfedApi
+import com.daniebeler.pfpixelix.domain.service.capabilities.Capabilities
 import com.daniebeler.pfpixelix.domain.service.general.CollectionService
 import com.daniebeler.pfpixelix.domain.service.general.AccountService
 import com.daniebeler.pfpixelix.domain.service.general.AuthService
 import com.daniebeler.pfpixelix.domain.service.general.AppIconService
 import com.daniebeler.pfpixelix.domain.service.platform.Platform
 import com.daniebeler.pfpixelix.domain.service.general.PostService
+import com.daniebeler.pfpixelix.domain.service.general.Session
 import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.ui.composables.profile.AccountState
@@ -32,8 +34,10 @@ class OwnProfileViewModel @Inject constructor(
     private val collectionService: CollectionService,
     private val authService: AuthService,
     private val platform: Platform,
-    private val appIconService: AppIconService
+    private val appIconService: AppIconService,
+    private val session: Session
 ) : ViewModel() {
+    val capabilities: Capabilities = session.capabilities.value
     var accountState by mutableStateOf(AccountState())
     var postsState by mutableStateOf(PostsState())
     var ownDomain by mutableStateOf("")
@@ -67,11 +71,13 @@ class OwnProfileViewModel @Inject constructor(
         getAccount(refreshing)
         getPostsFirstLoad(refreshing)
 
-        viewModelScope.launch {
-            val currentLoginData = authService.getCurrentSession()
-            currentLoginData?.let {
-                collectionsState = collectionsState.copy(endReached = false)
-                getCollections(it.accountId, false)
+        if (capabilities.profile.showCollectionsOwnProfile) {
+            viewModelScope.launch {
+                val currentLoginData = authService.getCurrentSession()
+                currentLoginData?.let {
+                    collectionsState = collectionsState.copy(endReached = false)
+                    getCollections(it.accountId, false)
+                }
             }
         }
     }

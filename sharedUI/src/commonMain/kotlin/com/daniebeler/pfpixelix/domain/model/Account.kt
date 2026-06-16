@@ -15,7 +15,8 @@ data class Account(
     val locked: Boolean = false,
     val createdAt: String = "",
     val isAdmin: Boolean = false,
-    val pronouns: List<String> = emptyList()
+    val pronouns: List<String> = emptyList(),
+    val headerUrl: String? = null
 )
 
 fun credentialsToAccount(credentials: Credentials) = Account(

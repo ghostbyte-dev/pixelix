@@ -36,32 +36,6 @@ class VernissagePostService(
     private val authService: AuthService,
     private val json: Json
 ) : PostService {
-    val emptyPost = Post(
-        id = "",
-        mediaAttachments = emptyList(),
-        account = Account(),
-        tags = emptyList(),
-        favouritesCount = 0,
-        content = "",
-        replyCount = 0,
-        createdAt = "",
-        url = "",
-        sensitive = false,
-        spoilerText = "",
-        favourited = false,
-        reblogged = false,
-        bookmarked = false,
-        mentions = emptyList(),
-        place = null,
-        likedBy = null,
-        visibility = Visibility.PUBLIC,
-        inReplyToId = null,
-        rebloggedBy = null,
-        reblogId = null,
-        reblogCount = 0,
-        emojis = emptyList()
-    )
-
     override fun getPostById(postId: String) = loadResource {
         api.getPostById(postId).toDomain()
     }
@@ -134,7 +108,8 @@ class VernissagePostService(
         // api.reportPost(json.encodeToString(reportBody)).toDomain()
     }
 
-    override fun getTrendingPosts(range: String, maxId: String?) = loadVernissagePaginatedListResources {
-        api.getTrendingPosts(range, maxId = maxId)
-    }.filterSensitive(prefs.hideSensitiveContent)
+    override fun getTrendingPosts(range: String, maxId: String?) =
+        loadVernissagePaginatedListResources {
+            api.getTrendingPosts(range, maxId = maxId)
+        }.filterSensitive(prefs.hideSensitiveContent)
 }

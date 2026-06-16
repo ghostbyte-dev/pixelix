@@ -46,7 +46,7 @@ class PixelfedAccountService(
         return refreshSignal
             .onStart { emit(Unit) }
             .flatMapLatest {
-                getAccount(current.accountId).onEach { resource ->
+                getAccount(current.accountId, current.username).onEach { resource ->
                     if (resource is Resource.Success) {
                         authService.updateSessionAvatar(resource.data.id, resource.data.avatar)
                     }
@@ -88,7 +88,7 @@ class PixelfedAccountService(
         result
     }
 
-    override fun getAccount(accountId: String) =
+    override fun getAccount(accountId: String, username: String) =
         loadResource { api.getAccount(accountId).toDomain() }
 
     override fun getAccountByUsername(username: String) =
@@ -125,7 +125,7 @@ class PixelfedAccountService(
     override fun getLikedBy(postId: String) =
         loadListResources { api.getAccountsWhoLikedPost(postId).map { it.toDomain() } }
 
-    override fun getAccountsFollowers(accountId: String, cursor: String?) = flow {
+    override fun getAccountsFollowers(accountId: String, username: String, cursor: String?) = flow {
         emit(Resource.Loading())
 
         try {
@@ -141,7 +141,7 @@ class PixelfedAccountService(
         }
     }
 
-    override fun getAccountsFollowing(accountId: String, cursor: String?) = flow {
+    override fun getAccountsFollowing(accountId: String, username: String, cursor: String?) = flow {
         emit(Resource.Loading())
 
         try {

@@ -1,12 +1,12 @@
 package com.daniebeler.pfpixelix.domain.repository.vernissage
 
-import com.daniebeler.pfpixelix.domain.repository.pixelfed.PixelfedApi
-import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedPostDto
+import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageAccountDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissagePostDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissagePaginatedResponse
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissagePostContextDto
 import de.jensklingenberg.ktorfit.http.Body
 import de.jensklingenberg.ktorfit.http.GET
+import de.jensklingenberg.ktorfit.http.Header
 import de.jensklingenberg.ktorfit.http.Headers
 import de.jensklingenberg.ktorfit.http.POST
 import de.jensklingenberg.ktorfit.http.Path
@@ -73,13 +73,13 @@ interface VernissageApi {
     @GET("api/v1/favourites")
     suspend fun getLikedPosts(
         @Query("maxId") maxId: String? = null,
-        @Query("limit") limit: Int = PixelfedApi.Companion.LIKED_POSTS_LIMIT
+        @Query("limit") limit: Int = LIKED_POSTS_LIMIT
     ): VernissagePaginatedResponse<List<VernissagePostDto>>
 
     @GET("api/v1/bookmarks")
     suspend fun getBookmarkedPosts(
         @Query("maxId") maxId: String? = null,
-        @Query("limit") limit: Int = PixelfedApi.Companion.LIKED_POSTS_LIMIT
+        @Query("limit") limit: Int = LIKED_POSTS_LIMIT
     ): VernissagePaginatedResponse<List<VernissagePostDto>>
 
     @POST("api/v1/statuses/{id}/favourite")
@@ -120,4 +120,23 @@ interface VernissageApi {
     suspend fun createReply(
         @Body createReply: String
     ): VernissagePostDto
+
+    @GET("api/v1/users/{userName}/followers")
+    suspend fun getAccountsFollowers(
+        @Path("userName") userName: String,
+        @Query("maxId") maxId: String? = null,
+        @Query("limit") limit: Int = FOLLOWERS_LIMIT
+    ): VernissagePaginatedResponse<List<VernissageAccountDto>>
+
+    @GET("api/v1/users/{userName}/following")
+    suspend fun getAccountsFollowing(
+        @Path("userName") userName: String,
+        @Query("maxId") maxId: String? = null,
+        @Query("limit") limit: Int = FOLLOWERS_LIMIT
+    ): VernissagePaginatedResponse<List<VernissageAccountDto>>
+
+    @GET("api/v1/users/{username}")
+    suspend fun getUser(
+        @Path("username") username: String
+    ): VernissageAccountDto
 }

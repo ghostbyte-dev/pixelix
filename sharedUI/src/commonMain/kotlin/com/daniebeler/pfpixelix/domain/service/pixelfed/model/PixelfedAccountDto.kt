@@ -2,6 +2,7 @@ package com.daniebeler.pfpixelix.domain.service.pixelfed.model
 
 import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.repository.serializers.HtmlAsTextSerializer
+import com.daniebeler.pfpixelix.domain.service.general.DtoMappable
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -22,24 +23,25 @@ data class PixelfedAccountDto(
     @SerialName("created_at") val createdAt: String = "",
     @SerialName("is_admin") val isAdmin: Boolean = false,
     @SerialName("pronouns") val pronouns: List<String> = emptyList()
-)
-
-fun PixelfedAccountDto.toDomain(): Account {
-    return Account(
-        id = this.id,
-        username = this.username,
-        acct = this.acct,
-        displayname = this.displayname,
-        avatar = this.avatar,
-        followersCount = this.followersCount,
-        followingCount = this.followingCount,
-        postsCount = this.postsCount,
-        website = this.website,
-        note = this.note,
-        url = this.url,
-        locked = this.locked,
-        createdAt = this.createdAt,
-        isAdmin = this.isAdmin,
-        pronouns = this.pronouns
-    )
+): DtoMappable<Account> {
+    override fun toDomain(): Account {
+        return Account(
+            id = this.id,
+            username = this.username,
+            acct = this.acct,
+            displayname = this.displayname,
+            avatar = this.avatar,
+            followersCount = this.followersCount,
+            followingCount = this.followingCount,
+            postsCount = this.postsCount,
+            website = this.website,
+            note = this.note,
+            url = this.url,
+            locked = this.locked,
+            createdAt = this.createdAt,
+            isAdmin = this.isAdmin,
+            pronouns = this.pronouns
+        )
+    }
 }
+

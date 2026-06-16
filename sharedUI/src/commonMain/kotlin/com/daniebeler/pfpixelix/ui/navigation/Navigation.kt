@@ -62,7 +62,7 @@ sealed interface Destination {
     ) : Destination
     @Serializable data class EditPost(val id: String) : Destination
     @Serializable data class Collection(val id: String) : Destination
-    @Serializable data class Followers(val userId: String, val isFollowers: Boolean) : Destination
+    @Serializable data class Followers(val userId: String, val username: String, val isFollowers: Boolean) : Destination
     @Serializable data object Conversations : Destination
     @Serializable data class Chat(val id: String) : Destination
     @Serializable data class Mention(val id: String) : Destination
@@ -258,6 +258,7 @@ private fun NavGraphBuilder.tabGraph(
         FollowersMainComposable(
             navController,
             accountId = args.userId,
+            username = args.username,
             isFollowers = args.isFollowers
         )
     }

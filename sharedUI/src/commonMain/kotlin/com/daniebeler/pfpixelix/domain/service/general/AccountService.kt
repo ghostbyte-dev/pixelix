@@ -14,6 +14,8 @@ import com.daniebeler.pfpixelix.domain.service.pixelfed.PixelfedAccountService
 import com.daniebeler.pfpixelix.domain.service.pixelfed.PixelfedAuthService
 import com.daniebeler.pfpixelix.domain.service.utils.loadListResources
 import com.daniebeler.pfpixelix.domain.service.utils.loadResource
+import com.daniebeler.pfpixelix.domain.service.vernissage.VernissageAccountService
+import com.daniebeler.pfpixelix.domain.service.vernissage.VernissageTimelineService
 import com.daniebeler.pfpixelix.utils.encodeToPngBytes
 import com.daniebeler.pfpixelix.utils.executeAndParsePagination
 import io.ktor.client.request.forms.MultiPartFormDataContent
@@ -44,7 +46,7 @@ interface AccountService {
         avatar: ImageBitmap?
     ): Flow<Resource<Account>>
 
-    fun getAccount(accountId: String): Flow<Resource<Account>>
+    fun getAccount(accountId: String, username: String): Flow<Resource<Account>>
     fun getAccountByUsername(username: String): Flow<Resource<Account>>
     fun getMutualFollowers(userId: String): Flow<Resource<List<Account>>>
     fun getAccountSettings(): Flow<Resource<Settings>>
@@ -59,11 +61,11 @@ interface AccountService {
     fun getLikedBy(postId: String): Flow<Resource<List<Account>>>
 
     fun getAccountsFollowers(
-        accountId: String, cursor: String? = null
+        accountId: String, username: String, cursor: String? = null
     ): Flow<Resource<PaginatedResponse<List<Account>>>>
 
     fun getAccountsFollowing(
-        accountId: String, cursor: String? = null
+        accountId: String,username: String, cursor: String? = null
     ): Flow<Resource<PaginatedResponse<List<Account>>>>
 }
 
@@ -72,12 +74,12 @@ interface AccountService {
 class AccountServiceDelegate(
     private val session: Session,
     private val pixelfed: PixelfedAccountService,
-    //private val vernissage: VernissageTimelineService
+    private val vernissage: VernissageAccountService
 ) : AccountService {
 
     private val current: AccountService
-        get() = when (session.backendType) {
-            // BackendType.VERNISSAGE -> vernissage
+        get() = when (session.backendType.value) {
+            BackendType.VERNISSAGE -> vernissage
             else -> pixelfed
         }
     override val refreshSignal: MutableSharedFlow<Unit> = current.refreshSignal
@@ -92,7 +94,7 @@ class AccountServiceDelegate(
         avatar: ImageBitmap?
     ): Flow<Resource<Account>> = current.updateAccount(displayName, note, website, privateProfile, avatar)
 
-    override fun getAccount(accountId: String): Flow<Resource<Account>> = current.getAccount(accountId)
+    override fun getAccount(accountId: String, username: String): Flow<Resource<Account>> = current.getAccount(accountId, username)
 
     override fun getAccountByUsername(username: String): Flow<Resource<Account>> = current.getAccountByUsername(username)
 
@@ -119,12 +121,12 @@ class AccountServiceDelegate(
     override fun getLikedBy(postId: String): Flow<Resource<List<Account>>> = current.getLikedBy(postId)
 
     override fun getAccountsFollowers(
-        accountId: String,
+        accountId: String,username: String,
         cursor: String?
-    ): Flow<Resource<PaginatedResponse<List<Account>>>> = current.getAccountsFollowers(accountId, cursor)
+    ): Flow<Resource<PaginatedResponse<List<Account>>>> = current.getAccountsFollowers(accountId, username, cursor)
 
     override fun getAccountsFollowing(
-        accountId: String,
+        accountId: String,username: String,
         cursor: String?
-    ): Flow<Resource<PaginatedResponse<List<Account>>>> = current.getAccountsFollowing(accountId, cursor)
+    ): Flow<Resource<PaginatedResponse<List<Account>>>> = current.getAccountsFollowing(accountId, username, cursor)
 }

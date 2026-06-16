@@ -2,6 +2,7 @@ package com.daniebeler.pfpixelix
 
 import android.app.Application
 import android.content.Context
+import android.content.pm.ApplicationInfo
 import androidx.activity.ComponentActivity
 import androidx.work.Configuration
 import androidx.work.ListenableWorker
@@ -31,7 +32,8 @@ class MyApplication : Application(), Configuration.Provider {
         SingletonImageLoader.setSafe {
             appComponent.provideImageLoader()
         }
-        configureLogger(false) //debug
+        val isDebug = (applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE) != 0
+        configureLogger(isDebug) //debug
         super.onCreate()
     }
 

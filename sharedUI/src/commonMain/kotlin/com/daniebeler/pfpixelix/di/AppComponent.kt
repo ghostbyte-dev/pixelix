@@ -112,12 +112,13 @@ abstract class AppComponent(
             install(Logging) {
                 logger = object : io.ktor.client.plugins.logging.Logger {
                     override fun log(message: String) {
-                        Logger.v("Pixelix HttpClient") {
-                            message.lines().joinToString { "\n\t\t$it" }
+                        val formattedMessage = message.lines().joinToString(separator = "\n") { "\t\t$it" }
+                        Logger.v (tag = "PixelixHttp") {
+                            formattedMessage
                         }
                     }
                 }
-                level = LogLevel.NONE
+                level = LogLevel.INFO
             }
             install(HttpTimeout) {
                 requestTimeoutMillis = 60000

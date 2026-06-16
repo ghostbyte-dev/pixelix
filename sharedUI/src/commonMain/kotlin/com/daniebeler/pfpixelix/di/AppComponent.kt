@@ -248,7 +248,11 @@ abstract class AppComponent(
             }
         }.apply {
             plugin(HttpSend).intercept { request ->
-                with(session) { intercept(request) }
+                session.credentials.value?.let { creds ->
+                    if (request.url.host != "api.fedisea.surf" && request.url.host != "pixelfed.org") {
+                        request.url.set(host = Url(creds.serverUrl).host)
+                    }
+                }
                 with(authInterceptor) { intercept(request) }
             }
         }

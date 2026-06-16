@@ -74,7 +74,6 @@ class PostViewModel @Inject constructor(
     init {
         myAccountId = authService.getCurrentSession()!!.accountId
         myUsername = authService.getCurrentSession()!!.username
-        getInstance()
         viewModelScope.launch {
             prefs.hideAltTextButtonFlow.collect {
                 isAltTextButtonHidden = it
@@ -109,7 +108,10 @@ class PostViewModel @Inject constructor(
         }
     }
 
-    private fun getInstance() {
+    fun getInstance() {
+        if (instance != null) {
+            return
+        }
         instanceService.getInstance().onEach { result ->
             when (result) {
                 is Resource.Success -> {

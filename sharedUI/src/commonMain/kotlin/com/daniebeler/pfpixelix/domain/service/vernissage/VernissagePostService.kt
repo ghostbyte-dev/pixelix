@@ -18,6 +18,7 @@ import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.domain.service.utils.loadListResources
 import com.daniebeler.pfpixelix.domain.service.utils.loadResource
 import com.daniebeler.pfpixelix.domain.service.utils.loadVernissagePaginatedListResources
+import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageNewReplyDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.toDomain
 import com.daniebeler.pfpixelix.utils.executeAndParsePagination
 import kotlinx.coroutines.flow.Flow
@@ -91,14 +92,12 @@ class VernissagePostService(
     }
 
     override fun createReply(postId: String, content: String) = loadResource {
-        // val dto = NewReply(status = content, toId = postId)
-        // api.createReply(json.encodeToString(dto)).toDomain()
-        emptyPost
+        val dto = VernissageNewReplyDto(note = content, replyToStatusId = postId)
+        api.createReply(json.encodeToString(dto)).toDomain()
     }
 
     override fun getReplies(postId: String) = loadResource {
-        PostContext(emptyList(), emptyList())
-        // api.getReplies(postId).toDomain()
+        api.getReplies(postId).toDomain()
     }
 
     override fun likePost(postId: String) = loadResource {
@@ -129,7 +128,7 @@ class VernissagePostService(
         api.getBookmarkedPosts(cursor)
     }
 
-
+    //TODO: implement reporting
     override fun reportPost(reportBody: NewReport) = loadResource {
         ReportResponse("", 0)
         // api.reportPost(json.encodeToString(reportBody)).toDomain()

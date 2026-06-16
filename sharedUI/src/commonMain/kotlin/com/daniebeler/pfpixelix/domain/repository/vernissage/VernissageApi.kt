@@ -4,8 +4,10 @@ import com.daniebeler.pfpixelix.domain.repository.pixelfed.PixelfedApi
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedPostDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissagePostDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissagePaginatedResponse
-import de.jensklingenberg.ktorfit.Call
+import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissagePostContextDto
+import de.jensklingenberg.ktorfit.http.Body
 import de.jensklingenberg.ktorfit.http.GET
+import de.jensklingenberg.ktorfit.http.Headers
 import de.jensklingenberg.ktorfit.http.POST
 import de.jensklingenberg.ktorfit.http.Path
 import de.jensklingenberg.ktorfit.http.Query
@@ -63,6 +65,11 @@ interface VernissageApi {
         @Path("id") postId: String
     ): VernissagePostDto
 
+    @GET("api/v1/statuses/{postId}/context")
+    suspend fun getReplies(
+        @Path("postId") postId: String
+    ): VernissagePostContextDto
+
     @GET("api/v1/favourites")
     suspend fun getLikedPosts(
         @Query("maxId") maxId: String? = null,
@@ -105,6 +112,12 @@ interface VernissageApi {
     suspend fun getPostsByAccount(
         @Path("userName") userName: String,
         @Query("maxId") maxPostId: String? = null,
-        @Query("limit") limit: Int = PixelfedApi.Companion.GLOBAL_TIMELINE_POSTS_LIMIT
+        @Query("limit") limit: Int = PROFILE_POSTS_LIMIT
     ): VernissagePaginatedResponse<List<VernissagePostDto>>
+
+    @Headers("Content-Type: application/json")
+    @POST("api/v1/statuses")
+    suspend fun createReply(
+        @Body createReply: String
+    ): VernissagePostDto
 }

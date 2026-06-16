@@ -27,14 +27,14 @@ class TrendingHashtagElementViewModel @Inject constructor(
                 postsState = when (result) {
                     is Resource.Success -> {
                         TrendingHashtagPostsState(
-                            posts = result.data ?: emptyList(), error = "", isLoading = false
+                            posts = result.data.data, error = "", isLoading = false
                         )
                     }
 
                     is Resource.Error -> {
                         TrendingHashtagPostsState(
                             posts = postsState.posts,
-                            error = result.message ?: "An unexpected error occurred",
+                            error = result.message,
                             isLoading = false
                         )
                     }

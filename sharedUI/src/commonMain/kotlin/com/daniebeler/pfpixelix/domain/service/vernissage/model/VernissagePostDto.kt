@@ -1,7 +1,9 @@
 package com.daniebeler.pfpixelix.domain.service.vernissage.model
 
+import com.daniebeler.pfpixelix.domain.model.Identifiable
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.repository.serializers.HtmlAsTextSerializer
+import com.daniebeler.pfpixelix.domain.service.general.DtoMappable
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -35,48 +37,48 @@ data class VernissagePostDto @OptIn(ExperimentalSerializationApi::class) constru
     @SerialName("visibility") val visibility: VernissageVisibilityDto,
     @SerialName("bookmarked") val bookmarked: Boolean = false,
  //   @SerialName("emojis") val emojis: List<PixelfedEmojiDto> = emptyList()
-)
+): DtoMappable<Post> {
+    override fun toDomain(): Post {
+        val activePost = this.reblog ?: this
 
-fun VernissagePostDto.toDomain(): Post {
-    val activePost = this.reblog ?: this
+        return Post(
+            // Handle flattened structural changes if this was a share/boost
+            id = this.id,
+            reblogId = this.reblog?.id,
+            rebloggedBy = if (this.reblog != null) this.account.toDomain() else null,
 
-    return Post(
-        // Handle flattened structural changes if this was a share/boost
-        id = this.id,
-        reblogId = this.reblog?.id,
-        rebloggedBy = if (this.reblog != null) this.account.toDomain() else null,
+            // Dynamic fallback matching for string fields
+            content = activePost.content ?: activePost.contentText,
 
-        // Dynamic fallback matching for string fields
-        content = activePost.content ?: activePost.contentText,
+            // Pass map downstream to children models
+            account = activePost.account.toDomain(),
+            mediaAttachments = activePost.mediaAttachments.map { it.toDomain() },
+            tags = activePost.tags.map { it.toDomain() },
+            // mentions = activePost.mentions.map { it.toDomain() },
+            mentions = emptyList(),
+            emojis = emptyList(),
+            // emojis = activePost.emojis.map { it.toDomain() },
 
-        // Pass map downstream to children models
-        account = activePost.account.toDomain(),
-        mediaAttachments = activePost.mediaAttachments.map { it.toDomain() },
-        tags = activePost.tags.map { it.toDomain() },
-       // mentions = activePost.mentions.map { it.toDomain() },
-        mentions = emptyList(),
-        emojis = emptyList(),
-       // emojis = activePost.emojis.map { it.toDomain() },
-
-        // Primitive values mapped cleanly
-        favouritesCount = activePost.favouritesCount,
-        replyCount = activePost.replyCount,
-        createdAt = activePost.createdAt,
-        url = activePost.url,
-        sensitive = activePost.sensitive,
-        //spoilerText = activePost.spoilerText,
-        spoilerText = "",
-        favourited = activePost.favourited,
-        reblogged = activePost.reblogged,
-        bookmarked = activePost.bookmarked,
-        reblogCount = activePost.reblogsCount,
-        //inReplyToId = activePost.inReplyToId,
-        inReplyToId = null,
-        // Nested nullable options
-        place = null,
-        //place = activePost.place?.toDomain(),
-        //likedBy = activePost.likedBy?.toDomain(),
-        likedBy = null,
-        visibility = activePost.visibility.toDomain()
-    )
+            // Primitive values mapped cleanly
+            favouritesCount = activePost.favouritesCount,
+            replyCount = activePost.replyCount,
+            createdAt = activePost.createdAt,
+            url = activePost.url,
+            sensitive = activePost.sensitive,
+            //spoilerText = activePost.spoilerText,
+            spoilerText = "",
+            favourited = activePost.favourited,
+            reblogged = activePost.reblogged,
+            bookmarked = activePost.bookmarked,
+            reblogCount = activePost.reblogsCount,
+            //inReplyToId = activePost.inReplyToId,
+            inReplyToId = null,
+            // Nested nullable options
+            place = null,
+            //place = activePost.place?.toDomain(),
+            //likedBy = activePost.likedBy?.toDomain(),
+            likedBy = null,
+            visibility = activePost.visibility.toDomain()
+        )
+    }
 }

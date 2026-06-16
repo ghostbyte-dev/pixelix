@@ -1,9 +1,8 @@
 package com.daniebeler.pfpixelix.domain.repository.vernissage
 
 import com.daniebeler.pfpixelix.domain.repository.pixelfed.PixelfedApi
-import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedPostDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissagePostDto
-import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageResponse
+import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissagePaginatedResponse
 import de.jensklingenberg.ktorfit.http.GET
 import de.jensklingenberg.ktorfit.http.POST
 import de.jensklingenberg.ktorfit.http.Path
@@ -27,7 +26,7 @@ interface VernissageApi {
     suspend fun getHomeTimeline(
         @Query("maxId") maxPostId: String? = null,
         @Query("limit") limit: Int = HOME_TIMELINE_POSTS_LIMIT
-    ): VernissageResponse<List<VernissagePostDto>>
+    ): VernissagePaginatedResponse<List<VernissagePostDto>>
 
     // Timelines
     @GET("api/v1/timelines/tag/{tag}")
@@ -35,19 +34,19 @@ interface VernissageApi {
         @Path("tag") tag: String,
         @Query("maxId") maxPostId: String? = null,
         @Query("limit") limit: Int
-    ): VernissageResponse<List<VernissagePostDto>>
+    ): VernissagePaginatedResponse<List<VernissagePostDto>>
 
     @GET("api/v1/timelines/public?onlyLocal=true")
     suspend fun getLocalTimeline(
         @Query("maxId") maxPostId: String? = null,
         @Query("limit") limit: Int = PixelfedApi.Companion.LOCAL_TIMELINE_POSTS_LIMIT
-    ): VernissageResponse<List<VernissagePostDto>>
+    ): VernissagePaginatedResponse<List<VernissagePostDto>>
 
     @GET("api/v1/timelines/public?onlyLocal=false")
     suspend fun getGlobalTimeline(
         @Query("maxId") maxPostId: String? = null,
         @Query("limit") limit: Int = PixelfedApi.Companion.GLOBAL_TIMELINE_POSTS_LIMIT
-    ): VernissageResponse<List<VernissagePostDto>>
+    ): VernissagePaginatedResponse<List<VernissagePostDto>>
 
     @POST("api/v1/statuses/{id}/favourite")
     suspend fun likePost(@Path("id") userId: String): VernissagePostDto

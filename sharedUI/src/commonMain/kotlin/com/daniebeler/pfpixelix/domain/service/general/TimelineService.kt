@@ -1,6 +1,7 @@
 package com.daniebeler.pfpixelix.domain.service.general
 
 import com.daniebeler.pfpixelix.di.AppSingleton
+import com.daniebeler.pfpixelix.domain.model.PaginatedResponse
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.repository.pixelfed.PixelfedApi
 import com.daniebeler.pfpixelix.domain.service.pixelfed.PixelfedTimelineService
@@ -14,23 +15,23 @@ import me.tatarka.inject.annotations.Inject
 interface TimelineService {
     fun getHomeTimeline(
         maxPostId: String? = null, enableReblogs: Boolean = false
-    ): Flow<Resource<List<Post>>>
+    ): Flow<Resource<PaginatedResponse<List<Post>>>>
 
-    fun getLocalTimeline(maxPostId: String? = null): Flow<Resource<List<Post>>>
+    fun getLocalTimeline(maxPostId: String? = null): Flow<Resource<PaginatedResponse<List<Post>>>>
 
-    fun getGlobalTimeline(maxPostId: String? = null): Flow<Resource<List<Post>>>
+    fun getGlobalTimeline(maxPostId: String? = null): Flow<Resource<PaginatedResponse<List<Post>>>>
 
     fun getHashtagTimeline(
         hashtag: String,
         maxId: String? = null,
         limit: Int = PixelfedApi.HASHTAG_TIMELINE_POSTS_LIMIT
-    ): Flow<Resource<List<Post>>>
+    ): Flow<Resource<PaginatedResponse<List<Post>>>>
 
-    fun Flow<Resource<List<Post>>>.filterSensitive(hideSensitiveContent: Boolean) =
+    fun Flow<Resource<PaginatedResponse<List<Post>>>>.filterSensitive(hideSensitiveContent: Boolean) =
         this.map { event ->
-            if (event is Resource.Success<List<Post>>) {
-                val filtered = event.data.filter { !(hideSensitiveContent && it.sensitive) }
-                Resource.Success(filtered)
+            if (event is Resource.Success<PaginatedResponse<List<Post>>>) {
+                val filtered = event.data.data.filter { !(hideSensitiveContent && it.sensitive) }
+                Resource.Success(event.data.copy(data = filtered))
             } else {
                 event
             }

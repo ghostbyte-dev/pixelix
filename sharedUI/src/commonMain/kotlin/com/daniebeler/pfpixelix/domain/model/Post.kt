@@ -1,7 +1,7 @@
 package com.daniebeler.pfpixelix.domain.model
 
 data class Post(
-    val id: String,
+    override val id: String,
     val mediaAttachments: List<MediaAttachment>,
     val account: Account,
     val tags: List<Tag>,
@@ -24,4 +24,4 @@ data class Post(
     val reblogId: String? = null,
     val reblogCount: Int,
     val emojis: List<Emoji>
-)
+): Identifiable

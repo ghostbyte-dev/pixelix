@@ -62,9 +62,10 @@ class HashtagTimelineViewModel @Inject constructor(
             timelineState = when (result) {
                 is Resource.Success -> {
                     val endReached =
-                        (result.data?.size ?: 0) < PixelfedApi.HASHTAG_TIMELINE_POSTS_LIMIT
+                        (result.data.data.size) < PixelfedApi.HASHTAG_TIMELINE_POSTS_LIMIT
                     TimelineState(
-                        posts = result.data ?: emptyList(),
+                        posts = result.data.data,
+                        nextId = result.data.next,
                         error = "",
                         isLoading = false,
                         isRefreshing = false,
@@ -75,7 +76,8 @@ class HashtagTimelineViewModel @Inject constructor(
                 is Resource.Error -> {
                     TimelineState(
                         posts = timelineState.posts,
-                        error = result.message ?: "An unexpected error occurred",
+                        nextId = timelineState.nextId,
+                        error = result.message,
                         isLoading = false,
                         isRefreshing = false
                     )
@@ -84,6 +86,7 @@ class HashtagTimelineViewModel @Inject constructor(
                 is Resource.Loading -> {
                     TimelineState(
                         posts = timelineState.posts,
+                        nextId = timelineState.nextId,
                         error = "",
                         isLoading = true,
                         isRefreshing = refreshing
@@ -101,10 +104,10 @@ class HashtagTimelineViewModel @Inject constructor(
             ).onEach { result ->
                 timelineState = when (result) {
                     is Resource.Success -> {
-                        val endReached = (result.data?.size ?: 0) == 0
+                        val endReached = (result.data.data.size ?: 0) == 0
                         TimelineState(
-                            posts = timelineState.posts + (result.data
-                                ?: emptyList()),
+                            posts = timelineState.posts + (result.data.data),
+                            nextId = result.data.next,
                             error = "",
                             isLoading = false,
                             isRefreshing = false,
@@ -115,6 +118,7 @@ class HashtagTimelineViewModel @Inject constructor(
                     is Resource.Error -> {
                         TimelineState(
                             posts = timelineState.posts,
+                            nextId = timelineState.nextId,
                             error = result.message ?: "An unexpected error occurred",
                             isLoading = false,
                             isRefreshing = false
@@ -124,6 +128,7 @@ class HashtagTimelineViewModel @Inject constructor(
                     is Resource.Loading -> {
                         TimelineState(
                             posts = timelineState.posts,
+                            nextId = timelineState.nextId,
                             error = "",
                             isLoading = true,
                             isRefreshing = false

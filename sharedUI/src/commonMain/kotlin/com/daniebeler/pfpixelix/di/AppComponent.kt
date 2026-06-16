@@ -69,6 +69,8 @@ import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.plugins.plugin
+import io.ktor.http.Url
+import io.ktor.http.set
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 import me.tatarka.inject.annotations.Component
@@ -174,12 +176,13 @@ abstract class AppComponent(
             install(Logging) {
                 logger = object : io.ktor.client.plugins.logging.Logger {
                     override fun log(message: String) {
-                        Logger.v("Pixelix HttpClient") {
-                            message.lines().joinToString { "\n\t\t$it" }
+                        val formattedMessage = message.lines().joinToString(separator = "\n") { "\t\t$it" }
+                        Logger.v (tag = "PixelixHttp") {
+                            formattedMessage
                         }
                     }
                 }
-                level = LogLevel.NONE
+                level = LogLevel.INFO
             }
             install(HttpTimeout) {
                 requestTimeoutMillis = 60000
@@ -188,7 +191,16 @@ abstract class AppComponent(
             }
         }.apply {
             plugin(HttpSend).intercept { request ->
-                with(session) { intercept(request) }
+                // Apply the correct server URL from session credentials without executing.
+                // Previously Session.intercept() called execute() here, which caused every
+                // request to be sent twice: once without the Bearer token (triggering a 401
+                // from the server) and once with it. For multipart uploads the first execute
+                // consumes the request body, so the retried authenticated request fails too.
+                session.credentials.value?.let { creds ->
+                    if (request.url.host != "api.fedisea.surf" && request.url.host != "pixelfed.org") {
+                        request.url.set(host = Url(creds.serverUrl).host)
+                    }
+                }
                 with(authInterceptor) { intercept(request) }
             }
         }

@@ -1,0 +1,57 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Version tag for APK name'
+        default: 'v4.4.1'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container:
+      image: registry.gitlab.com/fdroid/fdroidserver:buildserver-trixie
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup
+        run: |
+          apt-get update -q
+          apt-get install -y openjdk-21-jdk-headless
+          update-alternatives --set java /usr/lib/jvm/java-21-openjdk-amd64/bin/java
+          sed -i -e '/jetbrains/d' -e '/foojay/d' settings.gradle.kts
+
+      - name: Build
+        run: cd androidApp && ../gradlew assembleRelease
+        env:
+          ANDROID_HOME: /opt/android-sdk
+
+      - name: Sign
+        run: |
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > keystore.jks
+          TAG=${{ github.event.inputs.tag || github.ref_name }}
+          /opt/android-sdk/build-tools/$(ls /opt/android-sdk/build-tools/ | tail -1)/apksigner sign \
+            --ks keystore.jks \
+            --ks-pass "pass:${{ secrets.KEYSTORE_PASSWORD }}" \
+            --key-pass "pass:${{ secrets.KEYSTORE_PASSWORD }}" \
+            --ks-key-alias "${{ secrets.KEY_ALIAS }}" \
+            --out pixelix_${TAG}.apk \
+            androidApp/build/outputs/apk/release/androidApp-release-unsigned.apk
+          rm keystore.jks
+        env:
+          ANDROID_HOME: /opt/android-sdk
+          
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: pixelix_${{ github.event.inputs.tag || github.ref_name }}.apk
+          draft: true
+          tag_name: ${{ github.event.inputs.tag || github.ref_name }}
+          fail_on_unmatched_files: false

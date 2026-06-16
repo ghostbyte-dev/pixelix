@@ -213,6 +213,7 @@ fun PostComposable(
                 animateBoost = { animateBoost = !animateBoost },
                 onCommentsClick = {
                     viewModel.loadReplies(postId)
+                    viewModel.getInstance()
                     activeSheet = BottomSheetType.Comments
                 },
                 onLikesClick = {

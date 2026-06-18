@@ -18,7 +18,7 @@ fun PixelfedRelationshipDto.toDomain(): Relationship {
         id = this.id,
         following = this.following,
         followedBy = this.followedBy,
-        muting = this.muting,
-        blocking = this.blocking
+        muted = this.muting,
+        blocked = this.blocking
     )
 }

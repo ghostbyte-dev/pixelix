@@ -15,10 +15,6 @@ class PixelfedExploreService(
         api.getTrendingAccounts().map { it.toDomain() }
     }
 
-    override fun getRelationships(userIds: List<String>) = loadListResources {
-        api.getRelationships(userIds).map { it.toDomain() }
-    }
-
     override fun search(searchText: String, type: String?, limit: Int) = loadResource {
         api.getSearch(searchText, type, limit).toDomain()
     }

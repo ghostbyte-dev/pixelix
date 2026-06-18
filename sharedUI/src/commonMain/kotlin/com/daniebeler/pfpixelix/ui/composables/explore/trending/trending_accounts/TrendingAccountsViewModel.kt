@@ -16,7 +16,6 @@ class TrendingAccountsViewModel @Inject constructor(
     private val exploreService: ExploreService
 ) : ViewModel() {
     var trendingAccountsState by mutableStateOf(TrendingAccountsState())
-    var accountRelationShipsState by mutableStateOf(AccountRelationshipsState())
 
     init {
         getTrendingAccountsState()
@@ -27,7 +26,6 @@ class TrendingAccountsViewModel @Inject constructor(
             exploreService.getTrendingAccounts().onEach { result ->
                 trendingAccountsState = when (result) {
                     is Resource.Success -> {
-                        result.data?.let { getRelationships(it) }
                         TrendingAccountsState(trendingAccounts = result.data ?: emptyList())
                     }
 
@@ -47,30 +45,5 @@ class TrendingAccountsViewModel @Inject constructor(
                 }
             }.launchIn(viewModelScope)
         }
-    }
-
-    private fun getRelationships(accounts: List<Account>) {
-        val accountIds: List<String> = accounts.map { account: Account -> account.id }
-
-        exploreService.getRelationships(accountIds).onEach { result ->
-            accountRelationShipsState = when (result) {
-                is Resource.Success -> {
-                    AccountRelationshipsState(accountRelationships = result.data ?: emptyList())
-                }
-
-                is Resource.Error -> {
-                    AccountRelationshipsState(
-                        error = result.message ?: "An unexpected error occurred"
-                    )
-                }
-
-                is Resource.Loading -> {
-                    AccountRelationshipsState(
-                        isLoading = true,
-                        accountRelationships = accountRelationShipsState.accountRelationships
-                    )
-                }
-            }
-        }.launchIn(viewModelScope)
     }
 }

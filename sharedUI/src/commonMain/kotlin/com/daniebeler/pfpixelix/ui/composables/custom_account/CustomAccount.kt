@@ -67,8 +67,8 @@ fun CustomAccount(
             } else {
                 relationship?.following ?: false
             },
-            onFollowClick = { viewModel.followAccount(account.id) },
-            onUnFollowClick = { viewModel.unfollowAccount(account.id) },
+            onFollowClick = { viewModel.followAccount(account.id, account.username) },
+            onUnFollowClick = { viewModel.unfollowAccount(account.id, account.username) },
             iconButton = true
         )
 

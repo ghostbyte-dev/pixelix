@@ -94,26 +94,30 @@ class PixelfedAccountService(
     override fun getAccountByUsername(username: String) =
         loadResource { api.getAccountByUsername(username).toDomain() }
 
+    override fun getRelationships(userIds: List<String>) = loadListResources {
+        api.getRelationships(userIds).map { it.toDomain() }
+    }
+
     override fun getMutualFollowers(userId: String) =
         loadListResources { api.getMutalFollowers(userId).map { it.toDomain() } }
 
     override fun getAccountSettings() = loadResource { api.getSettings().toDomain() }
-    override fun followAccount(accountId: String) =
+    override fun followAccount(accountId: String, username: String) =
         loadResource { api.followAccount(accountId).toDomain() }
 
-    override fun unfollowAccount(accountId: String) =
+    override fun unfollowAccount(accountId: String, username: String) =
         loadResource { api.unfollowAccount(accountId).toDomain() }
 
-    override fun muteAccount(accountId: String) =
+    override fun muteAccount(accountId: String, username: String) =
         loadResource { api.muteAccount(accountId).toDomain() }
 
-    override fun unMuteAccount(accountId: String) =
+    override fun unMuteAccount(accountId: String, username: String) =
         loadResource { api.unmuteAccount(accountId).toDomain() }
 
-    override fun blockAccount(accountId: String) =
+    override fun blockAccount(accountId: String, username: String) =
         loadResource { api.blockAccount(accountId).toDomain() }
 
-    override fun unblockAccount(accountId: String) =
+    override fun unblockAccount(accountId: String, username: String) =
         loadResource { api.unblockAccount(accountId).toDomain() }
 
     override fun getMutedAccounts() =

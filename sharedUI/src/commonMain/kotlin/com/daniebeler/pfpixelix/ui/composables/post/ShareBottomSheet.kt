@@ -184,7 +184,7 @@ fun ShareBottomSheet(
 
             val relationship = viewModel.relationshipState.accountRelationship
 
-            if (relationship == null || !relationship.muting) {
+            if (relationship == null || !relationship.muted) {
                 ButtonRowElement(
                     icon = Res.drawable.muted, text = stringResource(
                         Res.string.mute_this_profile
@@ -193,7 +193,7 @@ fun ShareBottomSheet(
                     }, color = MaterialTheme.colorScheme.error
                 )
             }
-            if (relationship == null || !relationship.blocking) {
+            if (relationship == null || !relationship.blocked) {
                 ButtonRowElement(
                     icon = Res.drawable.blocked, text = stringResource(
                         Res.string.block_this_profile
@@ -220,7 +220,7 @@ fun ShareBottomSheet(
         MuteAccountAlert(
             onDismissRequest = { showMuteAlert = false }, onConfirmation = {
                 showMuteAlert = false
-                viewModel.post?.account?.let { viewModel.muteAccount(it.id) }
+                viewModel.post?.account?.let { viewModel.muteAccount(it.id, it.username) }
                 closeBottomSheet()
             }, account = viewModel.post?.account
         )
@@ -229,7 +229,7 @@ fun ShareBottomSheet(
         BlockAccountAlert(
             onDismissRequest = { showBlockAlert = false }, onConfirmation = {
                 showBlockAlert = false
-                viewModel.post?.account?.let { viewModel.blockAccount(it.id) }
+                viewModel.post?.account?.let { viewModel.blockAccount(it.id, it.username) }
                 closeBottomSheet()
             }, account = viewModel.post?.account
         )

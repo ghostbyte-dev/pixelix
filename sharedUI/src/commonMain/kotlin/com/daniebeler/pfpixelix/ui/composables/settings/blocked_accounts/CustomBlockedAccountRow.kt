@@ -68,7 +68,7 @@ fun CustomBlockedAccountRow(
             onDismissRequest = { viewModel.unblockAccountAlert = "" },
             onConfirmation = {
                 viewModel.unblockAccountAlert = ""
-                viewModel.unblockAccount(account.id) },
+                viewModel.unblockAccount(account.id, account.username) },
             account = account
         )
     }

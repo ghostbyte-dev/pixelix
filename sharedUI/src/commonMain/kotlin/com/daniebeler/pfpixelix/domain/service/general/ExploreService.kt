@@ -16,8 +16,6 @@ import me.tatarka.inject.annotations.Inject
 interface ExploreService {
     fun getTrendingAccounts(): Flow<Resource<List<Account>>>
 
-    fun getRelationships(userIds: List<String>): Flow<Resource<List<Relationship>>>
-
     fun search(searchText: String, type: String? = null, limit: Int = 5): Flow<Resource<Search>>
 
     fun searchLocations(searchText: String): Flow<Resource<List<Place>>>
@@ -51,9 +49,6 @@ class ExploreServiceDelegate(
         }
 
     override fun getTrendingAccounts(): Flow<Resource<List<Account>>> = current.getTrendingAccounts()
-
-    override fun getRelationships(userIds: List<String>): Flow<Resource<List<Relationship>>> = current.getRelationships(userIds)
-
     override fun search(
         searchText: String,
         type: String?,

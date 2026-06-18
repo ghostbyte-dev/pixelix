@@ -19,8 +19,8 @@ class CustomAccountViewModel @Inject constructor(
     var relationshipState by mutableStateOf(RelationshipState())
     var gotUpdatedRelationship by mutableStateOf(false)
 
-    fun followAccount(userId: String) {
-        accountService.followAccount(userId).onEach { result ->
+    fun followAccount(userId: String, username: String) {
+        accountService.followAccount(userId, username).onEach { result ->
             relationshipState = when (result) {
                 is Resource.Success -> {
                     gotUpdatedRelationship = true
@@ -42,8 +42,8 @@ class CustomAccountViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    fun unfollowAccount(userId: String) {
-        accountService.unfollowAccount(userId).onEach { result ->
+    fun unfollowAccount(userId: String, username: String) {
+        accountService.unfollowAccount(userId, username).onEach { result ->
             relationshipState = when (result) {
                 is Resource.Success -> {
                     gotUpdatedRelationship = true

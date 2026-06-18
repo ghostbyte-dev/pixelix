@@ -1,9 +1,12 @@
 package com.daniebeler.pfpixelix.domain.repository.vernissage
 
+import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedAccountDto
+import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedRelationshipDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageAccountDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissagePostDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissagePaginatedResponse
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissagePostContextDto
+import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageRelationshipDto
 import de.jensklingenberg.ktorfit.http.Body
 import de.jensklingenberg.ktorfit.http.GET
 import de.jensklingenberg.ktorfit.http.Header
@@ -139,4 +142,19 @@ interface VernissageApi {
     suspend fun getUser(
         @Path("username") username: String
     ): VernissageAccountDto
+
+    @POST("api/v1/users/{username}/follow")
+    suspend fun followUser(
+        @Path("username") username: String
+    ): VernissageRelationshipDto
+
+    @POST("api/v1/users/{username}/unfollow")
+    suspend fun unfollowUser(
+        @Path("username") username: String
+    ): VernissageRelationshipDto
+
+    @GET("api/v1/relationships")
+    suspend fun getRelationships(
+        @Query("id[]") userId: List<String>
+    ): List<VernissageRelationshipDto>
 }

@@ -72,7 +72,7 @@ fun CustomMutedAccountRow(
             onDismissRequest = { viewModel.unmuteAccountAlert = "" },
             onConfirmation = {
                 viewModel.unmuteAccountAlert = ""
-                viewModel.unmuteAccount(account.id) },
+                viewModel.unmuteAccount(account.id, account.username) },
             account = account
         )
     }

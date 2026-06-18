@@ -477,8 +477,8 @@ class PostViewModel @Inject constructor(
         }
     }
 
-    fun muteAccount(userId: String) {
-        accountService.muteAccount(userId).onEach { result ->
+    fun muteAccount(userId: String, username: String) {
+        accountService.muteAccount(userId, username).onEach { result ->
             relationshipState = when (result) {
                 is Resource.Success -> {
                     RelationshipState(accountRelationship = result.data)
@@ -495,8 +495,8 @@ class PostViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    fun blockAccount(userId: String) {
-        accountService.blockAccount(userId).onEach { result ->
+    fun blockAccount(userId: String, username: String) {
+        accountService.blockAccount(userId, username).onEach { result ->
             relationshipState = when (result) {
                 is Resource.Success -> {
                     RelationshipState(accountRelationship = result.data)

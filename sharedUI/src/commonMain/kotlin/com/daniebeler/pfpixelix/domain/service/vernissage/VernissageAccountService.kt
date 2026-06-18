@@ -1,40 +1,25 @@
 package com.daniebeler.pfpixelix.domain.service.vernissage
 
 import androidx.compose.ui.graphics.ImageBitmap
-import co.touchlab.kermit.Logger
 import com.daniebeler.pfpixelix.di.AppSingleton
 import com.daniebeler.pfpixelix.domain.model.Account
-import com.daniebeler.pfpixelix.domain.model.PaginatedResponse
 import com.daniebeler.pfpixelix.domain.model.Relationship
 import com.daniebeler.pfpixelix.domain.model.Settings
-import com.daniebeler.pfpixelix.domain.repository.pixelfed.PixelfedApi
 import com.daniebeler.pfpixelix.domain.repository.vernissage.VernissageApi
 import com.daniebeler.pfpixelix.domain.service.general.AccountService
 import com.daniebeler.pfpixelix.domain.service.general.AuthService
-import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedAccountDto
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.toDomain
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.domain.service.utils.loadListResources
-import com.daniebeler.pfpixelix.domain.service.utils.loadPaginatedListResources
 import com.daniebeler.pfpixelix.domain.service.utils.loadResource
 import com.daniebeler.pfpixelix.domain.service.utils.loadVernissagePaginatedListResources
-import com.daniebeler.pfpixelix.domain.service.vernissage.model.toDomain
-import com.daniebeler.pfpixelix.utils.encodeToPngBytes
-import com.daniebeler.pfpixelix.utils.executeAndParsePagination
-import io.ktor.client.request.forms.MultiPartFormDataContent
-import io.ktor.client.request.forms.formData
-import io.ktor.http.Headers
-import io.ktor.http.HttpHeaders
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
-import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 import kotlin.collections.emptyList
 
@@ -47,7 +32,7 @@ class VernissageAccountService(
     override val refreshSignal = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
     val emptyAccount = Account()
     val emptyRelationship = Relationship(
-        id = "", following = false, followedBy = false, muting = false, blocking = false
+        id = "", following = false, followedBy = false, muted = false, blocked = false
     )
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -105,8 +90,11 @@ class VernissageAccountService(
     }
 
     override fun getAccountByUsername(username: String) = loadResource {
-        //api.getAccountByUsername(username).toDomain()
-        emptyAccount
+        api.getUser(username).toDomain()
+    }
+
+    override fun getRelationships(userIds: List<String>) = loadListResources {
+        api.getRelationships(userIds).map { it.toDomain() }
     }
 
     override fun getMutualFollowers(userId: String) = loadListResources {
@@ -121,33 +109,31 @@ class VernissageAccountService(
         )
     }
 
-    override fun followAccount(accountId: String) = loadResource {
-        //api.followAccount(accountId).toDomain()
+    override fun followAccount(accountId: String, username: String) = loadResource {
+        api.followUser(username).toDomain()
+    }
+
+    override fun unfollowAccount(accountId: String, username: String) = loadResource {
+        api.unfollowUser(username).toDomain()
+    }
+
+    override fun muteAccount(accountId: String, username: String) = loadResource {
+        //    api.muteAccount(username).toDomain()
         emptyRelationship
     }
 
-    override fun unfollowAccount(accountId: String) = loadResource {
-        //api.unfollowAccount(accountId).toDomain()
+    override fun unMuteAccount(accountId: String, username: String) = loadResource {
+        //    api.unmuteAccount(username).toDomain()
         emptyRelationship
     }
 
-    override fun muteAccount(accountId: String) = loadResource {
-        //    api.muteAccount(accountId).toDomain()
+    override fun blockAccount(accountId: String, username: String) = loadResource {
+        //api.blockAccount(username).toDomain()
         emptyRelationship
     }
 
-    override fun unMuteAccount(accountId: String) = loadResource {
-        //    api.unmuteAccount(accountId).toDomain()
-        emptyRelationship
-    }
-
-    override fun blockAccount(accountId: String) = loadResource {
-        //api.blockAccount(accountId).toDomain()
-        emptyRelationship
-    }
-
-    override fun unblockAccount(accountId: String) = loadResource {
-        //api.unblockAccount(accountId).toDomain()
+    override fun unblockAccount(accountId: String, username: String) = loadResource {
+        //api.unblockAccount(username).toDomain()
         emptyRelationship
     }
 

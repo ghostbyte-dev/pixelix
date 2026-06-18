@@ -47,8 +47,8 @@ class MutedAccountsViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    fun unmuteAccount(accountId: String) {
-        accountService.unMuteAccount(accountId).onEach { result ->
+    fun unmuteAccount(accountId: String, username: String) {
+        accountService.unMuteAccount(accountId, username).onEach { result ->
             mutedAccountsState = when (result) {
                 is Resource.Success -> {
                     val newMutedAccounts =

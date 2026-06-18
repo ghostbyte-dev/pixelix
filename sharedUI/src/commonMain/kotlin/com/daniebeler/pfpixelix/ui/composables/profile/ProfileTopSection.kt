@@ -15,10 +15,16 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -30,6 +36,7 @@ import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.model.Relationship
+import com.daniebeler.pfpixelix.domain.service.capabilities.Capabilities
 import com.daniebeler.pfpixelix.ui.composables.hashtagMentionText.HashtagsMentionsTextView
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import com.daniebeler.pfpixelix.utils.StringFormat
@@ -42,15 +49,19 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.admin
+import pixelix.app.generated.resources.are_you_sure
 import pixelix.app.generated.resources.blocked
+import pixelix.app.generated.resources.cancel
+import pixelix.app.generated.resources.cancel_post_warning
 import pixelix.app.generated.resources.default_avatar
+import pixelix.app.generated.resources.discard
 import pixelix.app.generated.resources.follower
 import pixelix.app.generated.resources.following
 import pixelix.app.generated.resources.follows_you
-import pixelix.app.generated.resources.hash
 import pixelix.app.generated.resources.joined_date
 import pixelix.app.generated.resources.lock
 import pixelix.app.generated.resources.muted
+import pixelix.app.generated.resources.ok
 import pixelix.app.generated.resources.posts
 
 @Composable
@@ -60,6 +71,8 @@ fun ProfileTopSection(
     navController: NavController,
     openUrl: (url: String) -> Unit
 ) {
+    var isMuteInfoAlertOpen by remember { mutableStateOf(false) }
+
     if (account != null) {
         Column {
             if (account.headerUrl != null) {
@@ -163,14 +176,21 @@ fun ProfileTopSection(
                             ProfileBadge(text = stringResource(Res.string.follows_you))
                         }
 
-                        if (relationship != null && relationship.muting) {
+                        if (relationship != null && relationship.muted) {
                             ProfileBadge(
                                 text = stringResource(Res.string.muted),
-                                color = MaterialTheme.colorScheme.error
+                                color = MaterialTheme.colorScheme.error,
+                                onClick = if (relationship.mutedReblogs != null || relationship.mutedStatuses != null || relationship.mutedNotifications != null) {
+                                    {
+                                        isMuteInfoAlertOpen = true
+                                    }
+                                } else {
+                                    {}
+                                }
                             )
                         }
 
-                        if (relationship != null && relationship.blocking) {
+                        if (relationship != null && relationship.blocked) {
                             ProfileBadge(
                                 text = stringResource(Res.string.blocked),
                                 color = MaterialTheme.colorScheme.error
@@ -229,14 +249,51 @@ fun ProfileTopSection(
             }
         }
     }
+
+    //TODO: improve design and add strings to strings.xml
+    if (isMuteInfoAlertOpen && relationship != null) {
+        AlertDialog(
+            onDismissRequest = { isMuteInfoAlertOpen = false },
+            title = {
+                Text(text = stringResource(Res.string.muted))
+            },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text(text = "This account is muted for:")
+
+                    if (relationship.mutedStatuses != null && relationship.mutedStatuses) {
+                        Text(text = "• Posts/Statuses")
+                    }
+                    if (relationship.mutedReblogs != null && relationship.mutedReblogs) {
+                        Text(text = "• Reblogs/Shares")
+                    }
+                    if (relationship.mutedNotifications != null && relationship.mutedNotifications) {
+                        Text(text = "• Notifications")
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    isMuteInfoAlertOpen = false
+                }) {
+                    Text(stringResource(Res.string.ok))
+                }
+            }
+        )
+    }
 }
 
 @Composable
-private fun ProfileBadge(text: String, color: Color = MaterialTheme.colorScheme.onSurfaceVariant) {
+private fun ProfileBadge(text: String, color: Color = MaterialTheme.colorScheme.onSurfaceVariant, onClick: (() -> Unit)? = null) {
+    var baseModifier = Modifier
+        .border(BorderStroke(1.dp, color), shape = RoundedCornerShape(8.dp))
+
+    if (onClick != null) {
+        baseModifier = baseModifier.clickable(onClick = onClick)
+    }
+
     Box(
-        Modifier.border(
-            BorderStroke(1.dp, color), shape = RoundedCornerShape(8.dp)
-        ).padding(horizontal = 6.dp)
+        modifier = baseModifier.padding(horizontal = 6.dp)
     ) {
         Text(text = text, fontSize = 9.sp, color = color)
     }

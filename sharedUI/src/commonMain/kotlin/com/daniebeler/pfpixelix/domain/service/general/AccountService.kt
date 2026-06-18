@@ -1,37 +1,16 @@
 package com.daniebeler.pfpixelix.domain.service.general
 
 import androidx.compose.ui.graphics.ImageBitmap
-import co.touchlab.kermit.Logger
 import com.daniebeler.pfpixelix.di.AppSingleton
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
-import com.daniebeler.pfpixelix.domain.repository.pixelfed.PixelfedApi
 import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.model.PaginatedResponse
 import com.daniebeler.pfpixelix.domain.model.Relationship
 import com.daniebeler.pfpixelix.domain.model.Settings
-import com.daniebeler.pfpixelix.domain.service.general.AuthService
 import com.daniebeler.pfpixelix.domain.service.pixelfed.PixelfedAccountService
-import com.daniebeler.pfpixelix.domain.service.pixelfed.PixelfedAuthService
-import com.daniebeler.pfpixelix.domain.service.utils.loadListResources
-import com.daniebeler.pfpixelix.domain.service.utils.loadResource
 import com.daniebeler.pfpixelix.domain.service.vernissage.VernissageAccountService
-import com.daniebeler.pfpixelix.domain.service.vernissage.VernissageTimelineService
-import com.daniebeler.pfpixelix.utils.encodeToPngBytes
-import com.daniebeler.pfpixelix.utils.executeAndParsePagination
-import io.ktor.client.request.forms.MultiPartFormDataContent
-import io.ktor.client.request.forms.formData
-import io.ktor.http.Headers
-import io.ktor.http.HttpHeaders
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.onStart
-import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
 
 interface AccountService {
@@ -48,14 +27,15 @@ interface AccountService {
 
     fun getAccount(accountId: String, username: String): Flow<Resource<Account>>
     fun getAccountByUsername(username: String): Flow<Resource<Account>>
+    fun getRelationships(userIds: List<String>): Flow<Resource<List<Relationship>>>
     fun getMutualFollowers(userId: String): Flow<Resource<List<Account>>>
     fun getAccountSettings(): Flow<Resource<Settings>>
-    fun followAccount(accountId: String): Flow<Resource<Relationship>>
-    fun unfollowAccount(accountId: String): Flow<Resource<Relationship>>
-    fun muteAccount(accountId: String): Flow<Resource<Relationship>>
-    fun unMuteAccount(accountId: String): Flow<Resource<Relationship>>
-    fun blockAccount(accountId: String): Flow<Resource<Relationship>>
-    fun unblockAccount(accountId: String): Flow<Resource<Relationship>>
+    fun followAccount(accountId: String, username: String): Flow<Resource<Relationship>>
+    fun unfollowAccount(accountId: String, username: String): Flow<Resource<Relationship>>
+    fun muteAccount(accountId: String, username: String): Flow<Resource<Relationship>>
+    fun unMuteAccount(accountId: String, username: String): Flow<Resource<Relationship>>
+    fun blockAccount(accountId: String, username: String): Flow<Resource<Relationship>>
+    fun unblockAccount(accountId: String, username: String): Flow<Resource<Relationship>>
     fun getMutedAccounts(): Flow<Resource<List<Account>>>
     fun getBlockedAccounts(): Flow<Resource<List<Account>>>
     fun getLikedBy(postId: String): Flow<Resource<List<Account>>>
@@ -97,22 +77,23 @@ class AccountServiceDelegate(
     override fun getAccount(accountId: String, username: String): Flow<Resource<Account>> = current.getAccount(accountId, username)
 
     override fun getAccountByUsername(username: String): Flow<Resource<Account>> = current.getAccountByUsername(username)
+    override fun getRelationships(userIds: List<String>): Flow<Resource<List<Relationship>>> = current.getRelationships(userIds)
 
     override fun getMutualFollowers(userId: String): Flow<Resource<List<Account>>> = current.getMutualFollowers(userId)
 
     override fun getAccountSettings(): Flow<Resource<Settings>> = current.getAccountSettings()
 
-    override fun followAccount(accountId: String): Flow<Resource<Relationship>> = current.followAccount(accountId)
+    override fun followAccount(accountId: String, username: String): Flow<Resource<Relationship>> = current.followAccount(accountId, username)
 
-    override fun unfollowAccount(accountId: String): Flow<Resource<Relationship>> = current.unfollowAccount(accountId)
+    override fun unfollowAccount(accountId: String, username: String): Flow<Resource<Relationship>> = current.unfollowAccount(accountId, username)
 
-    override fun muteAccount(accountId: String): Flow<Resource<Relationship>> = current.muteAccount(accountId)
+    override fun muteAccount(accountId: String, username: String): Flow<Resource<Relationship>> = current.muteAccount(accountId, username)
 
-    override fun unMuteAccount(accountId: String): Flow<Resource<Relationship>> = current.unMuteAccount(accountId)
+    override fun unMuteAccount(accountId: String, username: String): Flow<Resource<Relationship>> = current.unMuteAccount(accountId, username)
 
-    override fun blockAccount(accountId: String): Flow<Resource<Relationship>> = current.blockAccount(accountId)
+    override fun blockAccount(accountId: String, username: String): Flow<Resource<Relationship>> = current.blockAccount(accountId, username)
 
-    override fun unblockAccount(accountId: String): Flow<Resource<Relationship>> = current.unblockAccount(accountId)
+    override fun unblockAccount(accountId: String, username: String): Flow<Resource<Relationship>> = current.unblockAccount(accountId, username)
 
     override fun getMutedAccounts(): Flow<Resource<List<Account>>> = current.getMutedAccounts()
 

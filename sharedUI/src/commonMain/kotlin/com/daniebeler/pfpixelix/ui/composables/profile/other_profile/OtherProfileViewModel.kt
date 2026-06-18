@@ -34,7 +34,6 @@ import me.tatarka.inject.annotations.Inject
 class OtherProfileViewModel(
     private val accountService: AccountService,
     private val postService: PostService,
-    private val exploreService: ExploreService,
     private val platform: Platform,
     private val prefs: UserPreferences,
     private val collectionService: CollectionService,
@@ -109,11 +108,11 @@ class OtherProfileViewModel(
     }
 
     fun getRelationship(userId: String) {
-        exploreService.getRelationships(List(1) { userId }).onEach { result ->
+        accountService.getRelationships(List(1) { userId }).onEach { result ->
             relationshipState = when (result) {
                 is Resource.Success -> {
                     RelationshipState(
-                        accountRelationship = if (!result.data.isNullOrEmpty()) {
+                        accountRelationship = if (result.data.isNotEmpty()) {
                             result.data[0]
                         } else {
                             null
@@ -308,8 +307,8 @@ class OtherProfileViewModel(
         }
     }
 
-    fun followAccount(userId: String) {
-        accountService.followAccount(userId).onEach { result ->
+    fun followAccount() {
+        accountService.followAccount(userId, username).onEach { result ->
             relationshipState = when (result) {
                 is Resource.Success -> {
                     RelationshipState(accountRelationship = result.data)
@@ -329,8 +328,8 @@ class OtherProfileViewModel(
         }.launchIn(viewModelScope)
     }
 
-    fun unfollowAccount(userId: String) {
-        accountService.unfollowAccount(userId).onEach { result ->
+    fun unfollowAccount() {
+        accountService.unfollowAccount(userId, username).onEach { result ->
             relationshipState = when (result) {
                 is Resource.Success -> {
                     RelationshipState(accountRelationship = result.data)
@@ -350,8 +349,8 @@ class OtherProfileViewModel(
         }.launchIn(viewModelScope)
     }
 
-    fun muteAccount(userId: String) {
-        accountService.muteAccount(userId).onEach { result ->
+    fun muteAccount() {
+        accountService.muteAccount(userId, username).onEach { result ->
             relationshipState = when (result) {
                 is Resource.Success -> {
                     RelationshipState(accountRelationship = result.data)
@@ -368,8 +367,8 @@ class OtherProfileViewModel(
         }.launchIn(viewModelScope)
     }
 
-    fun unMuteAccount(userId: String) {
-        accountService.unMuteAccount(userId).onEach { result ->
+    fun unMuteAccount() {
+        accountService.unMuteAccount(userId, username).onEach { result ->
             relationshipState = when (result) {
                 is Resource.Success -> {
                     RelationshipState(accountRelationship = result.data)
@@ -386,8 +385,8 @@ class OtherProfileViewModel(
         }.launchIn(viewModelScope)
     }
 
-    fun blockAccount(userId: String) {
-        accountService.blockAccount(userId).onEach { result ->
+    fun blockAccount() {
+        accountService.blockAccount(userId, username).onEach { result ->
             relationshipState = when (result) {
                 is Resource.Success -> {
                     RelationshipState(accountRelationship = result.data)
@@ -404,8 +403,8 @@ class OtherProfileViewModel(
         }.launchIn(viewModelScope)
     }
 
-    fun unblockAccount(userId: String) {
-        accountService.unblockAccount(userId).onEach { result ->
+    fun unblockAccount() {
+        accountService.unblockAccount(userId, username).onEach { result ->
             relationshipState = when (result) {
                 is Resource.Success -> {
                     RelationshipState(accountRelationship = result.data)

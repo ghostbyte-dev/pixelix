@@ -73,7 +73,6 @@ import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pfpixelix.ui.composables.widgets.ButtonRowElement
 import com.daniebeler.pfpixelix.ui.composables.widgets.CustomPullToRefreshBox
 import com.daniebeler.pfpixelix.ui.composables.widgets.InfiniteStaggeredGridHandler
-import com.daniebeler.pfpixelix.ui.composables.widgets.ToTopButton
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import com.daniebeler.pfpixelix.utils.DomainFormat
 import org.jetbrains.compose.resources.painterResource
@@ -285,13 +284,14 @@ fun OtherProfileComposable(
                                         contentColor = MaterialTheme.colorScheme.onPrimary
                                     }
 
+                                    //TODO: show state request (if user has setting follow request, if trying to follow, state requested is returned
                                     Button(
                                         onClick = {
                                             if (!viewModel.relationshipState.isLoading && viewModel.relationshipState.accountRelationship != null) {
                                                 if (viewModel.relationshipState.accountRelationship?.following == true) {
-                                                    viewModel.unfollowAccount(viewModel.userId)
+                                                    viewModel.unfollowAccount()
                                                 } else {
-                                                    viewModel.followAccount(viewModel.userId)
+                                                    viewModel.followAccount()
                                                 }
                                             }
                                         },
@@ -414,7 +414,7 @@ fun OtherProfileComposable(
                         modifier = Modifier.padding(bottom = 32.dp)
                     ) {
                         if (viewModel.relationshipState.accountRelationship != null) {
-                            if (viewModel.relationshipState.accountRelationship!!.muting) {
+                            if (viewModel.relationshipState.accountRelationship!!.muted) {
                                 ButtonRowElement(
                                     icon = Res.drawable.muted, text = stringResource(
                                         Res.string.unmute_this_profile
@@ -431,7 +431,7 @@ fun OtherProfileComposable(
                                 )
                             }
 
-                            if (viewModel.relationshipState.accountRelationship!!.blocking) {
+                            if (viewModel.relationshipState.accountRelationship!!.blocked) {
                                 ButtonRowElement(
                                     icon = Res.drawable.blocked, text = stringResource(
                                         Res.string.unblock_this_profile
@@ -474,7 +474,7 @@ fun OtherProfileComposable(
                     onConfirmation = {
                         showUnMuteAlert = false
                         showBottomSheet = false
-                        viewModel.unMuteAccount(viewModel.userId)
+                        viewModel.unMuteAccount()
                     },
                     account = viewModel.accountState.account!!
                 )
@@ -484,7 +484,7 @@ fun OtherProfileComposable(
                     onDismissRequest = { showMuteAlert = false }, onConfirmation = {
                         showMuteAlert = false
                         showBottomSheet = false
-                        viewModel.muteAccount(viewModel.userId)
+                        viewModel.muteAccount()
                     }, account = viewModel.accountState.account!!
                 )
             }
@@ -493,7 +493,7 @@ fun OtherProfileComposable(
                     onDismissRequest = { showBlockAlert = false }, onConfirmation = {
                         showBlockAlert = false
                         showBottomSheet = false
-                        viewModel.blockAccount(viewModel.userId)
+                        viewModel.blockAccount()
                     }, account = viewModel.accountState.account!!
                 )
             }
@@ -503,7 +503,7 @@ fun OtherProfileComposable(
                     onConfirmation = {
                         showUnBlockAlert = false
                         showBottomSheet = false
-                        viewModel.unblockAccount(viewModel.userId)
+                        viewModel.unblockAccount()
                     },
                     account = viewModel.accountState.account!!
                 )

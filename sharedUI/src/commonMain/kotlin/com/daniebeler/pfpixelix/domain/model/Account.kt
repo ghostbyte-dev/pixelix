@@ -1,7 +1,7 @@
 package com.daniebeler.pfpixelix.domain.model
 
 data class Account(
-    val id: String = "",
+    override val id: String = "",
     val username: String = "",
     val acct: String = "",
     val displayname: String? = null,
@@ -17,7 +17,7 @@ data class Account(
     val isAdmin: Boolean = false,
     val pronouns: List<String> = emptyList(),
     val headerUrl: String? = null
-)
+): Identifiable
 
 fun credentialsToAccount(credentials: Credentials) = Account(
     username = credentials.username,

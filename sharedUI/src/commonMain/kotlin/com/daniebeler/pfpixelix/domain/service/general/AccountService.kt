@@ -40,8 +40,6 @@ interface AccountService {
     fun unblockAccount(accountId: String, username: String): Flow<Resource<Relationship>>
     fun getMutedAccounts(): Flow<Resource<List<Account>>>
     fun getBlockedAccounts(): Flow<Resource<List<Account>>>
-    fun getLikedBy(postId: String): Flow<Resource<List<Account>>>
-
     fun getAccountsFollowers(
         accountId: String, username: String, cursor: String? = null
     ): Flow<Resource<PaginatedResponse<List<Account>>>>
@@ -100,8 +98,6 @@ class AccountServiceDelegate(
     override fun getMutedAccounts(): Flow<Resource<List<Account>>> = current.getMutedAccounts()
 
     override fun getBlockedAccounts(): Flow<Resource<List<Account>>> = current.getBlockedAccounts()
-
-    override fun getLikedBy(postId: String): Flow<Resource<List<Account>>> = current.getLikedBy(postId)
 
     override fun getAccountsFollowers(
         accountId: String,username: String,

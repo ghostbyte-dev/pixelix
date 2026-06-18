@@ -18,6 +18,7 @@ import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.domain.service.utils.loadListResources
 import com.daniebeler.pfpixelix.domain.service.utils.loadResource
 import com.daniebeler.pfpixelix.domain.service.utils.loadVernissagePaginatedListResources
+import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageAccountDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageNewReplyDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.toDomain
 import com.daniebeler.pfpixelix.utils.executeAndParsePagination
@@ -112,4 +113,9 @@ class VernissagePostService(
         loadVernissagePaginatedListResources {
             api.getTrendingPosts(range, maxId = maxId)
         }.filterSensitive(prefs.hideSensitiveContent)
+
+
+    override fun getLikedBy(postId: String) = loadVernissagePaginatedListResources {
+        api.getFavourited(postId)
+    }
 }

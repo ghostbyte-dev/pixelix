@@ -120,6 +120,13 @@ interface VernissageApi {
         @Query("limit") limit: Int = PROFILE_POSTS_LIMIT
     ): VernissagePaginatedResponse<List<VernissagePostDto>>
 
+    @GET("api/v1/statuses/{id}/favourited")
+    suspend fun getFavourited(
+        @Path("id") postId: String,
+        @Query("maxId") maxPostId: String? = null,
+        @Query("limit") limit: Int = PROFILE_POSTS_LIMIT
+    ): VernissagePaginatedResponse<List<VernissageAccountDto>>
+
     @Headers("Content-Type: application/json")
     @POST("api/v1/statuses")
     suspend fun createReply(

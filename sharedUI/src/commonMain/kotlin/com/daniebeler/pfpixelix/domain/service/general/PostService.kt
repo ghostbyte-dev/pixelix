@@ -1,6 +1,7 @@
 package com.daniebeler.pfpixelix.domain.service.general
 
 import com.daniebeler.pfpixelix.di.AppSingleton
+import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.model.NewReport
 import com.daniebeler.pfpixelix.domain.model.PaginatedResponse
 import com.daniebeler.pfpixelix.domain.model.Post
@@ -63,6 +64,8 @@ interface PostService {
     fun reportPost(reportBody: NewReport): Flow<Resource<ReportResponse>>
 
     fun getTrendingPosts(range: String, maxId: String? = null): Flow<Resource<PaginatedResponse<List<Post>>>>
+
+    fun getLikedBy(postId: String): Flow<Resource<PaginatedResponse<List<Account>>>>
 
     fun Flow<Resource<PaginatedResponse<List<Post>>>>.filterSensitive(hideSensitiveContent: Boolean) =
         this.map { event ->
@@ -131,4 +134,5 @@ class PostServiceDelegate(
     override fun getTrendingPosts(range: String, maxId: String?): Flow<Resource<PaginatedResponse<List<Post>>>> =
         current.getTrendingPosts(range, maxId)
 
+    override fun getLikedBy(postId: String): Flow<Resource<PaginatedResponse<List<Account>>>> = current.getLikedBy(postId)
 }

@@ -1,5 +1,6 @@
 package com.daniebeler.pfpixelix.domain.service.pixelfed
 
+import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.model.NewReply
 import com.daniebeler.pfpixelix.domain.model.NewReport
 import com.daniebeler.pfpixelix.domain.model.PaginatedResponse
@@ -135,4 +136,7 @@ class PixelfedPostService(
             emptyList()
         }
     }.filterSensitive(prefs.hideSensitiveContent)
+
+    override fun getLikedBy(postId: String) =
+        loadPaginatedListResources<Account> { api.getAccountsWhoLikedPost(postId).map { it.toDomain() } }
 }

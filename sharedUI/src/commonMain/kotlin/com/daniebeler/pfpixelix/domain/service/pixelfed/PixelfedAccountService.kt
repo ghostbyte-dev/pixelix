@@ -128,9 +128,6 @@ class PixelfedAccountService(
     override fun getBlockedAccounts() =
         loadListResources { api.getBlockedAccounts().map { it.toDomain() } }
 
-    override fun getLikedBy(postId: String) =
-        loadListResources { api.getAccountsWhoLikedPost(postId).map { it.toDomain() } }
-
     override fun getAccountsFollowers(accountId: String, username: String, cursor: String?) = flow {
         emit(Resource.Loading())
 

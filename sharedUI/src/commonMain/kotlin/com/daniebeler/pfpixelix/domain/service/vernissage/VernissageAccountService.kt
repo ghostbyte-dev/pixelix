@@ -34,9 +34,6 @@ class VernissageAccountService(
 ) : AccountService {
     override val refreshSignal = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
     val emptyAccount = Account()
-    val emptyRelationship = Relationship(
-        id = "", following = false, followedBy = false, muted = false, blocked = false
-    )
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override fun getOwnAccount(): Flow<Resource<Account>> {
@@ -138,16 +135,13 @@ class VernissageAccountService(
 
     override fun getMutedAccounts() = loadListResources {
         //    api.getMutedAccounts().map { it.toDomain() }
+        //TODO: check if there is endpoint, maybe possible to first fetch relationships and then get those accounts which are muted, but expensive
         emptyList<Account>()
     }
 
     override fun getBlockedAccounts() = loadListResources {
+        //TODO: same as getMutedAccounts()
         //    api.getBlockedAccounts().map { it.toDomain() }
-        emptyList<Account>()
-    }
-
-    override fun getLikedBy(postId: String) = loadListResources {
-        //    api.getAccountsWhoLikedPost(postId).map { it.toDomain() }
         emptyList<Account>()
     }
 

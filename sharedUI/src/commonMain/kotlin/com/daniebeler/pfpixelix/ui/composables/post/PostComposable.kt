@@ -69,8 +69,11 @@ import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import coil3.compose.AsyncImagePainter
 import com.daniebeler.pfpixelix.di.injectViewModel
+import com.daniebeler.pfpixelix.domain.model.Account
+import com.daniebeler.pfpixelix.domain.model.LikedBy
 import com.daniebeler.pfpixelix.domain.model.MediaAttachment
 import com.daniebeler.pfpixelix.domain.model.Post
+import com.daniebeler.pfpixelix.domain.service.capabilities.Capabilities
 import com.daniebeler.pfpixelix.ui.composables.hashtagMentionText.HashtagsMentionsTextView
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pfpixelix.ui.navigation.Destination
@@ -283,7 +286,12 @@ private fun PostHeader(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(6.dp),
             modifier = Modifier.padding(start = 16.dp, end = 12.dp).clickable {
-                navController.navigate(Destination.Profile(reblogAccount.id, reblogAccount.username))
+                navController.navigate(
+                    Destination.Profile(
+                        reblogAccount.id,
+                        reblogAccount.username
+                    )
+                )
             }) {
             Icon(
                 vectorResource(Res.drawable.repost),
@@ -451,7 +459,11 @@ private fun PostMediaContent(
         }
         Box {
             HorizontalPager(
-                state = pagerState, pageSpacing = if (isMasonry) {4.dp} else {16.dp}, modifier = Modifier.zIndex(50f).aspectRatio(
+                state = pagerState, pageSpacing = if (isMasonry) {
+                    4.dp
+                } else {
+                    16.dp
+                }, modifier = Modifier.zIndex(50f).aspectRatio(
                     smallestAspectRatio?.aspectRatio?.toFloat() ?: 1f
                 )
             ) { page ->
@@ -657,10 +669,14 @@ private fun PostActionBar(
             }
         }
 
-        // "Liked by" row
-        PostLikedByRow(
-            post = post, navController = navController, onLikesClick = onLikesClick
-        )
+        if (viewModel.capabilities.post.showLikedBy) {
+            // "Liked by" row
+            PostLikedByRow(
+                post = post,
+                navController = navController,
+                onLikesClick = onLikesClick
+            )
+        }
 
         Spacer(modifier = Modifier.height(12.dp))
 
@@ -704,6 +720,7 @@ private fun PostLikedByRow(
         }
     }
 }
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

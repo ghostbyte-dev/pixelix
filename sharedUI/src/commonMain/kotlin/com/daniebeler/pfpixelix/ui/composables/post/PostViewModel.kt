@@ -7,6 +7,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
+import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.model.Instance
 import com.daniebeler.pfpixelix.domain.model.LikedBy
 import com.daniebeler.pfpixelix.domain.model.NewReport
@@ -31,8 +32,14 @@ import com.daniebeler.pfpixelix.ui.composables.post.reply.RepliesState
 import com.daniebeler.pfpixelix.ui.composables.profile.RelationshipState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.transform
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 
@@ -217,10 +224,10 @@ class PostViewModel @Inject constructor(
 
 
     fun loadLikedBy(postId: String) {
-        accountService.getLikedBy(postId).onEach { result ->
+        postService.getLikedBy(postId).onEach { result ->
             likedByState = when (result) {
                 is Resource.Success -> {
-                    LikedByState(likedBy = result.data)
+                    LikedByState(likedBy = result.data.data)
                 }
 
                 is Resource.Error -> {

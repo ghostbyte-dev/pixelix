@@ -6,7 +6,8 @@ data class Capabilities(
 )
 
 data class PostCapabilities(
-    val showCameraMetadata: Boolean
+    val showCameraMetadata: Boolean,
+    val showLikedBy: Boolean
 )
 
 data class ProfileCapabilities(

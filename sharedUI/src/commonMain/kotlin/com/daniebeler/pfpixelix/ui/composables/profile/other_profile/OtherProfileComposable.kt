@@ -1,6 +1,7 @@
 package com.daniebeler.pfpixelix.ui.composables.profile.other_profile
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -24,6 +26,8 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -34,8 +38,10 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -59,6 +65,9 @@ import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.model.Account
+import com.daniebeler.pfpixelix.domain.model.request.UserBlockRequest
+import com.daniebeler.pfpixelix.domain.model.request.UserMuteRequest
+import com.daniebeler.pfpixelix.domain.service.capabilities.Capabilities
 import com.daniebeler.pfpixelix.ui.composables.profile.CollectionsComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.MutualFollowersComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.postsWrapperComposable
@@ -202,7 +211,7 @@ fun OtherProfileComposable(
         Box(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
             CustomPullToRefreshBox(
                 isRefreshing = viewModel.accountState.refreshing || viewModel.postsState.refreshing,
-                onRefresh = { viewModel.loadData(userId, username,true, navController) },
+                onRefresh = { viewModel.loadData(userId, username, true, navController) },
                 modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)
             ) {
 
@@ -481,20 +490,22 @@ fun OtherProfileComposable(
             }
             if (showMuteAlert) {
                 MuteAccountAlert(
-                    onDismissRequest = { showMuteAlert = false }, onConfirmation = {
+                    onDismissRequest = { showMuteAlert = false }, onConfirmation = { userMuteRequest ->
                         showMuteAlert = false
                         showBottomSheet = false
-                        viewModel.muteAccount()
-                    }, account = viewModel.accountState.account!!
+                        viewModel.muteAccount(userMuteRequest)
+                    }, account = viewModel.accountState.account!!,
+                    capabilities = viewModel.capabilities
                 )
             }
             if (showBlockAlert) {
                 BlockAccountAlert(
-                    onDismissRequest = { showBlockAlert = false }, onConfirmation = {
+                    onDismissRequest = { showBlockAlert = false }, onConfirmation = { userBlockRequest ->
                         showBlockAlert = false
                         showBottomSheet = false
-                        viewModel.blockAccount()
-                    }, account = viewModel.accountState.account!!
+                        viewModel.blockAccount(userBlockRequest)
+                    }, account = viewModel.accountState.account!!,
+                    capabilities = viewModel.capabilities
                 )
             }
             if (showUnBlockAlert) {
@@ -524,8 +535,11 @@ fun OtherProfileComposable(
 
 @Composable
 fun MuteAccountAlert(
-    onDismissRequest: () -> Unit, onConfirmation: () -> Unit, account: Account?
+    onDismissRequest: () -> Unit, onConfirmation: (userMuteRequest: UserMuteRequest) -> Unit, account: Account?, capabilities: Capabilities
 ) {
+    val showAdvanced = capabilities.profile.showAdvancedMuteOptions
+    var muteOptions by remember { mutableStateOf(UserMuteRequest()) }
+
     AlertDialog(title = {
         Text(text = stringResource(Res.string.mute_account))
     }, text = {
@@ -536,22 +550,55 @@ fun MuteAccountAlert(
                 HorizontalDivider(Modifier.padding(vertical = 12.dp))
             }
 
+            if (showAdvanced) {
+                Text(
+                    text = "Mute options",
+                    style = MaterialTheme.typography.titleSmall,
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
 
-            Text(text = stringResource(Res.string.mute_consequence_1))
-            Text(text = stringResource(Res.string.mute_consequence_2))
-            Text(text = stringResource(Res.string.mute_consequence_3))
-            Text(text = stringResource(Res.string.mute_consequence_4))
+                // Example Toggle Row component (Implementation depends on your project)
+                MuteOptionRow(
+                    label = "Mute Statuses",
+                    checked = muteOptions.muteStatuses,
+                    onCheckedChange = { muteOptions = muteOptions.copy(muteStatuses = it) })
+                MuteOptionRow(
+                    label = "Mute Reblogs",
+                    checked = muteOptions.muteReblogs,
+                    onCheckedChange = { muteOptions = muteOptions.copy(muteReblogs = it) })
+                MuteOptionRow(
+                    label = "Mute Notifications",
+                    checked = muteOptions.muteNotifications,
+                    onCheckedChange = { muteOptions = muteOptions.copy(muteNotifications = it) })
+                MuteOptionRow(
+                    label = "Remove Statuses From Timeline",
+                    checked = muteOptions.removeStatusesFromTimeline,
+                    onCheckedChange = {
+                        muteOptions = muteOptions.copy(removeStatusesFromTimeline = it)
+                    })
+                MuteOptionRow(
+                    label = "Remove Reblogs From Timeline",
+                    checked = muteOptions.removeReblogsFromTimeline,
+                    onCheckedChange = {
+                        muteOptions = muteOptions.copy(removeReblogsFromTimeline = it)
+                    })
+            } else {
 
-            HorizontalDivider(Modifier.padding(vertical = 12.dp))
+                Text(text = stringResource(Res.string.mute_consequence_1))
+                Text(text = stringResource(Res.string.mute_consequence_2))
+                Text(text = stringResource(Res.string.mute_consequence_3))
+                Text(text = stringResource(Res.string.mute_consequence_4))
 
-            Text(text = stringResource(Res.string.mute_consequence_5))
+                HorizontalDivider(Modifier.padding(vertical = 12.dp))
 
+                Text(text = stringResource(Res.string.mute_consequence_5))
+            }
         }
     }, onDismissRequest = {
         onDismissRequest()
     }, confirmButton = {
         TextButton(onClick = {
-            onConfirmation()
+            onConfirmation(muteOptions)
         }) {
             Text(stringResource(Res.string.mute))
         }
@@ -593,8 +640,10 @@ fun UnMuteAccountAlert(
 
 @Composable
 fun BlockAccountAlert(
-    onDismissRequest: () -> Unit, onConfirmation: () -> Unit, account: Account?
+    onDismissRequest: () -> Unit, onConfirmation: (userBlockRequest: UserBlockRequest) -> Unit, account: Account?, capabilities: Capabilities
 ) {
+    var reason by remember { mutableStateOf("") }
+
     AlertDialog(title = {
         Text(text = stringResource(Res.string.block_account))
     }, text = {
@@ -605,29 +654,40 @@ fun BlockAccountAlert(
                 HorizontalDivider(Modifier.padding(vertical = 12.dp))
             }
 
+            if (capabilities.profile.blockReason) {
+                //TODO: translate, style
+                TextField(
+                    value = reason,
+                    singleLine = false,
+                    onValueChange = {
+                        reason = it
+                    },
+                    shape = MaterialTheme.shapes.medium,
+                    placeholder = { Text("Reason") },
+                )
+            } else {
 
-            Text(text = stringResource(Res.string.block_consequence_1))
-            Text(text = stringResource(Res.string.block_consequence_2))
-            Text(text = stringResource(Res.string.block_consequence_3))
-            Text(text = stringResource(Res.string.block_consequence_4))
-            Text(text = stringResource(Res.string.block_consequence_5))
+                Text(text = stringResource(Res.string.block_consequence_1))
+                Text(text = stringResource(Res.string.block_consequence_2))
+                Text(text = stringResource(Res.string.block_consequence_3))
+                Text(text = stringResource(Res.string.block_consequence_4))
+                Text(text = stringResource(Res.string.block_consequence_5))
+                HorizontalDivider(Modifier.padding(vertical = 12.dp))
+                Text(text = stringResource(Res.string.block_consequence_6))
 
-            HorizontalDivider(Modifier.padding(vertical = 12.dp))
+                Text(text = stringResource(Res.string.block_consequence_7))
 
-            Text(text = stringResource(Res.string.block_consequence_6))
-            Text(text = stringResource(Res.string.block_consequence_7))
-            Text(text = stringResource(Res.string.block_consequence_8))
-            Text(text = stringResource(Res.string.block_consequence_9))
-
-            HorizontalDivider(Modifier.padding(vertical = 12.dp))
-
-            Text(text = stringResource(Res.string.block_consequence_10))
+                Text(text = stringResource(Res.string.block_consequence_8))
+                Text(text = stringResource(Res.string.block_consequence_9))
+                HorizontalDivider(Modifier.padding(vertical = 12.dp))
+                Text(text = stringResource(Res.string.block_consequence_10))
+            }
         }
     }, onDismissRequest = {
         onDismissRequest()
     }, confirmButton = {
         TextButton(onClick = {
-            onConfirmation()
+            onConfirmation(UserBlockRequest(reason))
         }) {
             Text(stringResource(Res.string.block))
         }
@@ -638,7 +698,20 @@ fun BlockAccountAlert(
             Text(stringResource(Res.string.cancel))
         }
     })
+}
 
+@Composable
+fun MuteOptionRow(label: String, checked: Boolean, onCheckedChange: (Boolean) -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onCheckedChange(!checked) }
+            .padding(vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(text = label, modifier = Modifier.weight(1f))
+        Switch(checked = checked, onCheckedChange = onCheckedChange)
+    }
 }
 
 @Composable

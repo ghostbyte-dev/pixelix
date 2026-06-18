@@ -8,6 +8,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.domain.model.Post
+import com.daniebeler.pfpixelix.domain.model.request.UserBlockRequest
+import com.daniebeler.pfpixelix.domain.model.request.UserMuteRequest
 import com.daniebeler.pfpixelix.domain.repository.pixelfed.PixelfedApi
 import com.daniebeler.pfpixelix.domain.service.capabilities.Capabilities
 import com.daniebeler.pfpixelix.domain.service.general.CollectionService
@@ -16,6 +18,7 @@ import com.daniebeler.pfpixelix.domain.service.general.AuthService
 import com.daniebeler.pfpixelix.domain.service.general.ExploreService
 import com.daniebeler.pfpixelix.domain.service.platform.Platform
 import com.daniebeler.pfpixelix.domain.service.general.PostService
+import com.daniebeler.pfpixelix.domain.service.general.Session
 import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.ui.composables.profile.AccountState
@@ -37,8 +40,11 @@ class OtherProfileViewModel(
     private val platform: Platform,
     private val prefs: UserPreferences,
     private val collectionService: CollectionService,
-    private val authService: AuthService
-) : ViewModel() {
+    private val authService: AuthService,
+    private val session: Session
+    ) : ViewModel() {
+    val capabilities: Capabilities = session.capabilities.value
+
     var userId: String = ""
     var username: String = ""
     var accountState by mutableStateOf(AccountState())
@@ -349,8 +355,8 @@ class OtherProfileViewModel(
         }.launchIn(viewModelScope)
     }
 
-    fun muteAccount() {
-        accountService.muteAccount(userId, username).onEach { result ->
+    fun muteAccount(userMuteRequest: UserMuteRequest) {
+        accountService.muteAccount(userId, username, userMuteRequest).onEach { result ->
             relationshipState = when (result) {
                 is Resource.Success -> {
                     RelationshipState(accountRelationship = result.data)
@@ -385,8 +391,8 @@ class OtherProfileViewModel(
         }.launchIn(viewModelScope)
     }
 
-    fun blockAccount() {
-        accountService.blockAccount(userId, username).onEach { result ->
+    fun blockAccount(userBlockRequest: UserBlockRequest) {
+        accountService.blockAccount(userId, username, userBlockRequest).onEach { result ->
             relationshipState = when (result) {
                 is Resource.Success -> {
                     RelationshipState(accountRelationship = result.data)

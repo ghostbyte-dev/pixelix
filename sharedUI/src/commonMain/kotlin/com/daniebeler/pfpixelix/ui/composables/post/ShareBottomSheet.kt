@@ -218,20 +218,22 @@ fun ShareBottomSheet(
 
     if (showMuteAlert) {
         MuteAccountAlert(
-            onDismissRequest = { showMuteAlert = false }, onConfirmation = {
+            onDismissRequest = { showMuteAlert = false }, onConfirmation = { userMuteRequest ->
                 showMuteAlert = false
-                viewModel.post?.account?.let { viewModel.muteAccount(it.id, it.username) }
+                viewModel.post?.account?.let { viewModel.muteAccount(it.id, it.username, userMuteRequest) }
                 closeBottomSheet()
-            }, account = viewModel.post?.account
+            }, account = viewModel.post?.account,
+            capabilities = viewModel.capabilities
         )
     }
     if (showBlockAlert) {
         BlockAccountAlert(
-            onDismissRequest = { showBlockAlert = false }, onConfirmation = {
+            onDismissRequest = { showBlockAlert = false }, onConfirmation = { userBlockRequest ->
                 showBlockAlert = false
-                viewModel.post?.account?.let { viewModel.blockAccount(it.id, it.username) }
+                viewModel.post?.account?.let { viewModel.blockAccount(it.id, it.username, userBlockRequest) }
                 closeBottomSheet()
-            }, account = viewModel.post?.account
+            }, account = viewModel.post?.account,
+            capabilities = viewModel.capabilities
         )
     }
 

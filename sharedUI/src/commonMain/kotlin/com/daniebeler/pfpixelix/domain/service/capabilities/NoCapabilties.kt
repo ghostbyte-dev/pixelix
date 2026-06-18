@@ -5,6 +5,8 @@ val NoCapabilities = Capabilities(
         showCameraMetadata = false
     ),
     profile = ProfileCapabilities(
-        showCollectionsOwnProfile = false
+        showCollectionsOwnProfile = false,
+        showAdvancedMuteOptions = false,
+        blockReason = false
     )
 )

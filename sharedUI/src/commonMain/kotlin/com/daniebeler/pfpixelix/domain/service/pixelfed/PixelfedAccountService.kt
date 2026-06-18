@@ -4,6 +4,8 @@ import androidx.compose.ui.graphics.ImageBitmap
 import co.touchlab.kermit.Logger
 import com.daniebeler.pfpixelix.di.AppSingleton
 import com.daniebeler.pfpixelix.domain.model.Account
+import com.daniebeler.pfpixelix.domain.model.request.UserBlockRequest
+import com.daniebeler.pfpixelix.domain.model.request.UserMuteRequest
 import com.daniebeler.pfpixelix.domain.repository.pixelfed.PixelfedApi
 import com.daniebeler.pfpixelix.domain.service.general.AccountService
 import com.daniebeler.pfpixelix.domain.service.general.AuthService
@@ -108,13 +110,13 @@ class PixelfedAccountService(
     override fun unfollowAccount(accountId: String, username: String) =
         loadResource { api.unfollowAccount(accountId).toDomain() }
 
-    override fun muteAccount(accountId: String, username: String) =
+    override fun muteAccount(accountId: String, username: String, userMuteRequest: UserMuteRequest) =
         loadResource { api.muteAccount(accountId).toDomain() }
 
     override fun unMuteAccount(accountId: String, username: String) =
         loadResource { api.unmuteAccount(accountId).toDomain() }
 
-    override fun blockAccount(accountId: String, username: String) =
+    override fun blockAccount(accountId: String, username: String, userBlockRequest: UserBlockRequest) =
         loadResource { api.blockAccount(accountId).toDomain() }
 
     override fun unblockAccount(accountId: String, username: String) =

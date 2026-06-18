@@ -27,67 +27,68 @@ import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.character_count
 
 @Composable
-fun MaxLengthTextField(submit: (text: String) -> Unit,
-                       value: TextFieldValue,
-                       onValueChange: (newText: TextFieldValue) -> Unit,
-                       label: StringResource,
-                       modifier: Modifier = Modifier,
-                       textFieldModifier: Modifier = Modifier,
-                       imeAction: ImeAction = ImeAction.Default,
-                       maxLength: Int? = null,
-                       shape: CornerBasedShape = MaterialTheme.shapes.medium,
-                       colors: TextFieldColors = TextFieldDefaults.colors(
-                             unfocusedIndicatorColor = Color.Transparent,
-                             focusedIndicatorColor = Color.Transparent,
-                             focusedContainerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(4.dp),
-                             unfocusedContainerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(4.dp)
-                         ),
+fun MaxLengthTextField(
+    submit: (text: String) -> Unit,
+    value: TextFieldValue,
+    onValueChange: (newText: TextFieldValue) -> Unit,
+    label: StringResource,
+    modifier: Modifier = Modifier,
+    textFieldModifier: Modifier = Modifier,
+    imeAction: ImeAction = ImeAction.Default,
+    maxLength: Int? = null,
+    shape: CornerBasedShape = MaterialTheme.shapes.medium,
+    colors: TextFieldColors = TextFieldDefaults.colors(
+        unfocusedIndicatorColor = Color.Transparent,
+        focusedIndicatorColor = Color.Transparent,
+        focusedContainerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(4.dp),
+        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(4.dp)
+    ),
 ) {
 
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
-        Row(verticalAlignment = Alignment.Bottom, modifier = modifier) {
-            TextField(
-                value = value,
-                singleLine = false,
-                onValueChange = {
-                    onValueChange(it)
-                },
-                shape = shape,
-                placeholder = { Text(stringResource(label)) },
-                modifier = textFieldModifier.heightIn(max = 200.dp),
-                colors = colors,
-                keyboardOptions = KeyboardOptions(imeAction = imeAction),
-                keyboardActions = KeyboardActions(onDone = {
-                    if ((maxLength ?: Int.MAX_VALUE) <= value.text.length && value.text.isNotEmpty()) {
-                        keyboardController?.hide()
-                        focusManager.clearFocus()
-                        submit(value.text)
-                    }
-                })
+    Row(verticalAlignment = Alignment.Bottom, modifier = modifier) {
+        TextField(
+            value = value,
+            singleLine = false,
+            onValueChange = {
+                onValueChange(it)
+            },
+            shape = shape,
+            placeholder = { Text(stringResource(label)) },
+            modifier = textFieldModifier.heightIn(max = 200.dp),
+            colors = colors,
+            keyboardOptions = KeyboardOptions(imeAction = imeAction),
+            keyboardActions = KeyboardActions(onDone = {
+                if ((maxLength ?: Int.MAX_VALUE) <= value.text.length && value.text.isNotEmpty()) {
+                    keyboardController?.hide()
+                    focusManager.clearFocus()
+                    submit(value.text)
+                }
+            })
+        )
+    }
+    if (maxLength != null) {
+        if (value.text.length > maxLength - 30
+        ) {
+            Text(
+                text = stringResource(
+                    Res.string.character_count,
+                    value.text.length,
+                    maxLength
+                ),
+                style = MaterialTheme.typography.labelSmall,
+                color = if (value.text.length > maxLength)
+                    MaterialTheme.colorScheme.error
+                else
+                    MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(
+                    top = 4.dp,
+                    start = 4.dp,
+                    bottom = 4.dp
+                )
             )
         }
-        if (maxLength != null) {
-            if (value.text.length > maxLength - 30
-            ) {
-                Text(
-                    text = stringResource(
-                        Res.string.character_count,
-                        value.text.length,
-                        maxLength
-                    ),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = if (value.text.length > maxLength)
-                        MaterialTheme.colorScheme.error
-                    else
-                        MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(
-                        top = 4.dp,
-                        start = 4.dp,
-                        bottom = 4.dp
-                    )
-                )
-            }
-        }
+    }
 
 }

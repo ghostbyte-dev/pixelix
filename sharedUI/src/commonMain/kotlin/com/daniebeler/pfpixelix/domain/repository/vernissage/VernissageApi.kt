@@ -7,6 +7,8 @@ import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissagePostDt
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissagePaginatedResponse
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissagePostContextDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageRelationshipDto
+import com.daniebeler.pfpixelix.domain.service.vernissage.model.request.VernissageUserBlockRequest
+import com.daniebeler.pfpixelix.domain.service.vernissage.model.request.VernissageUserMuteRequest
 import de.jensklingenberg.ktorfit.http.Body
 import de.jensklingenberg.ktorfit.http.GET
 import de.jensklingenberg.ktorfit.http.Header
@@ -150,6 +152,30 @@ interface VernissageApi {
 
     @POST("api/v1/users/{username}/unfollow")
     suspend fun unfollowUser(
+        @Path("username") username: String
+    ): VernissageRelationshipDto
+
+    @Headers("Content-Type: application/json")
+    @POST("api/v1/users/{username}/mute")
+    suspend fun muteUser(
+        @Path("username") username: String,
+        @Body muteRequest: VernissageUserMuteRequest
+    ): VernissageRelationshipDto
+
+    @POST("api/v1/users/{username}/unmute")
+    suspend fun unmuteUser(
+        @Path("username") username: String
+    ): VernissageRelationshipDto
+
+    @Headers("Content-Type: application/json")
+    @POST("api/v1/users/{username}/block")
+    suspend fun blockUser(
+        @Path("username") username: String,
+        @Body muteRequest: VernissageUserBlockRequest
+    ): VernissageRelationshipDto
+
+    @POST("api/v1/users/{username}/unblock")
+    suspend fun unblockUser(
         @Path("username") username: String
     ): VernissageRelationshipDto
 

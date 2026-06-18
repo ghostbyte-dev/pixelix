@@ -12,6 +12,8 @@ import com.daniebeler.pfpixelix.domain.model.LikedBy
 import com.daniebeler.pfpixelix.domain.model.NewReport
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.model.ReportObjectType
+import com.daniebeler.pfpixelix.domain.model.request.UserBlockRequest
+import com.daniebeler.pfpixelix.domain.model.request.UserMuteRequest
 import com.daniebeler.pfpixelix.domain.service.capabilities.Capabilities
 import com.daniebeler.pfpixelix.domain.service.general.PostEditorService
 import com.daniebeler.pfpixelix.domain.service.file.FileService
@@ -477,8 +479,8 @@ class PostViewModel @Inject constructor(
         }
     }
 
-    fun muteAccount(userId: String, username: String) {
-        accountService.muteAccount(userId, username).onEach { result ->
+    fun muteAccount(userId: String, username: String, userMuteRequest: UserMuteRequest) {
+        accountService.muteAccount(userId, username, userMuteRequest).onEach { result ->
             relationshipState = when (result) {
                 is Resource.Success -> {
                     RelationshipState(accountRelationship = result.data)
@@ -495,8 +497,8 @@ class PostViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    fun blockAccount(userId: String, username: String) {
-        accountService.blockAccount(userId, username).onEach { result ->
+    fun blockAccount(userId: String, username: String, userBlockRequest: UserBlockRequest) {
+        accountService.blockAccount(userId, username, userBlockRequest).onEach { result ->
             relationshipState = when (result) {
                 is Resource.Success -> {
                     RelationshipState(accountRelationship = result.data)

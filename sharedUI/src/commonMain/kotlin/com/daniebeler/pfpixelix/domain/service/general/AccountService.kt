@@ -7,6 +7,8 @@ import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.model.PaginatedResponse
 import com.daniebeler.pfpixelix.domain.model.Relationship
 import com.daniebeler.pfpixelix.domain.model.Settings
+import com.daniebeler.pfpixelix.domain.model.request.UserBlockRequest
+import com.daniebeler.pfpixelix.domain.model.request.UserMuteRequest
 import com.daniebeler.pfpixelix.domain.service.pixelfed.PixelfedAccountService
 import com.daniebeler.pfpixelix.domain.service.vernissage.VernissageAccountService
 import kotlinx.coroutines.flow.Flow
@@ -32,9 +34,9 @@ interface AccountService {
     fun getAccountSettings(): Flow<Resource<Settings>>
     fun followAccount(accountId: String, username: String): Flow<Resource<Relationship>>
     fun unfollowAccount(accountId: String, username: String): Flow<Resource<Relationship>>
-    fun muteAccount(accountId: String, username: String): Flow<Resource<Relationship>>
+    fun muteAccount(accountId: String, username: String, userMuteRequest: UserMuteRequest): Flow<Resource<Relationship>>
     fun unMuteAccount(accountId: String, username: String): Flow<Resource<Relationship>>
-    fun blockAccount(accountId: String, username: String): Flow<Resource<Relationship>>
+    fun blockAccount(accountId: String, username: String, userBlockRequest: UserBlockRequest): Flow<Resource<Relationship>>
     fun unblockAccount(accountId: String, username: String): Flow<Resource<Relationship>>
     fun getMutedAccounts(): Flow<Resource<List<Account>>>
     fun getBlockedAccounts(): Flow<Resource<List<Account>>>
@@ -87,11 +89,11 @@ class AccountServiceDelegate(
 
     override fun unfollowAccount(accountId: String, username: String): Flow<Resource<Relationship>> = current.unfollowAccount(accountId, username)
 
-    override fun muteAccount(accountId: String, username: String): Flow<Resource<Relationship>> = current.muteAccount(accountId, username)
+    override fun muteAccount(accountId: String, username: String, userMuteRequest: UserMuteRequest): Flow<Resource<Relationship>> = current.muteAccount(accountId, username, userMuteRequest)
 
     override fun unMuteAccount(accountId: String, username: String): Flow<Resource<Relationship>> = current.unMuteAccount(accountId, username)
 
-    override fun blockAccount(accountId: String, username: String): Flow<Resource<Relationship>> = current.blockAccount(accountId, username)
+    override fun blockAccount(accountId: String, username: String, userBlockRequest: UserBlockRequest): Flow<Resource<Relationship>> = current.blockAccount(accountId, username, userBlockRequest)
 
     override fun unblockAccount(accountId: String, username: String): Flow<Resource<Relationship>> = current.unblockAccount(accountId, username)
 

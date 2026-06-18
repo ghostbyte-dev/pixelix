@@ -5,6 +5,8 @@ val VernissageCapabilities = Capabilities(
         showCameraMetadata = true
     ),
     profile = ProfileCapabilities(
-        showCollectionsOwnProfile = false
+        showCollectionsOwnProfile = false,
+        showAdvancedMuteOptions = true,
+        blockReason = true
     )
 )

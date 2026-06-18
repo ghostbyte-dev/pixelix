@@ -5,6 +5,8 @@ val PixelfedCapabilities = Capabilities(
         showCameraMetadata = false
     ),
     profile = ProfileCapabilities(
-        showCollectionsOwnProfile = true
+        showCollectionsOwnProfile = true,
+        showAdvancedMuteOptions = false,
+        blockReason = false
     )
 )

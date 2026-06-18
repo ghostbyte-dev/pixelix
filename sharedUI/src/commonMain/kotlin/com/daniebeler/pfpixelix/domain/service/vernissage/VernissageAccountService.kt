@@ -5,6 +5,9 @@ import com.daniebeler.pfpixelix.di.AppSingleton
 import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.model.Relationship
 import com.daniebeler.pfpixelix.domain.model.Settings
+import com.daniebeler.pfpixelix.domain.model.request.UserBlockRequest
+import com.daniebeler.pfpixelix.domain.model.request.UserMuteRequest
+import com.daniebeler.pfpixelix.domain.model.request.toVernissage
 import com.daniebeler.pfpixelix.domain.repository.vernissage.VernissageApi
 import com.daniebeler.pfpixelix.domain.service.general.AccountService
 import com.daniebeler.pfpixelix.domain.service.general.AuthService
@@ -117,24 +120,20 @@ class VernissageAccountService(
         api.unfollowUser(username).toDomain()
     }
 
-    override fun muteAccount(accountId: String, username: String) = loadResource {
-        //    api.muteAccount(username).toDomain()
-        emptyRelationship
+    override fun muteAccount(accountId: String, username: String, userMuteRequest: UserMuteRequest) = loadResource {
+        api.muteUser(username, userMuteRequest.toVernissage()).toDomain()
     }
 
     override fun unMuteAccount(accountId: String, username: String) = loadResource {
-        //    api.unmuteAccount(username).toDomain()
-        emptyRelationship
+        api.unmuteUser(username).toDomain()
     }
 
-    override fun blockAccount(accountId: String, username: String) = loadResource {
-        //api.blockAccount(username).toDomain()
-        emptyRelationship
+    override fun blockAccount(accountId: String, username: String, userBlockRequest: UserBlockRequest) = loadResource {
+        api.blockUser(username, userBlockRequest.toVernissage()).toDomain()
     }
 
     override fun unblockAccount(accountId: String, username: String) = loadResource {
-        //api.unblockAccount(username).toDomain()
-        emptyRelationship
+        api.unblockUser(username).toDomain()
     }
 
     override fun getMutedAccounts() = loadListResources {

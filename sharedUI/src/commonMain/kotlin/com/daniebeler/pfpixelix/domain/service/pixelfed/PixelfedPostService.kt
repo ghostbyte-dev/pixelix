@@ -129,14 +129,6 @@ class PixelfedPostService(
         api.reportPost(json.encodeToString(reportBody)).toDomain()
     }
 
-    override fun getTrendingPosts(range: String, maxId: String?) = loadPaginatedListResources {
-        if (maxId == null) {
-            api.getTrendingPosts(range).map { it.toDomain() }
-        } else {
-            emptyList()
-        }
-    }.filterSensitive(prefs.hideSensitiveContent)
-
     override fun getLikedBy(postId: String) =
         loadPaginatedListResources<Account> { api.getAccountsWhoLikedPost(postId).map { it.toDomain() } }
 }

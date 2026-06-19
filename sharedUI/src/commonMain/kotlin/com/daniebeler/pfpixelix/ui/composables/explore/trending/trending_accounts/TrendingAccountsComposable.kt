@@ -9,6 +9,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -25,12 +26,18 @@ import pixelix.app.generated.resources.no_trending_profiles
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TrendingAccountsComposable(
+    range: String,
     navController: NavController,
     viewModel: TrendingAccountsViewModel = injectViewModel(key = "trending-accounts-key") { trendingAccountsViewModel }
 ) {
+    DisposableEffect(range) {
+        viewModel.getTrendingAccountsState(range)
+        onDispose {}
+    }
+
     CustomPullToRefreshBox(
         isRefreshing = viewModel.trendingAccountsState.isRefreshing,
-        onRefresh = { viewModel.getTrendingAccountsState(true) },
+        onRefresh = { viewModel.getTrendingAccountsState(range, true) },
         animatedBox = true
     ) {
         LazyColumn(modifier = Modifier.fillMaxSize().padding(horizontal = 4.dp),

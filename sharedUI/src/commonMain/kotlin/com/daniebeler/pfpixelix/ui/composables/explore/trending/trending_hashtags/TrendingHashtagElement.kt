@@ -68,7 +68,7 @@ fun TrendingHashtagElement(
             if (viewModel.hashtagState.hashtag != null) {
                 Text(
                     text = "  • " + StringFormat.groupDigits(
-                        viewModel.hashtagState.hashtag!!.count
+                        hashtag.count
                     ) + " " + stringResource(
                         Res.string.posts
                     ), fontSize = 12.sp, color = MaterialTheme.colorScheme.secondary

@@ -9,6 +9,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -25,12 +26,19 @@ import pixelix.app.generated.resources.no_trending_hashtags
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TrendingHashtagsComposable(
+    range: String,
     navController: NavController,
     viewModel: TrendingHashtagsViewModel = injectViewModel(key = "trending-hashtags-key") { trendingHashtagsViewModel }
 ) {
+    DisposableEffect(range) {
+        viewModel.getTrendingHashtags(range)
+        onDispose {}
+    }
+
+    //TODO: pagination, for vernissage
     CustomPullToRefreshBox(
         isRefreshing = viewModel.trendingHashtagsState.isRefreshing,
-        onRefresh = { viewModel.getTrendingHashtags(true) },
+        onRefresh = { viewModel.getTrendingHashtags(range, true) },
         animatedBox = true
     ) {
         LazyColumn(
@@ -39,7 +47,11 @@ fun TrendingHashtagsComposable(
             verticalArrangement = Arrangement.spacedBy(20.dp),
             content = {
                 items(viewModel.trendingHashtagsState.trendingHashtags, key = {
-                    it.hashtag ?: ""
+                    if (!it.hashtag.isNullOrEmpty()) {
+                        it.hashtag
+                    } else {
+                        it.name
+                    }
                 }) {
                     TrendingHashtagElement(hashtag = it, navController = navController)
                 }

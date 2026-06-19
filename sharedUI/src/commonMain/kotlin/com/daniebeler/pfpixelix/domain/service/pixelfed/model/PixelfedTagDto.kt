@@ -23,6 +23,7 @@ fun PixelfedTagDto.toDomain(): Tag {
         following = this.following,
         count = this.count,
         total = this.total,
-        hashtag = this.hashtag
+        hashtag = this.hashtag,
+        id = ""
     )
 }

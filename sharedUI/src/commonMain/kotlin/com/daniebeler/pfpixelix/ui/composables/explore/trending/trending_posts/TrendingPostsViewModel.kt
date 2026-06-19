@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.domain.repository.pixelfed.PixelfedApi
+import com.daniebeler.pfpixelix.domain.service.general.ExploreService
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.domain.service.general.PostService
 import kotlinx.coroutines.flow.launchIn
@@ -13,7 +14,7 @@ import kotlinx.coroutines.flow.onEach
 import me.tatarka.inject.annotations.Inject
 
 class TrendingPostsViewModel @Inject constructor(
-    private val postService: PostService
+    private val exploreService: ExploreService
 ) : ViewModel() {
 
     var trendingState by mutableStateOf(TrendingPostsState())
@@ -23,7 +24,7 @@ class TrendingPostsViewModel @Inject constructor(
         if (!refreshing && trendingState.trendingPosts.isNotEmpty()) {
             return
         }
-        postService.getTrendingPosts(timeRange).onEach { result ->
+        exploreService.getTrendingPosts(timeRange).onEach { result ->
             trendingState = when (result) {
                 is Resource.Success -> {
                     val endReached = result.data.data.isEmpty()
@@ -44,7 +45,7 @@ class TrendingPostsViewModel @Inject constructor(
 
     fun getTrendingPostsPaginated(timeRange: String) {
         if (trendingState.trendingPosts.isNotEmpty() && !trendingState.isLoading && !trendingState.endReached) {
-            postService.getTrendingPosts(timeRange, trendingState.nextId).onEach { result ->
+            exploreService.getTrendingPosts(timeRange, trendingState.nextId).onEach { result ->
                 trendingState = when (result) {
                     is Resource.Success -> {
                         val endReached = result.data.data.isEmpty()

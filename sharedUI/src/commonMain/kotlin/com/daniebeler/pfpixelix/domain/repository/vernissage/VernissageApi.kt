@@ -2,12 +2,15 @@ package com.daniebeler.pfpixelix.domain.repository.vernissage
 
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedAccountDto
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedRelationshipDto
+import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedSearchDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageAccountDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageNotificationDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissagePostDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissagePaginatedResponse
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissagePostContextDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageRelationshipDto
+import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageSearchDto
+import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageTagDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.request.VernissageUserBlockRequest
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.request.VernissageUserMuteRequest
 import de.jensklingenberg.ktorfit.http.Body
@@ -40,7 +43,7 @@ interface VernissageApi {
     ): VernissagePaginatedResponse<List<VernissagePostDto>>
 
     // Timelines
-    @GET("api/v1/timelines/tag/{tag}")
+    @GET("api/v1/timelines/hashtag/{tag}")
     suspend fun getHashtagTimeline(
         @Path("tag") tag: String,
         @Query("maxId") maxPostId: String? = null,
@@ -65,6 +68,20 @@ interface VernissageApi {
         @Query("maxId") maxId: String? = null,
         @Query("limit") limit: Int = TRENDING_TIMELINE_POSTS_LIMIT
     ): VernissagePaginatedResponse<List<VernissagePostDto>>
+
+    @GET("api/v1/trending/users")
+    suspend fun getTrendingUsers(
+        @Query("period") period: String,
+        @Query("maxId") maxId: String? = null,
+        @Query("limit") limit: Int = TRENDING_TIMELINE_POSTS_LIMIT
+    ): VernissagePaginatedResponse<List<VernissageAccountDto>>
+
+    @GET("api/v1/trending/hashtags")
+    suspend fun getTrendingHashtags(
+        @Query("period") period: String,
+        @Query("maxId") maxId: String? = null,
+        @Query("limit") limit: Int = TRENDING_TIMELINE_POSTS_LIMIT
+    ): VernissagePaginatedResponse<List<VernissageTagDto>>
 
     @GET("api/v1/statuses/{id}")
     suspend fun getPostById(
@@ -197,4 +214,9 @@ interface VernissageApi {
         @Query("maxId") maxId: String? = null,
         @Query("limit") limit: Int = NOTIFICATIONS_LIMIT
     ): VernissagePaginatedResponse<List<VernissageNotificationDto>>
+
+    @GET("api/v1/search")
+    suspend fun getSearch(
+        @Query("query") searchText: String, @Query("type") type: String?
+    ): VernissageSearchDto
 }

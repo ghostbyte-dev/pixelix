@@ -2,25 +2,30 @@ package com.daniebeler.pfpixelix.domain.service.general
 
 import com.daniebeler.pfpixelix.di.AppSingleton
 import com.daniebeler.pfpixelix.domain.model.Account
+import com.daniebeler.pfpixelix.domain.model.PaginatedResponse
 import com.daniebeler.pfpixelix.domain.model.Place
+import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.model.RelatedHashtag
 import com.daniebeler.pfpixelix.domain.model.Relationship
 import com.daniebeler.pfpixelix.domain.model.Search
 import com.daniebeler.pfpixelix.domain.model.Tag
 import com.daniebeler.pfpixelix.domain.service.pixelfed.PixelfedExploreService
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
+import com.daniebeler.pfpixelix.domain.service.vernissage.VernissageExploreService
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import me.tatarka.inject.annotations.Inject
 
 
 interface ExploreService {
-    fun getTrendingAccounts(): Flow<Resource<List<Account>>>
+    fun getTrendingAccounts(range: String): Flow<Resource<PaginatedResponse<List<Account>>>>
+    fun getTrendingPosts(range: String, maxId: String? = null): Flow<Resource<PaginatedResponse<List<Post>>>>
 
     fun search(searchText: String, type: String? = null, limit: Int = 5): Flow<Resource<Search>>
 
     fun searchLocations(searchText: String): Flow<Resource<List<Place>>>
 
-    fun getTrendingHashtags(): Flow<Resource<List<Tag>>>
+    fun getTrendingHashtags(range: String): Flow<Resource<PaginatedResponse<List<Tag>>>>
 
     fun getFollowedHashtags(): Flow<Resource<List<Tag>>>
 
@@ -31,6 +36,17 @@ interface ExploreService {
     fun followHashtag(tagId: String): Flow<Resource<Tag>>
 
     fun unfollowHashtag(tagId: String): Flow<Resource<Tag>>
+
+
+    fun Flow<Resource<PaginatedResponse<List<Post>>>>.filterSensitive(hideSensitiveContent: Boolean) =
+        this.map { event ->
+            if (event is Resource.Success<PaginatedResponse<List<Post>>>) {
+                val filtered = event.data.data.filter { !(hideSensitiveContent && it.sensitive) }
+                Resource.Success(event.data.copy(data = filtered))
+            } else {
+                event
+            }
+        }
 }
 
 
@@ -39,16 +55,20 @@ interface ExploreService {
 class ExploreServiceDelegate(
     private val session: Session,
     private val pixelfed: PixelfedExploreService,
-    //private val vernissage: VernissageTimelineService
+    private val vernissage: VernissageExploreService
 ) : ExploreService {
 
     private val current: ExploreService
-        get() = when (session.backendType) {
-            // BackendType.VERNISSAGE -> vernissage
+        get() = when (session.backendType.value) {
+            BackendType.VERNISSAGE -> vernissage
             else -> pixelfed
         }
 
-    override fun getTrendingAccounts(): Flow<Resource<List<Account>>> = current.getTrendingAccounts()
+    override fun getTrendingAccounts(range: String): Flow<Resource<PaginatedResponse<List<Account>>>> = current.getTrendingAccounts(range)
+
+    override fun getTrendingPosts(range: String, maxId: String?): Flow<Resource<PaginatedResponse<List<Post>>>> =
+        current.getTrendingPosts(range, maxId)
+
     override fun search(
         searchText: String,
         type: String?,
@@ -57,7 +77,7 @@ class ExploreServiceDelegate(
 
     override fun searchLocations(searchText: String): Flow<Resource<List<Place>>> = current.searchLocations(searchText)
 
-    override fun getTrendingHashtags(): Flow<Resource<List<Tag>>> = current.getTrendingHashtags()
+    override fun getTrendingHashtags(range: String): Flow<Resource<PaginatedResponse<List<Tag>>>> = current.getTrendingHashtags(range)
 
     override fun getFollowedHashtags(): Flow<Resource<List<Tag>>> = current.getFollowedHashtags()
 
@@ -68,5 +88,4 @@ class ExploreServiceDelegate(
     override fun followHashtag(tagId: String): Flow<Resource<Tag>> = current.followHashtag(tagId)
 
     override fun unfollowHashtag(tagId: String): Flow<Resource<Tag>> = current.unfollowHashtag(tagId)
-
 }

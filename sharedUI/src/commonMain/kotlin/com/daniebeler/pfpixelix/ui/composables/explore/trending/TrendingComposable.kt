@@ -73,11 +73,11 @@ fun TrendingComposable(navController: NavController, initialPage: Int, isSwipeEn
                 }
 
                 1 -> Box(modifier = Modifier.fillMaxSize()) {
-                    TrendingAccountsComposable(navController = navController)
+                    TrendingAccountsComposable(range, navController = navController)
                 }
 
                 2 -> Box(modifier = Modifier.fillMaxSize()) {
-                    TrendingHashtagsComposable(navController = navController)
+                    TrendingHashtagsComposable(range, navController = navController)
                 }
 
             }

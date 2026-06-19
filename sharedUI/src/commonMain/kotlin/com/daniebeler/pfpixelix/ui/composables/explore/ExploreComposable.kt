@@ -192,7 +192,7 @@ fun ExploreComposable(
                     modifier = Modifier.imePadding(),
                     contentPadding = PaddingValues(bottom = 60.dp),
                     content = {
-                    items(searchResult.accounts) {
+                    items(searchResult.accounts.take(5)) {
                         CustomAccount(
                             account = it,
                             relationship = null,
@@ -201,7 +201,7 @@ fun ExploreComposable(
                         )
                     }
                     item { HorizontalDivider(Modifier.padding(12.dp)) }
-                    items(searchResult.tags) {
+                    items(searchResult.tags.take(5)) {
                         CustomHashtag(
                             hashtag = it,
                             onClick = { viewModel.saveHashtag(it.name) },

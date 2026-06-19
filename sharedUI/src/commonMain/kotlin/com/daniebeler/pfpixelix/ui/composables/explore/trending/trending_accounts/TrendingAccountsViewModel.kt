@@ -17,21 +17,17 @@ class TrendingAccountsViewModel @Inject constructor(
 ) : ViewModel() {
     var trendingAccountsState by mutableStateOf(TrendingAccountsState())
 
-    init {
-        getTrendingAccountsState()
-    }
-
-    fun getTrendingAccountsState(refreshing: Boolean = false) {
+    fun getTrendingAccountsState(range: String, refreshing: Boolean = false) {
         if (refreshing || trendingAccountsState.trendingAccounts.isEmpty()) {
-            exploreService.getTrendingAccounts().onEach { result ->
+            exploreService.getTrendingAccounts(range).onEach { result ->
                 trendingAccountsState = when (result) {
                     is Resource.Success -> {
-                        TrendingAccountsState(trendingAccounts = result.data ?: emptyList())
+                        TrendingAccountsState(trendingAccounts = result.data.data)
                     }
 
                     is Resource.Error -> {
                         TrendingAccountsState(
-                            error = result.message ?: "An unexpected error occurred"
+                            error = result.message
                         )
                     }
 

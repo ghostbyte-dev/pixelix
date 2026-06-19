@@ -109,12 +109,6 @@ class VernissagePostService(
         // api.reportPost(json.encodeToString(reportBody)).toDomain()
     }
 
-    override fun getTrendingPosts(range: String, maxId: String?) =
-        loadVernissagePaginatedListResources {
-            api.getTrendingPosts(range, maxId = maxId)
-        }.filterSensitive(prefs.hideSensitiveContent)
-
-
     override fun getLikedBy(postId: String) = loadVernissagePaginatedListResources {
         api.getFavourited(postId)
     }

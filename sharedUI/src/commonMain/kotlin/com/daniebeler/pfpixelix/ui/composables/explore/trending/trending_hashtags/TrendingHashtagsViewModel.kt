@@ -17,19 +17,15 @@ class TrendingHashtagsViewModel @Inject constructor(
 
     var trendingHashtagsState by mutableStateOf(TrendingHashtagsState())
 
-    init {
-        getTrendingHashtags()
-    }
-
-    fun getTrendingHashtags(refreshing: Boolean = false) {
-        exploreService.getTrendingHashtags().onEach { result ->
+    fun getTrendingHashtags(range: String, refreshing: Boolean = false) {
+        exploreService.getTrendingHashtags(range).onEach { result ->
             trendingHashtagsState = when (result) {
                 is Resource.Success -> {
-                    TrendingHashtagsState(trendingHashtags = result.data ?: emptyList())
+                    TrendingHashtagsState(trendingHashtags = result.data.data)
                 }
 
                 is Resource.Error -> {
-                    TrendingHashtagsState(error = result.message ?: "An unexpected error occurred")
+                    TrendingHashtagsState(error = result.message)
                 }
 
                 is Resource.Loading -> {

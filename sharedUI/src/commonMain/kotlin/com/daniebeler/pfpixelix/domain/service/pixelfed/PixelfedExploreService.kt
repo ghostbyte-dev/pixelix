@@ -3,17 +3,28 @@ package com.daniebeler.pfpixelix.domain.service.pixelfed
 import com.daniebeler.pfpixelix.domain.repository.pixelfed.PixelfedApi
 import com.daniebeler.pfpixelix.domain.service.general.ExploreService
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.toDomain
+import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
 import com.daniebeler.pfpixelix.domain.service.utils.loadListResources
+import com.daniebeler.pfpixelix.domain.service.utils.loadPaginatedListResources
 import com.daniebeler.pfpixelix.domain.service.utils.loadResource
 import me.tatarka.inject.annotations.Inject
 
 @Inject
 class PixelfedExploreService(
+    private val prefs: UserPreferences,
     private val api: PixelfedApi
 ): ExploreService {
-    override fun getTrendingAccounts() = loadListResources {
+    override fun getTrendingAccounts(range: String) = loadPaginatedListResources {
         api.getTrendingAccounts().map { it.toDomain() }
     }
+
+    override fun getTrendingPosts(range: String, maxId: String?) = loadPaginatedListResources {
+        if (maxId == null) {
+            api.getTrendingPosts(range).map { it.toDomain() }
+        } else {
+            emptyList()
+        }
+    }.filterSensitive(prefs.hideSensitiveContent)
 
     override fun search(searchText: String, type: String?, limit: Int) = loadResource {
         api.getSearch(searchText, type, limit).toDomain()
@@ -23,7 +34,7 @@ class PixelfedExploreService(
         api.searchLocations(searchText).map { it.toDomain() }
     }
 
-    override fun getTrendingHashtags() = loadListResources {
+    override fun getTrendingHashtags(range: String) = loadPaginatedListResources {
         api.getTrendingHashtags().map { it.toDomain() }
     }
 

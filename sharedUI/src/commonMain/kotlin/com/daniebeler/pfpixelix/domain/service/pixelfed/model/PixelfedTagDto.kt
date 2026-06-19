@@ -11,8 +11,7 @@ data class PixelfedTagDto(
     @SerialName("name") val name: String,
     @SerialName("url") val url: String,
     @SerialName("following") val following: Boolean = false,
-    @SerialName("count") val count: Int = 0,
-    @SerialName("total") val total: Int = 0,
+    @SerialName("count") val count: Int?,
     @SerialName("hashtag") val hashtag: String? = null
 )
 
@@ -21,8 +20,7 @@ fun PixelfedTagDto.toDomain(): Tag {
         name = this.name,
         url = this.url,
         following = this.following,
-        count = this.count,
-        total = this.total,
+        postsCount = this.count,
         hashtag = this.hashtag,
         id = ""
     )

@@ -55,6 +55,7 @@ class PixelfedExploreService(
     }
 
     override fun unfollowHashtag(tagId: String) = loadResource {
-        api.unfollowHashtag(tagId).toDomain()
+        api.unfollowHashtag(tagId)
+        Unit
     }
 }

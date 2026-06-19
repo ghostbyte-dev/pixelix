@@ -9,6 +9,7 @@ import com.daniebeler.pfpixelix.domain.model.NodeInfo
 import com.daniebeler.pfpixelix.domain.service.pixelfed.PixelfedExploreService
 import com.daniebeler.pfpixelix.domain.service.pixelfed.PixelfedInstanceService
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
+import com.daniebeler.pfpixelix.domain.service.vernissage.VernissageInstanceService
 import kotlinx.coroutines.flow.Flow
 import me.tatarka.inject.annotations.Inject
 
@@ -24,12 +25,12 @@ interface InstanceService {
 class InstanceServiceDelegate(
     private val session: Session,
     private val pixelfed: PixelfedInstanceService,
-    //private val vernissage: VernissageTimelineService
+    private val vernissage: VernissageInstanceService
 ) : InstanceService {
 
     private val current: InstanceService
-        get() = when (session.backendType) {
-            // BackendType.VERNISSAGE -> vernissage
+        get() = when (session.backendType.value) {
+            BackendType.VERNISSAGE -> vernissage
             else -> pixelfed
         }
 

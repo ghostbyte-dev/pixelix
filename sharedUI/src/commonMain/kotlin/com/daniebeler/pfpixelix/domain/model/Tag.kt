@@ -5,7 +5,6 @@ data class Tag(
     val name: String,
     val url: String,
     val following: Boolean,
-    val count: Int,
-    val total: Int,
+    val postsCount: Int?,
     val hashtag: String?
 ): Identifiable

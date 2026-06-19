@@ -31,7 +31,7 @@ data class Configuration(
 data class MediaAttachmentConfiguration(
     val supportedMimeTypes: List<String>,
     val imageSizeLimit: Long,
-    val videoSizeLimit: Long
+    val videoSizeLimit: Long?
 )
 
 data class StatusConfiguration(

@@ -26,18 +26,12 @@ class FollowedHashtagsViewModel @Inject constructor(
         exploreService.getFollowedHashtags().onEach { result ->
             when (result) {
                 is Resource.Success -> {
-                    if (result.data?.isNotEmpty() == false) {
-                        followedHashtagsState = FollowedHashtagsState()
-                    } else {
-                        result.data!!.forEach {
-                            getFollowedHashtagSingle(it)
-                        }
-                    }
+                    followedHashtagsState = FollowedHashtagsState(followedHashtags = result.data)
                 }
 
                 is Resource.Error -> {
                     followedHashtagsState = FollowedHashtagsState(
-                        error = result.message ?: "An unexpected error occurred"
+                        error = result.message
                     )
                 }
 
@@ -51,23 +45,4 @@ class FollowedHashtagsViewModel @Inject constructor(
             }
         }.launchIn(viewModelScope)
     }
-
-    private fun getFollowedHashtagSingle(tag: Tag) {
-        exploreService.getHashtag(tag.name).onEach { result ->
-            followedHashtagsState = when (result) {
-                is Resource.Success -> {
-                    FollowedHashtagsState(followedHashtags = followedHashtagsState.followedHashtags + result.data)
-                }
-
-                is Resource.Error -> {
-                    FollowedHashtagsState(error = result.message ?: "An unexpected error occurred")
-                }
-
-                is Resource.Loading -> {
-                    FollowedHashtagsState(isLoading = true)
-                }
-            }
-        }.launchIn(viewModelScope)
-    }
-
 }

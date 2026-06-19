@@ -18,8 +18,7 @@ data class VernissageTagDto(
             name = this.name,
             url = this.url,
             following = false,
-            count = this.amount ?: 0,
-            total = 0,
+            postsCount = this.amount,
             hashtag = "",
             id = ""
         )

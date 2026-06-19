@@ -174,19 +174,19 @@ class NewPostViewModel @Inject constructor(
                     AddMediaErrorType.TOO_BIG_MEDIA,
                     "Image is to big", "This image is to big, the max size for this server is ${
                         bytesIntoHumanReadable(
-                            instance!!.configuration.mediaAttachmentConfig.imageSizeLimit.toLong()
+                            instance!!.configuration.mediaAttachmentConfig.imageSizeLimit
                         )
                     }, your video has ${bytesIntoHumanReadable(size)}", uri
                 )
                 return
             }
         } else if (fileType.take(5) == "video") {
-            if (instance != null && size > instance!!.configuration.mediaAttachmentConfig.videoSizeLimit) {
+            if (instance != null && instance?.configuration?.mediaAttachmentConfig?.videoSizeLimit != null && size > instance!!.configuration.mediaAttachmentConfig.videoSizeLimit!!) {
                 addImageError = AddMediaError(
                     AddMediaErrorType.ERROR,
                     "Video is to big", "This Video is to big, the max size for this server is ${
                         bytesIntoHumanReadable(
-                            instance!!.configuration.mediaAttachmentConfig.videoSizeLimit.toLong()
+                            instance!!.configuration.mediaAttachmentConfig.videoSizeLimit!!
                         )
                     }, your video has ${bytesIntoHumanReadable(size)}"
                 )

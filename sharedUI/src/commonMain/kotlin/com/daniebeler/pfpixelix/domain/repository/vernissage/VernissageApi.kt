@@ -1,9 +1,12 @@
 package com.daniebeler.pfpixelix.domain.repository.vernissage
 
+import com.daniebeler.pfpixelix.domain.model.Instance
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedAccountDto
+import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedNodeInfoDto
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedRelationshipDto
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedSearchDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageAccountDto
+import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageInstanceDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageNotificationDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissagePostDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissagePaginatedResponse
@@ -11,6 +14,8 @@ import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissagePostCo
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageRelationshipDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageSearchDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageTagDto
+import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageVisibilityDto
+import com.daniebeler.pfpixelix.domain.service.vernissage.model.request.VernissageReblogRequest
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.request.VernissageUserBlockRequest
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.request.VernissageUserMuteRequest
 import de.jensklingenberg.ktorfit.http.Body
@@ -20,6 +25,7 @@ import de.jensklingenberg.ktorfit.http.Headers
 import de.jensklingenberg.ktorfit.http.POST
 import de.jensklingenberg.ktorfit.http.Path
 import de.jensklingenberg.ktorfit.http.Query
+import de.jensklingenberg.ktorfit.http.Url
 
 interface VernissageApi {
     companion object {
@@ -123,8 +129,14 @@ interface VernissageApi {
         @Path("id") userId: String
     ): VernissagePostDto
 
+    @Headers("Content-Type: application/json")
     @POST("api/v1/statuses/{id}/reblog")
-    suspend fun reblogPost(@Path("id") userId: String): VernissagePostDto
+    suspend fun reblogPost(
+        @Path("id") userId: String,
+        @Body relogRequest: VernissageReblogRequest = VernissageReblogRequest(
+            VernissageVisibilityDto.PUBLIC
+        )
+    ): VernissagePostDto
 
     @POST("api/v1/statuses/{id}/unreblog")
     suspend fun unreblogPost(
@@ -209,6 +221,21 @@ interface VernissageApi {
         @Query("id[]") userId: List<String>
     ): List<VernissageRelationshipDto>
 
+    @GET("/api/v1/hashtags/followed")
+    suspend fun getFollowedHashtags(
+        @Query("limit") limit: Int = FOLLOWERS_LIMIT
+    ): List<VernissageTagDto>
+
+    @POST("/api/v1/hashtags/{tag}/follow")
+    suspend fun followHashtag(
+        @Path("tag") tag: String
+    ): VernissageTagDto
+
+    @POST("/api/v1/hashtags/{tag}/unfollow")
+    suspend fun unfollowHashtag(
+        @Path("tag") tag: String
+    )
+
     @GET("api/v1/notifications")
     suspend fun getNotifications(
         @Query("maxId") maxId: String? = null,
@@ -219,4 +246,10 @@ interface VernissageApi {
     suspend fun getSearch(
         @Query("query") searchText: String, @Query("type") type: String?
     ): VernissageSearchDto
+
+    @GET("api/v1/instance")
+    suspend fun getInstance(): VernissageInstanceDto
+
+    @GET
+    suspend fun getNodeInfo(@Url domain: String): PixelfedNodeInfoDto
 }

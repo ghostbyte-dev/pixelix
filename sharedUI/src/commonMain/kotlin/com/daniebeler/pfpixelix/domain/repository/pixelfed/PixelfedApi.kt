@@ -8,6 +8,7 @@ import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedAccountDto
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedChatDto
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedCollectionDto
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedConversationDto
+import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedInstanceDto
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedMediaAttachmentDto
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedMessageDto
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedNodeInfoDto
@@ -306,7 +307,7 @@ interface PixelfedApi {
     ): PixelfedPostContextDto
 
     @GET("api/v1/instance")
-    suspend fun getInstance(): Instance
+    suspend fun getInstance(): PixelfedInstanceDto
 
     @GET("api/v1/mutes")
     suspend fun getMutedAccounts(): List<PixelfedAccountDto>

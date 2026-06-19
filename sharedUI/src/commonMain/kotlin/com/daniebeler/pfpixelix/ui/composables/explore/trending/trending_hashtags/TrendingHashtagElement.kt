@@ -6,13 +6,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -45,7 +43,6 @@ fun TrendingHashtagElement(
 
     LaunchedEffect(hashtag) {
         viewModel.loadItems(hashtag.name)
-        viewModel.getHashtagInfo(hashtag.name)
     }
 
     Column(
@@ -65,10 +62,10 @@ fun TrendingHashtagElement(
                 .fillMaxWidth()
         ) {
             Text(text = "#" + hashtag.name, fontWeight = FontWeight.Bold, fontSize = 18.sp)
-            if (viewModel.hashtagState.hashtag != null) {
+            if (hashtag.postsCount != null) {
                 Text(
                     text = "  • " + StringFormat.groupDigits(
-                        hashtag.count
+                        hashtag.postsCount
                     ) + " " + stringResource(
                         Res.string.posts
                     ), fontSize = 12.sp, color = MaterialTheme.colorScheme.secondary

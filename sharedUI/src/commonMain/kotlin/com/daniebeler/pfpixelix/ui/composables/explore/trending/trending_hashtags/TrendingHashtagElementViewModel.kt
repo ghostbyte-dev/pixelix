@@ -14,13 +14,10 @@ import kotlinx.coroutines.flow.onEach
 import me.tatarka.inject.annotations.Inject
 
 class TrendingHashtagElementViewModel @Inject constructor(
-    private val timelineService: TimelineService,
-    private val exploreService: ExploreService
+    private val timelineService: TimelineService
 ) : ViewModel() {
 
     var postsState by mutableStateOf(TrendingHashtagPostsState())
-    var hashtagState by mutableStateOf(HashtagState())
-
     fun loadItems(hashtag: String) {
         if (postsState.posts.isEmpty()) {
             timelineService.getHashtagTimeline(hashtag, limit = 39).onEach { result ->
@@ -47,26 +44,5 @@ class TrendingHashtagElementViewModel @Inject constructor(
                 }
             }.launchIn(viewModelScope)
         }
-    }
-
-    fun getHashtagInfo(hashtag: String) {
-        if (hashtagState.hashtag == null) {
-            exploreService.getHashtag(hashtag).onEach { result ->
-                hashtagState = when (result) {
-                    is Resource.Success -> {
-                        HashtagState(hashtag = result.data)
-                    }
-
-                    is Resource.Error -> {
-                        HashtagState(error = result.message ?: "An unexpected error occurred")
-                    }
-
-                    is Resource.Loading -> {
-                        HashtagState(isLoading = true)
-                    }
-                }
-            }.launchIn(viewModelScope)
-        }
-
     }
 }

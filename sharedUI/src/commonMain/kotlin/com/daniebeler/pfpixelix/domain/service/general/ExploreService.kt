@@ -35,7 +35,7 @@ interface ExploreService {
 
     fun followHashtag(tagId: String): Flow<Resource<Tag>>
 
-    fun unfollowHashtag(tagId: String): Flow<Resource<Tag>>
+    fun unfollowHashtag(tagId: String): Flow<Resource<Unit>>
 
 
     fun Flow<Resource<PaginatedResponse<List<Post>>>>.filterSensitive(hideSensitiveContent: Boolean) =
@@ -87,5 +87,5 @@ class ExploreServiceDelegate(
 
     override fun followHashtag(tagId: String): Flow<Resource<Tag>> = current.followHashtag(tagId)
 
-    override fun unfollowHashtag(tagId: String): Flow<Resource<Tag>> = current.unfollowHashtag(tagId)
+    override fun unfollowHashtag(tagId: String): Flow<Resource<Unit>> = current.unfollowHashtag(tagId)
 }

@@ -72,10 +72,17 @@ fun AboutInstanceComposable(
                         modifier = Modifier.fillMaxWidth()
                     )
                     Spacer(modifier = Modifier.height(18.dp))
-                    Text(
-                        text = viewModel.instanceState.instance?.description ?: "",
-                        Modifier.padding(12.dp, 0.dp)
-                    )
+                    viewModel.instanceState.instance?.let {
+                        Text(
+                            text = if (it.description.length > 100) {
+                                it.shortDescription
+                            } else {
+                                it.description
+                            },
+                            Modifier.padding(12.dp, 0.dp)
+                        )
+                    }
+
                     Spacer(modifier = Modifier.height(18.dp))
 
                     Text(

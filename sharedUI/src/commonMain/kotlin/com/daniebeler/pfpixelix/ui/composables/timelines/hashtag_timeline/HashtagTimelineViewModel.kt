@@ -33,7 +33,6 @@ class HashtagTimelineViewModel @Inject constructor(
     var relatedHashtags by mutableStateOf<List<RelatedHashtag>>(emptyList())
 
 
-
     init {
         viewModelScope.launch {
             prefs.showUserGridTimelineFlow.collect { res ->
@@ -179,7 +178,7 @@ class HashtagTimelineViewModel @Inject constructor(
                 is Resource.Success -> {
                     val newHashtag = hashtagState.hashtag
                     if (newHashtag != null) {
-                        HashtagState(hashtag = newHashtag.copy(following = true))
+                        HashtagState(hashtag = newHashtag.copy(following = true), isLoading = false)
                     } else {
                         HashtagState(hashtag = result.data)
                     }
@@ -202,14 +201,14 @@ class HashtagTimelineViewModel @Inject constructor(
                 is Resource.Success -> {
                     val newHashtag = hashtagState.hashtag
                     if (newHashtag != null) {
-                        HashtagState(hashtag = newHashtag.copy(following = false))
+                        HashtagState(hashtag = newHashtag.copy(following = false), isLoading = false)
                     } else {
-                        HashtagState(hashtag = result.data)
+                        hashtagState
                     }
                 }
 
                 is Resource.Error -> {
-                    HashtagState(error = result.message ?: "An unexpected error occurred")
+                    HashtagState(error = result.message)
                 }
 
                 is Resource.Loading -> {

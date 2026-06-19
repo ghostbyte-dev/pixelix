@@ -24,7 +24,7 @@ data class VernissagePostDto @OptIn(ExperimentalSerializationApi::class) constru
     //@SerialName("place") val place: PixelfedPlaceDto?,
     @SerialName("reblog") val reblog: VernissagePostDto?,
     @SerialName("reblogged") val reblogged: Boolean = false,
-    @SerialName("reblogs_count") val reblogsCount: Int = 0,
+    @SerialName("reblogsCount") val reblogsCount: Int = 0,
 
     // @JsonNames allows fallback matching during parsing.
     // This completely removes the need for PostDtoTransformingSerializer!

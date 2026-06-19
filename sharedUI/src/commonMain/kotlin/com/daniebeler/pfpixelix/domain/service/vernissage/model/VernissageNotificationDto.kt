@@ -1,23 +1,26 @@
-package com.daniebeler.pfpixelix.domain.service.pixelfed.model
+package com.daniebeler.pfpixelix.domain.service.vernissage.model
 
 import com.daniebeler.pfpixelix.domain.model.Identifiable
 import com.daniebeler.pfpixelix.domain.model.Notification
 import com.daniebeler.pfpixelix.domain.model.NotificationType
 import com.daniebeler.pfpixelix.domain.service.general.DtoMappable
+import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedAccountDto
+import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedPostDto
+import com.daniebeler.pfpixelix.domain.service.pixelfed.model.toDomain
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class PixelfedNotificationDto(
-    @SerialName("account") val account: PixelfedAccountDto = PixelfedAccountDto(),
+data class VernissageNotificationDto(
+    @SerialName("byUser") val byUser: VernissageAccountDto,
     @SerialName("id") val id: String,
-    @SerialName("type") val type: PixelfedNotificationType,
-    @SerialName("status") val post: PixelfedPostDto?,
-    @SerialName("created_at") val createdAt: String
+    @SerialName("notificationType") val type: VernissageNotificationType,
+    @SerialName("status") val post: VernissagePostDto?,
+    @SerialName("createdAt") val createdAt: String
 ): DtoMappable<Notification> {
     override fun toDomain(): Notification {
         return Notification(
-            account = this.account.toDomain(),
+            account = this.byUser.toDomain(),
             id = this.id,
             type = this.type.toDomain(),
             post = this.post?.toDomain(),
@@ -27,21 +30,27 @@ data class PixelfedNotificationDto(
 }
 
 @Serializable
-enum class PixelfedNotificationType {
+enum class VernissageNotificationType {
     @SerialName("mention") MENTION,
-    @SerialName("direct") DIRECT_MESSAGE,
+    @SerialName("status") STATUS,
     @SerialName("reblog") REBLOG,
     @SerialName("follow") FOLLOW,
+    @SerialName("followRequest") FOLLOW_REQUEST,
     @SerialName("favourite") FAVOURITE,
+    @SerialName("update") UPDATE,
+    @SerialName("newComment") NEW_COMMENT,
     UNDEFINED;
 
     fun toDomain(): NotificationType {
         return when (this) {
             MENTION -> NotificationType.MENTION
-            DIRECT_MESSAGE -> NotificationType.DIRECT_MESSAGE
+            STATUS -> NotificationType.STATUS
             REBLOG -> NotificationType.REBLOG
             FOLLOW -> NotificationType.FOLLOW
+            FOLLOW_REQUEST -> NotificationType.FOLLOW_REQUEST
             FAVOURITE -> NotificationType.FAVOURITE
+            UPDATE -> NotificationType.UPDATE
+            NEW_COMMENT -> NotificationType.NEW_COMMENT
             UNDEFINED -> NotificationType.UNDEFINED
         }
     }

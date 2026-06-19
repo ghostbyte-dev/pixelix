@@ -45,6 +45,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.di.injectViewModel
+import com.daniebeler.pfpixelix.domain.model.NotificationType
 import com.daniebeler.pfpixelix.domain.service.platform.PlatformFeatures
 import com.daniebeler.pfpixelix.ui.composables.widgets.InfiniteStaggeredGridHandler
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
@@ -135,6 +136,7 @@ fun NotificationsComposable(
 
                     Spacer(modifier = Modifier.width(12.dp))
 
+                    //TODO: add vernissage notification types filters
                     if (viewModel.filter == NotificationsFilterEnum.Likes) {
                         ActiveFilterButton(text = stringResource(Res.string.likes_))
                     } else {
@@ -190,19 +192,19 @@ fun NotificationsComposable(
                                     CustomNotification(
                                         notification = it, navController = navController
                                     )
-                                } else if (viewModel.filter == NotificationsFilterEnum.Likes && it.type == "favourite") {
+                                } else if (viewModel.filter == NotificationsFilterEnum.Likes && it.type == NotificationType.FAVOURITE) {
                                     CustomNotification(
                                         notification = it, navController = navController
                                     )
-                                } else if (viewModel.filter == NotificationsFilterEnum.Followers && it.type == "follow") {
+                                } else if (viewModel.filter == NotificationsFilterEnum.Followers && it.type == NotificationType.FOLLOW) {
                                     CustomNotification(
                                         notification = it, navController = navController
                                     )
-                                } else if (viewModel.filter == NotificationsFilterEnum.Reposts && it.type == "reblog") {
+                                } else if (viewModel.filter == NotificationsFilterEnum.Reposts && it.type == NotificationType.REBLOG) {
                                     CustomNotification(
                                         notification = it, navController = navController
                                     )
-                                } else if (viewModel.filter == NotificationsFilterEnum.Mentions && it.type == "mention") {
+                                } else if (viewModel.filter == NotificationsFilterEnum.Mentions && it.type == NotificationType.MENTION) {
                                     CustomNotification(
                                         notification = it, navController = navController
                                     )

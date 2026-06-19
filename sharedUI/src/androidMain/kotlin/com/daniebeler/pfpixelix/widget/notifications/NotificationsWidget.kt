@@ -51,6 +51,7 @@ import androidx.core.net.toUri
 import androidx.glance.action.actionParametersOf
 import androidx.glance.action.actionStartActivity
 import com.daniebeler.pfpixelix.AppActivity
+import com.daniebeler.pfpixelix.domain.model.NotificationType
 
 //private val destinationKey = ActionParameters.Key<String>(
 //    MainActivity.KEY_DESTINATION
@@ -254,13 +255,14 @@ class NotificationsWidget : GlanceAppWidget() {
         }
     }
 
-    private fun getNotificationText(type: String): Int {
+    private fun getNotificationText(type: NotificationType): Int {
+        //TODO: add all notification types
         return when (type) {
-            "favourite" -> R.string.liked_your_post
-            "mention" -> R.string.mentioned_you
-            "follow" -> R.string.followed_you
-            "direct" -> R.string.sent_a_dm
-            "reblog" -> R.string.reblogged_your_post
+            NotificationType.FAVOURITE  -> R.string.liked_your_post
+            NotificationType.MENTION -> R.string.mentioned_you
+            NotificationType.FOLLOW -> R.string.followed_you
+            NotificationType.DIRECT_MESSAGE -> R.string.sent_a_dm
+            NotificationType.REBLOG -> R.string.reblogged_your_post
             else -> R.string.notifications
         }
     }

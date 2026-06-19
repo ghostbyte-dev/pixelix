@@ -39,6 +39,8 @@ import com.daniebeler.pfpixelix.domain.service.general.DirectMessagesService
 import com.daniebeler.pfpixelix.domain.service.general.DirectMessagesServiceDelegate
 import com.daniebeler.pfpixelix.domain.service.general.InstanceService
 import com.daniebeler.pfpixelix.domain.service.general.InstanceServiceDelegate
+import com.daniebeler.pfpixelix.domain.service.general.NotificationService
+import com.daniebeler.pfpixelix.domain.service.general.NotificationServiceDelegate
 import com.daniebeler.pfpixelix.domain.service.general.PostEditorService
 import com.daniebeler.pfpixelix.domain.service.general.PostEditorServiceDelegate
 import com.daniebeler.pfpixelix.domain.service.general.PostService
@@ -125,7 +127,8 @@ abstract class AppComponent(
 
     @Provides
     fun provideWidgetService(delegate: WidgetServiceDelegate): WidgetService = delegate
-
+    @Provides
+    fun provideNotificationService(delegate: NotificationServiceDelegate): NotificationService = delegate
     @Provides
     fun provideInstanceService(delegate: InstanceServiceDelegate): InstanceService = delegate
 

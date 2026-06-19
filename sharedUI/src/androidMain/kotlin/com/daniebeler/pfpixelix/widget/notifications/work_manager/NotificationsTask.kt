@@ -50,7 +50,7 @@ class NotificationsTask(
             }
             val res = widgetService.getNotifications().last()
             if (res is Resource.Success) {
-                val notifications = res.data.take(10)
+                val notifications = res.data.data.take(10)
                 val notificationStoreItems = notifications.map { notification ->
                     val bitmap = getBitmap(context, notification.account.avatar)
                     NotificationStoreItem(

@@ -3,6 +3,7 @@ package com.daniebeler.pfpixelix.domain.repository.vernissage
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedAccountDto
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedRelationshipDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageAccountDto
+import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageNotificationDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissagePostDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissagePaginatedResponse
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissagePostContextDto
@@ -190,4 +191,10 @@ interface VernissageApi {
     suspend fun getRelationships(
         @Query("id[]") userId: List<String>
     ): List<VernissageRelationshipDto>
+
+    @GET("api/v1/notifications")
+    suspend fun getNotifications(
+        @Query("maxId") maxId: String? = null,
+        @Query("limit") limit: Int = NOTIFICATIONS_LIMIT
+    ): VernissagePaginatedResponse<List<VernissageNotificationDto>>
 }

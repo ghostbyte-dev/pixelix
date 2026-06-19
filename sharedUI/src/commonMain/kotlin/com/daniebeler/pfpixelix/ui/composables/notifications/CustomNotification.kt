@@ -34,6 +34,7 @@ import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.model.Notification
+import com.daniebeler.pfpixelix.domain.model.NotificationType
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import com.daniebeler.pfpixelix.utils.TimeAgo
 import org.jetbrains.compose.resources.painterResource
@@ -55,32 +56,55 @@ fun CustomNotification(
     var showImage = false
     var text = ""
     when (notification.type) {
-        "follow" -> {
+        NotificationType.FOLLOW -> {
             text = " " + stringResource(Res.string.followed_you)
         }
 
-        "mention" -> {
+        NotificationType.MENTION  -> {
             text = " " + stringResource(Res.string.mentioned_you_in_a_post)
             showImage = true
         }
 
-        "direct" -> {
+        NotificationType.DIRECT_MESSAGE -> {
             text = " " + stringResource(Res.string.sent_a_dm)
         }
 
-        "favourite" -> {
+        NotificationType.FAVOURITE -> {
             text = " " + stringResource(Res.string.liked_your_post)
             showImage = true
         }
 
-        "reblog" -> {
+        NotificationType.REBLOG -> {
             text = " " + stringResource(Res.string.reblogged_your_post)
             showImage = true
+        }
+
+        NotificationType.NEW_COMMENT -> {
+            text = " " + "wrote a new comment"
+            showImage = true
+        }
+
+        //TODO: implement follow requests
+        NotificationType.FOLLOW_REQUEST -> {
+            text = " " + "sent you a follow request"
+        }
+
+        NotificationType.STATUS -> {
+            text = " " + "posted a new status"
+            showImage = true
+        }
+
+        NotificationType.UPDATE -> {
+            text = " " + "boosted status got updated"
+            showImage = true
+        }
+        NotificationType.UNDEFINED -> {
+            text = " " + "undefined"
         }
     }
 
     LaunchedEffect(notification) {
-        if (notification.type == "mention" && notification.post?.inReplyToId != null && notification.post.inReplyToId.isNotBlank()) {
+        if (notification.type == NotificationType.MENTION && notification.post?.inReplyToId != null && notification.post.inReplyToId.isNotBlank()) {
             viewModel.loadAncestor(notification.post.inReplyToId)
         }
     }

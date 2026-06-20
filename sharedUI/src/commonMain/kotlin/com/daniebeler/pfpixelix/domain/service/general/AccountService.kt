@@ -47,6 +47,9 @@ interface AccountService {
     fun getAccountsFollowing(
         accountId: String,username: String, cursor: String? = null
     ): Flow<Resource<PaginatedResponse<List<Account>>>>
+
+    fun acceptFollowRequest(accountId: String): Flow<Resource<Relationship>>
+    fun rejectFollowRequest(accountId: String): Flow<Resource<Relationship>>
 }
 
 @Inject
@@ -108,4 +111,7 @@ class AccountServiceDelegate(
         accountId: String,username: String,
         cursor: String?
     ): Flow<Resource<PaginatedResponse<List<Account>>>> = current.getAccountsFollowing(accountId, username, cursor)
+
+    override fun acceptFollowRequest(accountId: String): Flow<Resource<Relationship>> = current.acceptFollowRequest(accountId)
+    override fun rejectFollowRequest(accountId: String): Flow<Resource<Relationship>> = current.rejectFollowRequest(accountId)
 }

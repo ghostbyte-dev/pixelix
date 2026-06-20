@@ -4,6 +4,7 @@ import androidx.compose.ui.graphics.ImageBitmap
 import co.touchlab.kermit.Logger
 import com.daniebeler.pfpixelix.di.AppSingleton
 import com.daniebeler.pfpixelix.domain.model.Account
+import com.daniebeler.pfpixelix.domain.model.Relationship
 import com.daniebeler.pfpixelix.domain.model.request.UserBlockRequest
 import com.daniebeler.pfpixelix.domain.model.request.UserMuteRequest
 import com.daniebeler.pfpixelix.domain.repository.pixelfed.PixelfedApi
@@ -159,5 +160,13 @@ class PixelfedAccountService(
         } catch (e: Exception) {
             emit(Resource.Error(e.message ?: "Unknown error"))
         }
+    }
+
+    override fun acceptFollowRequest(accountId: String) = loadResource {
+        api.approveFollowRequest(accountId).toDomain()
+    }
+
+    override fun rejectFollowRequest(accountId: String) = loadResource {
+        api.denyFollowRequest(accountId).toDomain()
     }
 }

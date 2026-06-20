@@ -101,14 +101,12 @@ interface VernissageApi {
 
     @GET("api/v1/favourites")
     suspend fun getLikedPosts(
-        @Query("maxId") maxId: String? = null,
-        @Query("limit") limit: Int = LIKED_POSTS_LIMIT
+        @Query("maxId") maxId: String? = null, @Query("limit") limit: Int = LIKED_POSTS_LIMIT
     ): VernissagePaginatedResponse<List<VernissagePostDto>>
 
     @GET("api/v1/bookmarks")
     suspend fun getBookmarkedPosts(
-        @Query("maxId") maxId: String? = null,
-        @Query("limit") limit: Int = LIKED_POSTS_LIMIT
+        @Query("maxId") maxId: String? = null, @Query("limit") limit: Int = LIKED_POSTS_LIMIT
     ): VernissagePaginatedResponse<List<VernissagePostDto>>
 
     @POST("api/v1/statuses/{id}/favourite")
@@ -195,8 +193,7 @@ interface VernissageApi {
     @Headers("Content-Type: application/json")
     @POST("api/v1/users/{username}/mute")
     suspend fun muteUser(
-        @Path("username") username: String,
-        @Body muteRequest: VernissageUserMuteRequest
+        @Path("username") username: String, @Body muteRequest: VernissageUserMuteRequest
     ): VernissageRelationshipDto
 
     @POST("api/v1/users/{username}/unmute")
@@ -207,8 +204,7 @@ interface VernissageApi {
     @Headers("Content-Type: application/json")
     @POST("api/v1/users/{username}/block")
     suspend fun blockUser(
-        @Path("username") username: String,
-        @Body muteRequest: VernissageUserBlockRequest
+        @Path("username") username: String, @Body muteRequest: VernissageUserBlockRequest
     ): VernissageRelationshipDto
 
     @POST("api/v1/users/{username}/unblock")
@@ -238,9 +234,18 @@ interface VernissageApi {
 
     @GET("api/v1/notifications")
     suspend fun getNotifications(
-        @Query("maxId") maxId: String? = null,
-        @Query("limit") limit: Int = NOTIFICATIONS_LIMIT
+        @Query("maxId") maxId: String? = null, @Query("limit") limit: Int = NOTIFICATIONS_LIMIT
     ): VernissagePaginatedResponse<List<VernissageNotificationDto>>
+
+    @POST("api/v1/follow-requests/{userId}/approve")
+    suspend fun approveFollowRequest(
+        @Path("userId") accountId: String
+    ): VernissageRelationshipDto
+
+    @POST("api/v1/follow-requests/{userId}/reject")
+    suspend fun denyFollowRequest(
+        @Path("userId") accountId: String
+    ): VernissageRelationshipDto
 
     @GET("api/v1/search")
     suspend fun getSearch(

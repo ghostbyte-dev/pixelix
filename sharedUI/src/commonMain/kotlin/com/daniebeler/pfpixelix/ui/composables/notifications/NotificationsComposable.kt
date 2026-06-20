@@ -190,23 +190,23 @@ fun NotificationsComposable(
                             }) {
                                 if (viewModel.filter == NotificationsFilterEnum.All) {
                                     CustomNotification(
-                                        notification = it, navController = navController
+                                        notification = it, navController = navController, {viewModel.removeNotification(it)}
                                     )
                                 } else if (viewModel.filter == NotificationsFilterEnum.Likes && it.type == NotificationType.FAVOURITE) {
                                     CustomNotification(
-                                        notification = it, navController = navController
+                                        notification = it, navController = navController, {viewModel.removeNotification(it)}
                                     )
                                 } else if (viewModel.filter == NotificationsFilterEnum.Followers && it.type == NotificationType.FOLLOW) {
                                     CustomNotification(
-                                        notification = it, navController = navController
+                                        notification = it, navController = navController, {viewModel.removeNotification(it)}
                                     )
                                 } else if (viewModel.filter == NotificationsFilterEnum.Reposts && it.type == NotificationType.REBLOG) {
                                     CustomNotification(
-                                        notification = it, navController = navController
+                                        notification = it, navController = navController, {viewModel.removeNotification(it)}
                                     )
                                 } else if (viewModel.filter == NotificationsFilterEnum.Mentions && it.type == NotificationType.MENTION) {
                                     CustomNotification(
-                                        notification = it, navController = navController
+                                        notification = it, navController = navController, {viewModel.removeNotification(it)}
                                     )
                                 }
                             }

@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
+import androidx.compose.material.Button
 import androidx.compose.material.Colors
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -35,6 +36,7 @@ import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.model.Notification
 import com.daniebeler.pfpixelix.domain.model.NotificationType
+import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposableDialog
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import com.daniebeler.pfpixelix.utils.TimeAgo
 import org.jetbrains.compose.resources.painterResource
@@ -51,6 +53,7 @@ import pixelix.app.generated.resources.sent_a_dm
 fun CustomNotification(
     notification: Notification,
     navController: NavController,
+    removeNotification: () -> Unit,
     viewModel: CustomNotificationViewModel = injectViewModel(key = "custom-notification-viewmodel-key${notification.id}") { customNotificationViewModel }
 ) {
     var showImage = false
@@ -60,7 +63,7 @@ fun CustomNotification(
             text = " " + stringResource(Res.string.followed_you)
         }
 
-        NotificationType.MENTION  -> {
+        NotificationType.MENTION -> {
             text = " " + stringResource(Res.string.mentioned_you_in_a_post)
             showImage = true
         }
@@ -84,7 +87,6 @@ fun CustomNotification(
             showImage = true
         }
 
-        //TODO: implement follow requests
         NotificationType.FOLLOW_REQUEST -> {
             text = " " + "sent you a follow request"
         }
@@ -98,6 +100,7 @@ fun CustomNotification(
             text = " " + "boosted status got updated"
             showImage = true
         }
+
         NotificationType.UNDEFINED -> {
             text = " " + "undefined"
         }
@@ -115,22 +118,32 @@ fun CustomNotification(
 
     Row(
         Modifier.padding(horizontal = 12.dp, vertical = 8.dp).fillMaxWidth().clickable {
-                if (notification.post != null && notification.post.mediaAttachments.isEmpty()) {
-                    navController.navigate(Destination.Mention(notification.post.id))
-                } else if (notification.post != null && notification.post.mediaAttachments.isNotEmpty()) {
-                    navController.navigate(Destination.Post(notification.post.id))
-                } else if (notification.post == null) {
-                    navController.navigate(Destination.Profile(notification.account.id, notification.account.username))
-                }
-            }, verticalAlignment = Alignment.CenterVertically
+            if (notification.post != null && notification.post.mediaAttachments.isEmpty()) {
+                navController.navigate(Destination.Mention(notification.post.id))
+            } else if (notification.post != null && notification.post.mediaAttachments.isNotEmpty()) {
+                navController.navigate(Destination.Post(notification.post.id))
+            } else if (notification.post == null) {
+                navController.navigate(
+                    Destination.Profile(
+                        notification.account.id,
+                        notification.account.username
+                    )
+                )
+            }
+        }, verticalAlignment = Alignment.CenterVertically
     ) {
         AsyncImage(
             model = notification.account.avatar,
             error = painterResource(Res.drawable.default_avatar),
             contentDescription = "",
             modifier = Modifier.height(46.dp).width(46.dp).clip(CircleShape).clickable {
-                    navController.navigate(Destination.Profile(notification.account.id, notification.account.username))
-                })
+                navController.navigate(
+                    Destination.Profile(
+                        notification.account.id,
+                        notification.account.username
+                    )
+                )
+            })
         Spacer(modifier = Modifier.width(10.dp))
         Column(Modifier.weight(1f)) {
             val annotatedText = buildAnnotatedString {
@@ -156,27 +169,51 @@ fun CustomNotification(
                     annotatedText.getStringAnnotations(
                         tag = "username", start = offset, end = offset
                     ).firstOrNull()?.let { annotation ->
-                            if (annotation.tag == "username") {
-                                //TODO: check if this is correct
-                                navController.navigate(Destination.Profile(annotation.item, notification.account.username))
-                            }
-                        } ?: kotlin.run {
+                        if (annotation.tag == "username") {
+                            //TODO: check if this is correct
+                            navController.navigate(
+                                Destination.Profile(
+                                    annotation.item,
+                                    notification.account.username
+                                )
+                            )
+                        }
+                    } ?: kotlin.run {
                         if (notification.post != null && notification.post.mediaAttachments.isEmpty()) {
                             navController.navigate(Destination.Mention(notification.post.id))
                         } else if (notification.post != null && notification.post.mediaAttachments.isNotEmpty()) {
                             navController.navigate(Destination.Post(notification.post.id))
                         } else if (notification.post == null) {
-                            navController.navigate(Destination.Profile(notification.account.id, notification.account.username))
+                            navController.navigate(
+                                Destination.Profile(
+                                    notification.account.id,
+                                    notification.account.username
+                                )
+                            )
                         }
                     }
                 })
 
 
-            Text(
-                text = timeAgoText.value,
-                fontSize = 14.sp,
-                color = MaterialTheme.colorScheme.primary
-            )
+            if (notification.type == NotificationType.FOLLOW_REQUEST) {
+                Row {
+                    Button(
+                        onClick = { viewModel.acceptFollowRequest(notification.account.id, removeNotification) },
+                        modifier = Modifier.padding(end = 4.dp)
+                    ) {
+                        Text(text = "Accept")
+                    }
+                    Button(onClick = { viewModel.rejectFollowRequest(notification.account.id, removeNotification) }) {
+                        Text(text = "Reject")
+                    }
+                }
+            } else {
+                Text(
+                    text = timeAgoText.value,
+                    fontSize = 14.sp,
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
         }
 
         val doesMediaAttachmentExsist = (notification.post?.mediaAttachments?.size ?: 0) > 0
@@ -205,4 +242,9 @@ fun CustomNotification(
                     })
         }
     }
+
+    ErrorComposableDialog(viewModel.followRequestState.value.error, {
+        viewModel.followRequestState.value =
+            FollowRequestState()
+    })
 }

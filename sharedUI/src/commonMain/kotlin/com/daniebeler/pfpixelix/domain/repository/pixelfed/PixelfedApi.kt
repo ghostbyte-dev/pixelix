@@ -109,6 +109,19 @@ interface PixelfedApi {
         @Query("limit") limit: Int = NOTIFICATIONS_LIMIT
     ): List<PixelfedNotificationDto>
 
+    @GET("api/v1/follow_requests")
+    suspend fun getFollowRequests(
+    ): List<PixelfedAccountDto>
+
+    @POST("api/v1/follow_requests/{id}/authorize")
+    suspend fun approveFollowRequest(
+        @Path("id") accountId: String
+    ): PixelfedRelationshipDto
+
+    @POST("api/v1/follow_requests/{id}/reject")
+    suspend fun denyFollowRequest(
+        @Path("id") accountId: String
+    ): PixelfedRelationshipDto
 
     // Accounts
     @GET("api/pixelfed/v1/accounts/{accountid}")

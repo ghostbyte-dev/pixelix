@@ -154,4 +154,12 @@ class VernissageAccountService(
         loadVernissagePaginatedListResources {
             api.getAccountsFollowing(username, cursor)
         }
+
+    override fun acceptFollowRequest(accountId: String) = loadResource {
+        api.approveFollowRequest(accountId).toDomain()
+    }
+
+    override fun rejectFollowRequest(accountId: String) = loadResource {
+        api.denyFollowRequest(accountId).toDomain()
+    }
 }

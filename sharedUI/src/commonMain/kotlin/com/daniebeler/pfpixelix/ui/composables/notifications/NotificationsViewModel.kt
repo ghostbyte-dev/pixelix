@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.daniebeler.pfpixelix.domain.model.Notification
 import com.daniebeler.pfpixelix.domain.service.general.NotificationService
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.domain.service.platform.Platform
@@ -69,6 +70,12 @@ class NotificationsViewModel @Inject constructor(
             }.launchIn(viewModelScope)
         }
 
+    }
+
+    fun removeNotification(notification: Notification) {
+        notificationsState = notificationsState.copy(
+            notifications = notificationsState.notifications.filter { it.id != notification.id }
+        )
     }
 
     fun changeFilter(selectedFilter: NotificationsFilterEnum) {

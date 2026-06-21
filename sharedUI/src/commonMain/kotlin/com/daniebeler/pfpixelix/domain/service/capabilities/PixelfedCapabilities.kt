@@ -13,5 +13,12 @@ val PixelfedCapabilities = Capabilities(
     ),
     notification = NotificationCapabilities(
         supportsFollowRequestActions = true
+    ),
+    editProfile = EditProfileCapabilities(
+        privateAccountToggle = true,
+        manuallyAcceptNewFollowersToggle = false,
+        includePostsInSearchEngineToggle = false,
+        includeProfileInSearchEngineToggle = false,
+        websiteField = true
     )
 )

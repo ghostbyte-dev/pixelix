@@ -293,4 +293,7 @@
     <string name="open">open</string>
     <string name="closed">closed</string>
     <string name="jump_to_top">Jump to top</string>
+    <string name="manually_accept_new_followers">Manually accept new followers</string>
+    <string name="include_public_posts_in_search_engines">Include public posts in search engines</string>
+    <string name="include_profile_in_search_engines">Include profile in search engines</string>
 </resources>

@@ -1,10 +1,10 @@
 package com.daniebeler.pfpixelix.ui.composables.edit_profile
 
 import androidx.compose.ui.graphics.ImageBitmap
-import com.daniebeler.pfpixelix.domain.model.Account
 
-data class EditProfileState(
+data class EditAvatarState(
+    val newAvatar: ImageBitmap? = null,
+    val newUploadedAvatar: ImageBitmap? = null,
     val isLoading: Boolean = false,
-    val account: Account? = null,
-    val error: String = ""
+    val error: String = "",
 )

@@ -20,7 +20,10 @@ data class VernissageAccountDto(
     @SerialName("url") val url: String = "",
     @SerialName("createdAt") val createdAt: String = "",
     @SerialName("isAdmin") val isAdmin: Boolean = false,
-    @SerialName("headerUrl") val headerUrl: String? = null
+    @SerialName("headerUrl") val headerUrl: String? = null,
+    @SerialName("manuallyApprovesFollowers") val manuallyApprovesFollowers: Boolean? = null,
+    @SerialName("includeProfilePageInSearchEngines") val includeProfilePageInSearchEngine: Boolean? = null,
+    @SerialName("includePublicPostsInSearchEngines") val includePublicPostsInSearchEngines: Boolean? = null
 ): DtoMappable<Account> {
     override fun toDomain(): Account {
         return Account(
@@ -39,7 +42,10 @@ data class VernissageAccountDto(
             createdAt = this.createdAt,
             isAdmin = false,
             pronouns = emptyList(),
-            headerUrl = headerUrl
+            headerUrl = headerUrl,
+            manuallyApprovesFollowers = this.manuallyApprovesFollowers,
+            includePublicPostsInSearchEngines = this.includePublicPostsInSearchEngines,
+            includeProfilePageInSearchEngines =  this.includeProfilePageInSearchEngine
         )
     }
 }

@@ -22,6 +22,7 @@ import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedReportResp
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedSearchDto
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedSettingsDto
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedTagDto
+import com.daniebeler.pfpixelix.domain.service.pixelfed.model.request.PixelfedUpdateUserRequest
 import de.jensklingenberg.ktorfit.Call
 import de.jensklingenberg.ktorfit.http.Body
 import de.jensklingenberg.ktorfit.http.DELETE
@@ -134,8 +135,14 @@ interface PixelfedApi {
         @Path("username") username: String
     ): PixelfedAccountDto
 
+    @Headers("Content-Type: application/json")
     @POST("api/v1/accounts/update_credentials?_pe=1")
     suspend fun updateAccount(
+        @Body body: PixelfedUpdateUserRequest
+    ): PixelfedAccountDto
+
+    @POST("api/v1/accounts/update_credentials?_pe=1")
+    suspend fun updateAvatar(
         @Body body: MultiPartFormDataContent
     ): PixelfedAccountDto
 

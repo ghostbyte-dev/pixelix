@@ -5,8 +5,10 @@ import co.touchlab.kermit.Logger
 import com.daniebeler.pfpixelix.di.AppSingleton
 import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.model.Relationship
+import com.daniebeler.pfpixelix.domain.model.request.UpdateUserRequest
 import com.daniebeler.pfpixelix.domain.model.request.UserBlockRequest
 import com.daniebeler.pfpixelix.domain.model.request.UserMuteRequest
+import com.daniebeler.pfpixelix.domain.model.request.toPixelfed
 import com.daniebeler.pfpixelix.domain.repository.pixelfed.PixelfedApi
 import com.daniebeler.pfpixelix.domain.service.general.AccountService
 import com.daniebeler.pfpixelix.domain.service.general.AuthService
@@ -58,12 +60,16 @@ class PixelfedAccountService(
     }
 
     override fun updateAccount(
-        displayName: String,
-        note: String,
-        website: String,
-        privateProfile: Boolean,
-        avatar: ImageBitmap?
+        username: String,
+        updateUserRequest: UpdateUserRequest
     ) = loadResource {
+
+        val result = api.updateAccount(updateUserRequest.toPixelfed()).toDomain()
+        //refreshSignal.emit(Unit)
+        result
+    }
+
+    override fun updateAvatar(username: String, avatar: ImageBitmap?): Flow<Resource<Unit>> = loadResource {
         val bytes = withContext(Dispatchers.Default) {
             avatar?.encodeToPngBytes()
         }
@@ -80,15 +86,9 @@ class PixelfedAccountService(
                     Logger.Companion.e("AccountService.updateAccount error", e)
                 }
             }
-
-            append("display_name", displayName)
-            append("note", note)
-            append("website", website)
-            append("locked", privateProfile.toString())
         })
-        val result = api.updateAccount(body).toDomain()
+        api.updateAvatar(body).toDomain()
         refreshSignal.emit(Unit)
-        result
     }
 
     override fun getAccount(accountId: String, username: String) =

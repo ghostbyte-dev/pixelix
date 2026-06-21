@@ -5,6 +5,7 @@ import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedAccountDto
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedNodeInfoDto
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedRelationshipDto
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedSearchDto
+import com.daniebeler.pfpixelix.domain.service.pixelfed.model.request.PixelfedUpdateUserRequest
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageAccountDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageInstanceDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageNotificationDto
@@ -16,6 +17,7 @@ import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageSearch
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageTagDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageVisibilityDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.request.VernissageReblogRequest
+import com.daniebeler.pfpixelix.domain.service.vernissage.model.request.VernissageUpdateUserRequest
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.request.VernissageUserBlockRequest
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.request.VernissageUserMuteRequest
 import de.jensklingenberg.ktorfit.http.Body
@@ -23,9 +25,11 @@ import de.jensklingenberg.ktorfit.http.GET
 import de.jensklingenberg.ktorfit.http.Header
 import de.jensklingenberg.ktorfit.http.Headers
 import de.jensklingenberg.ktorfit.http.POST
+import de.jensklingenberg.ktorfit.http.PUT
 import de.jensklingenberg.ktorfit.http.Path
 import de.jensklingenberg.ktorfit.http.Query
 import de.jensklingenberg.ktorfit.http.Url
+import io.ktor.client.request.forms.MultiPartFormDataContent
 
 interface VernissageApi {
     companion object {
@@ -179,6 +183,20 @@ interface VernissageApi {
     suspend fun getUser(
         @Path("username") username: String
     ): VernissageAccountDto
+
+    @Headers("Content-Type: application/json")
+    @PUT("api/v1/users/{username}")
+    suspend fun updateAccount(
+        @Path("username") username: String,
+        @Body body: VernissageUpdateUserRequest
+    ): VernissageAccountDto
+
+
+    @POST("api/v1/avatars/{username}")
+    suspend fun updateAvatar(
+        @Path("username") username: String,
+        @Body body: MultiPartFormDataContent
+    )
 
     @POST("api/v1/users/{username}/follow")
     suspend fun followUser(

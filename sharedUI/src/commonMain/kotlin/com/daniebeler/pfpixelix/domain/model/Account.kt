@@ -16,7 +16,10 @@ data class Account(
     val createdAt: String = "",
     val isAdmin: Boolean = false,
     val pronouns: List<String> = emptyList(),
-    val headerUrl: String? = null
+    val headerUrl: String? = null,
+    val manuallyApprovesFollowers: Boolean? = null,
+    val includeProfilePageInSearchEngines: Boolean? = null,
+    val includePublicPostsInSearchEngines: Boolean? = null
 ): Identifiable
 
 fun credentialsToAccount(credentials: Credentials) = Account(

@@ -1,6 +1,7 @@
 package com.daniebeler.pfpixelix.ui.composables.edit_profile
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -56,6 +57,7 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.decodeToImageBitmap
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -84,6 +86,7 @@ import io.github.vinceglb.filekit.dialogs.FileKitType
 import io.github.vinceglb.filekit.dialogs.compose.rememberFilePickerLauncher
 import io.github.vinceglb.filekit.readBytes
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
@@ -98,6 +101,9 @@ import pixelix.app.generated.resources.confirm
 import pixelix.app.generated.resources.discard
 import pixelix.app.generated.resources.displayname
 import pixelix.app.generated.resources.edit_profile
+import pixelix.app.generated.resources.include_profile_in_search_engines
+import pixelix.app.generated.resources.include_public_posts_in_search_engines
+import pixelix.app.generated.resources.manually_accept_new_followers
 import pixelix.app.generated.resources.private_profile
 import pixelix.app.generated.resources.save
 import pixelix.app.generated.resources.undo
@@ -125,7 +131,8 @@ fun EditProfileComposable(
         Column(
             Modifier.imeAwareInsets(60.dp).fillMaxSize()
         ) {
-            val navigationBarPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+            val navigationBarPadding =
+                WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
 
             Column(
                 Modifier.padding(paddingValues)
@@ -154,15 +161,48 @@ fun EditProfileComposable(
                                     ImageBitmapSrc(file.readBytes().decodeToImageBitmap())
                                 }
                                 if (cropResult is CropResult.Success) {
-                                    viewModel.newAvatar = cropResult.bitmap
+                                    viewModel.avatarState =
+                                        viewModel.avatarState.copy(newAvatar = cropResult.bitmap)
                                 }
                             }
                         }
 
-                        val newAvatar = viewModel.newAvatar
+                        val newAvatar = viewModel.avatarState.newAvatar
                         if (newAvatar != null) {
+                            Box(
+                                contentAlignment = Alignment.Center,
+                                modifier = Modifier
+                                    .height(112.dp)
+                                    .width(112.dp)
+                            ) {
+                                // The Base Avatar Image
+                                Image(
+                                    bitmap = newAvatar,
+                                    contentDescription = "",
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .clip(CircleShape)
+                                        .clickable(enabled = !viewModel.avatarState.isLoading) { filePicker.launch() }
+                                )
+
+                                if (viewModel.avatarState.isLoading) {
+                                    Box(
+                                        contentAlignment = Alignment.Center,
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                            .clip(CircleShape)
+                                            .background(Color.Black.copy(alpha = 0.4f))
+                                    ) {
+                                        LoadingComposable(
+                                            color = Color.White,
+                                            size = 32.dp
+                                        )
+                                    }
+                                }
+                            }
+                        } else if (viewModel.avatarState.newUploadedAvatar != null) {
                             Image(
-                                bitmap = newAvatar,
+                                bitmap = viewModel.avatarState.newUploadedAvatar!!,
                                 contentDescription = "",
                                 modifier = Modifier.height(112.dp).width(112.dp).clip(CircleShape)
                                     .clickable { filePicker.launch() })
@@ -177,108 +217,85 @@ fun EditProfileComposable(
 
                     Spacer(modifier = Modifier.height(18.dp))
 
-                    Row {
-                        Spacer(Modifier.width(6.dp))
-                        Text(
-                            text = stringResource(Res.string.displayname),
-                            fontWeight = FontWeight.Bold
-                        )
-                    }
-
-                    Spacer(Modifier.height(6.dp))
-
-                    TextField(
+                    EditProfileTextField(
+                        label = Res.string.displayname,
                         value = viewModel.displayName,
-                        singleLine = true,
-                        onValueChange = { viewModel.displayName = it },
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(16.dp),
-                        colors = TextFieldDefaults.colors(
-                            unfocusedIndicatorColor = Color.Transparent,
-                            focusedIndicatorColor = Color.Transparent,
-                            focusedContainerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(
-                                4.dp
-                            ),
-                            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(
-                                4.dp
-                            )
-                        )
+                        onValueChange = { viewModel.displayName = it }
                     )
 
                     Spacer(modifier = Modifier.height(18.dp))
 
-                    Row {
-                        Spacer(Modifier.width(6.dp))
-                        Text(text = stringResource(Res.string.bio), fontWeight = FontWeight.Bold)
-                    }
-
-                    Spacer(Modifier.height(6.dp))
-
-                    TextField(
+                    EditProfileTextField(
+                        label = Res.string.bio,
                         value = viewModel.note,
                         onValueChange = { viewModel.updateNote(it) },
-                        modifier = Modifier.fillMaxWidth().onFocusChanged { focusState ->
-                            viewModel.hashtagMentionsSuggestionsManager.onFocusChanged(focusState.isFocused)
-                        },
-                        label = { Text(stringResource(Res.string.caption)) },
-                        shape = MaterialTheme.shapes.medium,
-                        colors = TextFieldDefaults.colors(
-                            unfocusedIndicatorColor = Color.Transparent,
-                            focusedIndicatorColor = Color.Transparent,
-                            focusedContainerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(
-                                4.dp
-                            ),
-                            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(
-                                4.dp
-                            )
-                        )
+                        singleLine = false
                     )
 
-                    Spacer(modifier = Modifier.height(18.dp))
 
-                    Row {
-                        Spacer(Modifier.width(6.dp))
-                        Text(
-                            text = stringResource(Res.string.website), fontWeight = FontWeight.Bold
+
+                    if (viewModel.capabilities.editProfile.websiteField) {
+                        Spacer(modifier = Modifier.height(18.dp))
+
+                        EditProfileTextField(
+                            label = Res.string.website,
+                            value = viewModel.website,
+                            onValueChange = { viewModel.website = it },
+                            prefix = {
+                                Text(text = "https://")
+                            }
                         )
                     }
 
-                    Spacer(Modifier.height(6.dp))
 
-                    TextField(
-                        value = viewModel.website,
-                        singleLine = true,
-                        prefix = {
-                            Text(text = "https://")
-                        },
-                        onValueChange = { viewModel.website = it },
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(16.dp),
-                        colors = TextFieldDefaults.colors(
-                            unfocusedIndicatorColor = Color.Transparent,
-                            focusedIndicatorColor = Color.Transparent,
-                            focusedContainerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(
-                                4.dp
-                            ),
-                            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(
-                                4.dp
-                            )
-                        )
-                    )
+                    if (viewModel.capabilities.editProfile.privateAccountToggle) {
+                        Spacer(modifier = Modifier.height(18.dp))
 
-                    Spacer(modifier = Modifier.height(18.dp))
-
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Spacer(Modifier.width(6.dp))
-                        Text(
-                            text = stringResource(Res.string.private_profile),
-                            fontWeight = FontWeight.Bold
-                        )
-                        Spacer(modifier = Modifier.weight(1f))
-                        Switch(
+                        EditProfileSwitch(
+                            label = Res.string.private_profile,
                             checked = viewModel.privateProfile,
-                            onCheckedChange = { viewModel.privateProfile = it })
+                            onCheckedChange = {
+                                viewModel.privateProfile = it
+                            }
+                        )
                     }
+
+                    if (viewModel.capabilities.editProfile.manuallyAcceptNewFollowersToggle && viewModel.manuallyAcceptNewFollowers != null) {
+                        Spacer(modifier = Modifier.height(18.dp))
+
+                        EditProfileSwitch(
+                            label = Res.string.manually_accept_new_followers,
+                            checked = viewModel.manuallyAcceptNewFollowers!!,
+                            onCheckedChange = {
+                                viewModel.manuallyAcceptNewFollowers = it
+                            }
+                        )
+                    }
+
+                    if (viewModel.capabilities.editProfile.includePostsInSearchEngineToggle && viewModel.includePublicPostsInSearchEngine != null) {
+                        Spacer(modifier = Modifier.height(18.dp))
+
+                        EditProfileSwitch(
+                            label = Res.string.include_public_posts_in_search_engines,
+                            checked = viewModel.includePublicPostsInSearchEngine!!,
+                            onCheckedChange = {
+                                viewModel.includePublicPostsInSearchEngine = it
+                            }
+                        )
+                    }
+
+                    if (viewModel.capabilities.editProfile.includeProfileInSearchEngineToggle && viewModel.includeProfileInSearchEngine != null) {
+                        Spacer(modifier = Modifier.height(18.dp))
+
+                        EditProfileSwitch(
+                            label = Res.string.include_profile_in_search_engines,
+                            checked = viewModel.includeProfileInSearchEngine!!,
+                            onCheckedChange = {
+                                viewModel.includeProfileInSearchEngine = it
+                            }
+                        )
+                    }
+
 
                     Spacer(Modifier.height(80.dp + navigationBarPadding))
                 }
@@ -318,76 +335,141 @@ fun EditProfileComposable(
             }
             ErrorComposableDialog(
                 errorMessage = viewModel.accountState.error, onDismiss = {
-                    viewModel.getAccount();
+                    viewModel.accountState = EditProfileState()
+                    viewModel.getAccount()
+                })
+
+            ErrorComposableDialog(
+                errorMessage = viewModel.avatarState.error, onDismiss = {
+                    viewModel.avatarState = EditAvatarState()
+                    viewModel.getAccount()
                 })
         }
 
         TopAppBar(
             modifier = Modifier.clip(
-            RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)
-        ), title = {
-            Text(
-                text = stringResource(Res.string.edit_profile),
-                fontWeight = FontWeight.Bold,
-                fontSize = 18.sp
-            )
-        }, navigationIcon = {
-            IconButton(onClick = {
-                if (viewModel.isEdited) {
-                    isCancelAlertOpen = true
-                } else {
-                    navController.popBackStack()
-                }
-            }) {
-                Icon(
-                    imageVector = vectorResource(Res.drawable.arrow_left), contentDescription = ""
+                RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)
+            ), title = {
+                Text(
+                    text = stringResource(Res.string.edit_profile),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp
                 )
-            }
-        }, actions = {
-            if (viewModel.firstLoaded) {
-                if (!viewModel.isEdited) {
-                    if (!viewModel.accountState.isLoading) {
-                        Button(
-                            onClick = {},
-                            modifier = Modifier.width(120.dp),
-                            shape = RoundedCornerShape(12.dp),
-                            enabled = false,
-                            colors = ButtonDefaults.buttonColors(
-                                disabledContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-                                disabledContentColor = MaterialTheme.colorScheme.onSurface
-                            )
-                        ) {
-                            Text(text = stringResource(Res.string.save))
-                        }
+            }, navigationIcon = {
+                IconButton(onClick = {
+                    if (viewModel.isEdited) {
+                        isCancelAlertOpen = true
+                    } else {
+                        navController.popBackStack()
                     }
-                } else {
-                    if (viewModel.accountState.isLoading) {
-                        Button(
-                            onClick = {},
-                            modifier = Modifier.width(120.dp),
-                            shape = RoundedCornerShape(12.dp)
-                        ) {
-                            LoadingComposable(
-                                modifier = Modifier.size(20.dp),
-                                color = MaterialTheme.colorScheme.onPrimary
-                            )
+                }) {
+                    Icon(
+                        imageVector = vectorResource(Res.drawable.arrow_left),
+                        contentDescription = ""
+                    )
+                }
+            }, actions = {
+                if (viewModel.firstLoaded) {
+                    if (!viewModel.isEdited) {
+                        if (!viewModel.accountState.isLoading) {
+                            Button(
+                                onClick = {},
+                                modifier = Modifier.width(120.dp),
+                                shape = RoundedCornerShape(12.dp),
+                                enabled = false,
+                                colors = ButtonDefaults.buttonColors(
+                                    disabledContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                                    disabledContentColor = MaterialTheme.colorScheme.onSurface
+                                )
+                            ) {
+                                Text(text = stringResource(Res.string.save))
+                            }
                         }
                     } else {
-                        Button(
-                            onClick = { viewModel.save() },
-                            modifier = Modifier.width(120.dp),
-                            shape = RoundedCornerShape(12.dp)
-                        ) {
-                            Text(text = stringResource(Res.string.save))
+                        if (viewModel.accountState.isLoading) {
+                            Button(
+                                onClick = {},
+                                modifier = Modifier.width(120.dp),
+                                shape = RoundedCornerShape(12.dp)
+                            ) {
+                                LoadingComposable(
+                                    modifier = Modifier.size(20.dp),
+                                    color = MaterialTheme.colorScheme.onPrimary
+                                )
+                            }
+                        } else {
+                            Button(
+                                onClick = { viewModel.save() },
+                                modifier = Modifier.width(120.dp),
+                                shape = RoundedCornerShape(12.dp)
+                            ) {
+                                Text(text = stringResource(Res.string.save))
+                            }
                         }
                     }
                 }
-            }
-        }, colors = TopAppBarDefaults.mediumTopAppBarColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainer
-        )
+            }, colors = TopAppBarDefaults.mediumTopAppBarColors(
+                containerColor = MaterialTheme.colorScheme.surfaceContainer
+            )
         )
 
+    }
+}
+
+@Composable
+private fun EditProfileTextField(
+    label: StringResource,
+    value: TextFieldValue,
+    onValueChange: (value: TextFieldValue) -> Unit,
+    singleLine: Boolean = true,
+    prefix: @Composable (() -> Unit)? = null
+) {
+    Row {
+        Spacer(Modifier.width(6.dp))
+        Text(
+            text = stringResource(label), fontWeight = FontWeight.Bold
+        )
+    }
+
+    Spacer(Modifier.height(6.dp))
+
+    TextField(
+        value = value,
+        singleLine = singleLine,
+        prefix = prefix,
+        onValueChange = onValueChange,
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(16.dp),
+        colors = TextFieldDefaults.colors(
+            unfocusedIndicatorColor = Color.Transparent,
+            focusedIndicatorColor = Color.Transparent,
+            focusedContainerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(
+                4.dp
+            ),
+            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(
+                4.dp
+            )
+        )
+    )
+}
+
+@Composable
+private fun EditProfileSwitch(
+    label: StringResource,
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit
+) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Spacer(Modifier.width(6.dp))
+        Text(
+            text = stringResource(label),
+            fontWeight = FontWeight.Bold
+        )
+        Spacer(modifier = Modifier.weight(1f))
+        Switch(
+            checked = checked,
+            onCheckedChange = onCheckedChange
+        )
     }
 }
 
@@ -412,21 +494,21 @@ private fun ImageCropperFullscreenDialog(
                 topBar = {
                     TopAppBar(
                         title = {}, navigationIcon = {
-                        androidx.compose.material.IconButton(onClick = { state.done(accept = false) }) {
-                            Icon(vectorResource(Res.drawable.arrow_left), null)
-                        }
-                    }, actions = {
-                        IconButton(onClick = { state.reset() }) {
-                            Icon(vectorResource(Res.drawable.undo), null)
-                        }
-                        IconButton(
-                            onClick = { state.done(accept = true) }, enabled = !state.accepted
-                        ) {
-                            Icon(vectorResource(Res.drawable.confirm), null)
-                        }
-                    }, colors = TopAppBarDefaults.mediumTopAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.surfaceContainer
-                    )
+                            androidx.compose.material.IconButton(onClick = { state.done(accept = false) }) {
+                                Icon(vectorResource(Res.drawable.arrow_left), null)
+                            }
+                        }, actions = {
+                            IconButton(onClick = { state.reset() }) {
+                                Icon(vectorResource(Res.drawable.undo), null)
+                            }
+                            IconButton(
+                                onClick = { state.done(accept = true) }, enabled = !state.accepted
+                            ) {
+                                Icon(vectorResource(Res.drawable.confirm), null)
+                            }
+                        }, colors = TopAppBarDefaults.mediumTopAppBarColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceContainer
+                        )
                     )
                 }) { paddingValues ->
                 Box(

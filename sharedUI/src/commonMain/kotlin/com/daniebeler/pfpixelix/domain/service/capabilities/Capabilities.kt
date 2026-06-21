@@ -1,9 +1,14 @@
 package com.daniebeler.pfpixelix.domain.service.capabilities
 
 data class Capabilities(
+    val general: GeneralCapabilities,
     val post: PostCapabilities,
     val profile: ProfileCapabilities,
     val notification: NotificationCapabilities
+)
+
+data class GeneralCapabilities(
+    val supportsDMs: Boolean,
 )
 
 data class PostCapabilities(
@@ -18,5 +23,5 @@ data class ProfileCapabilities(
 )
 
 data class NotificationCapabilities(
-    val supportsFollowRequetActions: Boolean
+    val supportsFollowRequestActions: Boolean
 )

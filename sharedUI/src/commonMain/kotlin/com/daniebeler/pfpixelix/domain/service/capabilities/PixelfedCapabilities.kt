@@ -1,6 +1,7 @@
 package com.daniebeler.pfpixelix.domain.service.capabilities
 
 val PixelfedCapabilities = Capabilities(
+    general = GeneralCapabilities(supportsDMs = true),
     post = PostCapabilities(
         showCameraMetadata = false,
         showLikedBy = true
@@ -11,6 +12,6 @@ val PixelfedCapabilities = Capabilities(
         blockReason = false
     ),
     notification = NotificationCapabilities(
-        supportsFollowRequetActions = true
+        supportsFollowRequestActions = true
     )
 )

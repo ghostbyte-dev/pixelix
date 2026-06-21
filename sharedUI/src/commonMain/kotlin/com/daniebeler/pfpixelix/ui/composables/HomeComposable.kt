@@ -101,14 +101,18 @@ fun HomeComposable(
                             )
                         }
 
-                        IconButton(onClick = {
-                            navController.navigate(Destination.Conversations)
-                        }) {
-                            Icon(
-                                imageVector = vectorResource(Res.drawable.mail),
-                                contentDescription = "Conversations"
-                            )
+                        if (viewModel.capabilities.general.supportsDMs) {
+                            IconButton(onClick = {
+                                navController.navigate(Destination.Conversations)
+                            }) {
+                                Icon(
+                                    imageVector = vectorResource(Res.drawable.mail),
+                                    contentDescription = "Conversations"
+                                )
+                            }
                         }
+
+
                         IconButton(onClick = {
                             openPreferencesDrawer()
                         }) {

@@ -198,7 +198,7 @@ fun CustomNotification(
                 })
 
 
-            if (notification.type == NotificationType.FOLLOW_REQUEST && viewModel.capabilities.notification.supportsFollowRequetActions) {
+            if (notification.type == NotificationType.FOLLOW_REQUEST && viewModel.capabilities.notification.supportsFollowRequestActions) {
                 Row {
                     Button(
                         onClick = {

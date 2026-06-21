@@ -1,6 +1,7 @@
 package com.daniebeler.pfpixelix.domain.service.capabilities
 
 val VernissageCapabilities = Capabilities(
+    general = GeneralCapabilities(supportsDMs = false),
     post = PostCapabilities(
         showCameraMetadata = true,
         showLikedBy = false
@@ -11,6 +12,6 @@ val VernissageCapabilities = Capabilities(
         blockReason = true
     ),
     notification = NotificationCapabilities(
-        supportsFollowRequetActions = false
+        supportsFollowRequestActions = false
     )
 )

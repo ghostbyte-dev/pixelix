@@ -1,0 +1,19 @@
+info:
+  name: Unfollow Hashtag
+  type: http
+  seq: 2
+
+http:
+  method: POST
+  url: "{{baseUrl}}/api/v1/hashtags/:tag/unfollow"
+  params:
+    - name: tag
+      value: pixelfed
+      type: path
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

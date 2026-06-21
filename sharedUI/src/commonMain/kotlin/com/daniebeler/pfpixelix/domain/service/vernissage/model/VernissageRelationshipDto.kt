@@ -13,7 +13,9 @@ data class VernissageRelationshipDto(
     @SerialName("mutedNotifications") val mutedNotifications: Boolean,
     @SerialName("mutedReblogs") val mutedReblogs: Boolean,
     @SerialName("mutedStatuses") val mutedStatuses: Boolean,
-    @SerialName("blocked") val blocked: Boolean
+    @SerialName("blocked") val blocked: Boolean,
+    @SerialName("requested") val requested: Boolean,
+    @SerialName("requestedBy") val requestedBy: Boolean
 ): DtoMappable<Relationship> {
     override fun toDomain(): Relationship {
         return Relationship(
@@ -24,7 +26,9 @@ data class VernissageRelationshipDto(
             blocked = this.blocked,
             mutedNotifications = this.mutedNotifications,
             mutedReblogs = this.mutedReblogs,
-            mutedStatuses = this.mutedStatuses
+            mutedStatuses = this.mutedStatuses,
+            requested = this.requested,
+            requestedBy = this.requestedBy
         )
     }
 }

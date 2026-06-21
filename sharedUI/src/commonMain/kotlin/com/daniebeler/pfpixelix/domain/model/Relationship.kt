@@ -8,5 +8,7 @@ data class Relationship(
     val muted: Boolean,
     val mutedNotifications: Boolean? = null,
     val mutedReblogs: Boolean? = null,
-    val mutedStatuses: Boolean? = null
+    val mutedStatuses: Boolean? = null,
+    val requested: Boolean,
+    val requestedBy: Boolean,
 )

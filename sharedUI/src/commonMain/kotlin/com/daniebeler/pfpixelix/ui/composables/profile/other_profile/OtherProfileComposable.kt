@@ -163,49 +163,49 @@ fun OtherProfileComposable(
         topBar = {
             TopAppBar(
                 scrollBehavior = scrollBehavior, title = {
-                    Row {
-                        Column {
-                            Text(
-                                text = viewModel.accountState.account?.username ?: "",
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 18.sp
-                            )
-                            Text(
-                                text = DomainFormat.formatDomain(viewModel.domain),
-                                fontSize = 12.sp,
-                                lineHeight = 6.sp
-                            )
-                        }
-
-                    }
-                }, navigationIcon = {
-                    IconButton(onClick = {
-                        navController.popBackStack()
-                    }) {
-                        Icon(
-                            imageVector = vectorResource(Res.drawable.arrow_left),
-                            contentDescription = ""
+                Row {
+                    Column {
+                        Text(
+                            text = viewModel.accountState.account?.username ?: "",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 18.sp
                         )
-                    }
-                }, actions = {
-
-                    if (viewModel.domain.isNotEmpty()) {
-                        DomainSoftwareComposable(
-                            domain = viewModel.domain
+                        Text(
+                            text = DomainFormat.formatDomain(viewModel.domain),
+                            fontSize = 12.sp,
+                            lineHeight = 6.sp
                         )
                     }
 
-                    IconButton(onClick = {
-                        showBottomSheet = true
-                    }) {
-                        Icon(
-                            imageVector = vectorResource(Res.drawable.more_menu),
-                            contentDescription = ""
-                        )
-                    }
-                }, colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceContainer
-                )
+                }
+            }, navigationIcon = {
+                IconButton(onClick = {
+                    navController.popBackStack()
+                }) {
+                    Icon(
+                        imageVector = vectorResource(Res.drawable.arrow_left),
+                        contentDescription = ""
+                    )
+                }
+            }, actions = {
+
+                if (viewModel.domain.isNotEmpty()) {
+                    DomainSoftwareComposable(
+                        domain = viewModel.domain
+                    )
+                }
+
+                IconButton(onClick = {
+                    showBottomSheet = true
+                }) {
+                    Icon(
+                        imageVector = vectorResource(Res.drawable.more_menu),
+                        contentDescription = ""
+                    )
+                }
+            }, colors = TopAppBarDefaults.topAppBarColors(
+                containerColor = MaterialTheme.colorScheme.surfaceContainer
+            )
             )
         }) { paddingValues ->
         Box(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
@@ -309,8 +309,11 @@ fun OtherProfileComposable(
                                         contentPadding = PaddingValues(12.dp),
                                         colors = ButtonDefaults.buttonColors(
                                             containerColor = containerColor,
-                                            contentColor = contentColor
-                                        )
+                                            contentColor = contentColor,
+                                            disabledContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+                                            disabledContentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                                        ),
+                                        enabled = viewModel.relationshipState.accountRelationship?.requested == false
                                     ) {
                                         if (viewModel.relationshipState.isLoading) {
                                             LoadingComposable(
@@ -320,6 +323,9 @@ fun OtherProfileComposable(
                                         } else {
                                             if (viewModel.relationshipState.accountRelationship?.following == true) {
                                                 Text(text = stringResource(Res.string.unfollow))
+                                            } else if (viewModel.relationshipState.accountRelationship?.requested == true) {
+                                                //TODO: string resource
+                                                Text(text = "Requested")
                                             } else {
                                                 Text(text = stringResource(Res.string.follow))
                                             }
@@ -343,6 +349,63 @@ fun OtherProfileComposable(
                                         )
                                     ) {
                                         Text(text = stringResource(Res.string.message))
+                                    }
+                                }
+
+                                viewModel.relationshipState.accountRelationship?.let { relationship ->
+                                    if (relationship.requestedBy) {
+                                        Row(
+                                            modifier = Modifier.fillMaxWidth()
+                                                .padding(horizontal = 12.dp).padding(top = 12.dp)
+                                        ) {
+                                            Button(
+                                                onClick = {
+                                                    viewModel.acceptFollowRequest()
+                                                },
+                                                modifier = Modifier.weight(1f),
+                                                shape = RoundedCornerShape(12.dp),
+                                                contentPadding = PaddingValues(12.dp),
+                                                colors = ButtonDefaults.buttonColors(
+                                                    containerColor = MaterialTheme.colorScheme.primary,
+                                                    contentColor = MaterialTheme.colorScheme.onPrimary,
+                                                ),
+                                            ) {
+                                                if (viewModel.followRequestState.isLoading && viewModel.followRequestState.isAccepting) {
+                                                    LoadingComposable(
+                                                        modifier = Modifier.size(20.dp),
+                                                        color = MaterialTheme.colorScheme.onPrimary
+                                                    )
+                                                } else {
+                                                    //TODO: String resource
+                                                    Text("Accept Follow Request")
+                                                }
+                                            }
+
+                                            Spacer(modifier = Modifier.width(12.dp))
+
+                                            Button(
+                                                onClick = {
+                                                    viewModel.rejectFollowRequest()
+                                                },
+                                                modifier = Modifier.weight(1f),
+                                                shape = RoundedCornerShape(12.dp),
+                                                contentPadding = PaddingValues(12.dp),
+                                                colors = ButtonDefaults.buttonColors(
+                                                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                                                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                                                )
+                                            ) {
+                                                if (viewModel.followRequestState.isLoading && !viewModel.followRequestState.isAccepting) {
+                                                    LoadingComposable(
+                                                        modifier = Modifier.size(20.dp),
+                                                        color = MaterialTheme.colorScheme.onPrimary
+                                                    )
+                                                } else {
+                                                    //TODO: string resource
+                                                    Text(text = "Reject Follow Request")
+                                                }
+                                            }
+                                        }
                                     }
                                 }
 
@@ -490,21 +553,25 @@ fun OtherProfileComposable(
             }
             if (showMuteAlert) {
                 MuteAccountAlert(
-                    onDismissRequest = { showMuteAlert = false }, onConfirmation = { userMuteRequest ->
+                    onDismissRequest = { showMuteAlert = false },
+                    onConfirmation = { userMuteRequest ->
                         showMuteAlert = false
                         showBottomSheet = false
                         viewModel.muteAccount(userMuteRequest)
-                    }, account = viewModel.accountState.account!!,
+                    },
+                    account = viewModel.accountState.account!!,
                     capabilities = viewModel.capabilities
                 )
             }
             if (showBlockAlert) {
                 BlockAccountAlert(
-                    onDismissRequest = { showBlockAlert = false }, onConfirmation = { userBlockRequest ->
+                    onDismissRequest = { showBlockAlert = false },
+                    onConfirmation = { userBlockRequest ->
                         showBlockAlert = false
                         showBottomSheet = false
                         viewModel.blockAccount(userBlockRequest)
-                    }, account = viewModel.accountState.account!!,
+                    },
+                    account = viewModel.accountState.account!!,
                     capabilities = viewModel.capabilities
                 )
             }
@@ -535,7 +602,10 @@ fun OtherProfileComposable(
 
 @Composable
 fun MuteAccountAlert(
-    onDismissRequest: () -> Unit, onConfirmation: (userMuteRequest: UserMuteRequest) -> Unit, account: Account?, capabilities: Capabilities
+    onDismissRequest: () -> Unit,
+    onConfirmation: (userMuteRequest: UserMuteRequest) -> Unit,
+    account: Account?,
+    capabilities: Capabilities
 ) {
     val showAdvanced = capabilities.profile.showAdvancedMuteOptions
     var muteOptions by remember { mutableStateOf(UserMuteRequest()) }
@@ -640,7 +710,10 @@ fun UnMuteAccountAlert(
 
 @Composable
 fun BlockAccountAlert(
-    onDismissRequest: () -> Unit, onConfirmation: (userBlockRequest: UserBlockRequest) -> Unit, account: Account?, capabilities: Capabilities
+    onDismissRequest: () -> Unit,
+    onConfirmation: (userBlockRequest: UserBlockRequest) -> Unit,
+    account: Account?,
+    capabilities: Capabilities
 ) {
     var reason by remember { mutableStateOf("") }
 
@@ -702,13 +775,8 @@ fun BlockAccountAlert(
 
 @Composable
 fun MuteOptionRow(label: String, checked: Boolean, onCheckedChange: (Boolean) -> Unit) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable { onCheckedChange(!checked) }
-            .padding(vertical = 8.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
+    Row(modifier = Modifier.fillMaxWidth().clickable { onCheckedChange(!checked) }
+        .padding(vertical = 8.dp), verticalAlignment = Alignment.CenterVertically) {
         Text(text = label, modifier = Modifier.weight(1f))
         Switch(checked = checked, onCheckedChange = onCheckedChange)
     }

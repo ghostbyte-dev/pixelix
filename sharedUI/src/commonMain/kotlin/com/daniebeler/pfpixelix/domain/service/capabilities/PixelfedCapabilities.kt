@@ -9,5 +9,8 @@ val PixelfedCapabilities = Capabilities(
         showCollectionsOwnProfile = true,
         showAdvancedMuteOptions = false,
         blockReason = false
+    ),
+    notification = NotificationCapabilities(
+        supportsFollowRequetActions = true
     )
 )

@@ -9,5 +9,8 @@ val VernissageCapabilities = Capabilities(
         showCollectionsOwnProfile = false,
         showAdvancedMuteOptions = true,
         blockReason = true
+    ),
+    notification = NotificationCapabilities(
+        supportsFollowRequetActions = false
     )
 )

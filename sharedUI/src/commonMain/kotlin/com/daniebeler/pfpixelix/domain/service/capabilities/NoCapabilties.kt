@@ -9,5 +9,8 @@ val NoCapabilities = Capabilities(
         showCollectionsOwnProfile = false,
         showAdvancedMuteOptions = false,
         blockReason = false
+    ),
+    notification = NotificationCapabilities(
+        supportsFollowRequetActions = false
     )
 )

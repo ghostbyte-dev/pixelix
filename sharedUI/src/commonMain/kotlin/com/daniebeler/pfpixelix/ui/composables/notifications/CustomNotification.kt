@@ -8,12 +8,13 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
-import androidx.compose.material.Button
-import androidx.compose.material.Colors
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -37,8 +38,10 @@ import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.model.Notification
 import com.daniebeler.pfpixelix.domain.model.NotificationType
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposableDialog
+import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import com.daniebeler.pfpixelix.utils.TimeAgo
+import kotlinx.coroutines.flow.none
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import pixelix.app.generated.resources.Res
@@ -195,16 +198,49 @@ fun CustomNotification(
                 })
 
 
-            if (notification.type == NotificationType.FOLLOW_REQUEST) {
+            if (notification.type == NotificationType.FOLLOW_REQUEST && viewModel.capabilities.notification.supportsFollowRequetActions) {
                 Row {
                     Button(
-                        onClick = { viewModel.acceptFollowRequest(notification.account.id, removeNotification) },
-                        modifier = Modifier.padding(end = 4.dp)
+                        onClick = {
+                            viewModel.acceptFollowRequest(
+                                notification.account.id,
+                                removeNotification
+                            )
+                        },
+                        modifier = Modifier.padding(end = 4.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                        ),
                     ) {
-                        Text(text = "Accept")
+                        if (viewModel.followRequestState.value.isLoading && viewModel.followRequestState.value.isAccepting) {
+                            LoadingComposable(
+                                modifier = Modifier.size(20.dp),
+                                color = MaterialTheme.colorScheme.onPrimaryContainer
+                            )
+                        } else {
+                            Text(text = "Accept")
+                        }
                     }
-                    Button(onClick = { viewModel.rejectFollowRequest(notification.account.id, removeNotification) }) {
-                        Text(text = "Reject")
+                    Button(
+                        onClick = {
+                            viewModel.rejectFollowRequest(
+                                notification.account.id,
+                                removeNotification
+                            )
+                        }, colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.errorContainer,
+                            contentColor = MaterialTheme.colorScheme.onErrorContainer,
+                        )
+                    ) {
+                        if (viewModel.followRequestState.value.isLoading && !viewModel.followRequestState.value.isAccepting) {
+                            LoadingComposable(
+                                modifier = Modifier.size(20.dp),
+                                color = MaterialTheme.colorScheme.onErrorContainer
+                            )
+                        } else {
+                            Text(text = "Reject")
+                        }
                     }
                 }
             } else {

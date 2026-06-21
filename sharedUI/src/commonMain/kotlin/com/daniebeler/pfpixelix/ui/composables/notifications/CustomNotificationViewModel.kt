@@ -9,21 +9,24 @@ import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.service.general.AccountService
 import com.daniebeler.pfpixelix.domain.service.general.PostService
+import com.daniebeler.pfpixelix.domain.service.general.Session
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import me.tatarka.inject.annotations.Inject
 
 class CustomNotificationViewModel @Inject constructor(
     private val postService: PostService,
-    private val accountService: AccountService
+    private val accountService: AccountService,
+    private val session: Session
 ): ViewModel() {
+    val capabilities = session.capabilities.value
     var ancestor by mutableStateOf<Post?>(null)
     val followRequestState = mutableStateOf(FollowRequestState())
 
     fun loadAncestor(postId: String) {
         postService.getPostById(postId).onEach { result ->
             if (result is Resource.Success) {
-                ancestor = result.data!!
+                ancestor = result.data
             }
         }.launchIn(viewModelScope)
     }
@@ -39,7 +42,7 @@ class CustomNotificationViewModel @Inject constructor(
                     followRequestState.value = FollowRequestState(error = result.message)
                 }
                 is Resource.Loading -> {
-                    followRequestState.value = FollowRequestState(isLoading = true)
+                    followRequestState.value = FollowRequestState(isLoading = true, isAccepting = true)
                 }
             }
         }.launchIn(viewModelScope)
@@ -56,7 +59,7 @@ class CustomNotificationViewModel @Inject constructor(
                     followRequestState.value = FollowRequestState(error = result.message)
                 }
                 is Resource.Loading -> {
-                    followRequestState.value = FollowRequestState(isLoading = true)
+                    followRequestState.value = FollowRequestState(isLoading = true, isAccepting = false)
                 }
             }
         }.launchIn(viewModelScope)

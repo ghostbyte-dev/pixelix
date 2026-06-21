@@ -21,6 +21,7 @@ import com.daniebeler.pfpixelix.domain.service.general.PostService
 import com.daniebeler.pfpixelix.domain.service.general.Session
 import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
+import com.daniebeler.pfpixelix.ui.composables.notifications.FollowRequestState
 import com.daniebeler.pfpixelix.ui.composables.profile.AccountState
 import com.daniebeler.pfpixelix.ui.composables.profile.CollectionsState
 import com.daniebeler.pfpixelix.ui.composables.profile.MutualFollowersState
@@ -53,6 +54,7 @@ class OtherProfileViewModel(
     var postsState by mutableStateOf(PostsState())
     private var collectionPage by mutableIntStateOf(1)
     var collectionsState by mutableStateOf(CollectionsState())
+    var followRequestState by mutableStateOf(FollowRequestState())
 
     var domain by mutableStateOf("")
     var view by mutableStateOf(ViewEnum.Grid)
@@ -422,6 +424,50 @@ class OtherProfileViewModel(
 
                 is Resource.Loading -> {
                     RelationshipState(isLoading = true)
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    fun acceptFollowRequest() {
+        val accountId = accountState.account?.id
+        if (accountId == null){
+            followRequestState = FollowRequestState(error = "Invalid account")
+            return
+        }
+        accountService.acceptFollowRequest(accountId).onEach { result ->
+            when(result) {
+                is Resource.Success -> {
+                    relationshipState = RelationshipState(accountRelationship = result.data)
+                    followRequestState = FollowRequestState(relationship = result.data)
+                }
+                is Resource.Error -> {
+                    followRequestState = FollowRequestState(error = result.message)
+                }
+                is Resource.Loading -> {
+                    followRequestState = FollowRequestState(isLoading = true, isAccepting = true)
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    fun rejectFollowRequest() {
+        val accountId = accountState.account?.id
+        if (accountId == null){
+            followRequestState = FollowRequestState(error = "Invalid account")
+            return
+        }
+        accountService.rejectFollowRequest(accountId).onEach { result ->
+            when(result) {
+                is Resource.Success -> {
+                    relationshipState = RelationshipState(accountRelationship = result.data)
+                    followRequestState = FollowRequestState(relationship = result.data)
+                }
+                is Resource.Error -> {
+                    followRequestState = FollowRequestState(error = result.message)
+                }
+                is Resource.Loading -> {
+                    followRequestState = FollowRequestState(isLoading = true, isAccepting = false)
                 }
             }
         }.launchIn(viewModelScope)

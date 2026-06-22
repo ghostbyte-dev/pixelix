@@ -3,10 +3,9 @@ package com.daniebeler.pfpixelix.domain.service.general
 import com.daniebeler.pfpixelix.di.AppSingleton
 import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.model.PaginatedResponse
-import com.daniebeler.pfpixelix.domain.model.Place
+import com.daniebeler.pfpixelix.domain.model.Location
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.model.RelatedHashtag
-import com.daniebeler.pfpixelix.domain.model.Relationship
 import com.daniebeler.pfpixelix.domain.model.Search
 import com.daniebeler.pfpixelix.domain.model.Tag
 import com.daniebeler.pfpixelix.domain.service.pixelfed.PixelfedExploreService
@@ -23,7 +22,7 @@ interface ExploreService {
 
     fun search(searchText: String, type: String? = null, limit: Int = 5): Flow<Resource<Search>>
 
-    fun searchLocations(searchText: String): Flow<Resource<List<Place>>>
+    fun searchLocations(searchText: String): Flow<Resource<List<Location>>>
 
     fun getTrendingHashtags(range: String): Flow<Resource<PaginatedResponse<List<Tag>>>>
 
@@ -75,7 +74,7 @@ class ExploreServiceDelegate(
         limit: Int
     ): Flow<Resource<Search>> = current.search(searchText, type, limit)
 
-    override fun searchLocations(searchText: String): Flow<Resource<List<Place>>> = current.searchLocations(searchText)
+    override fun searchLocations(searchText: String): Flow<Resource<List<Location>>> = current.searchLocations(searchText)
 
     override fun getTrendingHashtags(range: String): Flow<Resource<PaginatedResponse<List<Tag>>>> = current.getTrendingHashtags(range)
 

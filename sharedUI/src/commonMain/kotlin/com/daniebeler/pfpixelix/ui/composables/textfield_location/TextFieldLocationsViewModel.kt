@@ -7,7 +7,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
-import com.daniebeler.pfpixelix.domain.model.Place
+import com.daniebeler.pfpixelix.domain.model.Location
 import com.daniebeler.pfpixelix.domain.service.general.ExploreService
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -20,7 +20,7 @@ class TextFieldLocationsViewModel @Inject constructor(
     var locationsDropdownOpen by mutableStateOf(false)
     var locationsSuggestions by mutableStateOf(LocationsState())
 
-    fun initializePlace(initialPlace: Place) {
+    fun initializePlace(initialPlace: Location) {
         locationsSuggestions = LocationsState(location = initialPlace)
         text = TextFieldValue(initialPlace.name!!)
     }
@@ -55,7 +55,7 @@ class TextFieldLocationsViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    fun clickLocation(location: Place) {
+    fun clickLocation(location: Location) {
         locationsDropdownOpen = false
         locationsSuggestions = locationsSuggestions.copy(location = location)
     }

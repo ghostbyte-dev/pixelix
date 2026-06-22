@@ -14,7 +14,7 @@ data class VernissagePostDto @OptIn(ExperimentalSerializationApi::class) constru
     @SerialName("user") val account: VernissageAccountDto,
     @Serializable(with = HtmlAsTextSerializer::class) @SerialName("noteHtml") val content: String?,
     @SerialName("note") val contentText: String = "",
-    @SerialName("created_at") val createdAt: String = "",
+    @SerialName("createdAt") val createdAt: String = "",
     @SerialName("favourited") val favourited: Boolean = false,
     @SerialName("favouritesCount") val favouritesCount: Int = 0,
     //@SerialName("in_reply_to_id") val inReplyToId: String?,
@@ -74,7 +74,7 @@ data class VernissagePostDto @OptIn(ExperimentalSerializationApi::class) constru
             //inReplyToId = activePost.inReplyToId,
             inReplyToId = null,
             // Nested nullable options
-            place = null,
+            location = null,
             //place = activePost.place?.toDomain(),
             //likedBy = activePost.likedBy?.toDomain(),
             likedBy = null,

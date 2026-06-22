@@ -1,6 +1,6 @@
 package com.daniebeler.pfpixelix.domain.service.vernissage
 
-import com.daniebeler.pfpixelix.domain.model.Place
+import com.daniebeler.pfpixelix.domain.model.Location
 import com.daniebeler.pfpixelix.domain.model.RelatedHashtag
 import com.daniebeler.pfpixelix.domain.model.Search
 import com.daniebeler.pfpixelix.domain.model.Tag
@@ -10,7 +10,6 @@ import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
 import com.daniebeler.pfpixelix.domain.service.utils.loadListResources
 import com.daniebeler.pfpixelix.domain.service.utils.loadResource
 import com.daniebeler.pfpixelix.domain.service.utils.loadVernissagePaginatedListResources
-import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageTagDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.toDomain
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -53,7 +52,7 @@ class VernissageExploreService(
 
     override fun searchLocations(searchText: String) = loadListResources {
         //api.searchLocations(searchText).map { it.toDomain() }
-        emptyList<Place>()
+        emptyList<Location>()
     }
 
     override fun getTrendingHashtags(range: String) = loadVernissagePaginatedListResources {

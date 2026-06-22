@@ -26,21 +26,19 @@ fun PixelfedUpdatePostDto.toDomain(): UpdatePost {
     )
 }
 
-// Convert Domain payload to DTO format for request bodies
 fun UpdatePost.toDto(): PixelfedUpdatePostDto {
     return PixelfedUpdatePostDto(
         status = this.status,
         mediaIds = this.mediaIds,
         sensitive = this.sensitive,
         spoilerText = this.spoilerText,
-        // Assuming PixelfedPlaceDto has an expansion mapping or you add a toDto() on Place
         location = this.location?.let {
             PixelfedPlaceDto(
                 id = it.id,
-                slug = it.slug,
+                slug = null,
                 name = it.name,
-                country = it.country,
-                url = it.url
+                country = it.country?.name,
+                url = null
             )
         }
     )

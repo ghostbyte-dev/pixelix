@@ -333,27 +333,13 @@ private fun PostHeader(
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1
             )
+            Spacer(Modifier.height(2.dp))
             Text(
                 text = timeAgoText,
                 fontSize = 12.sp,
                 lineHeight = 8.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
-            if (post.place != null) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(
-                        imageVector = vectorResource(Res.drawable.location),
-                        contentDescription = null,
-                        modifier = Modifier.size(16.dp)
-                    )
-                    Row {
-                        Text(text = post.place.name ?: "", fontSize = 12.sp)
-                        if (post.place.country != null) {
-                            Text(text = ", ${post.place.country}", fontSize = 12.sp)
-                        }
-                    }
-                }
-            }
         }
 
 
@@ -699,24 +685,32 @@ private fun PostActionBar(
         }
 
         val currentAttachment = post.mediaAttachments.getOrNull(pagerState.currentPage)
-        val hasLicense = currentAttachment?.license?.let { it.name != null || it.code != null } == true
-        val hasMetadata = viewModel.capabilities.post.showCameraMetadata && currentAttachment?.metadata != null
+        val attachmentLocation = currentAttachment?.location
+        val postLocation = post.location
+        val displayLocation = attachmentLocation ?: postLocation
 
-        if (hasLicense || hasMetadata) {
+
+        val hasLicense =
+            currentAttachment?.license?.let { it.name != null || it.code != null } == true
+        val hasMetadata =
+            viewModel.capabilities.post.showCameraMetadata && currentAttachment?.metadata != null
+        val hasLocation = displayLocation?.let {
+            !it.name.isNullOrBlank() || !it.country?.name.isNullOrBlank()
+        } == true
+
+        if (hasLocation || hasLicense || hasMetadata) {
             Spacer(Modifier.height(12.dp))
         }
 
-        post.mediaAttachments.getOrNull(pagerState.currentPage)?.license?.let { license ->
+        displayLocation?.let { loc ->
             val label = when {
-                license.name.isNullOrBlank() && license.code.isNullOrEmpty() -> null
-                license.name.isNullOrBlank() -> license.code
-                license.code.isNullOrBlank() -> license.name
-                else -> "${license.name} (${license.code})"
+                loc.name.isNullOrBlank() && loc.country?.name.isNullOrEmpty() -> null
+                loc.name.isNullOrBlank() -> loc.country?.name
+                loc.country?.name.isNullOrBlank() -> loc.name
+                else -> "${loc.name}, ${loc.country?.name}"
             }
             if (label != null) {
-                MetadataItem(Res.drawable.license, label, license.url) {
-                    viewModel.openUrl(it)
-                }
+                MetadataItem(Res.drawable.location, label)
             }
         }
 
@@ -742,11 +736,30 @@ private fun PostActionBar(
                 }
             }
         }
+
+        post.mediaAttachments.getOrNull(pagerState.currentPage)?.license?.let { license ->
+            val label = when {
+                license.name.isNullOrBlank() && license.code.isNullOrEmpty() -> null
+                license.name.isNullOrBlank() -> license.code
+                license.code.isNullOrBlank() -> license.name
+                else -> "${license.name} (${license.code})"
+            }
+            if (label != null) {
+                MetadataItem(Res.drawable.license, label, license.url) {
+                    viewModel.openUrl(it)
+                }
+            }
+        }
     }
 }
 
 @Composable
-private fun MetadataItem(icon: DrawableResource, value: String, url: String? = null, openUrl: ((url: String) -> Unit)? = null) {
+private fun MetadataItem(
+    icon: DrawableResource,
+    value: String,
+    url: String? = null,
+    openUrl: ((url: String) -> Unit)? = null
+) {
     Row(
         verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(vertical = 4.dp)
     ) {
@@ -764,8 +777,7 @@ private fun MetadataItem(icon: DrawableResource, value: String, url: String? = n
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.primary,
                 textDecoration = TextDecoration.Underline,
-                modifier = Modifier.clickable { openUrl?.invoke(url) }
-            )
+                modifier = Modifier.clickable { openUrl?.invoke(url) })
         } else {
             Text(text = value, style = MaterialTheme.typography.bodySmall)
         }
@@ -842,10 +854,10 @@ private fun PostDeleteDialog(viewModel: PostViewModel) {
 
     AlertDialog(
         icon = {
-        Icon(
-            imageVector = vectorResource(Res.drawable.trash), contentDescription = null
-        )
-    },
+            Icon(
+                imageVector = vectorResource(Res.drawable.trash), contentDescription = null
+            )
+        },
         title = { Text(text = stringResource(Res.string.delete_post)) },
         text = { Text(text = stringResource(Res.string.this_action_cannot_be_undone)) },
         onDismissRequest = { viewModel.deleteDialog = null },

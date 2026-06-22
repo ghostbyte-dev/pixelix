@@ -1,9 +1,10 @@
 package com.daniebeler.pfpixelix.domain.service.vernissage.model
 
+import com.daniebeler.pfpixelix.domain.model.Country
 import com.daniebeler.pfpixelix.domain.model.License
 import com.daniebeler.pfpixelix.domain.model.MediaAttachment
 import com.daniebeler.pfpixelix.domain.model.MediaMetadata
-import com.daniebeler.pfpixelix.domain.model.Place
+import com.daniebeler.pfpixelix.domain.model.Location
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -29,18 +30,18 @@ data class VernissageLicenseDto(
 
 @Serializable
 data class VernissageLocationDto(
-    @SerialName("country") val country: VernissageCountryDto,
+    @SerialName("country") val country: VernissageCountryDto?,
     @SerialName("id") val id: String,
-    @SerialName("name") val name: String,
-    @SerialName("latitude") val lat: String,
-    @SerialName("longitude") val long: String,
+    @SerialName("name") val name: String?,
+    @SerialName("latitude") val lat: String?,
+    @SerialName("longitude") val long: String?,
 )
 
 @Serializable
 data class VernissageCountryDto(
-    @SerialName("name") val name: String,
-    @SerialName("code") val code: String,
-    @SerialName("id") val id: String
+    @SerialName("name") val name: String?,
+    @SerialName("code") val code: String?,
+    @SerialName("id") val id: String?
 )
 
 @Serializable
@@ -93,13 +94,21 @@ fun VernissageLicenseDto.toDomain(): License {
     )
 }
 
-fun VernissageLocationDto.toDomain(): Place {
-    return Place(
-        country = this.country.name,
+fun VernissageLocationDto.toDomain(): Location {
+    return Location(
         id = this.id,
-        name = this.name + " " + this.country.name,
-        slug = this.name + " " + this.country.name,
-        url = null
+        name = this.name,
+        latitude = this.lat,
+        longitude = this.long,
+        country = this.country?.toDomain()
+    )
+}
+
+fun VernissageCountryDto.toDomain(): Country {
+    return Country(
+        id = this.id,
+        name = this.name,
+        code = this.code
     )
 }
 

@@ -1,6 +1,7 @@
 package com.daniebeler.pfpixelix.domain.service.pixelfed.model
 
-import com.daniebeler.pfpixelix.domain.model.Place
+import com.daniebeler.pfpixelix.domain.model.Country
+import com.daniebeler.pfpixelix.domain.model.Location
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -13,12 +14,11 @@ data class PixelfedPlaceDto(
     @SerialName("url") val url: String?
 )
 
-fun PixelfedPlaceDto.toDomain(): Place {
-    return Place(
+fun PixelfedPlaceDto.toDomain(): Location {
+    return Location(
         id = this.id,
-        slug = this.slug,
         name = this.name,
-        country = this.country,
-        url = this.url
-    )
+        latitude = null,
+        longitude = null,
+        country = this.country?.let { Country(id = null, name = it, code = null) })
 }

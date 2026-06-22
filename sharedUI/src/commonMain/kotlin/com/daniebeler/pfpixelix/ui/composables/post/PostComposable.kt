@@ -558,7 +558,7 @@ private fun PostActionBar(
                                 animateHeart()
                                 viewModel.likePost(postId, updatePost)
                             }
-                        }.padding(horizontal = 10.dp, vertical = 4.dp),
+                        }.padding(horizontal = 10.dp).height(32.dp),
                 ) {
                     if (post.favourited) {
                         Icon(
@@ -574,36 +574,40 @@ private fun PostActionBar(
                             contentDescription = "like post"
                         )
                     }
-                    Spacer(Modifier.width(4.dp))
-                    Text(
-                        text = post.favouritesCount.toString(),
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold
-                    )
+                    if (post.favouritesCount > 0) {
+                        Spacer(Modifier.width(4.dp))
+                        Text(
+                            text = post.favouritesCount.toString(),
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+
                 }
 
                 Spacer(Modifier.width(16.dp))
 
-                // Comment button with count
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.clip(RoundedCornerShape(percent = 50))
                         .background(MaterialTheme.colorScheme.surfaceContainerHigh)
                         .clickable(onClick = onCommentsClick)
-                        .padding(horizontal = 10.dp, vertical = 4.dp)
-
+                        .padding(horizontal = 10.dp).height(32.dp)
                 ) {
                     Icon(
                         imageVector = vectorResource(Res.drawable.chatbubble),
                         modifier = Modifier.size(22.dp),
                         contentDescription = "open comments"
                     )
-                    Spacer(Modifier.width(4.dp))
-                    Text(
-                        text = post.replyCount.toString(),
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold
-                    )
+                    if (post.replyCount > 0) {
+                        Spacer(Modifier.width(4.dp))
+                        Text(
+                            text = post.replyCount.toString(),
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+
                 }
             }
 
@@ -618,7 +622,7 @@ private fun PostActionBar(
                             } else {
                                 viewModel.reblogPost(postId, updatePost)
                             }
-                        }.padding(horizontal = 10.dp, vertical = 4.dp)
+                        }.padding(horizontal = 10.dp).height(32.dp)
                 ) {
                     Icon(
                         imageVector = if (post.reblogged) {
@@ -631,14 +635,15 @@ private fun PostActionBar(
                             MaterialTheme.colorScheme.onSurface
                         }, modifier = Modifier.rotate(boostRotation).size(22.dp)
                     )
-                    Spacer(Modifier.width(4.dp))
-                    Text(
-                        text = post.reblogCount.toString(),
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold
-                    )
+                    if (post.reblogCount > 0) {
+                        Spacer(Modifier.width(4.dp))
+                        Text(
+                            text = post.reblogCount.toString(),
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
                 }
-
 
                 Spacer(Modifier.width(14.dp))
 

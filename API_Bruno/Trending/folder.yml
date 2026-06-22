@@ -1,0 +1,7 @@
+info:
+  name: Trending
+  type: folder
+  seq: 6
+
+request:
+  auth: inherit

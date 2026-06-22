@@ -7,5 +7,12 @@ val NoCapabilities = Capabilities(
         showCollectionsOwnProfile = false, showAdvancedMuteOptions = false, blockReason = false
     ), notification = NotificationCapabilities(
         supportsFollowRequestActions = false
+    ),
+    editProfile = EditProfileCapabilities(
+        privateAccountToggle = false,
+        manuallyAcceptNewFollowersToggle = false,
+        includePostsInSearchEngineToggle = false,
+        includeProfileInSearchEngineToggle = false,
+        websiteField = false
     )
 )

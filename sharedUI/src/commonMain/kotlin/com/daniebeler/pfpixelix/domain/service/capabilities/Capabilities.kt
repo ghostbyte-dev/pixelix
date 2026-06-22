@@ -4,6 +4,7 @@ data class Capabilities(
     val general: GeneralCapabilities,
     val post: PostCapabilities,
     val profile: ProfileCapabilities,
+    val editProfile: EditProfileCapabilities,
     val notification: NotificationCapabilities
 )
 
@@ -20,6 +21,14 @@ data class ProfileCapabilities(
     val showCollectionsOwnProfile: Boolean,
     val showAdvancedMuteOptions: Boolean,
     val blockReason: Boolean
+)
+
+data class EditProfileCapabilities(
+    val privateAccountToggle: Boolean,
+    val manuallyAcceptNewFollowersToggle: Boolean,
+    val includePostsInSearchEngineToggle: Boolean,
+    val includeProfileInSearchEngineToggle: Boolean,
+    val websiteField: Boolean,
 )
 
 data class NotificationCapabilities(

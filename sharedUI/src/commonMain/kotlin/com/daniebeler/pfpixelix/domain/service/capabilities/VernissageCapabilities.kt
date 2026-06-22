@@ -13,5 +13,12 @@ val VernissageCapabilities = Capabilities(
     ),
     notification = NotificationCapabilities(
         supportsFollowRequestActions = false
+    ),
+    editProfile = EditProfileCapabilities(
+        privateAccountToggle = false,
+        manuallyAcceptNewFollowersToggle = true,
+        includePostsInSearchEngineToggle = true,
+        includeProfileInSearchEngineToggle = true,
+        websiteField = false
     )
 )

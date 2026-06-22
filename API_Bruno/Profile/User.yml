@@ -1,0 +1,23 @@
+info:
+  name: User
+  type: http
+  seq: 1
+
+http:
+  method: GET
+  url: "{{baseUrl}}/api/v1/users/:userName"
+  params:
+    - name: maxId
+      value: ""
+      type: query
+      disabled: true
+    - name: userName
+      value: hiebeler05
+      type: path
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

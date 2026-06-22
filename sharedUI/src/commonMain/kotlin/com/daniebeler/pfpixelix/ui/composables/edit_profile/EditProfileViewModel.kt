@@ -8,9 +8,12 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.daniebeler.pfpixelix.domain.model.request.UpdateUserRequest
 import com.daniebeler.pfpixelix.domain.service.general.AccountService
+import com.daniebeler.pfpixelix.domain.service.general.Session
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.domain.service.suggestions.HashtagMentionsSuggestionsManager
+import com.daniebeler.pfpixelix.ui.composables.profile.AccountState
 import com.daniebeler.pfpixelix.utils.EmptyKmpUri
 import com.daniebeler.pfpixelix.utils.toKmpUri
 import kotlinx.coroutines.flow.launchIn
@@ -19,25 +22,30 @@ import me.tatarka.inject.annotations.Inject
 
 class EditProfileViewModel @Inject constructor(
     private val accountService: AccountService,
-    val hashtagMentionsSuggestionsManager: HashtagMentionsSuggestionsManager
+    val hashtagMentionsSuggestionsManager: HashtagMentionsSuggestionsManager,
+    private val session: Session
 ) : ViewModel() {
-
+    val capabilities = session.capabilities.value
     var accountState by mutableStateOf(EditProfileState())
+    var avatarState by mutableStateOf(EditAvatarState())
 
     var firstLoaded by mutableStateOf(false)
     var displayName by mutableStateOf(TextFieldValue())
     var note by mutableStateOf(TextFieldValue())
-    var website by mutableStateOf("")
+    var website by mutableStateOf(TextFieldValue())
     var avatarUri by mutableStateOf(EmptyKmpUri)
-    var newAvatar by mutableStateOf<ImageBitmap?>(null)
     var privateProfile by mutableStateOf(false)
+    var manuallyAcceptNewFollowers by mutableStateOf<Boolean?>(null)
+    var includePublicPostsInSearchEngine by mutableStateOf<Boolean?>(null)
+    var includeProfileInSearchEngine by mutableStateOf<Boolean?>(null)
+
 
     val isEdited: Boolean by derivedStateOf {
         if (accountState.account == null) return@derivedStateOf false
         !(displayName.text == (accountState.account?.displayname
             ?: "") && note.text == (accountState.account?.note
-            ?: "") && ("https://$website" == (accountState.account?.website
-            ?: "") || (accountState.account?.website.isNullOrEmpty() && website.isEmpty())) && newAvatar == null && privateProfile == accountState.account?.locked)
+            ?: "") && ("https://${website.text}" == (accountState.account?.website
+            ?: "") || (accountState.account?.website.isNullOrEmpty() && website.text.isEmpty())) && avatarState.newAvatar == null && privateProfile == accountState.account?.locked && manuallyAcceptNewFollowers == accountState.account?.manuallyApprovesFollowers && includeProfileInSearchEngine == accountState.account?.includeProfilePageInSearchEngines && includePublicPostsInSearchEngine == accountState.account?.includePublicPostsInSearchEngines)
     }
 
     init {
@@ -52,15 +60,21 @@ class EditProfileViewModel @Inject constructor(
                     accountState = EditProfileState(account = result.data)
                     displayName = TextFieldValue(accountState.account?.displayname ?: "")
                     note = TextFieldValue(accountState.account?.note ?: "")
-                    website = accountState.account?.website?.replace("https://", "") ?: ""
+                    website =
+                        TextFieldValue(accountState.account?.website?.replace("https://", "") ?: "")
                     avatarUri = accountState.account?.avatar!!.toKmpUri()
                     privateProfile = accountState.account?.locked ?: false
+                    manuallyAcceptNewFollowers =
+                        accountState.account?.manuallyApprovesFollowers
+                    includeProfileInSearchEngine =
+                        accountState.account?.includeProfilePageInSearchEngines
+                    includePublicPostsInSearchEngine =
+                        accountState.account?.includePublicPostsInSearchEngines
                     firstLoaded = true
                 }
 
                 is Resource.Error -> {
-                    accountState =
-                        EditProfileState(error = result.message)
+                    accountState = EditProfileState(error = result.message)
                 }
 
                 is Resource.Loading -> {
@@ -71,21 +85,61 @@ class EditProfileViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    fun save() {
-        accountService.updateAccount(
-            displayName.text, note.text, "https://$website", privateProfile, newAvatar
+    //TODO: implement update header for vernissage
+    fun updateAvatar(avatar: ImageBitmap) {
+        accountService.updateAvatar(
+            username = accountState.account!!.username, avatar
         ).onEach { result ->
-            accountState = when (result) {
+            avatarState = when (result) {
                 is Resource.Success -> {
-                    EditProfileState(account = result.data)
+                    avatarState.copy(
+                        isLoading = false, newAvatar = null, newUploadedAvatar = avatar
+                    )
                 }
 
                 is Resource.Error -> {
-                    EditProfileState(error = result.message)
+                    avatarState.copy(isLoading = false, error = result.message)
                 }
 
                 is Resource.Loading -> {
-                    EditProfileState(isLoading = true, account = accountState.account)
+                    avatarState.copy(isLoading = true)
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    fun save() {
+        if (accountState.account == null) {
+            accountState = EditProfileState(error = "No user found")
+            return
+        }
+        if (avatarState.newAvatar != null) {
+            updateAvatar(avatarState.newAvatar!!)
+        }
+        val updateUserRequest = UpdateUserRequest(
+            displayName = displayName.text,
+            note = note.text,
+            website = "https://${website.text}",
+            locked = privateProfile,
+            manuallyAcceptNewFollowers = manuallyAcceptNewFollowers,
+            includeProfilePageInSearchEngines = includeProfileInSearchEngine,
+            includePublicPostsInSearchEngines = includePublicPostsInSearchEngine
+        )
+
+        accountService.updateAccount(
+            username = accountState.account!!.username, updateUserRequest = updateUserRequest
+        ).onEach { result ->
+            accountState = when (result) {
+                is Resource.Success -> {
+                    accountState.copy(account = result.data, isLoading = false)
+                }
+
+                is Resource.Error -> {
+                    accountState.copy(error = result.message, isLoading = false)
+                }
+
+                is Resource.Loading -> {
+                    accountState.copy(isLoading = true)
                 }
             }
         }.launchIn(viewModelScope)

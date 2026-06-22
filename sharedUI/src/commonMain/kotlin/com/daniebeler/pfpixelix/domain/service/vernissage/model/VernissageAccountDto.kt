@@ -1,6 +1,7 @@
 package com.daniebeler.pfpixelix.domain.service.vernissage.model
 
 import com.daniebeler.pfpixelix.domain.model.Account
+import com.daniebeler.pfpixelix.domain.model.Field
 import com.daniebeler.pfpixelix.domain.repository.serializers.HtmlAsTextSerializer
 import com.daniebeler.pfpixelix.domain.service.general.DtoMappable
 import kotlinx.serialization.SerialName
@@ -21,6 +22,7 @@ data class VernissageAccountDto(
     @SerialName("createdAt") val createdAt: String = "",
     @SerialName("isAdmin") val isAdmin: Boolean = false,
     @SerialName("headerUrl") val headerUrl: String? = null,
+    @SerialName("fields") val fields: List<FieldDto> = emptyList(),
     @SerialName("manuallyApprovesFollowers") val manuallyApprovesFollowers: Boolean? = null,
     @SerialName("includeProfilePageInSearchEngines") val includeProfilePageInSearchEngine: Boolean? = null,
     @SerialName("includePublicPostsInSearchEngines") val includePublicPostsInSearchEngines: Boolean? = null
@@ -43,6 +45,7 @@ data class VernissageAccountDto(
             isAdmin = false,
             pronouns = emptyList(),
             headerUrl = headerUrl,
+            fields = this.fields.map { it.toDomain() },
             manuallyApprovesFollowers = this.manuallyApprovesFollowers,
             includePublicPostsInSearchEngines = this.includePublicPostsInSearchEngines,
             includeProfilePageInSearchEngines =  this.includeProfilePageInSearchEngine
@@ -50,3 +53,19 @@ data class VernissageAccountDto(
     }
 }
 
+@Serializable
+data class FieldDto(
+    @SerialName("id") val id: String? = null,
+    @SerialName("key") val key: String,
+    @SerialName("value") val value: String,
+    @SerialName("valueHtml") val valueHtml: String? = null,
+    @SerialName("isVerified") val isVerified: Boolean = false
+)
+
+fun FieldDto.toDomain() = Field(
+    id = this.id,
+    key = this.key,
+    value = this.value,
+    valueHtml = this.valueHtml,
+    isVerified = this.isVerified
+)

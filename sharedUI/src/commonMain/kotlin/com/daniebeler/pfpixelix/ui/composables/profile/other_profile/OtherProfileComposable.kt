@@ -163,49 +163,49 @@ fun OtherProfileComposable(
         topBar = {
             TopAppBar(
                 scrollBehavior = scrollBehavior, title = {
-                Row {
-                    Column {
-                        Text(
-                            text = viewModel.accountState.account?.username ?: "",
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 18.sp
+                    Row {
+                        Column {
+                            Text(
+                                text = viewModel.accountState.account?.username ?: "",
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 18.sp
+                            )
+                            Text(
+                                text = DomainFormat.formatDomain(viewModel.domain),
+                                fontSize = 12.sp,
+                                lineHeight = 6.sp
+                            )
+                        }
+
+                    }
+                }, navigationIcon = {
+                    IconButton(onClick = {
+                        navController.popBackStack()
+                    }) {
+                        Icon(
+                            imageVector = vectorResource(Res.drawable.arrow_left),
+                            contentDescription = ""
                         )
-                        Text(
-                            text = DomainFormat.formatDomain(viewModel.domain),
-                            fontSize = 12.sp,
-                            lineHeight = 6.sp
+                    }
+                }, actions = {
+
+                    if (viewModel.domain.isNotEmpty()) {
+                        DomainSoftwareComposable(
+                            domain = viewModel.domain
                         )
                     }
 
-                }
-            }, navigationIcon = {
-                IconButton(onClick = {
-                    navController.popBackStack()
-                }) {
-                    Icon(
-                        imageVector = vectorResource(Res.drawable.arrow_left),
-                        contentDescription = ""
-                    )
-                }
-            }, actions = {
-
-                if (viewModel.domain.isNotEmpty()) {
-                    DomainSoftwareComposable(
-                        domain = viewModel.domain
-                    )
-                }
-
-                IconButton(onClick = {
-                    showBottomSheet = true
-                }) {
-                    Icon(
-                        imageVector = vectorResource(Res.drawable.more_menu),
-                        contentDescription = ""
-                    )
-                }
-            }, colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = MaterialTheme.colorScheme.surfaceContainer
-            )
+                    IconButton(onClick = {
+                        showBottomSheet = true
+                    }) {
+                        Icon(
+                            imageVector = vectorResource(Res.drawable.more_menu),
+                            contentDescription = ""
+                        )
+                    }
+                }, colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceContainer
+                )
             )
         }) { paddingValues ->
         Box(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
@@ -332,24 +332,28 @@ fun OtherProfileComposable(
                                         }
                                     }
 
-                                    Spacer(modifier = Modifier.width(12.dp))
+                                    if (viewModel.capabilities.general.supportsDMs) {
+                                        Spacer(modifier = Modifier.width(12.dp))
 
-                                    Button(
-                                        onClick = {
-                                            viewModel.accountState.account?.let { account ->
-                                                navController.navigate(Destination.Chat(account.id))
-                                            }
-                                        },
-                                        modifier = Modifier.weight(1f),
-                                        shape = RoundedCornerShape(12.dp),
-                                        contentPadding = PaddingValues(12.dp),
-                                        colors = ButtonDefaults.buttonColors(
-                                            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-                                            contentColor = MaterialTheme.colorScheme.onSurface
-                                        )
-                                    ) {
-                                        Text(text = stringResource(Res.string.message))
+                                        Button(
+                                            onClick = {
+                                                viewModel.accountState.account?.let { account ->
+                                                    navController.navigate(Destination.Chat(account.id))
+                                                }
+                                            },
+                                            modifier = Modifier.weight(1f),
+                                            shape = RoundedCornerShape(12.dp),
+                                            contentPadding = PaddingValues(12.dp),
+                                            colors = ButtonDefaults.buttonColors(
+                                                containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                                                contentColor = MaterialTheme.colorScheme.onSurface
+                                            )
+                                        ) {
+                                            Text(text = stringResource(Res.string.message))
+                                        }
                                     }
+
+
                                 }
 
                                 viewModel.relationshipState.accountRelationship?.let { relationship ->

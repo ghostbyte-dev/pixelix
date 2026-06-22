@@ -17,6 +17,7 @@ data class Account(
     val isAdmin: Boolean = false,
     val pronouns: List<String> = emptyList(),
     val headerUrl: String? = null,
+    val fields: List<Field> = emptyList(),
     val manuallyApprovesFollowers: Boolean? = null,
     val includeProfilePageInSearchEngines: Boolean? = null,
     val includePublicPostsInSearchEngines: Boolean? = null
@@ -38,4 +39,12 @@ fun credentialsToAccount(credentials: Credentials) = Account(
     followingCount = 0,
     website = "",
     pronouns = emptyList()
+)
+
+data class Field(
+    val id: String?,
+    val key: String,
+    val value: String,
+    val valueHtml: String?,
+    val isVerified: Boolean
 )

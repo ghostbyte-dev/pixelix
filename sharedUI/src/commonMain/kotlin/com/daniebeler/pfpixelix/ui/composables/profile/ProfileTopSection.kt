@@ -39,6 +39,7 @@ import com.daniebeler.pfpixelix.domain.model.Relationship
 import com.daniebeler.pfpixelix.domain.service.capabilities.Capabilities
 import com.daniebeler.pfpixelix.ui.composables.hashtagMentionText.HashtagsMentionsTextView
 import com.daniebeler.pfpixelix.ui.navigation.Destination
+import com.daniebeler.pfpixelix.utils.DomainFormat
 import com.daniebeler.pfpixelix.utils.StringFormat
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.format.MonthNames
@@ -53,6 +54,7 @@ import pixelix.app.generated.resources.are_you_sure
 import pixelix.app.generated.resources.blocked
 import pixelix.app.generated.resources.cancel
 import pixelix.app.generated.resources.cancel_post_warning
+import pixelix.app.generated.resources.confirm
 import pixelix.app.generated.resources.default_avatar
 import pixelix.app.generated.resources.discard
 import pixelix.app.generated.resources.follower
@@ -112,7 +114,11 @@ fun ProfileTopSection(
                         Column(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             modifier = Modifier.clickable {
-                                navController.navigate(Destination.Followers(account.id, account.username, true))
+                                navController.navigate(
+                                    Destination.Followers(
+                                        account.id, account.username, true
+                                    )
+                                )
                             }) {
                             Text(
                                 text = StringFormat.groupDigits(account.followersCount),
@@ -131,9 +137,7 @@ fun ProfileTopSection(
                             modifier = Modifier.clickable {
                                 navController.navigate(
                                     Destination.Followers(
-                                        account.id,
-                                        account.username,
-                                        false
+                                        account.id, account.username, false
                                     )
                                 )
                             }) {
@@ -186,8 +190,7 @@ fun ProfileTopSection(
                                     }
                                 } else {
                                     {}
-                                }
-                            )
+                                })
                         }
 
                         if (relationship != null && relationship.blocked) {
@@ -220,7 +223,10 @@ fun ProfileTopSection(
                 }
 
                 if (account.website.isNotBlank()) {
-                    Row(Modifier.padding(top = 12.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Row(
+                        Modifier.padding(top = 12.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
 
                         Text(
                             text = account.website.substringAfter("https://"),
@@ -228,6 +234,43 @@ fun ProfileTopSection(
                             fontWeight = FontWeight.Bold,
                             modifier = Modifier.clickable(onClick = { openUrl(account.website) })
                         )
+                    }
+                }
+
+                if (account.fields.isNotEmpty()) {
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                        account.fields.forEach { field ->
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Text(
+                                    text = field.key,
+                                    fontSize = 13.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    modifier = Modifier.width(100.dp)
+                                )
+                                if (field.isVerified) {
+                                    Icon(
+                                        imageVector = vectorResource(Res.drawable.confirm),
+                                        contentDescription = null,
+                                        tint = Color(0xFF4CAF50),
+                                        modifier = Modifier.size(14.dp)
+                                    )
+                                    Spacer(Modifier.width(4.dp))
+                                }
+                                Text(
+                                    text = DomainFormat.extractUrl(field.value) ?: field.value,
+                                    fontSize = 13.sp,
+                                    color = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.clickable {
+                                        openUrl(
+                                            "https://" + (DomainFormat.extractUrl(
+                                                field.value
+                                            ) ?: field.value)
+                                        )
+                                    })
+                            }
+                        }
                     }
                 }
 
@@ -252,41 +295,39 @@ fun ProfileTopSection(
 
     //TODO: improve design and add strings to strings.xml
     if (isMuteInfoAlertOpen && relationship != null) {
-        AlertDialog(
-            onDismissRequest = { isMuteInfoAlertOpen = false },
-            title = {
-                Text(text = stringResource(Res.string.muted))
-            },
-            text = {
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text(text = "This account is muted for:")
+        AlertDialog(onDismissRequest = { isMuteInfoAlertOpen = false }, title = {
+            Text(text = stringResource(Res.string.muted))
+        }, text = {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(text = "This account is muted for:")
 
-                    if (relationship.mutedStatuses != null && relationship.mutedStatuses) {
-                        Text(text = "• Posts/Statuses")
-                    }
-                    if (relationship.mutedReblogs != null && relationship.mutedReblogs) {
-                        Text(text = "• Reblogs/Shares")
-                    }
-                    if (relationship.mutedNotifications != null && relationship.mutedNotifications) {
-                        Text(text = "• Notifications")
-                    }
+                if (relationship.mutedStatuses != null && relationship.mutedStatuses) {
+                    Text(text = "• Posts/Statuses")
                 }
-            },
-            confirmButton = {
-                TextButton(onClick = {
-                    isMuteInfoAlertOpen = false
-                }) {
-                    Text(stringResource(Res.string.ok))
+                if (relationship.mutedReblogs != null && relationship.mutedReblogs) {
+                    Text(text = "• Reblogs/Shares")
+                }
+                if (relationship.mutedNotifications != null && relationship.mutedNotifications) {
+                    Text(text = "• Notifications")
                 }
             }
-        )
+        }, confirmButton = {
+            TextButton(onClick = {
+                isMuteInfoAlertOpen = false
+            }) {
+                Text(stringResource(Res.string.ok))
+            }
+        })
     }
 }
 
 @Composable
-private fun ProfileBadge(text: String, color: Color = MaterialTheme.colorScheme.onSurfaceVariant, onClick: (() -> Unit)? = null) {
-    var baseModifier = Modifier
-        .border(BorderStroke(1.dp, color), shape = RoundedCornerShape(8.dp))
+private fun ProfileBadge(
+    text: String,
+    color: Color = MaterialTheme.colorScheme.onSurfaceVariant,
+    onClick: (() -> Unit)? = null
+) {
+    var baseModifier = Modifier.border(BorderStroke(1.dp, color), shape = RoundedCornerShape(8.dp))
 
     if (onClick != null) {
         baseModifier = baseModifier.clickable(onClick = onClick)

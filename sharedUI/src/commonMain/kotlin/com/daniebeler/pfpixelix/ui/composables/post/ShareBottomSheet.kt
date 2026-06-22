@@ -111,21 +111,15 @@ fun ShareBottomSheet(
             Text(text = stringResource(Res.string.visibility_x, humanReadableVisibility))
         }
 
-        if (viewModel.capabilities.post.showCameraMetadata) {
-            ButtonRowElement(
-                icon = Res.drawable.document_text, text = "Cam Metadata", onClick = {
-                })
-        }
-
-        if (mediaAttachment?.license != null) {
-            ButtonRowElement(
-                icon = Res.drawable.document_text, text = stringResource(
-                    Res.string.license, mediaAttachment.license.title
-                ), onClick = {
-                    viewModel.openUrl(mediaAttachment.license.url)
-                    closeBottomSheet()
-                })
-        }
+//        if (mediaAttachment?.license != null) {
+//            ButtonRowElement(
+//                icon = Res.drawable.document_text, text = stringResource(
+//                    Res.string.license, mediaAttachment.license.name
+//                ), onClick = {
+//                    viewModel.openUrl(mediaAttachment.license.url)
+//                    closeBottomSheet()
+//                })
+//        }
 
         HorizontalDivider(Modifier.padding(12.dp))
 

@@ -1,5 +1,6 @@
 package com.daniebeler.pfpixelix.domain.service.vernissage.model
 
+import com.daniebeler.pfpixelix.domain.model.License
 import com.daniebeler.pfpixelix.domain.model.MediaAttachment
 import com.daniebeler.pfpixelix.domain.model.MediaMetadata
 import com.daniebeler.pfpixelix.domain.model.Place
@@ -14,7 +15,16 @@ data class VernissageMediaAttachmentDto(
     @SerialName("metadata") val metadata: VernissageMetaDto?,
     @SerialName("blurhash") val blurHash: String?,
     @SerialName("description") val description: String?,
+    @SerialName ("license") val license: VernissageLicenseDto?,
     @SerialName("location") val location: VernissageLocationDto?
+)
+
+@Serializable
+data class VernissageLicenseDto(
+    @SerialName("name") val name: String?,
+    @SerialName("code") val code: String?,
+    @SerialName("id") val id: String?,
+    @SerialName("url") val url: String?
 )
 
 @Serializable
@@ -68,9 +78,18 @@ fun VernissageMediaAttachmentDto.toDomain(): MediaAttachment {
         blurHash = this.blurHash,
         type = "",
         description = this.description,
-        license = null,
+        license = this.license?.toDomain(),
         aspectRatio = this.smallFile.aspect,
         location = this.location?.toDomain()
+    )
+}
+
+fun VernissageLicenseDto.toDomain(): License {
+    return License(
+        code = this.code,
+        id = this.id,
+        name = this.name,
+        url = this.url,
     )
 }
 

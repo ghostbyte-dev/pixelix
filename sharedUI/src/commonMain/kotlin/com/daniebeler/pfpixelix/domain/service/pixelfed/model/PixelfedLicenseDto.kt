@@ -13,8 +13,9 @@ data class PixelfedLicenseDto(
 
 fun PixelfedLicenseDto.toDomain(): License {
     return License(
-        id = this.id,
-        title = this.title,
+        id = this.id.toString(),
+        name = this.title,
+        code = null,
         url = this.url
     )
 }

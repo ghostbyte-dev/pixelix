@@ -7,6 +7,7 @@ import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
 import com.daniebeler.pfpixelix.domain.service.utils.loadListResources
 import com.daniebeler.pfpixelix.domain.service.utils.loadPaginatedListResources
 import com.daniebeler.pfpixelix.domain.service.utils.loadResource
+import com.daniebeler.pfpixelix.ui.composables.explore.trending.TrendingRange
 import me.tatarka.inject.annotations.Inject
 
 @Inject
@@ -18,9 +19,9 @@ class PixelfedExploreService(
         api.getTrendingAccounts().map { it.toDomain() }
     }
 
-    override fun getTrendingPosts(range: String, maxId: String?) = loadPaginatedListResources {
+    override fun getTrendingPosts(range: TrendingRange, maxId: String?) = loadPaginatedListResources {
         if (maxId == null) {
-            api.getTrendingPosts(range).map { it.toDomain() }
+            api.getTrendingPosts(range.toApiString()).map { it.toDomain() }
         } else {
             emptyList()
         }

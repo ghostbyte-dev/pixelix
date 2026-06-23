@@ -9,18 +9,30 @@ import com.daniebeler.pfpixelix.domain.repository.pixelfed.PixelfedApi
 import com.daniebeler.pfpixelix.domain.service.general.ExploreService
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.domain.service.general.PostService
+import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
+import com.daniebeler.pfpixelix.ui.composables.explore.trending.TrendingRange
+import com.daniebeler.pfpixelix.ui.composables.profile.ViewEnum
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import me.tatarka.inject.annotations.Inject
 
 class TrendingPostsViewModel @Inject constructor(
-    private val exploreService: ExploreService
+    private val exploreService: ExploreService,
+    private val prefs: UserPreferences,
 ) : ViewModel() {
 
     var trendingState by mutableStateOf(TrendingPostsState())
         private set
 
-    fun getTrendingPosts(timeRange: String, refreshing: Boolean = false) {
+    var view by mutableStateOf(ViewEnum.Grid)
+
+    var timeRange by mutableStateOf(TrendingRange.DAILY)
+
+    init {
+        getTrendingPosts()
+    }
+
+    fun getTrendingPosts(refreshing: Boolean = false) {
         if (!refreshing && trendingState.trendingPosts.isNotEmpty()) {
             return
         }
@@ -43,7 +55,7 @@ class TrendingPostsViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    fun getTrendingPostsPaginated(timeRange: String) {
+    fun getTrendingPostsPaginated() {
         if (trendingState.trendingPosts.isNotEmpty() && !trendingState.isLoading && !trendingState.endReached) {
             exploreService.getTrendingPosts(timeRange, trendingState.nextId).onEach { result ->
                 trendingState = when (result) {
@@ -63,5 +75,16 @@ class TrendingPostsViewModel @Inject constructor(
                 }
             }.launchIn(viewModelScope)
         }
+    }
+
+    fun changeTimeRange(range: TrendingRange) {
+        timeRange = range
+        trendingState = TrendingPostsState()
+        getTrendingPosts()
+    }
+
+    fun changeView(newView: ViewEnum) {
+        view = newView
+        prefs.showUserGridTimeline = newView.ordinal
     }
 }

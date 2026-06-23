@@ -11,6 +11,7 @@ import com.daniebeler.pfpixelix.domain.model.Tag
 import com.daniebeler.pfpixelix.domain.service.pixelfed.PixelfedExploreService
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.domain.service.vernissage.VernissageExploreService
+import com.daniebeler.pfpixelix.ui.composables.explore.trending.TrendingRange
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import me.tatarka.inject.annotations.Inject
@@ -18,7 +19,7 @@ import me.tatarka.inject.annotations.Inject
 
 interface ExploreService {
     fun getTrendingAccounts(range: String): Flow<Resource<PaginatedResponse<List<Account>>>>
-    fun getTrendingPosts(range: String, maxId: String? = null): Flow<Resource<PaginatedResponse<List<Post>>>>
+    fun getTrendingPosts(range: TrendingRange, maxId: String? = null): Flow<Resource<PaginatedResponse<List<Post>>>>
 
     fun search(searchText: String, type: String? = null, limit: Int = 5): Flow<Resource<Search>>
 
@@ -65,7 +66,7 @@ class ExploreServiceDelegate(
 
     override fun getTrendingAccounts(range: String): Flow<Resource<PaginatedResponse<List<Account>>>> = current.getTrendingAccounts(range)
 
-    override fun getTrendingPosts(range: String, maxId: String?): Flow<Resource<PaginatedResponse<List<Post>>>> =
+    override fun getTrendingPosts(range: TrendingRange, maxId: String?): Flow<Resource<PaginatedResponse<List<Post>>>> =
         current.getTrendingPosts(range, maxId)
 
     override fun search(

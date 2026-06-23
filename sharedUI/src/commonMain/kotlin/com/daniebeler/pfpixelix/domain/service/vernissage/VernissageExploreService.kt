@@ -11,6 +11,7 @@ import com.daniebeler.pfpixelix.domain.service.utils.loadListResources
 import com.daniebeler.pfpixelix.domain.service.utils.loadResource
 import com.daniebeler.pfpixelix.domain.service.utils.loadVernissagePaginatedListResources
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.toDomain
+import com.daniebeler.pfpixelix.ui.composables.explore.trending.TrendingRange
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import me.tatarka.inject.annotations.Inject
@@ -25,9 +26,9 @@ class VernissageExploreService(
         api.getTrendingUsers(range)
     }
 
-    override fun getTrendingPosts(range: String, maxId: String?) =
+    override fun getTrendingPosts(range: TrendingRange, maxId: String?) =
         loadVernissagePaginatedListResources {
-            api.getTrendingPosts(range, maxId = maxId)
+            api.getTrendingPosts(range.toApiString(), maxId = maxId)
         }.filterSensitive(prefs.hideSensitiveContent)
 
     override fun search(searchText: String, type: String?, limit: Int)= loadResource {

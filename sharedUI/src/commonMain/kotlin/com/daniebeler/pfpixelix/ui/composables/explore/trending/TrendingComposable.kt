@@ -10,7 +10,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ButtonGroup
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.PrimaryTabRow
@@ -33,8 +36,10 @@ import com.daniebeler.pfpixelix.ui.composables.explore.trending.trending_hashtag
 import com.daniebeler.pfpixelix.ui.composables.explore.trending.trending_posts.TrendingPostsComposable
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.accounts
+import pixelix.app.generated.resources.datetime
 import pixelix.app.generated.resources.hashtags
 import pixelix.app.generated.resources.posts
 import pixelix.app.generated.resources.trending_account_description
@@ -44,7 +49,19 @@ import pixelix.app.generated.resources.what_makes_a_hashtag_trend
 import pixelix.app.generated.resources.what_makes_a_post_trend
 import pixelix.app.generated.resources.what_makes_an_account_trend
 
-@OptIn(ExperimentalMaterial3Api::class)
+enum class TrendingRange {
+    DAILY,
+    MONTHLY,
+    YEARLY;
+
+    fun toApiString() = when (this) {
+        DAILY -> "daily"
+        MONTHLY -> "monthly"
+        YEARLY -> "yearly"
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun TrendingComposable(navController: NavController, initialPage: Int, isSwipeEnabled: Boolean) {
 
@@ -55,8 +72,7 @@ fun TrendingComposable(navController: NavController, initialPage: Int, isSwipeEn
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
 
-    val range by remember { mutableStateOf("daily") }
-
+    var range by remember { mutableStateOf("daily") }
 
     Box(
         Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)
@@ -69,7 +85,7 @@ fun TrendingComposable(navController: NavController, initialPage: Int, isSwipeEn
         ) { tabIndex ->
             when (tabIndex) {
                 0 -> Box(modifier = Modifier.fillMaxSize()) {
-                    TrendingPostsComposable(range, navController = navController)
+                    TrendingPostsComposable(navController = navController)
                 }
 
                 1 -> Box(modifier = Modifier.fillMaxSize()) {

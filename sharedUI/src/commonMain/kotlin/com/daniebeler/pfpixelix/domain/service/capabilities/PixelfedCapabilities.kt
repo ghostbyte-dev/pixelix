@@ -20,5 +20,9 @@ val PixelfedCapabilities = Capabilities(
         includePostsInSearchEngineToggle = false,
         includeProfileInSearchEngineToggle = false,
         websiteField = true
+    ),
+    trending = TrendingCapabilities(
+        supportsMultipleProfileTimeRanges = false,
+        supportsMultipleHashtagTimeRanges = false
     )
 )

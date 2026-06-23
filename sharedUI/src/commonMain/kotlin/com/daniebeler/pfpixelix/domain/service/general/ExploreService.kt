@@ -18,14 +18,14 @@ import me.tatarka.inject.annotations.Inject
 
 
 interface ExploreService {
-    fun getTrendingAccounts(range: String): Flow<Resource<PaginatedResponse<List<Account>>>>
+    fun getTrendingAccounts(range: TrendingRange): Flow<Resource<PaginatedResponse<List<Account>>>>
     fun getTrendingPosts(range: TrendingRange, maxId: String? = null): Flow<Resource<PaginatedResponse<List<Post>>>>
 
     fun search(searchText: String, type: String? = null, limit: Int = 5): Flow<Resource<Search>>
 
     fun searchLocations(searchText: String): Flow<Resource<List<Location>>>
 
-    fun getTrendingHashtags(range: String): Flow<Resource<PaginatedResponse<List<Tag>>>>
+    fun getTrendingHashtags(range: TrendingRange): Flow<Resource<PaginatedResponse<List<Tag>>>>
 
     fun getFollowedHashtags(): Flow<Resource<List<Tag>>>
 
@@ -64,7 +64,7 @@ class ExploreServiceDelegate(
             else -> pixelfed
         }
 
-    override fun getTrendingAccounts(range: String): Flow<Resource<PaginatedResponse<List<Account>>>> = current.getTrendingAccounts(range)
+    override fun getTrendingAccounts(range: TrendingRange): Flow<Resource<PaginatedResponse<List<Account>>>> = current.getTrendingAccounts(range)
 
     override fun getTrendingPosts(range: TrendingRange, maxId: String?): Flow<Resource<PaginatedResponse<List<Post>>>> =
         current.getTrendingPosts(range, maxId)
@@ -77,7 +77,7 @@ class ExploreServiceDelegate(
 
     override fun searchLocations(searchText: String): Flow<Resource<List<Location>>> = current.searchLocations(searchText)
 
-    override fun getTrendingHashtags(range: String): Flow<Resource<PaginatedResponse<List<Tag>>>> = current.getTrendingHashtags(range)
+    override fun getTrendingHashtags(range: TrendingRange): Flow<Resource<PaginatedResponse<List<Tag>>>> = current.getTrendingHashtags(range)
 
     override fun getFollowedHashtags(): Flow<Resource<List<Tag>>> = current.getFollowedHashtags()
 

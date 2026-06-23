@@ -19,11 +19,10 @@ import kotlin.collections.emptyList
 
 @Inject
 class VernissageExploreService(
-    private val prefs: UserPreferences,
-    private val api: VernissageApi
-): ExploreService {
-    override fun getTrendingAccounts(range: String) = loadVernissagePaginatedListResources {
-        api.getTrendingUsers(range)
+    private val prefs: UserPreferences, private val api: VernissageApi
+) : ExploreService {
+    override fun getTrendingAccounts(range: TrendingRange) = loadVernissagePaginatedListResources {
+        api.getTrendingUsers(range.toApiString())
     }
 
     override fun getTrendingPosts(range: TrendingRange, maxId: String?) =
@@ -31,7 +30,7 @@ class VernissageExploreService(
             api.getTrendingPosts(range.toApiString(), maxId = maxId)
         }.filterSensitive(prefs.hideSensitiveContent)
 
-    override fun search(searchText: String, type: String?, limit: Int)= loadResource {
+    override fun search(searchText: String, type: String?, limit: Int) = loadResource {
         if (type == null) {
             coroutineScope {
                 val accountsDeferred = async { api.getSearch(searchText, "accounts") }
@@ -56,8 +55,8 @@ class VernissageExploreService(
         emptyList<Location>()
     }
 
-    override fun getTrendingHashtags(range: String) = loadVernissagePaginatedListResources {
-        api.getTrendingHashtags(range)
+    override fun getTrendingHashtags(range: TrendingRange) = loadVernissagePaginatedListResources {
+        api.getTrendingHashtags(range.toApiString())
     }
 
     override fun getFollowedHashtags() = loadListResources {
@@ -71,8 +70,8 @@ class VernissageExploreService(
 
     override fun getHashtag(hashtag: String) = loadResource {
         coroutineScope {
-            val followedDeferred = async {api.getFollowedHashtags()}
-            val searchDeferred = async {api.getSearch(hashtag, "hashtags")}
+            val followedDeferred = async { api.getFollowedHashtags() }
+            val searchDeferred = async { api.getSearch(hashtag, "hashtags") }
 
             val followedHashtags = followedDeferred.await()
             val searchHashtags = searchDeferred.await().tags
@@ -80,7 +79,14 @@ class VernissageExploreService(
             val count = searchHashtags.find { it.name == hashtag }?.amount ?: 0
             val isFollowed = followedHashtags.find { it.name == hashtag } != null
 
-            Tag(name = hashtag, url = "", following = isFollowed, id = "", postsCount = count, hashtag = null)
+            Tag(
+                name = hashtag,
+                url = "",
+                following = isFollowed,
+                id = "",
+                postsCount = count,
+                hashtag = null
+            )
         }
     }
 

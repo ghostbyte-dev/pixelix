@@ -15,7 +15,7 @@ class PixelfedExploreService(
     private val prefs: UserPreferences,
     private val api: PixelfedApi
 ): ExploreService {
-    override fun getTrendingAccounts(range: String) = loadPaginatedListResources {
+    override fun getTrendingAccounts(range: TrendingRange) = loadPaginatedListResources {
         api.getTrendingAccounts().map { it.toDomain() }
     }
 
@@ -35,7 +35,7 @@ class PixelfedExploreService(
         api.searchLocations(searchText).map { it.toDomain() }
     }
 
-    override fun getTrendingHashtags(range: String) = loadPaginatedListResources {
+    override fun getTrendingHashtags(range: TrendingRange) = loadPaginatedListResources {
         api.getTrendingHashtags().map { it.toDomain() }
     }
 

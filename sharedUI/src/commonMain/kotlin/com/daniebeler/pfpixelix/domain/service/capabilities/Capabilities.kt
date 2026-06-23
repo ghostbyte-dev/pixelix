@@ -5,11 +5,17 @@ data class Capabilities(
     val post: PostCapabilities,
     val profile: ProfileCapabilities,
     val editProfile: EditProfileCapabilities,
-    val notification: NotificationCapabilities
+    val notification: NotificationCapabilities,
+    val trending: TrendingCapabilities
 )
 
 data class GeneralCapabilities(
     val supportsDMs: Boolean,
+)
+
+data class TrendingCapabilities(
+    val supportsMultipleProfileTimeRanges: Boolean,
+    val supportsMultipleHashtagTimeRanges: Boolean,
 )
 
 data class PostCapabilities(

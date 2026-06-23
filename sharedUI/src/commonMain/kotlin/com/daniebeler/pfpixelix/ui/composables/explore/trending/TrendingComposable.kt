@@ -72,8 +72,6 @@ fun TrendingComposable(navController: NavController, initialPage: Int, isSwipeEn
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
 
-    var range by remember { mutableStateOf("daily") }
-
     Box(
         Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)
     ) {
@@ -89,11 +87,11 @@ fun TrendingComposable(navController: NavController, initialPage: Int, isSwipeEn
                 }
 
                 1 -> Box(modifier = Modifier.fillMaxSize()) {
-                    TrendingAccountsComposable(range, navController = navController)
+                    TrendingAccountsComposable(navController = navController)
                 }
 
                 2 -> Box(modifier = Modifier.fillMaxSize()) {
-                    TrendingHashtagsComposable(range, navController = navController)
+                    TrendingHashtagsComposable(navController = navController)
                 }
 
             }

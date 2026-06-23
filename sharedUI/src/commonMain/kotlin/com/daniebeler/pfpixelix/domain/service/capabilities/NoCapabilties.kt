@@ -14,5 +14,9 @@ val NoCapabilities = Capabilities(
         includePostsInSearchEngineToggle = false,
         includeProfileInSearchEngineToggle = false,
         websiteField = false
+    ),
+    trending = TrendingCapabilities(
+        supportsMultipleProfileTimeRanges = false,
+        supportsMultipleHashtagTimeRanges = false
     )
 )

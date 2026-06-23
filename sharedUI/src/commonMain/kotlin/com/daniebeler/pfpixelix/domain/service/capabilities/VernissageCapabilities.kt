@@ -20,5 +20,9 @@ val VernissageCapabilities = Capabilities(
         includePostsInSearchEngineToggle = true,
         includeProfileInSearchEngineToggle = true,
         websiteField = false
+    ),
+    trending = TrendingCapabilities(
+        supportsMultipleProfileTimeRanges = true,
+        supportsMultipleHashtagTimeRanges = true
     )
 )

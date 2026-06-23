@@ -78,9 +78,12 @@ class TrendingPostsViewModel @Inject constructor(
     }
 
     fun changeTimeRange(range: TrendingRange) {
-        timeRange = range
-        trendingState = TrendingPostsState()
-        getTrendingPosts()
+        if (range != timeRange) {
+            timeRange = range
+            trendingState = TrendingPostsState()
+            getTrendingPosts()
+        }
+
     }
 
     fun changeView(newView: ViewEnum) {

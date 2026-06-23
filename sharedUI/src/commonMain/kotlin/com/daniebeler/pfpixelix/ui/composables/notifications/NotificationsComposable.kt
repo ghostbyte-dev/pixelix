@@ -54,6 +54,7 @@ import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyStateComposable
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pfpixelix.ui.composables.widgets.CustomPullToRefreshBox
+import io.ktor.client.request.invoke
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
@@ -181,7 +182,8 @@ fun NotificationsComposable(
                     LazyVerticalStaggeredGrid(
                         columns = StaggeredGridCells.Adaptive(350.dp),
                         state = staggeredGridState,
-                        contentPadding = PaddingValues(bottom = 60.dp),
+                        contentPadding = PaddingValues(start = 8.dp, end = 8.dp, bottom = 60.dp, top = 8.dp),
+                        verticalItemSpacing = 4.dp,
                         modifier = Modifier.fillMaxSize()
                     ) {
                         if (viewModel.notificationsState.notifications.isNotEmpty()) {

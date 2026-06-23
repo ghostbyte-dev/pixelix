@@ -176,6 +176,9 @@ fun ProfileTopSection(
                         if (account.isAdmin) {
                             ProfileBadge(text = stringResource(Res.string.admin))
                         }
+                        if (account.isSupporterFlagEnabled) {
+                            ProfileBadge(text = "Supporter", color = MaterialTheme.colorScheme.primary)
+                        }
                         if (relationship != null && relationship.followedBy) {
                             ProfileBadge(text = stringResource(Res.string.follows_you))
                         }

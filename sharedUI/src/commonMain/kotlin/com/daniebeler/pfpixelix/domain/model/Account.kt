@@ -18,6 +18,7 @@ data class Account(
     val pronouns: List<String> = emptyList(),
     val headerUrl: String? = null,
     val fields: List<Field> = emptyList(),
+    val isSupporterFlagEnabled: Boolean = false,
     val manuallyApprovesFollowers: Boolean? = null,
     val includeProfilePageInSearchEngines: Boolean? = null,
     val includePublicPostsInSearchEngines: Boolean? = null

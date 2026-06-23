@@ -23,6 +23,7 @@ data class VernissageAccountDto(
     @SerialName("isAdmin") val isAdmin: Boolean = false,
     @SerialName("headerUrl") val headerUrl: String? = null,
     @SerialName("fields") val fields: List<FieldDto> = emptyList(),
+    @SerialName("isSupporterFlagEnabled") val isSupporterFlagEnabled: Boolean = false,
     @SerialName("manuallyApprovesFollowers") val manuallyApprovesFollowers: Boolean? = null,
     @SerialName("includeProfilePageInSearchEngines") val includeProfilePageInSearchEngine: Boolean? = null,
     @SerialName("includePublicPostsInSearchEngines") val includePublicPostsInSearchEngines: Boolean? = null
@@ -46,6 +47,7 @@ data class VernissageAccountDto(
             pronouns = emptyList(),
             headerUrl = headerUrl,
             fields = this.fields.map { it.toDomain() },
+            isSupporterFlagEnabled = this.isSupporterFlagEnabled,
             manuallyApprovesFollowers = this.manuallyApprovesFollowers,
             includePublicPostsInSearchEngines = this.includePublicPostsInSearchEngines,
             includeProfilePageInSearchEngines =  this.includeProfilePageInSearchEngine

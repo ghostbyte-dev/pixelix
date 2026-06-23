@@ -7,6 +7,7 @@ import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedRelationsh
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedSearchDto
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.request.PixelfedUpdateUserRequest
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageAccountDto
+import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageBlockedAccountDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageInstanceDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageNotificationDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissagePostDto
@@ -187,15 +188,13 @@ interface VernissageApi {
     @Headers("Content-Type: application/json")
     @PUT("api/v1/users/{username}")
     suspend fun updateAccount(
-        @Path("username") username: String,
-        @Body body: VernissageUpdateUserRequest
+        @Path("username") username: String, @Body body: VernissageUpdateUserRequest
     ): VernissageAccountDto
 
 
     @POST("api/v1/avatars/{username}")
     suspend fun updateAvatar(
-        @Path("username") username: String,
-        @Body body: MultiPartFormDataContent
+        @Path("username") username: String, @Body body: MultiPartFormDataContent
     )
 
     @POST("api/v1/users/{username}/follow")
@@ -272,6 +271,9 @@ interface VernissageApi {
 
     @GET("api/v1/instance")
     suspend fun getInstance(): VernissageInstanceDto
+
+    @GET("api/v1/user-blocked-users")
+    suspend fun getBlockedAccounts(): VernissagePaginatedResponse<List<VernissageBlockedAccountDto>>
 
     @GET
     suspend fun getNodeInfo(@Url domain: String): PixelfedNodeInfoDto

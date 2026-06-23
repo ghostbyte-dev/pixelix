@@ -15,7 +15,6 @@ actual fun generateColorScheme(
     lightScheme: ColorScheme,
     darkScheme: ColorScheme
 ): ColorScheme {
-    //TODO dynamicColor
     return remember(
         nightModeValue, dynamicColor, lightScheme, darkScheme
     ) {

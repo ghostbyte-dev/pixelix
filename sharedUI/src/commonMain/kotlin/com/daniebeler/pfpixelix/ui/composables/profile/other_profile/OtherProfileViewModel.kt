@@ -15,6 +15,7 @@ import com.daniebeler.pfpixelix.domain.service.capabilities.Capabilities
 import com.daniebeler.pfpixelix.domain.service.general.CollectionService
 import com.daniebeler.pfpixelix.domain.service.general.AccountService
 import com.daniebeler.pfpixelix.domain.service.general.AuthService
+import com.daniebeler.pfpixelix.domain.service.general.BackendType
 import com.daniebeler.pfpixelix.domain.service.general.ExploreService
 import com.daniebeler.pfpixelix.domain.service.platform.Platform
 import com.daniebeler.pfpixelix.domain.service.general.PostService
@@ -43,7 +44,7 @@ class OtherProfileViewModel(
     private val collectionService: CollectionService,
     private val authService: AuthService,
     private val session: Session
-    ) : ViewModel() {
+) : ViewModel() {
     val capabilities: Capabilities = session.capabilities.value
 
     var userId: String = ""
@@ -60,13 +61,14 @@ class OtherProfileViewModel(
     var view by mutableStateOf(ViewEnum.Grid)
 
     fun loadData(
-        userId: String?,
-        username: String?,
-        refreshing: Boolean,
-        navController: NavController
+        userId: String?, username: String?, refreshing: Boolean, navController: NavController
     ) {
         if (username == null) {
-            //TODO: only return if pixelfed
+            if (session.backendType.value == BackendType.VERNISSAGE) {
+                accountState =
+                    AccountState(error = "Vernissage requires username for loading profile")
+            }
+
             return
         }
         if (userId == null) {
@@ -175,9 +177,7 @@ class OtherProfileViewModel(
 
                 is Resource.Loading -> {
                     AccountState(
-                        isLoading = true,
-                        account = accountState.account,
-                        refreshing = refreshing
+                        isLoading = true, account = accountState.account, refreshing = refreshing
                     )
                 }
             }
@@ -204,9 +204,7 @@ class OtherProfileViewModel(
 
                 is Resource.Loading -> {
                     AccountState(
-                        isLoading = true,
-                        account = accountState.account,
-                        refreshing = refreshing
+                        isLoading = true, account = accountState.account, refreshing = refreshing
                     )
                 }
             }
@@ -264,9 +262,7 @@ class OtherProfileViewModel(
                 is Resource.Success -> {
                     val endReached = (result.data.data.size) < PixelfedApi.PROFILE_POSTS_LIMIT
                     PostsState(
-                        posts = result.data.data,
-                        endReached = endReached,
-                        nextId = result.data.next
+                        posts = result.data.data, endReached = endReached, nextId = result.data.next
                     )
                 }
 
@@ -305,9 +301,7 @@ class OtherProfileViewModel(
 
                     is Resource.Loading -> {
                         PostsState(
-                            isLoading = true,
-                            posts = postsState.posts,
-                            nextId = postsState.nextId
+                            isLoading = true, posts = postsState.posts, nextId = postsState.nextId
                         )
                     }
                 }
@@ -431,19 +425,21 @@ class OtherProfileViewModel(
 
     fun acceptFollowRequest() {
         val accountId = accountState.account?.id
-        if (accountId == null){
+        if (accountId == null) {
             followRequestState = FollowRequestState(error = "Invalid account")
             return
         }
         accountService.acceptFollowRequest(accountId).onEach { result ->
-            when(result) {
+            when (result) {
                 is Resource.Success -> {
                     relationshipState = RelationshipState(accountRelationship = result.data)
                     followRequestState = FollowRequestState(relationship = result.data)
                 }
+
                 is Resource.Error -> {
                     followRequestState = FollowRequestState(error = result.message)
                 }
+
                 is Resource.Loading -> {
                     followRequestState = FollowRequestState(isLoading = true, isAccepting = true)
                 }
@@ -453,19 +449,21 @@ class OtherProfileViewModel(
 
     fun rejectFollowRequest() {
         val accountId = accountState.account?.id
-        if (accountId == null){
+        if (accountId == null) {
             followRequestState = FollowRequestState(error = "Invalid account")
             return
         }
         accountService.rejectFollowRequest(accountId).onEach { result ->
-            when(result) {
+            when (result) {
                 is Resource.Success -> {
                     relationshipState = RelationshipState(accountRelationship = result.data)
                     followRequestState = FollowRequestState(relationship = result.data)
                 }
+
                 is Resource.Error -> {
                     followRequestState = FollowRequestState(error = result.message)
                 }
+
                 is Resource.Loading -> {
                     followRequestState = FollowRequestState(isLoading = true, isAccepting = false)
                 }

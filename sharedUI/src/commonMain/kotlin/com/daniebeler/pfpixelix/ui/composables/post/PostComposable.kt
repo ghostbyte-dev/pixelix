@@ -399,7 +399,7 @@ private fun PostMediaSection(
 @Composable
 private fun PostSensitiveOverlay(post: Post, viewModel: PostViewModel, isMasonry: Boolean) {
     Box(
-        modifier = Modifier.fillMaxWidth().zIndex(80f).clip(RoundedCornerShape(16.dp))
+        modifier = Modifier.fillMaxWidth().zIndex(80f).clip(RoundedCornerShape(if (isMasonry) 8.dp else 16.dp))
     ) {
         val blurHashBitmap = BlurHashDecoder.decode(post.mediaAttachments[0].blurHash)
         val aspectRatio = post.mediaAttachments[0].aspectRatio?.toFloat() ?: 1.5f
@@ -591,8 +591,8 @@ private fun PostActionBar(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.clip(RoundedCornerShape(percent = 50))
                         .background(MaterialTheme.colorScheme.surfaceContainerHigh)
-                        .clickable(onClick = onCommentsClick)
-                        .padding(horizontal = 10.dp).height(32.dp)
+                        .clickable(onClick = onCommentsClick).padding(horizontal = 10.dp)
+                        .height(32.dp)
                 ) {
                     Icon(
                         imageVector = vectorResource(Res.drawable.chatbubble),
@@ -903,7 +903,7 @@ fun PostImage(
     var showMediaDialog by remember { mutableStateOf<MediaAttachment?>(null) }
     var altText by remember { mutableStateOf("") }
 
-    Box(modifier = Modifier.fillMaxWidth().zIndex(80f).clip(RoundedCornerShape(16.dp))) {
+    Box(modifier = Modifier.fillMaxWidth().zIndex(80f).clip(RoundedCornerShape(if (isMasonry) 8.dp else 16.dp))) {
         val blurHashBitmap = BlurHashDecoder.decode(mediaAttachment.blurHash)
 
         if (!imageLoaded && blurHashBitmap != null) {
@@ -955,7 +955,7 @@ fun PostImage(
             }
         }
 
-        if (mediaAttachment.description?.isNotBlank() == true && showAltTextIcon.value && !viewModel.isAltTextButtonHidden) {
+        if (mediaAttachment.description?.isNotBlank() == true && showAltTextIcon.value && !viewModel.isAltTextButtonHidden && !isMasonry) {
             Box(
                 modifier = Modifier.align(Alignment.BottomStart).zIndex(3f).padding(10.dp)
                     .clip(RoundedCornerShape(10.dp))

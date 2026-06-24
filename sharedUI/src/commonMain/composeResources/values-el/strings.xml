@@ -31,7 +31,6 @@
         <item quantity="one">Ανάρτηση</item>
         <item quantity="other">Αναρτήσεις</item>
     </plurals>
-    <string name="posts">Αναρτήσεις</string>
     <string name="hashtags">Ετικέτες</string>
     <string name="reblogged_your_post">αναδημοσίευσε την ανάρτησή σου</string>
     <string name="liked_your_post">άρεσε η ανάρτησή σου</string>

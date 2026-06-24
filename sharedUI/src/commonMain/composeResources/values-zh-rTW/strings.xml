@@ -28,7 +28,6 @@
     <plurals name="posts">
         <item quantity="other">貼文</item>
     </plurals>
-    <string name="posts">貼文</string>
     <string name="hashtags">標籤</string>
     <string name="reblogged_your_post">轉發了你的貼文</string>
     <string name="liked_your_post">對你的貼文表示喜歡</string>

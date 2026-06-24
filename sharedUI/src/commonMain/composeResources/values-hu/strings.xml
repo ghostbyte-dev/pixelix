@@ -31,10 +31,6 @@
         <item quantity="one">Bejegyzés</item>
         <item quantity="other">Bejegyzés</item>
     </plurals>
-    <plurals name="posts">
-        <item quantity="one">Bejegyzés</item>
-        <item quantity="other">Bejegyzés</item>
-    </plurals>
     <string name="hashtags">Hashtagek</string>
     <string name="reblogged_your_post">megosztotta a bejegyzésed</string>
     <string name="liked_your_post">kedvelte a bejegyzésed</string>

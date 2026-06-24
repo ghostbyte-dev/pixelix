@@ -37,7 +37,6 @@
         <item quantity="many">Дописів</item>
         <item quantity="other">Дописів</item>
     </plurals>
-    <string name="posts">Публікації</string>
     <string name="hashtags">Хештеґи</string>
     <string name="reblogged_your_post">репост вашого допису</string>
     <string name="liked_your_post">сподобався ваш допис</string>

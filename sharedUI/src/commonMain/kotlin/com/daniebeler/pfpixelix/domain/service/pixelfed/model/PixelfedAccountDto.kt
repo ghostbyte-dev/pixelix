@@ -1,6 +1,8 @@
 package com.daniebeler.pfpixelix.domain.service.pixelfed.model
 
 import com.daniebeler.pfpixelix.domain.model.Account
+import com.daniebeler.pfpixelix.domain.model.MutedAccount
+import com.daniebeler.pfpixelix.domain.model.request.UserMuteRequest
 import com.daniebeler.pfpixelix.domain.repository.serializers.HtmlAsTextSerializer
 import com.daniebeler.pfpixelix.domain.service.general.DtoMappable
 import kotlinx.serialization.SerialName
@@ -41,6 +43,16 @@ data class PixelfedAccountDto(
             createdAt = this.createdAt,
             isAdmin = this.isAdmin,
             pronouns = this.pronouns
+        )
+    }
+
+    fun toMutedAccount(): MutedAccount {
+        return MutedAccount(
+            id = id,
+            account = this.toDomain(),
+            UserMuteRequest(
+                mute = true
+            )
         )
     }
 }

@@ -26,7 +26,7 @@ import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.model.Visibility
 import com.daniebeler.pfpixelix.domain.service.platform.PlatformFeatures
 import com.daniebeler.pfpixelix.ui.composables.profile.other_profile.BlockAccountAlert
-import com.daniebeler.pfpixelix.ui.composables.profile.other_profile.MuteAccountAlert
+import com.daniebeler.pfpixelix.ui.composables.settings.muted_accounts.MuteAccountAlert
 import com.daniebeler.pfpixelix.ui.composables.widgets.ButtonRowElement
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import org.jetbrains.compose.resources.getString
@@ -220,7 +220,7 @@ fun ShareBottomSheet(
                 }
                 closeBottomSheet()
             },
-            account = viewModel.post?.account,
+            mutedAccount = null,
             capabilities = viewModel.capabilities
         )
     }

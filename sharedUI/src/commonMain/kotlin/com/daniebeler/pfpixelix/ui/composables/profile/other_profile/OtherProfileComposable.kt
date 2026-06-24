@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -74,6 +73,7 @@ import com.daniebeler.pfpixelix.ui.composables.profile.postsWrapperComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.ProfileTopSection
 import com.daniebeler.pfpixelix.ui.composables.profile.SwitchViewComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.server_stats.DomainSoftwareComposable
+import com.daniebeler.pfpixelix.ui.composables.settings.muted_accounts.MuteAccountAlert
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyStateComposable
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
@@ -149,7 +149,6 @@ fun OtherProfileComposable(
 
     var showBottomSheet by remember { mutableStateOf(false) }
     var showMuteAlert by remember { mutableStateOf(false) }
-    var showUnMuteAlert by remember { mutableStateOf(false) }
     var showBlockAlert by remember { mutableStateOf(false) }
     var showUnBlockAlert by remember { mutableStateOf(false) }
 
@@ -495,7 +494,7 @@ fun OtherProfileComposable(
                                     icon = Res.drawable.muted, text = stringResource(
                                         Res.string.unmute_this_profile
                                     ), onClick = {
-                                        showUnMuteAlert = true
+                                        showMuteAlert = true
                                     })
                             } else {
                                 ButtonRowElement(
@@ -544,17 +543,6 @@ fun OtherProfileComposable(
                 }
             }
 
-            if (showUnMuteAlert) {
-                UnMuteAccountAlert(
-                    onDismissRequest = { showUnMuteAlert = false },
-                    onConfirmation = {
-                        showUnMuteAlert = false
-                        showBottomSheet = false
-                        viewModel.unMuteAccount()
-                    },
-                    account = viewModel.accountState.account!!
-                )
-            }
             if (showMuteAlert) {
                 MuteAccountAlert(
                     onDismissRequest = { showMuteAlert = false },
@@ -563,7 +551,7 @@ fun OtherProfileComposable(
                         showBottomSheet = false
                         viewModel.muteAccount(userMuteRequest)
                     },
-                    account = viewModel.accountState.account!!,
+                    mutedAccount = null,
                     capabilities = viewModel.capabilities
                 )
             }
@@ -605,7 +593,7 @@ fun OtherProfileComposable(
 }
 
 @Composable
-fun MuteAccountAlert(
+fun MuteAccountAlertOld(
     onDismissRequest: () -> Unit,
     onConfirmation: (userMuteRequest: UserMuteRequest) -> Unit,
     account: Account?,

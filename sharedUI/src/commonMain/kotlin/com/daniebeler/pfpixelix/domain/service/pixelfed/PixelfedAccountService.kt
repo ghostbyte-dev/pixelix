@@ -124,7 +124,7 @@ class PixelfedAccountService(
         loadResource { api.unblockAccount(accountId).toDomain() }
 
     override fun getMutedAccounts() =
-        loadListResources { api.getMutedAccounts().map { it.toDomain() } }
+        loadListResources { api.getMutedAccounts().map { it.toMutedAccount() } }
 
     override fun getBlockedAccounts() =
         loadListResources { api.getBlockedAccounts().map { it.toDomain() } }

@@ -145,15 +145,11 @@ class VernissageAccountService(
     }
 
     override fun getMutedAccounts() = loadListResources {
-        //    api.getMutedAccounts().map { it.toDomain() }
-        //TODO: check if there is endpoint, maybe possible to first fetch relationships and then get those accounts which are muted, but expensive
-        emptyList<Account>()
+        api.getMutedAccounts().data.map { it.toDomain() }
     }
 
     override fun getBlockedAccounts() = loadListResources {
-        //TODO: same as getMutedAccounts()
-        //    api.getBlockedAccounts().map { it.toDomain() }
-        emptyList<Account>()
+        api.getBlockedAccounts().data.map { it.toDomain() }
     }
 
     override fun getAccountsFollowers(accountId: String, username: String, cursor: String?) =

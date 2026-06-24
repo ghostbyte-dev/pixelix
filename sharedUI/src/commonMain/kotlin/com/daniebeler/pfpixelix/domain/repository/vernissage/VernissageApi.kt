@@ -4,7 +4,9 @@ import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedNodeInfoDt
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageAccountDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageBlockedAccountDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageInstanceDto
+import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageMutedAccountDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageNotificationDto
+import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissagePagePaginatedResponse
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissagePaginatedResponse
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissagePostContextDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissagePostDto
@@ -267,7 +269,10 @@ interface VernissageApi {
     suspend fun getInstance(): VernissageInstanceDto
 
     @GET("api/v1/user-blocked-users")
-    suspend fun getBlockedAccounts(): VernissagePaginatedResponse<List<VernissageBlockedAccountDto>>
+    suspend fun getBlockedAccounts(): VernissagePagePaginatedResponse<List<VernissageBlockedAccountDto>>
+
+    @GET("api/v1/user-mutes")
+    suspend fun getMutedAccounts(): VernissagePagePaginatedResponse<List<VernissageMutedAccountDto>>
 
     @GET
     suspend fun getNodeInfo(@Url domain: String): PixelfedNodeInfoDto

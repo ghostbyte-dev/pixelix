@@ -4,6 +4,7 @@ import com.daniebeler.pfpixelix.domain.model.Identifiable
 import com.daniebeler.pfpixelix.domain.model.PaginatedResponse
 import com.daniebeler.pfpixelix.domain.service.general.DtoMappable
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
+import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissagePagePaginatedResponse
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissagePaginatedResponse
 import io.ktor.client.plugins.ClientRequestException
 import io.ktor.client.statement.bodyAsText

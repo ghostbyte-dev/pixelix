@@ -3,6 +3,7 @@ package com.daniebeler.pfpixelix.domain.model.request
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.request.VernissageUserMuteRequest
 
 data class UserMuteRequest(
+    val mute: Boolean = false,
     val muteStatuses: Boolean = false,
     val muteReblogs: Boolean = false,
     val muteNotifications: Boolean = false,

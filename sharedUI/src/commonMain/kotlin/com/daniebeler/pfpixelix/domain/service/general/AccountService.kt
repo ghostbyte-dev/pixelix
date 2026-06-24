@@ -4,6 +4,7 @@ import androidx.compose.ui.graphics.ImageBitmap
 import com.daniebeler.pfpixelix.di.AppSingleton
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.domain.model.Account
+import com.daniebeler.pfpixelix.domain.model.MutedAccount
 import com.daniebeler.pfpixelix.domain.model.PaginatedResponse
 import com.daniebeler.pfpixelix.domain.model.Relationship
 import com.daniebeler.pfpixelix.domain.model.Settings
@@ -45,7 +46,7 @@ interface AccountService {
     ): Flow<Resource<Relationship>>
 
     fun unblockAccount(accountId: String, username: String): Flow<Resource<Relationship>>
-    fun getMutedAccounts(): Flow<Resource<List<Account>>>
+    fun getMutedAccounts(): Flow<Resource<List<MutedAccount>>>
     fun getBlockedAccounts(): Flow<Resource<List<Account>>>
     fun getAccountsFollowers(
         accountId: String, username: String, cursor: String? = null
@@ -118,7 +119,7 @@ class AccountServiceDelegate(
     override fun unblockAccount(accountId: String, username: String): Flow<Resource<Relationship>> =
         current.unblockAccount(accountId, username)
 
-    override fun getMutedAccounts(): Flow<Resource<List<Account>>> = current.getMutedAccounts()
+    override fun getMutedAccounts(): Flow<Resource<List<MutedAccount>>> = current.getMutedAccounts()
 
     override fun getBlockedAccounts(): Flow<Resource<List<Account>>> = current.getBlockedAccounts()
 

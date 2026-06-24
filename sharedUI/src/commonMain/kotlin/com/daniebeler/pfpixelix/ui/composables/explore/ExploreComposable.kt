@@ -63,6 +63,7 @@ import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.model.SavedSearchItem
 import com.daniebeler.pfpixelix.domain.model.SavedSearchType
+import com.daniebeler.pfpixelix.domain.model.toDomain
 import com.daniebeler.pfpixelix.ui.composables.widgets.CustomHashtag
 import com.daniebeler.pfpixelix.ui.composables.custom_account.CustomAccount
 import com.daniebeler.pfpixelix.ui.composables.explore.trending.TrendingComposable
@@ -170,7 +171,7 @@ fun ExploreComposable(
                         if (it.savedSearchType == SavedSearchType.Account) {
                             Row {
                                 CustomAccount(
-                                    account = it.account!!,
+                                    account = it.account!!.toDomain(),
                                     relationship = null,
                                     navController = navController,
                                     removeSavedSearch = { viewModel.deleteSavedSearch(it) }
@@ -191,7 +192,7 @@ fun ExploreComposable(
                     modifier = Modifier.imePadding(),
                     contentPadding = PaddingValues(bottom = 60.dp),
                     content = {
-                    items(searchResult.accounts) {
+                    items(searchResult.accounts.take(5)) {
                         CustomAccount(
                             account = it,
                             relationship = null,
@@ -200,7 +201,7 @@ fun ExploreComposable(
                         )
                     }
                     item { HorizontalDivider(Modifier.padding(12.dp)) }
-                    items(searchResult.tags) {
+                    items(searchResult.tags.take(5)) {
                         CustomHashtag(
                             hashtag = it,
                             onClick = { viewModel.saveHashtag(it.name) },
@@ -317,7 +318,7 @@ private fun PastSearchItem(
             .fillMaxWidth()
             .clickable {
                 when (item.savedSearchType) {
-                    SavedSearchType.Account -> navController.navigate(Destination.Profile(item.account!!.id))
+                    SavedSearchType.Account -> navController.navigate(Destination.Profile(item.account?.id, item.account?.username))
 
                     SavedSearchType.Hashtag -> navController.navigate(Destination.HashtagTimeline(item.value))
 

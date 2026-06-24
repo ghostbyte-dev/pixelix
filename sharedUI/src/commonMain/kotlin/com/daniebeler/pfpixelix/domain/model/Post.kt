@@ -1,11 +1,7 @@
 package com.daniebeler.pfpixelix.domain.model
 
-import com.daniebeler.pfpixelix.domain.repository.serializers.PostSerializer
-import kotlinx.serialization.Serializable
-
-@Serializable(with = PostSerializer::class)
 data class Post(
-    val id: String,
+    override val id: String,
     val mediaAttachments: List<MediaAttachment>,
     val account: Account,
     val tags: List<Tag>,
@@ -20,7 +16,7 @@ data class Post(
     var reblogged: Boolean,
     val bookmarked: Boolean,
     val mentions: List<Account>,
-    val place: Place?,
+    val location: Location?,
     val likedBy: LikedBy?,
     val visibility: Visibility,
     val inReplyToId: String?,
@@ -28,4 +24,4 @@ data class Post(
     val reblogId: String? = null,
     val reblogCount: Int,
     val emojis: List<Emoji>
-)
+): Identifiable

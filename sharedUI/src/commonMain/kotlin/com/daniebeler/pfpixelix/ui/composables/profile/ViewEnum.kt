@@ -7,7 +7,7 @@ enum class ViewEnum {
 
     companion object {
         fun getView(ordinal: Int): ViewEnum {
-            return entries.getOrNull(ordinal) ?: Grid // Defaults to EASY if invalid
+            return entries.getOrNull(ordinal) ?: Grid
         }
     }
 }

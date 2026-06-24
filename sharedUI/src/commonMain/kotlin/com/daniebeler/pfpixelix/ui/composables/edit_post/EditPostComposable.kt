@@ -260,7 +260,7 @@ fun EditPostComposable(
                         TextFieldLocationsComposable(
                             submit = {},
                             submitPlace = { viewModel._setLocation(it) },
-                            initialValue = viewModel.editPostState.post!!.place,
+                            initialValue = viewModel.editPostState.post!!.location,
                             labelStringId = Res.string.location,
                             modifier = Modifier.fillMaxWidth(),
                             imeAction = ImeAction.Default,
@@ -438,7 +438,7 @@ fun ImagesPagerEditPost(
                     val type = image.type
 
                     if (image.url != null) {
-                        if (type.take(5) == "video") {
+                        if (type?.take(5) == "video") {
                             //todo KMP video
                             AsyncImage(
                                 model = image.url.toKmpUri().getPlatformUriObject(),

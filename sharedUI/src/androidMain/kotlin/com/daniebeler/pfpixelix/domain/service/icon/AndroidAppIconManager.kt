@@ -4,6 +4,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.pm.PackageManager
 import co.touchlab.kermit.Logger
+import com.daniebeler.pfpixelix.domain.service.general.AppIconManager
 import org.jetbrains.compose.resources.DrawableResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.app_icon_00

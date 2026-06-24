@@ -1,0 +1,6 @@
+name: vernissage.photos
+variables:
+  - name: baseUrl
+    value: https://vernissage.photos
+  - secret: true
+    name: JWT-TOKEN

@@ -1,13 +1,22 @@
 package com.daniebeler.pfpixelix.domain.model
 
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
-
-@Serializable
 data class Notification(
-    @SerialName("account") val account: Account = Account(),
-    @SerialName("id") val id: String,
-    @SerialName("type") val type: String,
-    @SerialName("status") val post: Post?,
-    @SerialName("created_at") var createdAt: String
-)
+    val account: Account = Account(),
+    override val id: String,
+    val type: NotificationType,
+    val post: Post?,
+    val createdAt: String
+): Identifiable
+
+enum class NotificationType {
+    MENTION,
+    STATUS,
+    REBLOG,
+    FOLLOW,
+    FOLLOW_REQUEST,
+    FAVOURITE,
+    UPDATE,
+    NEW_COMMENT,
+    DIRECT_MESSAGE,
+    UNDEFINED
+}

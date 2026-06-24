@@ -49,12 +49,13 @@ import pixelix.app.generated.resources.following
 fun FollowersMainComposable(
     navController: NavController,
     accountId: String,
+    username: String,
     isFollowers: Boolean,
     viewModel: FollowersViewModel = injectViewModel(key = "followers-viewmodel-key") { followersViewModel }
 ) {
 
     LaunchedEffect(Unit) {
-        viewModel.setAccountIdValue(accountId)
+        viewModel.setAccountValues(accountId, username)
         viewModel.getAccount(accountId)
         viewModel.getFollowersFirstLoad()
         viewModel.getFollowingFirstLoad()

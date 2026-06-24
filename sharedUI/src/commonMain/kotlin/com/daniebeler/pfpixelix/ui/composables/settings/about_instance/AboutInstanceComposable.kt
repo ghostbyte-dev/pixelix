@@ -72,10 +72,17 @@ fun AboutInstanceComposable(
                         modifier = Modifier.fillMaxWidth()
                     )
                     Spacer(modifier = Modifier.height(18.dp))
-                    Text(
-                        text = viewModel.instanceState.instance?.description ?: "",
-                        Modifier.padding(12.dp, 0.dp)
-                    )
+                    viewModel.instanceState.instance?.let {
+                        Text(
+                            text = if (it.description.length > 100) {
+                                it.shortDescription
+                            } else {
+                                it.description
+                            },
+                            Modifier.padding(12.dp, 0.dp)
+                        )
+                    }
+
                     Spacer(modifier = Modifier.height(18.dp))
 
                     Text(
@@ -120,7 +127,7 @@ fun AboutInstanceComposable(
 
                         Row(
                             modifier = Modifier.clickable {
-                                navController.navigate(Destination.Profile(account.id))
+                                navController.navigate(Destination.Profile(account.id, account.username))
                             }.padding(horizontal = 12.dp, vertical = 8.dp).fillMaxWidth(),
                             verticalAlignment = Alignment.CenterVertically
                         ) {

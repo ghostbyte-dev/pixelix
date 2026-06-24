@@ -29,8 +29,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.di.injectViewModel
+import com.daniebeler.pfpixelix.domain.model.Credentials
 import com.daniebeler.pfpixelix.domain.model.credentialsToAccount
-import com.daniebeler.pfpixelix.domain.service.session.Credentials
 import com.daniebeler.pfpixelix.ui.composables.custom_account.CustomAccount
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import kotlinx.coroutines.CoroutineScope

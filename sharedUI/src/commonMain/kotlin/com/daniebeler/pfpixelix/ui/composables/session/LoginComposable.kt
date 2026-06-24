@@ -29,7 +29,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -59,6 +58,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.di.injectViewModel
+import com.daniebeler.pfpixelix.domain.service.general.BackendType
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pfpixelix.ui.composables.widgets.SuggestionsBar
 import org.jetbrains.compose.resources.painterResource
@@ -82,13 +82,11 @@ fun LoginComposable(
     viewModel: LoginViewModel = injectViewModel("LoginViewModel") { loginViewModel }
 ) {
     val dark = MaterialTheme.colorScheme.background.luminance() < 0.5
-
     val suggestionsState by viewModel.serversSuggestionsManager.suggestionsState.collectAsStateWithLifecycle()
 
     Scaffold {
         Column(
-            Modifier.imePadding().fillMaxSize(),
-            verticalArrangement = Arrangement.SpaceBetween
+            Modifier.imePadding().fillMaxSize(), verticalArrangement = Arrangement.SpaceBetween
         ) {
             Column(
                 modifier = Modifier.fillMaxWidth().weight(1f, false)
@@ -96,12 +94,12 @@ fun LoginComposable(
             ) {
                 Column(
                     modifier = Modifier.fillMaxWidth().background(
-                            if (dark) Color.White else Color.Black
-                        ).windowInsetsPadding(
-                            WindowInsets.systemBars.only(
-                                WindowInsetsSides.Top + WindowInsetsSides.Horizontal
-                            )
-                        ), horizontalAlignment = Alignment.CenterHorizontally
+                        if (dark) Color.White else Color.Black
+                    ).windowInsetsPadding(
+                        WindowInsets.systemBars.only(
+                            WindowInsetsSides.Top + WindowInsetsSides.Horizontal
+                        )
+                    ), horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Box(
                         modifier = Modifier.padding(8.dp).heightIn(min = 50.dp).fillMaxWidth()
@@ -164,106 +162,23 @@ fun LoginComposable(
                 }
 
                 Spacer(modifier = Modifier.weight(1f))
-                Column(Modifier.padding(12.dp)) {
 
-                    Row {
-                        Spacer(Modifier.width(6.dp))
-                        Text(
-                            text = stringResource(Res.string.server_url),
-                            fontWeight = FontWeight.Bold
+                when (viewModel.currentStep) {
+                    LoginStep.PLATFORM_SELECTION -> {
+                        PlatformSelectionLayout(
+                            onPlatformSelected = { platform ->
+                                viewModel.selectPlatform(platform)
+                            })
+                    }
+
+                    LoginStep.SERVER_INPUT -> {
+                        ServerInputLayout(
+                            viewModel = viewModel
                         )
                     }
-
-                    Spacer(Modifier.height(6.dp))
-
-                    val keyboardController = LocalSoftwareKeyboardController.current
-                    val focusManager = LocalFocusManager.current
-                    fun login() {
-                        viewModel.serversSuggestionsManager.onFocusChanged(false)
-                        keyboardController?.hide()
-                        focusManager.clearFocus()
-                        viewModel.auth()
-                    }
-
-                    Row(verticalAlignment = Alignment.Bottom) {
-                        TextField(
-                            value = viewModel.serverHost,
-                            onValueChange = {
-                                viewModel.updateServerHost(it)
-                            },
-                            prefix = { Text("https://") },
-                            singleLine = true,
-                            modifier = Modifier.weight(1f).onFocusChanged { focusState ->
-                                viewModel.serversSuggestionsManager.onFocusChanged(focusState.isFocused)
-                            },
-                            shape = RoundedCornerShape(16.dp),
-                            colors = TextFieldDefaults.colors(
-                                unfocusedIndicatorColor = Color.Transparent,
-                                focusedIndicatorColor = Color.Transparent,
-                                focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
-                                unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer
-                            ),
-                            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                            keyboardActions = KeyboardActions(onDone = { login() })
-                        )
-
-
-                        Spacer(Modifier.width(12.dp))
-                        if (viewModel.isLoading) {
-                            Box(
-                                contentAlignment = Alignment.Center,
-                                modifier = Modifier.height(56.dp).width(56.dp).padding(0.dp, 0.dp)
-                                    .clip(RoundedCornerShape(16.dp))
-                                    .background(MaterialTheme.colorScheme.primary)
-
-                            ) {
-                                LoadingComposable(
-                                    modifier = Modifier.size(24.dp),
-                                    color = MaterialTheme.colorScheme.onPrimary
-                                )
-                            }
-                        } else {
-                            Button(
-                                onClick = {
-                                    login()
-                                },
-                                Modifier.height(56.dp).width(56.dp).padding(0.dp, 0.dp),
-                                shape = RoundedCornerShape(16.dp),
-                                contentPadding = PaddingValues(12.dp),
-                                enabled = viewModel.isValidHost,
-                                colors = ButtonDefaults.buttonColors(
-                                    containerColor = MaterialTheme.colorScheme.primary,
-                                    contentColor = MaterialTheme.colorScheme.onPrimary,
-                                    disabledContainerColor = MaterialTheme.colorScheme.surfaceContainer
-                                )
-                            ) {
-                                Icon(
-                                    imageVector = vectorResource(Res.drawable.chevron_right),
-                                    contentDescription = "submit",
-                                    Modifier.fillMaxSize().fillMaxWidth()
-                                )
-                            }
-                        }
-                    }
-
-                    Spacer(Modifier.height(24.dp))
-
-                    Spacer(modifier = Modifier.height(24.dp))
-
-                    TextButton(onClick = {
-                        viewModel.showAvailableServers()
-                    }) {
-                        Text(
-                            stringResource(Res.string.i_don_t_have_an_account),
-                            textDecoration = TextDecoration.Underline,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                    }
-
                 }
-
             }
+
             if (viewModel.serversSuggestionsManager.suggestionsOpen) {
                 SuggestionsBar(
                     state = suggestionsState, bottomBarPadding = false, onSelected = { selected ->
@@ -276,5 +191,190 @@ fun LoginComposable(
             }
 
         }
+
+
+    }
+}
+
+
+@Composable
+fun ServerInputLayout(
+    viewModel: LoginViewModel
+) {
+    Column(Modifier.padding(12.dp)) {
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Spacer(Modifier.width(6.dp))
+                Text(
+                    text = "Platform: ",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+
+                Text(
+                    text = viewModel.selectedPlatform?.name?.lowercase()
+                    ?.replaceFirstChar { it.uppercase() } ?: "",
+                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.primary)
+            }
+
+            TextButton(
+                onClick = { viewModel.goBackToPlatformSelection() },
+                contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp)
+            ) {
+                Text(
+                    text = "Change", fontSize = 14.sp
+                )
+            }
+        }
+
+        Row {
+            Spacer(Modifier.width(6.dp))
+            Text(
+                text = stringResource(Res.string.server_url), fontWeight = FontWeight.Bold
+            )
+        }
+
+        Spacer(Modifier.height(6.dp))
+
+        val keyboardController = LocalSoftwareKeyboardController.current
+        val focusManager = LocalFocusManager.current
+        fun login() {
+            viewModel.serversSuggestionsManager.onFocusChanged(false)
+            keyboardController?.hide()
+            focusManager.clearFocus()
+            viewModel.auth()
+        }
+
+        Row(verticalAlignment = Alignment.Bottom) {
+            TextField(
+                value = viewModel.serverHost,
+                onValueChange = { viewModel.updateServerHost(it) },
+                prefix = { Text("https://") },
+                singleLine = true,
+                modifier = Modifier.weight(1f).onFocusChanged { focusState ->
+                    viewModel.serversSuggestionsManager.onFocusChanged(focusState.isFocused)
+                },
+                shape = RoundedCornerShape(16.dp),
+                colors = TextFieldDefaults.colors(
+                    unfocusedIndicatorColor = Color.Transparent,
+                    focusedIndicatorColor = Color.Transparent,
+                    focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer
+                ),
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                keyboardActions = KeyboardActions(onDone = { login() })
+            )
+
+            Spacer(Modifier.width(12.dp))
+
+            if (viewModel.isLoading) {
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier.height(56.dp).width(56.dp).clip(RoundedCornerShape(16.dp))
+                        .background(MaterialTheme.colorScheme.primary)
+                ) {
+                    LoadingComposable(
+                        modifier = Modifier.size(24.dp), color = MaterialTheme.colorScheme.onPrimary
+                    )
+                }
+            } else {
+                Button(
+                    onClick = { login() },
+                    Modifier.height(56.dp).width(56.dp),
+                    shape = RoundedCornerShape(16.dp),
+                    contentPadding = PaddingValues(12.dp),
+                    enabled = viewModel.isValidHost,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary,
+                        disabledContainerColor = MaterialTheme.colorScheme.surfaceContainer
+                    )
+                ) {
+                    Icon(
+                        imageVector = vectorResource(Res.drawable.chevron_right),
+                        contentDescription = "submit",
+                        Modifier.fillMaxSize()
+                    )
+                }
+            }
+        }
+
+        Spacer(Modifier.height(24.dp))
+
+        TextButton(onClick = { viewModel.showAvailableServers() }) {
+            Text(
+                stringResource(Res.string.i_don_t_have_an_account),
+                textDecoration = TextDecoration.Underline,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+    }
+}
+
+@Composable
+fun PlatformSelectionLayout(
+    onPlatformSelected: (BackendType) -> Unit, modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier.padding(horizontal = 24.dp, vertical = 16.dp).fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = "Choose your network platform",
+            fontSize = 20.sp,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onSurface,
+            textAlign = TextAlign.Center
+        )
+
+        Text(
+            text = "Select the Fediverse service you want to connect with.",
+            fontSize = 14.sp,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(top = 4.dp, bottom = 24.dp)
+        )
+
+        // --- Pixelfed Button ---
+        Button(
+            onClick = { onPlatformSelected(BackendType.PIXELFED) },
+            modifier = Modifier.fillMaxWidth().height(56.dp),
+            shape = RoundedCornerShape(16.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary
+            )
+        ) {
+            Text(
+                text = "Pixelfed", fontSize = 16.sp, fontWeight = FontWeight.SemiBold
+            )
+        }
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        // --- Vernissage Button ---
+        Button(
+            onClick = { onPlatformSelected(BackendType.VERNISSAGE) },
+            modifier = Modifier.fillMaxWidth().height(56.dp),
+            shape = RoundedCornerShape(16.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+            )
+        ) {
+            Text(
+                text = "Vernissage", fontSize = 16.sp, fontWeight = FontWeight.SemiBold
+            )
+        }
+
+        // Extra padding to balance out the bottom spacing above the navigation bar
+        Spacer(modifier = Modifier.height(16.dp))
     }
 }

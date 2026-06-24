@@ -252,7 +252,7 @@ fun ChatComposable(
                 if (viewModel.chatState.chat != null) {
                     Row(
                         modifier = Modifier.clickable {
-                            navController.navigate(Destination.Profile(accountId))
+                            navController.navigate(Destination.Profile(accountId, viewModel.chatState.chat?.username))
                         }, verticalAlignment = Alignment.CenterVertically
                     ) {
                         AsyncImage(

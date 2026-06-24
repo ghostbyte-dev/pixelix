@@ -1,0 +1,23 @@
+info:
+  name: Trending Posts
+  type: http
+  seq: 2
+
+http:
+  method: GET
+  url: "{{baseUrl}}/api/v1/trending/statuses?period=daily"
+  params:
+    - name: maxId
+      value: "7652062361897789599"
+      type: query
+      disabled: true
+    - name: period
+      value: daily
+      type: query
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

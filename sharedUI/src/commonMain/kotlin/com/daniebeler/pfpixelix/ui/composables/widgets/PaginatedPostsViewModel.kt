@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.daniebeler.pfpixelix.domain.model.PaginatedResponse
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.ui.composables.timelines.TimelineState
@@ -17,15 +18,15 @@ abstract class PaginatedPostsViewModel : ViewModel() {
     var timelineState by mutableStateOf(TimelineState(isLoading = true))
         protected set
 
-    protected abstract fun fetchPage(maxId: String?): Flow<Resource<List<Post>>>
+    protected abstract fun fetchPage(maxId: String?): Flow<Resource<PaginatedResponse<List<Post>>>>
 
     protected fun loadItems(refreshing: Boolean) {
         if (timelineState.posts.isNotEmpty() && !refreshing) return
         fetchPage(null).onEach { result ->
             timelineState = when (result) {
-                is Resource.Success -> TimelineState(posts = result.data ?: emptyList())
+                is Resource.Success -> TimelineState(posts = result.data.data, nextId = result.data.next)
                 is Resource.Error -> timelineState.copy(
-                    error = result.message ?: "An unexpected error occurred",
+                    error = result.message,
                     isLoading = false,
                     isRefreshing = false
                 )
@@ -36,16 +37,17 @@ abstract class PaginatedPostsViewModel : ViewModel() {
 
     fun getItemsPaginated() {
         if (timelineState.posts.isEmpty() || timelineState.isLoading) return
-        fetchPage(timelineState.posts.last().id).onEach { result ->
+        fetchPage(timelineState.nextId).onEach { result ->
             timelineState = when (result) {
                 is Resource.Success -> timelineState.copy(
-                    posts = timelineState.posts + (result.data ?: emptyList()),
+                    posts = timelineState.posts + (result.data.data),
+                    nextId = result.data.next,
                     isLoading = false,
                     isRefreshing = false,
                     error = ""
                 )
                 is Resource.Error -> timelineState.copy(
-                    error = result.message ?: "An unexpected error occurred",
+                    error = result.message,
                     isLoading = false,
                     isRefreshing = false
                 )

@@ -5,36 +5,33 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.daniebeler.pfpixelix.domain.service.general.ExploreService
+import com.daniebeler.pfpixelix.domain.service.general.TimelineService
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
-import com.daniebeler.pfpixelix.domain.service.hashtag.SearchService
-import com.daniebeler.pfpixelix.domain.service.timeline.TimelineService
 import com.daniebeler.pfpixelix.ui.composables.timelines.hashtag_timeline.HashtagState
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import me.tatarka.inject.annotations.Inject
 
 class TrendingHashtagElementViewModel @Inject constructor(
-    private val timelineService: TimelineService,
-    private val searchService: SearchService
+    private val timelineService: TimelineService
 ) : ViewModel() {
 
     var postsState by mutableStateOf(TrendingHashtagPostsState())
-    var hashtagState by mutableStateOf(HashtagState())
-
     fun loadItems(hashtag: String) {
         if (postsState.posts.isEmpty()) {
             timelineService.getHashtagTimeline(hashtag, limit = 39).onEach { result ->
                 postsState = when (result) {
                     is Resource.Success -> {
                         TrendingHashtagPostsState(
-                            posts = result.data ?: emptyList(), error = "", isLoading = false
+                            posts = result.data.data, error = "", isLoading = false
                         )
                     }
 
                     is Resource.Error -> {
                         TrendingHashtagPostsState(
                             posts = postsState.posts,
-                            error = result.message ?: "An unexpected error occurred",
+                            error = result.message,
                             isLoading = false
                         )
                     }
@@ -47,26 +44,5 @@ class TrendingHashtagElementViewModel @Inject constructor(
                 }
             }.launchIn(viewModelScope)
         }
-    }
-
-    fun getHashtagInfo(hashtag: String) {
-        if (hashtagState.hashtag == null) {
-            searchService.getHashtag(hashtag).onEach { result ->
-                hashtagState = when (result) {
-                    is Resource.Success -> {
-                        HashtagState(hashtag = result.data)
-                    }
-
-                    is Resource.Error -> {
-                        HashtagState(error = result.message ?: "An unexpected error occurred")
-                    }
-
-                    is Resource.Loading -> {
-                        HashtagState(isLoading = true)
-                    }
-                }
-            }.launchIn(viewModelScope)
-        }
-
     }
 }

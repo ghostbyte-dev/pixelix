@@ -1,0 +1,26 @@
+info:
+  name: create reply
+  type: http
+  seq: 4
+
+http:
+  method: POST
+  url: "{{baseUrl}}/api/v1/statuses"
+  body:
+    type: json
+    data: |-
+      {
+        "replyToStatusId": "7652086323519425223",
+        "note": "@hiebeler05 hola",
+        "visibility": "public",
+        "sensitive": false,
+        "commentsDisabled": false,
+        "attachmentIds": []
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

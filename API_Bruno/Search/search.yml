@@ -1,0 +1,22 @@
+info:
+  name: search
+  type: http
+  seq: 1
+
+http:
+  method: GET
+  url: "{{baseUrl}}/api/v1/search?query=hiebeler05&type=users"
+  params:
+    - name: query
+      value: hiebeler05
+      type: query
+    - name: type
+      value: users
+      type: query
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

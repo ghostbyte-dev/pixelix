@@ -18,8 +18,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
-import com.daniebeler.pfpixelix.domain.model.Account
-import com.daniebeler.pfpixelix.ui.composables.profile.other_profile.UnMuteAccountAlert
+import com.daniebeler.pfpixelix.domain.model.MutedAccount
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -29,51 +28,56 @@ import pixelix.app.generated.resources.unmute
 
 @Composable
 fun CustomMutedAccountRow(
-    account: Account,
+    mutedAccount: MutedAccount,
     navController: NavController,
-    viewModel: MutedAccountsViewModel
+    viewModel: MutedAccountsViewModel,
 ) {
     Row(
-        Modifier
-            .padding(horizontal = 12.dp, vertical = 8.dp)
-            .fillMaxWidth(), verticalAlignment = Alignment.CenterVertically
+        Modifier.padding(horizontal = 12.dp, vertical = 8.dp).fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
     ) {
 
-        Row(verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.clickable {
-                navController.navigate(Destination.Profile(account.id))
-            }
-        ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically, modifier = Modifier.clickable {
+                navController.navigate(
+                    Destination.Profile(
+                        mutedAccount.account.id, mutedAccount.account.username
+                    )
+                )
+            }) {
             AsyncImage(
-                model = account.avatar,
+                model = mutedAccount.account.avatar,
                 error = painterResource(Res.drawable.default_avatar),
                 contentDescription = "",
-                modifier = Modifier
-                    .height(32.dp)
-                    .width(32.dp)
-                    .clip(CircleShape)
+                modifier = Modifier.height(32.dp).width(32.dp).clip(CircleShape)
             )
             Spacer(modifier = Modifier.width(10.dp))
 
-            Text(text = account.username, fontWeight = FontWeight.Bold)
+            Text(text = mutedAccount.account.username, fontWeight = FontWeight.Bold)
 
             Spacer(modifier = Modifier.weight(1f))
 
             Button(onClick = {
-                viewModel.unmuteAccountAlert = account.id
+                viewModel.unmuteAccountAlert = mutedAccount.account.id
             }) {
                 Text(text = stringResource(Res.string.unmute))
             }
         }
     }
 
-    if (viewModel.unmuteAccountAlert == account.id) {
-        UnMuteAccountAlert(
+    if (viewModel.unmuteAccountAlert == mutedAccount.account.id) {
+        MuteAccountAlert(
             onDismissRequest = { viewModel.unmuteAccountAlert = "" },
-            onConfirmation = {
+            onConfirmation = { userMuteRequest ->
+                viewModel.muteAccount(
+                    mutedAccount.account.id, mutedAccount.account.username, userMuteRequest
+                )
+
                 viewModel.unmuteAccountAlert = ""
-                viewModel.unmuteAccount(account.id) },
-            account = account
+            },
+            mutedAccount = mutedAccount,
+            capabilities = viewModel.capabilities
         )
+
     }
 }

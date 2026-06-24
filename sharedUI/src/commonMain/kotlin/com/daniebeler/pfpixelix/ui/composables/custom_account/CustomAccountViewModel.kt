@@ -5,8 +5,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.daniebeler.pfpixelix.domain.service.general.AccountService
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
-import com.daniebeler.pfpixelix.domain.service.account.AccountService
 import com.daniebeler.pfpixelix.ui.composables.profile.RelationshipState
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -19,8 +19,8 @@ class CustomAccountViewModel @Inject constructor(
     var relationshipState by mutableStateOf(RelationshipState())
     var gotUpdatedRelationship by mutableStateOf(false)
 
-    fun followAccount(userId: String) {
-        accountService.followAccount(userId).onEach { result ->
+    fun followAccount(userId: String, username: String) {
+        accountService.followAccount(userId, username).onEach { result ->
             relationshipState = when (result) {
                 is Resource.Success -> {
                     gotUpdatedRelationship = true
@@ -42,8 +42,8 @@ class CustomAccountViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    fun unfollowAccount(userId: String) {
-        accountService.unfollowAccount(userId).onEach { result ->
+    fun unfollowAccount(userId: String, username: String) {
+        accountService.unfollowAccount(userId, username).onEach { result ->
             relationshipState = when (result) {
                 is Resource.Success -> {
                     gotUpdatedRelationship = true

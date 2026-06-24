@@ -2,8 +2,10 @@ package com.daniebeler.pfpixelix.ui.composables.notifications
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -26,13 +28,18 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ButtonGroup
+import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.ToggleButton
+import androidx.compose.material3.ToggleButtonDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
@@ -45,7 +52,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.di.injectViewModel
+import com.daniebeler.pfpixelix.domain.model.NotificationType
 import com.daniebeler.pfpixelix.domain.service.platform.PlatformFeatures
+import com.daniebeler.pfpixelix.ui.composables.explore.trending.TrendingRange
 import com.daniebeler.pfpixelix.ui.composables.widgets.InfiniteStaggeredGridHandler
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 import com.daniebeler.pfpixelix.ui.composables.states.EndOfListComposable
@@ -53,6 +62,7 @@ import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyStateComposable
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pfpixelix.ui.composables.widgets.CustomPullToRefreshBox
+import io.ktor.client.request.invoke
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
@@ -66,7 +76,7 @@ import pixelix.app.generated.resources.notifications
 import pixelix.app.generated.resources.reposts
 import pixelix.app.generated.resources.you_don_t_have_any_notifications
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun NotificationsComposable(
     navController: NavController,
@@ -82,8 +92,7 @@ fun NotificationsComposable(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             TopAppBar(
-                scrollBehavior = scrollBehavior,
-                title = {
+                scrollBehavior = scrollBehavior, title = {
                     Text(
                         stringResource(Res.string.notifications),
                         fontWeight = FontWeight.Bold,
@@ -109,59 +118,89 @@ fun NotificationsComposable(
             modifier = Modifier.fillMaxSize().padding(paddingValues)
         ) {
             Column {
+                val allText = stringResource(Res.string.all)
+                val followersText = stringResource(Res.string.followers)
+                val likesText = stringResource(Res.string.likes_)
+                val repostsText = stringResource(Res.string.reposts)
+                val mentionsText = stringResource(Res.string.mentions)
+
                 Row(
                     modifier = Modifier.background(MaterialTheme.colorScheme.surfaceContainer)
-                        .horizontalScroll(scrollState)
+                        .horizontalScroll(scrollState),horizontalArrangement = Arrangement.spacedBy(
+                        ButtonGroupDefaults.ConnectedSpaceBetween)
                 ) {
+
                     Spacer(modifier = Modifier.width(12.dp))
-                    if (viewModel.filter == NotificationsFilterEnum.All) {
-                        ActiveFilterButton(text = stringResource(Res.string.all))
-                    } else {
-                        InactiveFilterButton(text = stringResource(Res.string.all), onClick = {
+                    ToggleButton(
+                        checked = viewModel.filter == NotificationsFilterEnum.All,
+                        onCheckedChange = {
                             viewModel.changeFilter(NotificationsFilterEnum.All)
+                        },
+                        colors = ToggleButtonDefaults.toggleButtonColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
+                        ),
+                        content = {
+                            Text(allText)
                         })
-                    }
 
                     Spacer(modifier = Modifier.width(12.dp))
 
-                    if (viewModel.filter == NotificationsFilterEnum.Followers) {
-                        ActiveFilterButton(text = stringResource(Res.string.followers))
-                    } else {
-                        InactiveFilterButton(
-                            text = stringResource(Res.string.followers), onClick = {
-                                viewModel.changeFilter(NotificationsFilterEnum.Followers)
-                            })
-                    }
+                    ToggleButton(
+                        checked = viewModel.filter == NotificationsFilterEnum.Followers,
+                        onCheckedChange = {
+                            viewModel.changeFilter(NotificationsFilterEnum.Followers)
+                        },
+                        colors = ToggleButtonDefaults.toggleButtonColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
+                        ),
+                        content = {
+                            Text(followersText)
+                        })
 
                     Spacer(modifier = Modifier.width(12.dp))
 
-                    if (viewModel.filter == NotificationsFilterEnum.Likes) {
-                        ActiveFilterButton(text = stringResource(Res.string.likes_))
-                    } else {
-                        InactiveFilterButton(text = stringResource(Res.string.likes_), onClick = {
+                    ToggleButton(
+                        checked = viewModel.filter == NotificationsFilterEnum.Likes,
+                        onCheckedChange = {
                             viewModel.changeFilter(NotificationsFilterEnum.Likes)
+                        },
+                        colors = ToggleButtonDefaults.toggleButtonColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
+                        ),
+                        content = {
+                            Text(likesText)
                         })
-                    }
+
+                    //TODO: add vernissage notification types filters
 
                     Spacer(modifier = Modifier.width(12.dp))
 
-                    if (viewModel.filter == NotificationsFilterEnum.Reposts) {
-                        ActiveFilterButton(text = stringResource(Res.string.reposts))
-                    } else {
-                        InactiveFilterButton(text = stringResource(Res.string.reposts), onClick = {
+                    ToggleButton(
+                        checked = viewModel.filter == NotificationsFilterEnum.Reposts,
+                        onCheckedChange = {
                             viewModel.changeFilter(NotificationsFilterEnum.Reposts)
+                        },
+                        colors = ToggleButtonDefaults.toggleButtonColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
+                        ),
+                        content = {
+                            Text(repostsText)
                         })
-                    }
+
 
                     Spacer(modifier = Modifier.width(12.dp))
 
-                    if (viewModel.filter == NotificationsFilterEnum.Mentions) {
-                        ActiveFilterButton(text = stringResource(Res.string.mentions))
-                    } else {
-                        InactiveFilterButton(text = stringResource(Res.string.mentions), onClick = {
+                    ToggleButton(
+                        checked = viewModel.filter == NotificationsFilterEnum.Mentions,
+                        onCheckedChange = {
                             viewModel.changeFilter(NotificationsFilterEnum.Mentions)
+                        },
+                        colors = ToggleButtonDefaults.toggleButtonColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
+                        ),
+                        content = {
+                            Text(mentionsText)
                         })
-                    }
 
                     Spacer(modifier = Modifier.width(12.dp))
                 }
@@ -179,7 +218,9 @@ fun NotificationsComposable(
                     LazyVerticalStaggeredGrid(
                         columns = StaggeredGridCells.Adaptive(350.dp),
                         state = staggeredGridState,
-                        contentPadding = PaddingValues(bottom = 60.dp),
+                        contentPadding = PaddingValues(
+                            start = 8.dp, end = 8.dp, bottom = 60.dp, top = 8.dp
+                        ),
                         modifier = Modifier.fillMaxSize()
                     ) {
                         if (viewModel.notificationsState.notifications.isNotEmpty()) {
@@ -188,24 +229,29 @@ fun NotificationsComposable(
                             }) {
                                 if (viewModel.filter == NotificationsFilterEnum.All) {
                                     CustomNotification(
-                                        notification = it, navController = navController
-                                    )
-                                } else if (viewModel.filter == NotificationsFilterEnum.Likes && it.type == "favourite") {
+                                        notification = it,
+                                        navController = navController,
+                                        { viewModel.removeNotification(it) })
+                                } else if (viewModel.filter == NotificationsFilterEnum.Likes && it.type == NotificationType.FAVOURITE) {
                                     CustomNotification(
-                                        notification = it, navController = navController
-                                    )
-                                } else if (viewModel.filter == NotificationsFilterEnum.Followers && it.type == "follow") {
+                                        notification = it,
+                                        navController = navController,
+                                        { viewModel.removeNotification(it) })
+                                } else if (viewModel.filter == NotificationsFilterEnum.Followers && it.type == NotificationType.FOLLOW) {
                                     CustomNotification(
-                                        notification = it, navController = navController
-                                    )
-                                } else if (viewModel.filter == NotificationsFilterEnum.Reposts && it.type == "reblog") {
+                                        notification = it,
+                                        navController = navController,
+                                        { viewModel.removeNotification(it) })
+                                } else if (viewModel.filter == NotificationsFilterEnum.Reposts && it.type == NotificationType.REBLOG) {
                                     CustomNotification(
-                                        notification = it, navController = navController
-                                    )
-                                } else if (viewModel.filter == NotificationsFilterEnum.Mentions && it.type == "mention") {
+                                        notification = it,
+                                        navController = navController,
+                                        { viewModel.removeNotification(it) })
+                                } else if (viewModel.filter == NotificationsFilterEnum.Mentions && it.type == NotificationType.MENTION) {
                                     CustomNotification(
-                                        notification = it, navController = navController
-                                    )
+                                        notification = it,
+                                        navController = navController,
+                                        { viewModel.removeNotification(it) })
                                 }
                             }
 
@@ -247,26 +293,5 @@ fun NotificationsComposable(
         ) {
             viewModel.getNotificationsPaginated()
         }
-    }
-}
-
-@Composable
-private fun ActiveFilterButton(text: String) {
-    Button(onClick = { }, shape = RoundedCornerShape(12.dp)) {
-        Text(text = text)
-    }
-}
-
-@Composable
-private fun InactiveFilterButton(text: String, onClick: () -> Unit) {
-    Button(
-        onClick = { onClick() },
-        shape = RoundedCornerShape(12.dp),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-            contentColor = MaterialTheme.colorScheme.onSurface
-        )
-    ) {
-        Text(text = text)
     }
 }

@@ -61,11 +61,13 @@ fun CustomHashtag(
 
         Column {
             Text(text = "#${hashtag.name}", maxLines = 1, overflow = TextOverflow.Ellipsis)
-            Text(
-                text = "${hashtag.count} posts",
-                fontSize = 14.sp,
-                color = MaterialTheme.colorScheme.primary
-            )
+            if (hashtag.postsCount != null) {
+                Text(
+                    text = "${hashtag.postsCount} posts",
+                    fontSize = 14.sp,
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
         }
     }
 }

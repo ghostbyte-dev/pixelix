@@ -19,14 +19,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.windowInsetsBottomHeight
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -69,7 +67,7 @@ import com.daniebeler.pfpixelix.ui.composables.post.reply.ReplyElementViewModel
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pfpixelix.ui.navigation.Destination
-import com.daniebeler.pfpixelix.utils.TimeAgo
+import com.daniebeler.pfpixelix.utils.timeAgo
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
@@ -116,7 +114,7 @@ fun CommentsBottomSheet(
                             favourited = false,
                             visibility = Visibility.PUBLIC,
                             spoilerText = "",
-                            place = null,
+                            location = null,
                             inReplyToId = null,
                             emojis = emptyList(),
                             reblogCount = 0
@@ -265,7 +263,7 @@ private fun ReplyElement(
         if (myAccountId != null) {
             viewModel.onInit(reply, myAccountId)
         }
-        timeAgo = TimeAgo.convertTimeToText(reply.createdAt)
+        timeAgo = timeAgo(reply.createdAt)
     }
     Column(modifier = Modifier.padding(vertical = 8.dp)) {
         Row {
@@ -273,7 +271,7 @@ private fun ReplyElement(
                 model = reply.account.avatar,
                 contentDescription = "",
                 modifier = Modifier.height(42.dp).width(42.dp).clip(CircleShape).clickable {
-                    navController.navigate(Destination.Profile(reply.account.id))
+                    navController.navigate(Destination.Profile(reply.account.id, reply.account.username))
                 })
 
             Spacer(modifier = Modifier.width(12.dp))
@@ -287,7 +285,7 @@ private fun ReplyElement(
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         modifier = Modifier.clickable {
-                            navController.navigate(Destination.Profile(reply.account.id))
+                            navController.navigate(Destination.Profile(reply.account.id, reply.account.username))
                         })
 
                     Text(

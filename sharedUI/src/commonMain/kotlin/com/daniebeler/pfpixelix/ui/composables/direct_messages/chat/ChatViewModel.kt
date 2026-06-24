@@ -8,7 +8,7 @@ import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
 import com.daniebeler.pfpixelix.domain.model.Message
 import com.daniebeler.pfpixelix.domain.model.NewMessage
-import com.daniebeler.pfpixelix.domain.service.dm.DirectMessagesService
+import com.daniebeler.pfpixelix.domain.service.general.DirectMessagesService
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach

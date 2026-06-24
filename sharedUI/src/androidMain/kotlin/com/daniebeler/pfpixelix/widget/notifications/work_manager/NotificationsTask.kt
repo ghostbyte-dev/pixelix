@@ -1,25 +1,18 @@
 package com.daniebeler.pfpixelix.widget.notifications.work_manager
 
 import android.content.Context
-import android.content.Intent
-import android.content.Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION
-import android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION
-import android.content.pm.PackageManager
-import android.graphics.drawable.BitmapDrawable
-import androidx.core.content.FileProvider.getUriForFile
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import coil3.Bitmap
 import coil3.imageLoader
 import coil3.network.NetworkHeaders
 import coil3.network.httpHeaders
-import coil3.request.ErrorResult
 import coil3.request.ImageRequest
 import coil3.request.SuccessResult
 import coil3.toBitmap
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.di.AppComponent
-import com.daniebeler.pfpixelix.utils.TimeAgo
+import com.daniebeler.pfpixelix.utils.timeAgo
 import com.daniebeler.pfpixelix.widget.notifications.models.NotificationStoreItem
 import com.daniebeler.pfpixelix.widget.notifications.updateNotificationsWidget
 import com.daniebeler.pfpixelix.widget.notifications.updateNotificationsWidgetRefreshing
@@ -50,7 +43,7 @@ class NotificationsTask(
             }
             val res = widgetService.getNotifications().last()
             if (res is Resource.Success) {
-                val notifications = res.data.take(10)
+                val notifications = res.data.data.take(10)
                 val notificationStoreItems = notifications.map { notification ->
                     val bitmap = getBitmap(context, notification.account.avatar)
                     NotificationStoreItem(
@@ -59,7 +52,7 @@ class NotificationsTask(
                         accountAvatarBitmap = bitmap,
                         accountId = notification.account.id,
                         accountUsername = notification.account.username,
-                        timeAgo = TimeAgo.convertTimeToText(notification.createdAt),
+                        timeAgo = timeAgo(notification.createdAt),
                         type = notification.type,
                     )
                 }

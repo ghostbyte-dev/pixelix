@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.daniebeler.pfpixelix.domain.service.general.Session
 import com.daniebeler.pfpixelix.domain.service.platform.Platform
 import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
 import kotlinx.coroutines.launch
@@ -12,8 +13,11 @@ import me.tatarka.inject.annotations.Inject
 
 class HomeViewModel @Inject constructor(
     private val prefs: UserPreferences,
-    private val platform: Platform
+    private val platform: Platform,
+    private val session: Session
 ) : ViewModel() {
+
+    val capabilities = session.capabilities.value
     var isSwipeBetweenTabsEnabled by mutableStateOf(true)
     init {
         viewModelScope.launch {

@@ -1,6 +1,7 @@
 package com.daniebeler.pfpixelix.ui.composables.profile.other_profile
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -24,6 +25,8 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -34,8 +37,10 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -59,12 +64,16 @@ import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.model.Account
+import com.daniebeler.pfpixelix.domain.model.request.UserBlockRequest
+import com.daniebeler.pfpixelix.domain.model.request.UserMuteRequest
+import com.daniebeler.pfpixelix.domain.service.capabilities.Capabilities
 import com.daniebeler.pfpixelix.ui.composables.profile.CollectionsComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.MutualFollowersComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.postsWrapperComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.ProfileTopSection
 import com.daniebeler.pfpixelix.ui.composables.profile.SwitchViewComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.server_stats.DomainSoftwareComposable
+import com.daniebeler.pfpixelix.ui.composables.settings.muted_accounts.MuteAccountAlert
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyStateComposable
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
@@ -73,7 +82,6 @@ import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pfpixelix.ui.composables.widgets.ButtonRowElement
 import com.daniebeler.pfpixelix.ui.composables.widgets.CustomPullToRefreshBox
 import com.daniebeler.pfpixelix.ui.composables.widgets.InfiniteStaggeredGridHandler
-import com.daniebeler.pfpixelix.ui.composables.widgets.ToTopButton
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import com.daniebeler.pfpixelix.utils.DomainFormat
 import org.jetbrains.compose.resources.painterResource
@@ -128,9 +136,9 @@ import pixelix.app.generated.resources.unmute_this_profile
 @Composable
 fun OtherProfileComposable(
     navController: NavController,
-    userId: String,
-    byUsername: String?,
-    viewModel: OtherProfileViewModel = injectViewModel(key = "other-profile$userId$byUsername") { otherProfileViewModel }
+    userId: String?,
+    username: String?,
+    viewModel: OtherProfileViewModel = injectViewModel(key = "other-profile$userId$username") { otherProfileViewModel }
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
@@ -141,16 +149,11 @@ fun OtherProfileComposable(
 
     var showBottomSheet by remember { mutableStateOf(false) }
     var showMuteAlert by remember { mutableStateOf(false) }
-    var showUnMuteAlert by remember { mutableStateOf(false) }
     var showBlockAlert by remember { mutableStateOf(false) }
     var showUnBlockAlert by remember { mutableStateOf(false) }
 
-    LaunchedEffect(userId) {
-        if (userId != "") {
-            viewModel.loadData(userId, false, navController)
-        } else {
-            viewModel.loadDataByUsername(byUsername!!, false, navController)
-        }
+    LaunchedEffect(userId, username) {
+        viewModel.loadData(userId, username, false, navController)
     }
 
     Scaffold(
@@ -207,7 +210,7 @@ fun OtherProfileComposable(
         Box(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
             CustomPullToRefreshBox(
                 isRefreshing = viewModel.accountState.refreshing || viewModel.postsState.refreshing,
-                onRefresh = { viewModel.loadData(userId, true, navController) },
+                onRefresh = { viewModel.loadData(userId, username, true, navController) },
                 modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)
             ) {
 
@@ -251,7 +254,7 @@ fun OtherProfileComposable(
                                 }.fillMaxWidth().clip(
                                     RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)
                                 ).background(MaterialTheme.colorScheme.surfaceContainer)
-                                    .padding(top = 24.dp, bottom = 12.dp)
+                                    .padding(bottom = 12.dp)
                             ) {
                                 if (viewModel.accountState.account != null) {
                                     ProfileTopSection(
@@ -289,13 +292,14 @@ fun OtherProfileComposable(
                                         contentColor = MaterialTheme.colorScheme.onPrimary
                                     }
 
+                                    //TODO: show state request (if user has setting follow request, if trying to follow, state requested is returned
                                     Button(
                                         onClick = {
                                             if (!viewModel.relationshipState.isLoading && viewModel.relationshipState.accountRelationship != null) {
                                                 if (viewModel.relationshipState.accountRelationship?.following == true) {
-                                                    viewModel.unfollowAccount(viewModel.userId)
+                                                    viewModel.unfollowAccount()
                                                 } else {
-                                                    viewModel.followAccount(viewModel.userId)
+                                                    viewModel.followAccount()
                                                 }
                                             }
                                         },
@@ -304,8 +308,11 @@ fun OtherProfileComposable(
                                         contentPadding = PaddingValues(12.dp),
                                         colors = ButtonDefaults.buttonColors(
                                             containerColor = containerColor,
-                                            contentColor = contentColor
-                                        )
+                                            contentColor = contentColor,
+                                            disabledContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+                                            disabledContentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                                        ),
+                                        enabled = viewModel.relationshipState.accountRelationship?.requested == false
                                     ) {
                                         if (viewModel.relationshipState.isLoading) {
                                             LoadingComposable(
@@ -315,29 +322,93 @@ fun OtherProfileComposable(
                                         } else {
                                             if (viewModel.relationshipState.accountRelationship?.following == true) {
                                                 Text(text = stringResource(Res.string.unfollow))
+                                            } else if (viewModel.relationshipState.accountRelationship?.requested == true) {
+                                                //TODO: string resource
+                                                Text(text = "Requested")
                                             } else {
                                                 Text(text = stringResource(Res.string.follow))
                                             }
                                         }
                                     }
 
-                                    Spacer(modifier = Modifier.width(12.dp))
+                                    if (viewModel.capabilities.general.supportsDMs) {
+                                        Spacer(modifier = Modifier.width(12.dp))
 
-                                    Button(
-                                        onClick = {
-                                            viewModel.accountState.account?.let { account ->
-                                                navController.navigate(Destination.Chat(account.id))
+                                        Button(
+                                            onClick = {
+                                                viewModel.accountState.account?.let { account ->
+                                                    navController.navigate(Destination.Chat(account.id))
+                                                }
+                                            },
+                                            modifier = Modifier.weight(1f),
+                                            shape = RoundedCornerShape(12.dp),
+                                            contentPadding = PaddingValues(12.dp),
+                                            colors = ButtonDefaults.buttonColors(
+                                                containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                                                contentColor = MaterialTheme.colorScheme.onSurface
+                                            )
+                                        ) {
+                                            Text(text = stringResource(Res.string.message))
+                                        }
+                                    }
+
+
+                                }
+
+                                viewModel.relationshipState.accountRelationship?.let { relationship ->
+                                    if (relationship.requestedBy) {
+                                        Row(
+                                            modifier = Modifier.fillMaxWidth()
+                                                .padding(horizontal = 12.dp).padding(top = 12.dp)
+                                        ) {
+                                            Button(
+                                                onClick = {
+                                                    viewModel.acceptFollowRequest()
+                                                },
+                                                modifier = Modifier.weight(1f),
+                                                shape = RoundedCornerShape(12.dp),
+                                                contentPadding = PaddingValues(12.dp),
+                                                colors = ButtonDefaults.buttonColors(
+                                                    containerColor = MaterialTheme.colorScheme.primary,
+                                                    contentColor = MaterialTheme.colorScheme.onPrimary,
+                                                ),
+                                            ) {
+                                                if (viewModel.followRequestState.isLoading && viewModel.followRequestState.isAccepting) {
+                                                    LoadingComposable(
+                                                        modifier = Modifier.size(20.dp),
+                                                        color = MaterialTheme.colorScheme.onPrimary
+                                                    )
+                                                } else {
+                                                    //TODO: String resource
+                                                    Text("Accept Follow Request")
+                                                }
                                             }
-                                        },
-                                        modifier = Modifier.weight(1f),
-                                        shape = RoundedCornerShape(12.dp),
-                                        contentPadding = PaddingValues(12.dp),
-                                        colors = ButtonDefaults.buttonColors(
-                                            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-                                            contentColor = MaterialTheme.colorScheme.onSurface
-                                        )
-                                    ) {
-                                        Text(text = stringResource(Res.string.message))
+
+                                            Spacer(modifier = Modifier.width(12.dp))
+
+                                            Button(
+                                                onClick = {
+                                                    viewModel.rejectFollowRequest()
+                                                },
+                                                modifier = Modifier.weight(1f),
+                                                shape = RoundedCornerShape(12.dp),
+                                                contentPadding = PaddingValues(12.dp),
+                                                colors = ButtonDefaults.buttonColors(
+                                                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                                                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                                                )
+                                            ) {
+                                                if (viewModel.followRequestState.isLoading && !viewModel.followRequestState.isAccepting) {
+                                                    LoadingComposable(
+                                                        modifier = Modifier.size(20.dp),
+                                                        color = MaterialTheme.colorScheme.onPrimary
+                                                    )
+                                                } else {
+                                                    //TODO: string resource
+                                                    Text(text = "Reject Follow Request")
+                                                }
+                                            }
+                                        }
                                     }
                                 }
 
@@ -418,12 +489,12 @@ fun OtherProfileComposable(
                         modifier = Modifier.padding(bottom = 32.dp)
                     ) {
                         if (viewModel.relationshipState.accountRelationship != null) {
-                            if (viewModel.relationshipState.accountRelationship!!.muting) {
+                            if (viewModel.relationshipState.accountRelationship!!.muted == true || viewModel.relationshipState.accountRelationship!!.mutedNotifications == true || viewModel.relationshipState.accountRelationship!!.mutedStatuses == true || viewModel.relationshipState.accountRelationship!!.mutedReblogs == true) {
                                 ButtonRowElement(
                                     icon = Res.drawable.muted, text = stringResource(
                                         Res.string.unmute_this_profile
                                     ), onClick = {
-                                        showUnMuteAlert = true
+                                        showMuteAlert = true
                                     })
                             } else {
                                 ButtonRowElement(
@@ -435,7 +506,7 @@ fun OtherProfileComposable(
                                 )
                             }
 
-                            if (viewModel.relationshipState.accountRelationship!!.blocking) {
+                            if (viewModel.relationshipState.accountRelationship!!.blocked) {
                                 ButtonRowElement(
                                     icon = Res.drawable.blocked, text = stringResource(
                                         Res.string.unblock_this_profile
@@ -472,33 +543,28 @@ fun OtherProfileComposable(
                 }
             }
 
-            if (showUnMuteAlert) {
-                UnMuteAccountAlert(
-                    onDismissRequest = { showUnMuteAlert = false },
-                    onConfirmation = {
-                        showUnMuteAlert = false
-                        showBottomSheet = false
-                        viewModel.unMuteAccount(viewModel.userId)
-                    },
-                    account = viewModel.accountState.account!!
-                )
-            }
             if (showMuteAlert) {
                 MuteAccountAlert(
-                    onDismissRequest = { showMuteAlert = false }, onConfirmation = {
+                    onDismissRequest = { showMuteAlert = false },
+                    onConfirmation = { userMuteRequest ->
                         showMuteAlert = false
                         showBottomSheet = false
-                        viewModel.muteAccount(viewModel.userId)
-                    }, account = viewModel.accountState.account!!
+                        viewModel.muteAccount(userMuteRequest)
+                    },
+                    mutedAccount = viewModel.mutedAccount,
+                    capabilities = viewModel.capabilities
                 )
             }
             if (showBlockAlert) {
                 BlockAccountAlert(
-                    onDismissRequest = { showBlockAlert = false }, onConfirmation = {
+                    onDismissRequest = { showBlockAlert = false },
+                    onConfirmation = { userBlockRequest ->
                         showBlockAlert = false
                         showBottomSheet = false
-                        viewModel.blockAccount(viewModel.userId)
-                    }, account = viewModel.accountState.account!!
+                        viewModel.blockAccount(userBlockRequest)
+                    },
+                    account = viewModel.accountState.account!!,
+                    capabilities = viewModel.capabilities
                 )
             }
             if (showUnBlockAlert) {
@@ -507,7 +573,7 @@ fun OtherProfileComposable(
                     onConfirmation = {
                         showUnBlockAlert = false
                         showBottomSheet = false
-                        viewModel.unblockAccount(viewModel.userId)
+                        viewModel.unblockAccount()
                     },
                     account = viewModel.accountState.account!!
                 )
@@ -516,7 +582,6 @@ fun OtherProfileComposable(
             ErrorComposableDialog(
                 errorMessage = viewModel.relationshipState.error, onDismiss = {
                     viewModel.relationshipState = viewModel.relationshipState.copy(error = "")
-                    viewModel.getRelationship(userId)
                     showBottomSheet = false
                 })
             ErrorComposableDialog(
@@ -527,79 +592,16 @@ fun OtherProfileComposable(
     }
 }
 
-@Composable
-fun MuteAccountAlert(
-    onDismissRequest: () -> Unit, onConfirmation: () -> Unit, account: Account?
-) {
-    AlertDialog(title = {
-        Text(text = stringResource(Res.string.mute_account))
-    }, text = {
-        Column {
-
-            account?.let {
-                AlertTopSection(account = account)
-                HorizontalDivider(Modifier.padding(vertical = 12.dp))
-            }
-
-
-            Text(text = stringResource(Res.string.mute_consequence_1))
-            Text(text = stringResource(Res.string.mute_consequence_2))
-            Text(text = stringResource(Res.string.mute_consequence_3))
-            Text(text = stringResource(Res.string.mute_consequence_4))
-
-            HorizontalDivider(Modifier.padding(vertical = 12.dp))
-
-            Text(text = stringResource(Res.string.mute_consequence_5))
-
-        }
-    }, onDismissRequest = {
-        onDismissRequest()
-    }, confirmButton = {
-        TextButton(onClick = {
-            onConfirmation()
-        }) {
-            Text(stringResource(Res.string.mute))
-        }
-    }, dismissButton = {
-        TextButton(onClick = {
-            onDismissRequest()
-        }) {
-            Text(stringResource(Res.string.cancel))
-        }
-    })
-}
-
-@Composable
-fun UnMuteAccountAlert(
-    onDismissRequest: () -> Unit, onConfirmation: () -> Unit, account: Account
-) {
-    AlertDialog(title = {
-        Text(text = stringResource(Res.string.unmute_account))
-    }, text = {
-        AlertTopSection(account = account)
-
-
-    }, onDismissRequest = {
-        onDismissRequest()
-    }, confirmButton = {
-        TextButton(onClick = {
-            onConfirmation()
-        }) {
-            Text(stringResource(Res.string.unmute_caps))
-        }
-    }, dismissButton = {
-        TextButton(onClick = {
-            onDismissRequest()
-        }) {
-            Text(stringResource(Res.string.cancel))
-        }
-    })
-}
 
 @Composable
 fun BlockAccountAlert(
-    onDismissRequest: () -> Unit, onConfirmation: () -> Unit, account: Account?
+    onDismissRequest: () -> Unit,
+    onConfirmation: (userBlockRequest: UserBlockRequest) -> Unit,
+    account: Account?,
+    capabilities: Capabilities
 ) {
+    var reason by remember { mutableStateOf("") }
+
     AlertDialog(title = {
         Text(text = stringResource(Res.string.block_account))
     }, text = {
@@ -610,29 +612,40 @@ fun BlockAccountAlert(
                 HorizontalDivider(Modifier.padding(vertical = 12.dp))
             }
 
+            if (capabilities.profile.blockReason) {
+                //TODO: translate, style
+                TextField(
+                    value = reason,
+                    singleLine = false,
+                    onValueChange = {
+                        reason = it
+                    },
+                    shape = MaterialTheme.shapes.medium,
+                    placeholder = { Text("Reason") },
+                )
+            } else {
 
-            Text(text = stringResource(Res.string.block_consequence_1))
-            Text(text = stringResource(Res.string.block_consequence_2))
-            Text(text = stringResource(Res.string.block_consequence_3))
-            Text(text = stringResource(Res.string.block_consequence_4))
-            Text(text = stringResource(Res.string.block_consequence_5))
+                Text(text = stringResource(Res.string.block_consequence_1))
+                Text(text = stringResource(Res.string.block_consequence_2))
+                Text(text = stringResource(Res.string.block_consequence_3))
+                Text(text = stringResource(Res.string.block_consequence_4))
+                Text(text = stringResource(Res.string.block_consequence_5))
+                HorizontalDivider(Modifier.padding(vertical = 12.dp))
+                Text(text = stringResource(Res.string.block_consequence_6))
 
-            HorizontalDivider(Modifier.padding(vertical = 12.dp))
+                Text(text = stringResource(Res.string.block_consequence_7))
 
-            Text(text = stringResource(Res.string.block_consequence_6))
-            Text(text = stringResource(Res.string.block_consequence_7))
-            Text(text = stringResource(Res.string.block_consequence_8))
-            Text(text = stringResource(Res.string.block_consequence_9))
-
-            HorizontalDivider(Modifier.padding(vertical = 12.dp))
-
-            Text(text = stringResource(Res.string.block_consequence_10))
+                Text(text = stringResource(Res.string.block_consequence_8))
+                Text(text = stringResource(Res.string.block_consequence_9))
+                HorizontalDivider(Modifier.padding(vertical = 12.dp))
+                Text(text = stringResource(Res.string.block_consequence_10))
+            }
         }
     }, onDismissRequest = {
         onDismissRequest()
     }, confirmButton = {
         TextButton(onClick = {
-            onConfirmation()
+            onConfirmation(UserBlockRequest(reason))
         }) {
             Text(stringResource(Res.string.block))
         }
@@ -643,7 +656,15 @@ fun BlockAccountAlert(
             Text(stringResource(Res.string.cancel))
         }
     })
+}
 
+@Composable
+fun MuteOptionRow(label: String, checked: Boolean, onCheckedChange: (Boolean) -> Unit) {
+    Row(modifier = Modifier.fillMaxWidth().clickable { onCheckedChange(!checked) }
+        .padding(vertical = 8.dp), verticalAlignment = Alignment.CenterVertically) {
+        Text(text = label, modifier = Modifier.weight(1f))
+        Switch(checked = checked, onCheckedChange = onCheckedChange)
+    }
 }
 
 @Composable

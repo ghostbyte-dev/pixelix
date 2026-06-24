@@ -6,7 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.domain.service.platform.Platform
-import com.daniebeler.pfpixelix.domain.service.post.PostService
+import com.daniebeler.pfpixelix.domain.service.general.PostService
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -18,20 +18,20 @@ class TrendingAccountElementViewModel @Inject constructor(
 ) : ViewModel() {
     var postsState by mutableStateOf(TrendingAccountPostsState())
 
-    fun loadItems(accountId: String) {
+    fun loadItems(accountId: String, username: String) {
         if (postsState.posts.isEmpty()) {
-            postService.getPostsOfAccount(accountId, limit = 9).onEach { result ->
+            postService.getPostsOfAccount(accountId, username, limit = 9).onEach { result ->
                 postsState = when (result) {
                     is Resource.Success -> {
                         TrendingAccountPostsState(
-                            posts = result.data ?: emptyList(), error = "", isLoading = false
+                            posts = result.data.data, error = "", isLoading = false
                         )
                     }
 
                     is Resource.Error -> {
                         TrendingAccountPostsState(
                             posts = postsState.posts,
-                            error = result.message ?: "An unexpected error occurred",
+                            error = result.message,
                             isLoading = false
                         )
                     }

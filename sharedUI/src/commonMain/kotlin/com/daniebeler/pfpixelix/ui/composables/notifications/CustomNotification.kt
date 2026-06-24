@@ -8,11 +8,15 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
-import androidx.compose.material.Colors
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,12 +25,10 @@ import androidx.compose.runtime.produceState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -34,8 +36,11 @@ import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.model.Notification
+import com.daniebeler.pfpixelix.domain.model.NotificationType
+import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposableDialog
+import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pfpixelix.ui.navigation.Destination
-import com.daniebeler.pfpixelix.utils.TimeAgo
+import com.daniebeler.pfpixelix.utils.timeAgo
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import pixelix.app.generated.resources.Res
@@ -50,81 +55,87 @@ import pixelix.app.generated.resources.sent_a_dm
 fun CustomNotification(
     notification: Notification,
     navController: NavController,
+    removeNotification: () -> Unit,
     viewModel: CustomNotificationViewModel = injectViewModel(key = "custom-notification-viewmodel-key${notification.id}") { customNotificationViewModel }
 ) {
     var showImage = false
     var text = ""
     when (notification.type) {
-        "follow" -> {
+        NotificationType.FOLLOW -> {
             text = " " + stringResource(Res.string.followed_you)
         }
 
-        "mention" -> {
+        NotificationType.MENTION -> {
             text = " " + stringResource(Res.string.mentioned_you_in_a_post)
             showImage = true
         }
 
-        "direct" -> {
+        NotificationType.DIRECT_MESSAGE -> {
             text = " " + stringResource(Res.string.sent_a_dm)
         }
 
-        "favourite" -> {
+        NotificationType.FAVOURITE -> {
             text = " " + stringResource(Res.string.liked_your_post)
             showImage = true
         }
 
-        "reblog" -> {
+        NotificationType.REBLOG -> {
             text = " " + stringResource(Res.string.reblogged_your_post)
             showImage = true
+        }
+
+        NotificationType.NEW_COMMENT -> {
+            text = " " + "wrote a new comment"
+            showImage = true
+        }
+
+        NotificationType.FOLLOW_REQUEST -> {
+            text = " " + "sent you a follow request"
+        }
+
+        NotificationType.STATUS -> {
+            text = " " + "posted a new status"
+            showImage = true
+        }
+
+        NotificationType.UPDATE -> {
+            text = " " + "boosted status got updated"
+            showImage = true
+        }
+
+        NotificationType.UNDEFINED -> {
+            text = " " + "undefined"
         }
     }
 
     LaunchedEffect(notification) {
-        if (notification.type == "mention" && notification.post?.inReplyToId != null && notification.post.inReplyToId.isNotBlank()) {
+        if (notification.type == NotificationType.MENTION && notification.post?.inReplyToId != null && notification.post.inReplyToId.isNotBlank()) {
             viewModel.loadAncestor(notification.post.inReplyToId)
         }
     }
 
     val timeAgoText = produceState(initialValue = "") {
-        value = TimeAgo.convertTimeToText(notification.createdAt)
+        value = timeAgo(notification.createdAt)
     }
 
-    Row(
-        Modifier.padding(horizontal = 12.dp, vertical = 8.dp).fillMaxWidth().clickable {
-                if (notification.post != null && notification.post.mediaAttachments.isEmpty()) {
-                    navController.navigate(Destination.Mention(notification.post.id))
-                } else if (notification.post != null && notification.post.mediaAttachments.isNotEmpty()) {
-                    navController.navigate(Destination.Post(notification.post.id))
-                } else if (notification.post == null) {
-                    navController.navigate(Destination.Profile(notification.account.id))
-                }
-            }, verticalAlignment = Alignment.CenterVertically
-    ) {
-        AsyncImage(
-            model = notification.account.avatar,
-            error = painterResource(Res.drawable.default_avatar),
-            contentDescription = "",
-            modifier = Modifier.height(46.dp).width(46.dp).clip(CircleShape).clickable {
-                    navController.navigate(Destination.Profile(notification.account.id))
-                })
-        Spacer(modifier = Modifier.width(10.dp))
-        Column(Modifier.weight(1f)) {
-            val annotatedText = buildAnnotatedString {
-                pushStringAnnotation(tag = "username", annotation = notification.account.id)
-                withStyle(
-                    style = SpanStyle(
-                        fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onBackground
-                    )
-                ) {
-                    append(notification.account.username)
-                }
-                pop()
-                append(" ")
-                withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.onBackground)) {
-                    append(text)
-                }
-            }
+    val annotatedText = buildAnnotatedString {
+        pushStringAnnotation(tag = "username", annotation = notification.account.id)
+        withStyle(
+            style = SpanStyle(
+                fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onBackground
+            )
+        ) {
+            append(notification.account.displayname ?: notification.account.username)
+        }
+        pop()
+        append(" ")
+        withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.onBackground)) {
+            append(text)
+        }
+    }
 
+    ListItem(
+        headlineContent = {
             ClickableText(
                 text = annotatedText,
                 style = MaterialTheme.typography.bodyMedium,
@@ -132,52 +143,138 @@ fun CustomNotification(
                     annotatedText.getStringAnnotations(
                         tag = "username", start = offset, end = offset
                     ).firstOrNull()?.let { annotation ->
-                            if (annotation.tag == "username") {
-                                navController.navigate(Destination.Profile(annotation.item))
-                            }
-                        } ?: kotlin.run {
+                        if (annotation.tag == "username") {
+                            //TODO: check if this is correct
+                            navController.navigate(
+                                Destination.Profile(
+                                    annotation.item, notification.account.username
+                                )
+                            )
+                        }
+                    } ?: run {
                         if (notification.post != null && notification.post.mediaAttachments.isEmpty()) {
                             navController.navigate(Destination.Mention(notification.post.id))
                         } else if (notification.post != null && notification.post.mediaAttachments.isNotEmpty()) {
                             navController.navigate(Destination.Post(notification.post.id))
                         } else if (notification.post == null) {
-                            navController.navigate(Destination.Profile(notification.account.id))
+                            navController.navigate(
+                                Destination.Profile(
+                                    notification.account.id, notification.account.username
+                                )
+                            )
                         }
                     }
                 })
-
-
-            Text(
-                text = timeAgoText.value,
-                fontSize = 14.sp,
-                color = MaterialTheme.colorScheme.primary
-            )
-        }
-
-        val doesMediaAttachmentExsist = (notification.post?.mediaAttachments?.size ?: 0) > 0
-        if (showImage && (doesMediaAttachmentExsist || (viewModel.ancestor != null && viewModel.ancestor!!.mediaAttachments.isNotEmpty()))) {
-            val previewUrl = if (doesMediaAttachmentExsist) {
-                notification.post?.mediaAttachments?.get(0)?.previewUrl
-            } else {
-                viewModel.ancestor?.mediaAttachments?.get(0)?.previewUrl
-            }
-            Spacer(modifier = Modifier.width(10.dp))
-            AsyncImage(
-                model = previewUrl,
-                contentDescription = "",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.height(36.dp).aspectRatio(1f).clip(RoundedCornerShape(4.dp))
-                    .clickable {
-                        navController.navigate(
-                            Destination.Post(
-                                id = if (doesMediaAttachmentExsist) {
-                                    notification.post!!.id
-                                } else {
-                                    viewModel.ancestor!!.id
-                                }, openReplies = !doesMediaAttachmentExsist
+        }, supportingContent = {
+            if (notification.type == NotificationType.FOLLOW_REQUEST && viewModel.capabilities.notification.supportsFollowRequestActions) {
+                Row {
+                    Button(
+                        onClick = {
+                            viewModel.acceptFollowRequest(
+                                notification.account.id, removeNotification
                             )
+                        },
+                        modifier = Modifier.padding(end = 4.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                        ),
+                    ) {
+                        if (viewModel.followRequestState.value.isLoading && viewModel.followRequestState.value.isAccepting) {
+                            LoadingComposable(
+                                modifier = Modifier.size(20.dp),
+                                color = MaterialTheme.colorScheme.onPrimaryContainer
+                            )
+                        } else {
+                            Text(text = "Accept")
+                        }
+                    }
+                    Button(
+                        onClick = {
+                            viewModel.rejectFollowRequest(
+                                notification.account.id, removeNotification
+                            )
+                        }, colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.errorContainer,
+                            contentColor = MaterialTheme.colorScheme.onErrorContainer,
                         )
-                    })
-        }
-    }
+                    ) {
+                        if (viewModel.followRequestState.value.isLoading && !viewModel.followRequestState.value.isAccepting) {
+                            LoadingComposable(
+                                modifier = Modifier.size(20.dp),
+                                color = MaterialTheme.colorScheme.onErrorContainer
+                            )
+                        } else {
+                            Text(text = "Reject")
+                        }
+                    }
+                }
+            } else {
+                Text(
+                    text = timeAgoText.value,
+                    fontSize = 14.sp,
+                    color = MaterialTheme.colorScheme.primary
+                )
+            }
+        }, leadingContent = {
+            AsyncImage(
+                model = notification.account.avatar,
+                error = painterResource(Res.drawable.default_avatar),
+                contentDescription = "",
+                modifier = Modifier.height(46.dp).width(46.dp).clip(CircleShape).clickable {
+                    navController.navigate(
+                        Destination.Profile(
+                            notification.account.id, notification.account.username
+                        )
+                    )
+                })
+        }, trailingContent = {
+            val doesMediaAttachmentExsist = (notification.post?.mediaAttachments?.size ?: 0) > 0
+            if (showImage && (doesMediaAttachmentExsist || (viewModel.ancestor != null && viewModel.ancestor!!.mediaAttachments.isNotEmpty()))) {
+                val previewUrl = if (doesMediaAttachmentExsist) {
+                    notification.post?.mediaAttachments?.get(0)?.previewUrl
+                } else {
+                    viewModel.ancestor?.mediaAttachments?.get(0)?.previewUrl
+                }
+                Spacer(modifier = Modifier.width(10.dp))
+                AsyncImage(
+                    model = previewUrl,
+                    contentDescription = "",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.height(36.dp).aspectRatio(1f).clip(RoundedCornerShape(4.dp))
+                        .clickable {
+                            navController.navigate(
+                                Destination.Post(
+                                    id = if (doesMediaAttachmentExsist) {
+                                        notification.post!!.id
+                                    } else {
+                                        viewModel.ancestor!!.id
+                                    }, openReplies = !doesMediaAttachmentExsist
+                                )
+                            )
+                        })
+            }
+        }, modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp).clip(RoundedCornerShape(16.dp)).clickable {
+            if (notification.post != null && notification.post.mediaAttachments.isEmpty()) {
+                navController.navigate(Destination.Mention(notification.post.id))
+            } else if (notification.post != null && notification.post.mediaAttachments.isNotEmpty()) {
+                navController.navigate(Destination.Post(notification.post.id))
+            } else if (notification.post == null) {
+                navController.navigate(
+                    Destination.Profile(
+                        notification.account.id, notification.account.username
+                    )
+                )
+            }
+        }, colors = ListItemDefaults.colors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainerLow
+        )
+    )
+
+
+
+
+    ErrorComposableDialog(viewModel.followRequestState.value.error, {
+        viewModel.followRequestState.value = FollowRequestState()
+    })
 }

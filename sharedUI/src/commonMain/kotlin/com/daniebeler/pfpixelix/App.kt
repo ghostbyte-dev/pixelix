@@ -69,7 +69,7 @@ import androidx.navigation.compose.rememberNavController
 import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.di.AppComponent
 import com.daniebeler.pfpixelix.di.LocalAppComponent
-import com.daniebeler.pfpixelix.domain.service.utils.GlobalNavigationEvent
+import com.daniebeler.pfpixelix.ui.events.GlobalNavigationEvent
 import com.daniebeler.pfpixelix.ui.composables.profile.own_profile.AccountSwitchBottomSheet
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.PreferencesComposable
 import com.daniebeler.pfpixelix.ui.composables.widgets.ReverseModalNavigationDrawer
@@ -281,9 +281,10 @@ fun App(
                 LaunchedEffect(Unit) {
                     appComponent.accountIntentHandler.pendingAccountId.collect { accountId ->
                         if (accountId.isNotEmpty()) {
-                            navController.navigate(
+                            //TODO: navigate to profile, with accountId and username
+                            /*navController.navigate(
                                 Destination.Profile(accountId)
-                            )
+                            )*/
                         }
                     }
                 }

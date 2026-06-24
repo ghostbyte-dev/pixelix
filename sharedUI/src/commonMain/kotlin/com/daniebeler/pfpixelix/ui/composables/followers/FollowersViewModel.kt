@@ -5,10 +5,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.daniebeler.pfpixelix.domain.repository.PixelfedApi
+import com.daniebeler.pfpixelix.domain.repository.pixelfed.PixelfedApi
+import com.daniebeler.pfpixelix.domain.service.general.AccountService
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
-import com.daniebeler.pfpixelix.domain.service.account.AccountService
-import com.daniebeler.pfpixelix.domain.service.session.AuthService
+import com.daniebeler.pfpixelix.domain.service.general.AuthService
 import com.daniebeler.pfpixelix.ui.composables.profile.AccountState
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -24,10 +24,11 @@ class FollowersViewModel @Inject constructor(
     var followingState by mutableStateOf(FollowingState())
 
     var accountId: String = ""
+    var username: String = ""
     var loggedInAccountId: String = ""
 
     fun getAccount(userId: String) {
-        accountService.getAccount(userId).onEach { result ->
+        accountService.getAccount(userId, username).onEach { result ->
             accountState = when (result) {
                 is Resource.Success -> {
                     AccountState(account = result.data)
@@ -44,8 +45,9 @@ class FollowersViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    fun setAccountIdValue(id: String) {
+    fun setAccountValues(id: String, username: String) {
         accountId = id
+        this.username = username
     }
 
     fun setLoggedInAccountIdValue() {
@@ -53,7 +55,7 @@ class FollowersViewModel @Inject constructor(
     }
 
     fun getFollowersFirstLoad(refreshing: Boolean = false) {
-        accountService.getAccountsFollowers(accountId).onEach { result ->
+        accountService.getAccountsFollowers(accountId, username).onEach { result ->
             followersState = when (result) {
                 is Resource.Success -> {
                     val endReached = (result.data.data.size) < PixelfedApi.FOLLOWERS_LIMIT
@@ -82,7 +84,7 @@ class FollowersViewModel @Inject constructor(
     fun getFollowersPaginated() {
         if (followersState.followers.isNotEmpty() && !followersState.isLoading && followersState.cursor.isNotEmpty()) {
             accountService.getAccountsFollowers(
-                accountId, followersState.cursor
+                accountId, username, followersState.cursor
             ).onEach { result ->
                 followersState = when (result) {
                     is Resource.Success -> {
@@ -112,7 +114,7 @@ class FollowersViewModel @Inject constructor(
     }
 
     fun getFollowingFirstLoad(refreshing: Boolean = false) {
-        accountService.getAccountsFollowing(accountId).onEach { result ->
+        accountService.getAccountsFollowing(accountId, username).onEach { result ->
             followingState = when (result) {
                 is Resource.Success -> {
                     val endReached = (result.data.data.size) < PixelfedApi.FOLLOWERS_LIMIT
@@ -141,7 +143,7 @@ class FollowersViewModel @Inject constructor(
     fun getFollowingPaginated() {
         if (followingState.following.isNotEmpty() && !followingState.isLoading && followingState.cursor.isNotEmpty()) {
             accountService.getAccountsFollowing(
-                accountId, followingState.cursor
+                accountId, username, followingState.cursor
             ).onEach { result ->
                 followingState = when (result) {
                     is Resource.Success -> {

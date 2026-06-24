@@ -1,16 +1,28 @@
 package com.daniebeler.pfpixelix.domain.model
 
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
-
-@Serializable
 data class MediaAttachment(
-    @SerialName("id") val id: String,
-    @SerialName("url") val url: String?,
-    @SerialName("preview_url") val previewUrl: String,
-    @SerialName("meta") val meta: Meta?,
-    @SerialName("blurhash") val blurHash: String?,
-    @SerialName("type") val type: String,
-    @SerialName("description") val description: String?,
-    @SerialName("license") val license: License?
+    val id: String,
+    val url: String?,
+    val previewUrl: String,
+    val aspectRatio: Double?,
+    val metadata: MediaMetadata?,
+    val blurHash: String?,
+    val type: String?,
+    val description: String?,
+    val license: License?,
+    val location: Location?
+)
+
+data class MediaMetadata(
+    val createDate: String?,
+    val exposureTime: String?,
+    val fNumber: String?,
+    val flash: String?,
+    val focalLenIn35mmFilm: String?,
+    val focalLength: String?,
+    val lens: String?,
+    val make: String?,
+    val model: String?,
+    val photographicSensitivity: String?,
+    val software: String?
 )

@@ -1,0 +1,28 @@
+package com.daniebeler.pfpixelix.domain.service.capabilities
+
+val PixelfedCapabilities = Capabilities(
+    general = GeneralCapabilities(supportsDMs = true, supportsPosting = true),
+    post = PostCapabilities(
+        showCameraMetadata = false,
+        showLikedBy = true
+    ),
+    profile = ProfileCapabilities(
+        showCollectionsOwnProfile = true,
+        showAdvancedMuteOptions = false,
+        blockReason = false
+    ),
+    notification = NotificationCapabilities(
+        supportsFollowRequestActions = true
+    ),
+    editProfile = EditProfileCapabilities(
+        privateAccountToggle = true,
+        manuallyAcceptNewFollowersToggle = false,
+        includePostsInSearchEngineToggle = false,
+        includeProfileInSearchEngineToggle = false,
+        websiteField = true
+    ),
+    trending = TrendingCapabilities(
+        supportsMultipleProfileTimeRanges = false,
+        supportsMultipleHashtagTimeRanges = false
+    )
+)

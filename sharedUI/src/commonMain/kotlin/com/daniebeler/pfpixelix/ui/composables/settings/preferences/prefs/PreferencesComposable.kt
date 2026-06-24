@@ -40,6 +40,7 @@ import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.HideAl
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.HideSensitiveContentPref
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.LogoutPref
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.MoreSettingsPref
+import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.PreferencesViewModel
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.RepostSettingsPref
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.SwipeBetweenTimelines
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.ThemePref

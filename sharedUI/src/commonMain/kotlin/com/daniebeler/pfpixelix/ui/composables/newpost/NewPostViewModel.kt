@@ -13,11 +13,12 @@ import co.touchlab.kermit.Logger
 import com.daniebeler.pfpixelix.domain.model.Instance
 import com.daniebeler.pfpixelix.domain.model.NewPost
 import com.daniebeler.pfpixelix.domain.model.Visibility
-import com.daniebeler.pfpixelix.domain.service.account.AccountService
-import com.daniebeler.pfpixelix.domain.service.editor.PostEditorService
+import com.daniebeler.pfpixelix.domain.service.general.PostEditorService
 import com.daniebeler.pfpixelix.domain.service.file.FileService
 import com.daniebeler.pfpixelix.domain.service.file.PlatformFile
-import com.daniebeler.pfpixelix.domain.service.instance.InstanceService
+import com.daniebeler.pfpixelix.domain.service.general.AccountService
+import com.daniebeler.pfpixelix.domain.service.general.InstanceService
+import com.daniebeler.pfpixelix.domain.service.general.Session
 import com.daniebeler.pfpixelix.domain.service.platform.Platform
 import com.daniebeler.pfpixelix.domain.service.suggestions.HashtagMentionsSuggestionsManager
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
@@ -51,7 +52,8 @@ class NewPostViewModel @Inject constructor(
     private val fileService: FileService,
     private val platform: Platform,
     val hashtagMentionsSuggestionsManager: HashtagMentionsSuggestionsManager,
-    private val accountService: AccountService
+    private val accountService: AccountService,
+    private val session: Session
 ) : ViewModel() {
     data class ImageItem(
         val imageUri: KmpUri,
@@ -60,6 +62,9 @@ class NewPostViewModel @Inject constructor(
         var text: String = "",
         var isLoading: Boolean
     )
+
+    val capabilities = session.capabilities.value
+
     var images = mutableStateListOf<ImageItem>()
     var caption by mutableStateOf(TextFieldValue())
     var locationId: String by mutableStateOf("")
@@ -174,19 +179,19 @@ class NewPostViewModel @Inject constructor(
                     AddMediaErrorType.TOO_BIG_MEDIA,
                     "Image is to big", "This image is to big, the max size for this server is ${
                         bytesIntoHumanReadable(
-                            instance!!.configuration.mediaAttachmentConfig.imageSizeLimit.toLong()
+                            instance!!.configuration.mediaAttachmentConfig.imageSizeLimit
                         )
                     }, your video has ${bytesIntoHumanReadable(size)}", uri
                 )
                 return
             }
         } else if (fileType.take(5) == "video") {
-            if (instance != null && size > instance!!.configuration.mediaAttachmentConfig.videoSizeLimit) {
+            if (instance != null && instance?.configuration?.mediaAttachmentConfig?.videoSizeLimit != null && size > instance!!.configuration.mediaAttachmentConfig.videoSizeLimit!!) {
                 addImageError = AddMediaError(
                     AddMediaErrorType.ERROR,
                     "Video is to big", "This Video is to big, the max size for this server is ${
                         bytesIntoHumanReadable(
-                            instance!!.configuration.mediaAttachmentConfig.videoSizeLimit.toLong()
+                            instance!!.configuration.mediaAttachmentConfig.videoSizeLimit!!
                         )
                     }, your video has ${bytesIntoHumanReadable(size)}"
                 )
@@ -223,7 +228,7 @@ class NewPostViewModel @Inject constructor(
             val imageBytes = file.readBytes()
             val compressedBytes = compressToLimit(
                 imageBytes,
-                instance!!.configuration.mediaAttachmentConfig.imageSizeLimit,
+                instance!!.configuration.mediaAttachmentConfig.imageSizeLimit.toInt(),
                 file.toImageBitmap()
             )
             val timestamp = Clock.System.now().toEpochMilliseconds()

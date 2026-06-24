@@ -5,14 +5,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import co.touchlab.kermit.Logger
 import com.daniebeler.pfpixelix.domain.model.Post
-import com.daniebeler.pfpixelix.domain.repository.PixelfedApi
-import com.daniebeler.pfpixelix.domain.service.collection.CollectionService
+import com.daniebeler.pfpixelix.domain.repository.pixelfed.PixelfedApi
+import com.daniebeler.pfpixelix.domain.service.general.CollectionService
+import com.daniebeler.pfpixelix.domain.service.general.AuthService
 import com.daniebeler.pfpixelix.domain.service.platform.Platform
-import com.daniebeler.pfpixelix.domain.service.post.PostService
+import com.daniebeler.pfpixelix.domain.service.general.PostService
 import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
-import com.daniebeler.pfpixelix.domain.service.session.AuthService
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.ui.composables.profile.ViewEnum
 import kotlinx.coroutines.flow.launchIn
@@ -165,12 +164,13 @@ class CollectionViewModel @Inject constructor(
         postService.getOwnPosts().onEach { result ->
             when (result) {
                 is Resource.Success -> {
-                    val endReached = (result.data.size) < PixelfedApi.PROFILE_POSTS_LIMIT
+                    val endReached = (result.data.data.size) < PixelfedApi.PROFILE_POSTS_LIMIT
 
                     editState = editState.copy(
-                        allPosts = result.data,
+                        allPosts = result.data.data,
                         isAllPostsEndReached = endReached,
-                        isAllPostsLoading = false
+                        isAllPostsLoading = false,
+                        nextId = result.data.next
                     )
                 }
 
@@ -187,16 +187,17 @@ class CollectionViewModel @Inject constructor(
 
     fun getPostsExceptCollectionPaginated() {
         if (!editState.isAllPostsLoading && editState.allPosts.isNotEmpty() && !editState.isAllPostsEndReached) {
-            postService.getOwnPosts(editState.allPosts.last().id).onEach { result ->
+            postService.getOwnPosts(editState.nextId).onEach { result ->
                 when (result) {
                     is Resource.Success -> {
-                        val endReached = (result.data.size) < PixelfedApi.PROFILE_POSTS_LIMIT
+                        val endReached = (result.data.data.size) < PixelfedApi.PROFILE_POSTS_LIMIT
 
                         editState = editState.copy(
-                            allPosts = editState.allPosts + result.data,
+                            allPosts = editState.allPosts + result.data.data,
                             isAllPostsEndReached = endReached,
                             isAllPostsLoading = false,
-                            errorAllPosts = ""
+                            errorAllPosts = "",
+                            nextId = result.data.next
                         )
                     }
 

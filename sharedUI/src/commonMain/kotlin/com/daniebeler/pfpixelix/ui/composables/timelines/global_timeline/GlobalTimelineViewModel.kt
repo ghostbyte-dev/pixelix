@@ -4,8 +4,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
+import com.daniebeler.pfpixelix.domain.service.general.TimelineService
 import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
-import com.daniebeler.pfpixelix.domain.service.timeline.TimelineService
 import com.daniebeler.pfpixelix.ui.composables.widgets.PaginatedPostsViewModel
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject

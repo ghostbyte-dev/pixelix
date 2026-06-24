@@ -8,15 +8,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.domain.model.Account
-import com.daniebeler.pfpixelix.domain.service.dm.DirectMessagesService
-import com.daniebeler.pfpixelix.domain.service.hashtag.SearchService
+import com.daniebeler.pfpixelix.domain.service.general.DirectMessagesService
+import com.daniebeler.pfpixelix.domain.service.general.ExploreService
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import me.tatarka.inject.annotations.Inject
 
 class ConversationsViewModel @Inject constructor(
     private val dmService: DirectMessagesService,
-    private val searchService: SearchService
+    private val exploreService: ExploreService
 ) : ViewModel() {
 
     var conversationsState by mutableStateOf(ConversationsState())
@@ -56,7 +56,7 @@ class ConversationsViewModel @Inject constructor(
     fun changeNewConversationUsername(newUsername: TextFieldValue) {
         newConversationSelectedAccount = null
         newConversationUsername = newUsername
-        searchService.search(newUsername.text, "accounts").onEach { result ->
+        exploreService.search(newUsername.text, "accounts").onEach { result ->
             newConversationState = when (result) {
                 is Resource.Success -> {
                     NewConversationState(suggestions = result.data.accounts)

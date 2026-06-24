@@ -30,7 +30,7 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import com.daniebeler.pfpixelix.di.injectViewModel
-import com.daniebeler.pfpixelix.domain.model.Place
+import com.daniebeler.pfpixelix.domain.model.Location
 import com.daniebeler.pfpixelix.ui.composables.newpost.NewPostPref
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
@@ -43,8 +43,8 @@ import pixelix.app.generated.resources.trash
 @Composable
 fun TextFieldLocationsComposable(
     submit: (id: String) -> Unit,
-    submitPlace: (place: Place?) -> Unit,
-    initialValue: Place?,
+    submitPlace: (place: Location?) -> Unit,
+    initialValue: Location?,
     labelStringId: StringResource,
     submitButton: (@Composable () -> Unit)?,
     modifier: Modifier?,

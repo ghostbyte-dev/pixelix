@@ -209,11 +209,6 @@ interface VernissageApi {
         @Path("username") username: String, @Body muteRequest: VernissageUserMuteRequest
     ): VernissageRelationshipDto
 
-    @POST("api/v1/users/{username}/unmute")
-    suspend fun unmuteUser(
-        @Path("username") username: String
-    ): VernissageRelationshipDto
-
     @Headers("Content-Type: application/json")
     @POST("api/v1/users/{username}/block")
     suspend fun blockUser(

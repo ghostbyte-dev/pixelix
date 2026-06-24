@@ -52,9 +52,8 @@ class MutedAccountsViewModel @Inject constructor(
     }
 
     fun muteAccount(userId: String, username: String, userMuteRequest: UserMuteRequest) {
-        val isMuting = userMuteRequest.mute || userMuteRequest.muteStatuses ||
-                userMuteRequest.muteReblogs || userMuteRequest.muteNotifications ||
-                userMuteRequest.removeStatusesFromTimeline || userMuteRequest.removeReblogsFromTimeline
+        val isMuting =
+            userMuteRequest.mute == true || userMuteRequest.muteStatuses == true || userMuteRequest.muteReblogs == true || userMuteRequest.muteNotifications == true || userMuteRequest.removeStatusesFromTimeline == true || userMuteRequest.removeReblogsFromTimeline == true
 
         accountService.muteAccount(userId, username, userMuteRequest).onEach { result ->
             mutedAccountsState = when (result) {
@@ -62,14 +61,18 @@ class MutedAccountsViewModel @Inject constructor(
                     if (isMuting) {
                         mutedAccountsState
                     } else {
-                        val newMutedAccounts = mutedAccountsState.mutedAccounts
-                            .filter { it.account.id != userId }
+                        val newMutedAccounts =
+                            mutedAccountsState.mutedAccounts.filter { it.account.id != userId }
                         MutedAccountsState(mutedAccounts = newMutedAccounts)
                     }
                 }
+
                 is Resource.Error -> {
-                    mutedAccountsState.copy(error = result.message ?: "An unexpected error occurred")
+                    mutedAccountsState.copy(
+                        error = result.message ?: "An unexpected error occurred"
+                    )
                 }
+
                 is Resource.Loading -> {
                     mutedAccountsState.copy(isLoading = true)
                 }

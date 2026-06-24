@@ -177,13 +177,15 @@ fun ProfileTopSection(
                             ProfileBadge(text = stringResource(Res.string.admin))
                         }
                         if (account.isSupporterFlagEnabled) {
-                            ProfileBadge(text = "Supporter", color = MaterialTheme.colorScheme.primary)
+                            ProfileBadge(
+                                text = "Supporter", color = MaterialTheme.colorScheme.primary
+                            )
                         }
                         if (relationship != null && relationship.followedBy) {
                             ProfileBadge(text = stringResource(Res.string.follows_you))
                         }
 
-                        if (relationship != null && relationship.muted) {
+                        if (relationship != null && (relationship.muted == true || relationship.mutedNotifications == true || relationship.mutedReblogs == true || relationship.mutedStatuses == true)) {
                             ProfileBadge(
                                 text = stringResource(Res.string.muted),
                                 color = MaterialTheme.colorScheme.error,

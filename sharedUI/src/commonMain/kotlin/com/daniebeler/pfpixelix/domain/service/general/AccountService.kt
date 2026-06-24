@@ -40,7 +40,6 @@ interface AccountService {
         accountId: String, username: String, userMuteRequest: UserMuteRequest
     ): Flow<Resource<Relationship>>
 
-    fun unMuteAccount(accountId: String, username: String): Flow<Resource<Relationship>>
     fun blockAccount(
         accountId: String, username: String, userBlockRequest: UserBlockRequest
     ): Flow<Resource<Relationship>>
@@ -108,9 +107,6 @@ class AccountServiceDelegate(
     override fun muteAccount(
         accountId: String, username: String, userMuteRequest: UserMuteRequest
     ): Flow<Resource<Relationship>> = current.muteAccount(accountId, username, userMuteRequest)
-
-    override fun unMuteAccount(accountId: String, username: String): Flow<Resource<Relationship>> =
-        current.unMuteAccount(accountId, username)
 
     override fun blockAccount(
         accountId: String, username: String, userBlockRequest: UserBlockRequest

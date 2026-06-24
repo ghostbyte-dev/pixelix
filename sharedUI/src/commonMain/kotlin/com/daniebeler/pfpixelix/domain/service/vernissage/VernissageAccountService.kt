@@ -128,10 +128,6 @@ class VernissageAccountService(
         api.muteUser(username, userMuteRequest.toVernissage()).toDomain()
     }
 
-    override fun unMuteAccount(accountId: String, username: String) = loadResource {
-        api.unmuteUser(username).toDomain()
-    }
-
     override fun blockAccount(
         accountId: String,
         username: String,

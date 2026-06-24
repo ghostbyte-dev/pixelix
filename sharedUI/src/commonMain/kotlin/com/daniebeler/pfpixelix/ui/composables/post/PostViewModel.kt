@@ -10,6 +10,7 @@ import co.touchlab.kermit.Logger
 import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.model.Instance
 import com.daniebeler.pfpixelix.domain.model.LikedBy
+import com.daniebeler.pfpixelix.domain.model.MutedAccount
 import com.daniebeler.pfpixelix.domain.model.NewReport
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.model.ReportObjectType
@@ -82,6 +83,20 @@ class PostViewModel @Inject constructor(
 
     var volume by mutableStateOf(prefs.enableVolume)
     var relationshipState by mutableStateOf(RelationshipState())
+
+    val mutedAccount: MutedAccount?
+        get() {
+            val account = post?.account ?: return null
+            val relationship = relationshipState.accountRelationship ?: return null
+            return MutedAccount(
+                id = account.id, account = account, muteOptions = UserMuteRequest(
+                    mute = relationship.muted,
+                    muteNotifications = relationship.mutedNotifications,
+                    muteReblogs = relationship.mutedReblogs,
+                    muteStatuses = relationship.mutedStatuses
+                )
+            )
+        }
 
     init {
         myAccountId = authService.getCurrentSession()!!.accountId
@@ -191,8 +206,7 @@ class PostViewModel @Inject constructor(
                     }
 
                     is Resource.Error -> {
-                        ownReplyState =
-                            OwnReplyState(error = result.message)
+                        ownReplyState = OwnReplyState(error = result.message)
                     }
 
                     is Resource.Loading -> {
@@ -220,6 +234,35 @@ class PostViewModel @Inject constructor(
                 }
             }
         }.launchIn(viewModelScope)
+    }
+
+    fun getRelationship() {
+        if (post?.account?.username != null) {
+            accountService.getRelationships(List(1) { post!!.account.id }).onEach { result ->
+                relationshipState = when (result) {
+                    is Resource.Success -> {
+                        RelationshipState(
+                            accountRelationship = if (result.data.isNotEmpty()) {
+                                result.data[0]
+                            } else {
+                                null
+                            }
+                        )
+                    }
+
+                    is Resource.Error -> {
+                        RelationshipState(error = result.message ?: "An unexpected error occurred")
+                    }
+
+                    is Resource.Loading -> {
+                        RelationshipState(
+                            isLoading = true,
+                            accountRelationship = relationshipState.accountRelationship
+                        )
+                    }
+                }
+            }.launchIn(viewModelScope)
+        }
     }
 
 
@@ -298,8 +341,7 @@ class PostViewModel @Inject constructor(
             if (it.username == myUsername) {
                 post = post!!.copy(
                     likedBy = post!!.likedBy!!.copy(
-                        username = null,
-                        totalCount = post!!.likedBy!!.totalCount - 1
+                        username = null, totalCount = post!!.likedBy!!.totalCount - 1
                     )
                 )
             } else {
@@ -337,22 +379,23 @@ class PostViewModel @Inject constructor(
     fun reblogPost(postId: String, updatePost: (Post) -> Unit) {
         if (post?.reblogged == false) {
             post = post?.copy(
-                reblogged = true,
-                reblogCount = post?.reblogCount?.plus(1) ?: 0
+                reblogged = true, reblogCount = post?.reblogCount?.plus(1) ?: 0
             )
             post?.let { updatePost(it) }
             CoroutineScope(Dispatchers.Default).launch {
                 postService.reblogPost(postId).onEach { result ->
                     when (result) {
                         is Resource.Success -> {
-                            post = post?.copy(reblogged = result.data.reblogged, reblogCount = result.data.reblogCount)
+                            post = post?.copy(
+                                reblogged = result.data.reblogged,
+                                reblogCount = result.data.reblogCount
+                            )
                             post?.let { updatePost(it) }
                         }
 
                         is Resource.Error -> {
                             post = post?.copy(
-                                reblogged = false,
-                                reblogCount = post?.reblogCount?.minus(1) ?: 0
+                                reblogged = false, reblogCount = post?.reblogCount?.minus(1) ?: 0
                             )
                             post?.let { updatePost(it) }
                         }
@@ -382,8 +425,7 @@ class PostViewModel @Inject constructor(
 
                         is Resource.Error -> {
                             post = post?.copy(
-                                reblogged = true,
-                                reblogCount = post?.reblogCount?.plus(1) ?: 0
+                                reblogged = true, reblogCount = post?.reblogCount?.plus(1) ?: 0
                             )
                             post?.let { updatePost(it) }
                         }
@@ -450,16 +492,12 @@ class PostViewModel @Inject constructor(
         reportState = ReportState(isLoading = true, reported = false)
         if (post == null) {
             reportState = ReportState(
-                isLoading = false,
-                reported = false,
-                error = "an unexpected error occurred"
+                isLoading = false, reported = false, error = "an unexpected error occurred"
             )
             return
         }
         val newReport = NewReport(
-            reportType = category,
-            objectType = ReportObjectType.POST,
-            objectId = post!!.id
+            reportType = category, objectType = ReportObjectType.POST, objectId = post!!.id
         )
         CoroutineScope(Dispatchers.Default).launch {
             postService.reportPost(newReport).onEach { result ->

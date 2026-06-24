@@ -176,7 +176,7 @@ fun ShareBottomSheet(
 
             val relationship = viewModel.relationshipState.accountRelationship
 
-            if (relationship == null || !relationship.muted) {
+            if (relationship == null || relationship.muted == true || relationship.mutedNotifications == true || relationship.mutedStatuses == true || relationship.mutedReblogs == true) {
                 ButtonRowElement(
                     icon = Res.drawable.muted, text = stringResource(
                         Res.string.mute_this_profile
@@ -209,6 +209,9 @@ fun ShareBottomSheet(
     }
 
     if (showMuteAlert) {
+        LaunchedEffect(Unit) {
+            viewModel.getRelationship()
+        }
         MuteAccountAlert(
             onDismissRequest = { showMuteAlert = false },
             onConfirmation = { userMuteRequest ->
@@ -220,7 +223,7 @@ fun ShareBottomSheet(
                 }
                 closeBottomSheet()
             },
-            mutedAccount = null,
+            mutedAccount = viewModel.mutedAccount,
             capabilities = viewModel.capabilities
         )
     }

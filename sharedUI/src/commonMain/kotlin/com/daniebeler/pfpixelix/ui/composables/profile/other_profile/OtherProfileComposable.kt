@@ -489,7 +489,7 @@ fun OtherProfileComposable(
                         modifier = Modifier.padding(bottom = 32.dp)
                     ) {
                         if (viewModel.relationshipState.accountRelationship != null) {
-                            if (viewModel.relationshipState.accountRelationship!!.muted) {
+                            if (viewModel.relationshipState.accountRelationship!!.muted == true || viewModel.relationshipState.accountRelationship!!.mutedNotifications == true || viewModel.relationshipState.accountRelationship!!.mutedStatuses == true || viewModel.relationshipState.accountRelationship!!.mutedReblogs == true) {
                                 ButtonRowElement(
                                     icon = Res.drawable.muted, text = stringResource(
                                         Res.string.unmute_this_profile
@@ -551,7 +551,7 @@ fun OtherProfileComposable(
                         showBottomSheet = false
                         viewModel.muteAccount(userMuteRequest)
                     },
-                    mutedAccount = null,
+                    mutedAccount = viewModel.mutedAccount,
                     capabilities = viewModel.capabilities
                 )
             }
@@ -592,113 +592,6 @@ fun OtherProfileComposable(
     }
 }
 
-@Composable
-fun MuteAccountAlertOld(
-    onDismissRequest: () -> Unit,
-    onConfirmation: (userMuteRequest: UserMuteRequest) -> Unit,
-    account: Account?,
-    capabilities: Capabilities
-) {
-    val showAdvanced = capabilities.profile.showAdvancedMuteOptions
-    var muteOptions by remember { mutableStateOf(UserMuteRequest()) }
-
-    AlertDialog(title = {
-        Text(text = stringResource(Res.string.mute_account))
-    }, text = {
-        Column {
-
-            account?.let {
-                AlertTopSection(account = account)
-                HorizontalDivider(Modifier.padding(vertical = 12.dp))
-            }
-
-            if (showAdvanced) {
-                Text(
-                    text = "Mute options",
-                    style = MaterialTheme.typography.titleSmall,
-                    modifier = Modifier.padding(bottom = 8.dp)
-                )
-
-                // Example Toggle Row component (Implementation depends on your project)
-                MuteOptionRow(
-                    label = "Mute Statuses",
-                    checked = muteOptions.muteStatuses,
-                    onCheckedChange = { muteOptions = muteOptions.copy(muteStatuses = it) })
-                MuteOptionRow(
-                    label = "Mute Reblogs",
-                    checked = muteOptions.muteReblogs,
-                    onCheckedChange = { muteOptions = muteOptions.copy(muteReblogs = it) })
-                MuteOptionRow(
-                    label = "Mute Notifications",
-                    checked = muteOptions.muteNotifications,
-                    onCheckedChange = { muteOptions = muteOptions.copy(muteNotifications = it) })
-                MuteOptionRow(
-                    label = "Remove Statuses From Timeline",
-                    checked = muteOptions.removeStatusesFromTimeline,
-                    onCheckedChange = {
-                        muteOptions = muteOptions.copy(removeStatusesFromTimeline = it)
-                    })
-                MuteOptionRow(
-                    label = "Remove Reblogs From Timeline",
-                    checked = muteOptions.removeReblogsFromTimeline,
-                    onCheckedChange = {
-                        muteOptions = muteOptions.copy(removeReblogsFromTimeline = it)
-                    })
-            } else {
-
-                Text(text = stringResource(Res.string.mute_consequence_1))
-                Text(text = stringResource(Res.string.mute_consequence_2))
-                Text(text = stringResource(Res.string.mute_consequence_3))
-                Text(text = stringResource(Res.string.mute_consequence_4))
-
-                HorizontalDivider(Modifier.padding(vertical = 12.dp))
-
-                Text(text = stringResource(Res.string.mute_consequence_5))
-            }
-        }
-    }, onDismissRequest = {
-        onDismissRequest()
-    }, confirmButton = {
-        TextButton(onClick = {
-            onConfirmation(muteOptions)
-        }) {
-            Text(stringResource(Res.string.mute))
-        }
-    }, dismissButton = {
-        TextButton(onClick = {
-            onDismissRequest()
-        }) {
-            Text(stringResource(Res.string.cancel))
-        }
-    })
-}
-
-@Composable
-fun UnMuteAccountAlert(
-    onDismissRequest: () -> Unit, onConfirmation: () -> Unit, account: Account
-) {
-    AlertDialog(title = {
-        Text(text = stringResource(Res.string.unmute_account))
-    }, text = {
-        AlertTopSection(account = account)
-
-
-    }, onDismissRequest = {
-        onDismissRequest()
-    }, confirmButton = {
-        TextButton(onClick = {
-            onConfirmation()
-        }) {
-            Text(stringResource(Res.string.unmute_caps))
-        }
-    }, dismissButton = {
-        TextButton(onClick = {
-            onDismissRequest()
-        }) {
-            Text(stringResource(Res.string.cancel))
-        }
-    })
-}
 
 @Composable
 fun BlockAccountAlert(

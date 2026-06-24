@@ -7,6 +7,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
+import com.daniebeler.pfpixelix.domain.model.MutedAccount
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.model.request.UserBlockRequest
 import com.daniebeler.pfpixelix.domain.model.request.UserMuteRequest
@@ -59,6 +60,22 @@ class OtherProfileViewModel(
 
     var domain by mutableStateOf("")
     var view by mutableStateOf(ViewEnum.Grid)
+
+    val mutedAccount: MutedAccount?
+        get() {
+            val account = accountState.account ?: return null
+            val relationship = relationshipState.accountRelationship ?: return null
+            return MutedAccount(
+                id = account.id,
+                account = account,
+                muteOptions = UserMuteRequest(
+                    mute = relationship.muted,
+                    muteNotifications = relationship.mutedNotifications,
+                    muteReblogs = relationship.mutedReblogs,
+                    muteStatuses = relationship.mutedStatuses
+                )
+            )
+        }
 
     fun loadData(
         userId: String?, username: String?, refreshing: Boolean, navController: NavController
@@ -369,23 +386,6 @@ class OtherProfileViewModel(
         }.launchIn(viewModelScope)
     }
 
-    fun unMuteAccount() {
-        accountService.unMuteAccount(userId, username).onEach { result ->
-            relationshipState = when (result) {
-                is Resource.Success -> {
-                    RelationshipState(accountRelationship = result.data)
-                }
-
-                is Resource.Error -> {
-                    RelationshipState(error = result.message ?: "An unexpected error occurred")
-                }
-
-                is Resource.Loading -> {
-                    RelationshipState(isLoading = true)
-                }
-            }
-        }.launchIn(viewModelScope)
-    }
 
     fun blockAccount(userBlockRequest: UserBlockRequest) {
         accountService.blockAccount(userId, username, userBlockRequest).onEach { result ->

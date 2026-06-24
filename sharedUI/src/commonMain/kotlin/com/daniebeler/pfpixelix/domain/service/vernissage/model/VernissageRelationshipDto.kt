@@ -22,7 +22,7 @@ data class VernissageRelationshipDto(
             id = this.userId,
             following = this.following,
             followedBy = this.followedBy,
-            muted = this.mutedNotifications || this.mutedReblogs || this.mutedStatuses,
+            muted = false,
             blocked = this.blocked,
             mutedNotifications = this.mutedNotifications,
             mutedReblogs = this.mutedReblogs,

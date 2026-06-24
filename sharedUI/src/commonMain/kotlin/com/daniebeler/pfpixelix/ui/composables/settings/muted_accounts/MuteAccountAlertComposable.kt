@@ -74,27 +74,27 @@ fun MuteAccountAlert(
                     )
                     MuteOptionRow(
                         label = "Mute Statuses",
-                        checked = muteOptions.muteStatuses,
+                        checked = muteOptions.muteStatuses ?: false,
                         onCheckedChange = { muteOptions = muteOptions.copy(muteStatuses = it) })
                     MuteOptionRow(
                         label = "Mute Reblogs",
-                        checked = muteOptions.muteReblogs,
+                        checked = muteOptions.muteReblogs ?: false,
                         onCheckedChange = { muteOptions = muteOptions.copy(muteReblogs = it) })
                     MuteOptionRow(
                         label = "Mute Notifications",
-                        checked = muteOptions.muteNotifications,
+                        checked = muteOptions.muteNotifications ?: false,
                         onCheckedChange = {
                             muteOptions = muteOptions.copy(muteNotifications = it)
                         })
                     MuteOptionRow(
                         label = "Remove Statuses From Timeline",
-                        checked = muteOptions.removeStatusesFromTimeline,
+                        checked = muteOptions.removeStatusesFromTimeline ?: false,
                         onCheckedChange = {
                             muteOptions = muteOptions.copy(removeStatusesFromTimeline = it)
                         })
                     MuteOptionRow(
                         label = "Remove Reblogs From Timeline",
-                        checked = muteOptions.removeReblogsFromTimeline,
+                        checked = muteOptions.removeReblogsFromTimeline ?: false,
                         onCheckedChange = {
                             muteOptions = muteOptions.copy(removeReblogsFromTimeline = it)
                         })

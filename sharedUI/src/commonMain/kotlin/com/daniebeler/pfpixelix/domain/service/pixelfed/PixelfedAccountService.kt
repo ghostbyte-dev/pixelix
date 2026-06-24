@@ -112,10 +112,11 @@ class PixelfedAccountService(
         loadResource { api.unfollowAccount(accountId).toDomain() }
 
     override fun muteAccount(accountId: String, username: String, userMuteRequest: UserMuteRequest) =
-        loadResource { api.muteAccount(accountId).toDomain() }
-
-    override fun unMuteAccount(accountId: String, username: String) =
-        loadResource { api.unmuteAccount(accountId).toDomain() }
+        if (userMuteRequest.mute == true) {
+            loadResource { api.muteAccount(accountId).toDomain() }
+        } else {
+            loadResource { api.unmuteAccount(accountId).toDomain() }
+        }
 
     override fun blockAccount(accountId: String, username: String, userBlockRequest: UserBlockRequest) =
         loadResource { api.blockAccount(accountId).toDomain() }

@@ -5,7 +5,7 @@ data class Relationship(
     val following: Boolean,
     val followedBy: Boolean,
     val blocked: Boolean,
-    val muted: Boolean,
+    val muted: Boolean? = null,
     val mutedNotifications: Boolean? = null,
     val mutedReblogs: Boolean? = null,
     val mutedStatuses: Boolean? = null,

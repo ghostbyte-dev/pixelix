@@ -150,7 +150,7 @@ class PixelfedAccountService(
         emit(Resource.Loading())
 
         try {
-            val response = api.getAccountsFollowers(accountId, cursor)
+            val response = api.getAccountsFollowing(accountId, cursor)
                 .executeAndParsePagination(
                     directionNext = false,
                     paginationName = "cursor",

@@ -254,7 +254,7 @@ fun CustomNotification(
                             )
                         })
             }
-        }, modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(16.dp)).clickable {
+        }, modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp).clip(RoundedCornerShape(16.dp)).clickable {
             if (notification.post != null && notification.post.mediaAttachments.isEmpty()) {
                 navController.navigate(Destination.Mention(notification.post.id))
             } else if (notification.post != null && notification.post.mediaAttachments.isNotEmpty()) {

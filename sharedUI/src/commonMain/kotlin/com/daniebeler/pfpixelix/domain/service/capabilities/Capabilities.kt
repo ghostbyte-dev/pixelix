@@ -11,6 +11,7 @@ data class Capabilities(
 
 data class GeneralCapabilities(
     val supportsDMs: Boolean,
+    val supportsPosting: Boolean
 )
 
 data class TrendingCapabilities(

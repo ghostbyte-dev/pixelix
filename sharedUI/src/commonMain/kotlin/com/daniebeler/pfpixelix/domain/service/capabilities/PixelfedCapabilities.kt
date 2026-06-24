@@ -1,7 +1,7 @@
 package com.daniebeler.pfpixelix.domain.service.capabilities
 
 val PixelfedCapabilities = Capabilities(
-    general = GeneralCapabilities(supportsDMs = true),
+    general = GeneralCapabilities(supportsDMs = true, supportsPosting = true),
     post = PostCapabilities(
         showCameraMetadata = false,
         showLikedBy = true

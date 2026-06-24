@@ -18,6 +18,7 @@ import com.daniebeler.pfpixelix.domain.service.file.FileService
 import com.daniebeler.pfpixelix.domain.service.file.PlatformFile
 import com.daniebeler.pfpixelix.domain.service.general.AccountService
 import com.daniebeler.pfpixelix.domain.service.general.InstanceService
+import com.daniebeler.pfpixelix.domain.service.general.Session
 import com.daniebeler.pfpixelix.domain.service.platform.Platform
 import com.daniebeler.pfpixelix.domain.service.suggestions.HashtagMentionsSuggestionsManager
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
@@ -51,7 +52,8 @@ class NewPostViewModel @Inject constructor(
     private val fileService: FileService,
     private val platform: Platform,
     val hashtagMentionsSuggestionsManager: HashtagMentionsSuggestionsManager,
-    private val accountService: AccountService
+    private val accountService: AccountService,
+    private val session: Session
 ) : ViewModel() {
     data class ImageItem(
         val imageUri: KmpUri,
@@ -60,6 +62,9 @@ class NewPostViewModel @Inject constructor(
         var text: String = "",
         var isLoading: Boolean
     )
+
+    val capabilities = session.capabilities.value
+
     var images = mutableStateListOf<ImageItem>()
     var caption by mutableStateOf(TextFieldValue())
     var locationId: String by mutableStateOf("")

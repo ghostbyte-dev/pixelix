@@ -139,10 +139,7 @@ fun ShareBottomSheet(
                 closeBottomSheet()
             })
 
-        if (
-            PlatformFeatures.downloadToGallery &&
-            mediaAttachment?.url != null
-        ) {
+        if (PlatformFeatures.downloadToGallery && mediaAttachment?.url != null) {
             val snackbarPresenter = LocalSnackbarPresenter.current
             ButtonRowElement(
                 icon = Res.drawable.download,
@@ -151,20 +148,21 @@ fun ShareBottomSheet(
                     viewModel.saveImage(mediaAttachment.url)
                     snackbarPresenter("Image saved to the gallery")
                     closeBottomSheet()
-                }
-            )
+                })
         }
 
         if (minePost) {
             HorizontalDivider(Modifier.padding(12.dp))
 
-            ButtonRowElement(
-                icon = Res.drawable.edit,
-                text = stringResource(Res.string.edit_post),
-                onClick = {
-                    navController.navigate(Destination.EditPost(post.id))
-                }
-            )
+            if (viewModel.capabilities.general.supportsPosting) {
+                ButtonRowElement(
+                    icon = Res.drawable.edit,
+                    text = stringResource(Res.string.edit_post),
+                    onClick = {
+                        navController.navigate(Destination.EditPost(post.id))
+                    })
+            }
+
             ButtonRowElement(
                 icon = Res.drawable.trash,
                 text = stringResource(Res.string.delete_this_post),
@@ -212,21 +210,33 @@ fun ShareBottomSheet(
 
     if (showMuteAlert) {
         MuteAccountAlert(
-            onDismissRequest = { showMuteAlert = false }, onConfirmation = { userMuteRequest ->
+            onDismissRequest = { showMuteAlert = false },
+            onConfirmation = { userMuteRequest ->
                 showMuteAlert = false
-                viewModel.post?.account?.let { viewModel.muteAccount(it.id, it.username, userMuteRequest) }
+                viewModel.post?.account?.let {
+                    viewModel.muteAccount(
+                        it.id, it.username, userMuteRequest
+                    )
+                }
                 closeBottomSheet()
-            }, account = viewModel.post?.account,
+            },
+            account = viewModel.post?.account,
             capabilities = viewModel.capabilities
         )
     }
     if (showBlockAlert) {
         BlockAccountAlert(
-            onDismissRequest = { showBlockAlert = false }, onConfirmation = { userBlockRequest ->
+            onDismissRequest = { showBlockAlert = false },
+            onConfirmation = { userBlockRequest ->
                 showBlockAlert = false
-                viewModel.post?.account?.let { viewModel.blockAccount(it.id, it.username, userBlockRequest) }
+                viewModel.post?.account?.let {
+                    viewModel.blockAccount(
+                        it.id, it.username, userBlockRequest
+                    )
+                }
                 closeBottomSheet()
-            }, account = viewModel.post?.account,
+            },
+            account = viewModel.post?.account,
             capabilities = viewModel.capabilities
         )
     }
@@ -236,8 +246,7 @@ fun ShareBottomSheet(
             dismissDialog = {
                 isReportDialogOpen = false
                 viewModel.reportState = null
-            },
-            reportState = viewModel.reportState
+            }, reportState = viewModel.reportState
         ) { category ->
             viewModel.reportPost(category)
             viewModel.reportState = null

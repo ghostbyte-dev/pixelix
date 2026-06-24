@@ -31,10 +31,6 @@
         <item quantity="one">Beitrag</item>
         <item quantity="other">Beiträge</item>
     </plurals>
-    <plurals name="posts">
-        <item quantity="one">Beitrag</item>
-        <item quantity="other">Beiträge</item>
-    </plurals>
     <string name="hashtags">Hashtags</string>
     <string name="reblogged_your_post">hat deinen Beitrag geteilt</string>
     <string name="liked_your_post">gefällt dein Beitrag</string>

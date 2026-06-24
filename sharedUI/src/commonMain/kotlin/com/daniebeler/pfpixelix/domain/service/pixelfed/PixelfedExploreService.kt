@@ -12,20 +12,25 @@ import me.tatarka.inject.annotations.Inject
 
 @Inject
 class PixelfedExploreService(
-    private val prefs: UserPreferences,
-    private val api: PixelfedApi
-): ExploreService {
-    override fun getTrendingAccounts(range: TrendingRange) = loadPaginatedListResources {
-        api.getTrendingAccounts().map { it.toDomain() }
-    }
-
-    override fun getTrendingPosts(range: TrendingRange, maxId: String?) = loadPaginatedListResources {
-        if (maxId == null) {
-            api.getTrendingPosts(range.toApiString()).map { it.toDomain() }
-        } else {
-            emptyList()
+    private val prefs: UserPreferences, private val api: PixelfedApi
+) : ExploreService {
+    override fun getTrendingAccounts(range: TrendingRange, maxId: String?) =
+        loadPaginatedListResources {
+            if (maxId == null) {
+                api.getTrendingAccounts().map { it.toDomain() }
+            } else {
+                emptyList()
+            }
         }
-    }.filterSensitive(prefs.hideSensitiveContent)
+
+    override fun getTrendingPosts(range: TrendingRange, maxId: String?) =
+        loadPaginatedListResources {
+            if (maxId == null) {
+                api.getTrendingPosts(range.toApiString()).map { it.toDomain() }
+            } else {
+                emptyList()
+            }
+        }.filterSensitive(prefs.hideSensitiveContent)
 
     override fun search(searchText: String, type: String?, limit: Int) = loadResource {
         api.getSearch(searchText, type, limit).toDomain()
@@ -35,9 +40,15 @@ class PixelfedExploreService(
         api.searchLocations(searchText).map { it.toDomain() }
     }
 
-    override fun getTrendingHashtags(range: TrendingRange) = loadPaginatedListResources {
-        api.getTrendingHashtags().map { it.toDomain() }
-    }
+    override fun getTrendingHashtags(range: TrendingRange, maxId: String?) =
+        loadPaginatedListResources {
+            if (maxId == null) {
+                api.getTrendingHashtags().map { it.toDomain() }
+            } else {
+                emptyList()
+            }
+
+        }
 
     override fun getFollowedHashtags() = loadListResources {
         api.getFollowedHashtags().map { it.toDomain() }

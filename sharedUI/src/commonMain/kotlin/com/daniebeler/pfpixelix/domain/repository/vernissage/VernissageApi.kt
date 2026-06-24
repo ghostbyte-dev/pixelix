@@ -1,18 +1,13 @@
 package com.daniebeler.pfpixelix.domain.repository.vernissage
 
-import com.daniebeler.pfpixelix.domain.model.Instance
-import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedAccountDto
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedNodeInfoDto
-import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedRelationshipDto
-import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedSearchDto
-import com.daniebeler.pfpixelix.domain.service.pixelfed.model.request.PixelfedUpdateUserRequest
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageAccountDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageBlockedAccountDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageInstanceDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageNotificationDto
-import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissagePostDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissagePaginatedResponse
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissagePostContextDto
+import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissagePostDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageRelationshipDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageSearchDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageTagDto
@@ -23,7 +18,6 @@ import com.daniebeler.pfpixelix.domain.service.vernissage.model.request.Vernissa
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.request.VernissageUserMuteRequest
 import de.jensklingenberg.ktorfit.http.Body
 import de.jensklingenberg.ktorfit.http.GET
-import de.jensklingenberg.ktorfit.http.Header
 import de.jensklingenberg.ktorfit.http.Headers
 import de.jensklingenberg.ktorfit.http.POST
 import de.jensklingenberg.ktorfit.http.PUT

@@ -21,8 +21,8 @@ import kotlin.collections.emptyList
 class VernissageExploreService(
     private val prefs: UserPreferences, private val api: VernissageApi
 ) : ExploreService {
-    override fun getTrendingAccounts(range: TrendingRange) = loadVernissagePaginatedListResources {
-        api.getTrendingUsers(range.toApiString())
+    override fun getTrendingAccounts(range: TrendingRange, maxId: String?) = loadVernissagePaginatedListResources {
+        api.getTrendingUsers(range.toApiString(), maxId = maxId)
     }
 
     override fun getTrendingPosts(range: TrendingRange, maxId: String?) =
@@ -55,8 +55,8 @@ class VernissageExploreService(
         emptyList<Location>()
     }
 
-    override fun getTrendingHashtags(range: TrendingRange) = loadVernissagePaginatedListResources {
-        api.getTrendingHashtags(range.toApiString())
+    override fun getTrendingHashtags(range: TrendingRange, maxId: String?) = loadVernissagePaginatedListResources {
+        api.getTrendingHashtags(range.toApiString(), maxId)
     }
 
     override fun getFollowedHashtags() = loadListResources {

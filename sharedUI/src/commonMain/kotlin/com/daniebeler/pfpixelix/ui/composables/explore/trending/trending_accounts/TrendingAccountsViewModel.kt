@@ -17,8 +17,7 @@ import kotlinx.coroutines.flow.onEach
 import me.tatarka.inject.annotations.Inject
 
 class TrendingAccountsViewModel @Inject constructor(
-    private val exploreService: ExploreService,
-    private val session: Session
+    private val exploreService: ExploreService, private val session: Session
 ) : ViewModel() {
     val capabilities: Capabilities = session.capabilities.value
     var trendingAccountsState by mutableStateOf(TrendingAccountsState())
@@ -30,29 +29,49 @@ class TrendingAccountsViewModel @Inject constructor(
     }
 
     fun getTrendingAccountsState(refreshing: Boolean = false) {
-        if (refreshing || trendingAccountsState.trendingAccounts.isEmpty()) {
-            exploreService.getTrendingAccounts(timeRange).onEach { result ->
-                trendingAccountsState = when (result) {
-                    is Resource.Success -> {
-                        TrendingAccountsState(trendingAccounts = result.data.data)
-                    }
+        if (!refreshing && trendingAccountsState.trendingAccounts.isNotEmpty()) return
+        fetchAccounts(nextId = null, isRefreshing = refreshing)
+    }
 
-                    is Resource.Error -> {
-                        TrendingAccountsState(
-                            error = result.message
-                        )
-                    }
-
-                    is Resource.Loading -> {
-                        TrendingAccountsState(
-                            isLoading = true,
-                            isRefreshing = refreshing,
-                            trendingAccounts = trendingAccountsState.trendingAccounts
-                        )
-                    }
-                }
-            }.launchIn(viewModelScope)
+    fun getTrendingAccountsPaginated() {
+        if (trendingAccountsState.isLoading || trendingAccountsState.endReached || trendingAccountsState.nextId == null || trendingAccountsState.trendingAccounts.isEmpty()) {
+            return
         }
+
+        fetchAccounts(nextId = trendingAccountsState.nextId, isRefreshing = false)
+    }
+
+    private fun fetchAccounts(nextId: String?, isRefreshing: Boolean) {
+        exploreService.getTrendingAccounts(timeRange, nextId).onEach { result ->
+            trendingAccountsState = when (result) {
+                is Resource.Success -> {
+                    val newAccounts = result.data.data
+                    val updatedAccounts =
+                        if (nextId == null) newAccounts else trendingAccountsState.trendingAccounts + newAccounts
+
+                    trendingAccountsState.copy(
+                        isLoading = false,
+                        isRefreshing = false,
+                        trendingAccounts = updatedAccounts,
+                        nextId = result.data.next,
+                        endReached = newAccounts.isEmpty() || result.data.next == null,
+                        error = ""
+                    )
+                }
+
+                is Resource.Error -> {
+                    trendingAccountsState.copy(
+                        isLoading = false, isRefreshing = false, error = result.message
+                    )
+                }
+
+                is Resource.Loading -> {
+                    trendingAccountsState.copy(
+                        isLoading = true, isRefreshing = isRefreshing
+                    )
+                }
+            }
+        }.launchIn(viewModelScope)
     }
 
     fun changeTimeRange(range: TrendingRange) {

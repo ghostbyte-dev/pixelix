@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ButtonGroup
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -24,6 +25,7 @@ import com.daniebeler.pfpixelix.ui.composables.states.EmptyStateComposable
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pfpixelix.ui.composables.widgets.CustomPullToRefreshBox
+import com.daniebeler.pfpixelix.ui.composables.widgets.InfiniteListHandler
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
@@ -38,14 +40,15 @@ fun TrendingHashtagsComposable(
 ) {
 
     val calendarIcon = vectorResource(Res.drawable.datetime)
+    val lazyListState = rememberLazyListState()
 
-    //TODO: pagination, for vernissage
     CustomPullToRefreshBox(
         isRefreshing = viewModel.trendingHashtagsState.isRefreshing,
         onRefresh = { viewModel.getTrendingHashtags(true) },
         animatedBox = true
     ) {
         LazyColumn(
+            state = lazyListState,
             modifier = Modifier.fillMaxSize().padding(horizontal = 4.dp),
             contentPadding = PaddingValues(top = 32.dp, bottom = 72.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp),
@@ -98,6 +101,12 @@ fun TrendingHashtagsComposable(
                 }) {
                     TrendingHashtagElement(hashtag = it, navController = navController)
                 }
+
+                if (viewModel.trendingHashtagsState.isLoading && viewModel.trendingHashtagsState.trendingHashtags.isNotEmpty()) {
+                    item {
+                        LoadingComposable()
+                    }
+                }
             })
 
         if (viewModel.trendingHashtagsState.trendingHashtags.isEmpty()) {
@@ -116,5 +125,11 @@ fun TrendingHashtagsComposable(
                 EmptyStateComposable(EmptyState(heading = stringResource(Res.string.no_trending_hashtags)))
             }
         }
+    }
+
+    InfiniteListHandler(
+        lazyListState = lazyListState
+    ) {
+        viewModel.getTrendingHashtagsPaginated()
     }
 }

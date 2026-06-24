@@ -33,48 +33,55 @@ class TrendingPostsViewModel @Inject constructor(
     }
 
     fun getTrendingPosts(refreshing: Boolean = false) {
-        if (!refreshing && trendingState.trendingPosts.isNotEmpty()) {
-            return
-        }
-        exploreService.getTrendingPosts(timeRange).onEach { result ->
-            trendingState = when (result) {
-                is Resource.Success -> {
-                    val endReached = result.data.data.isEmpty()
+        // If we are not refreshing and already have data, don't reload
+        if (!refreshing && trendingState.trendingPosts.isNotEmpty()) return
 
-                    TrendingPostsState(trendingPosts = result.data.data, nextId = result.data.next, endReached = endReached)
-                }
-
-                is Resource.Error -> {
-                    TrendingPostsState(error = result.message)
-                }
-
-                is Resource.Loading -> {
-                    trendingState.copy(isLoading = true, isRefreshing = refreshing)
-                }
-            }
-        }.launchIn(viewModelScope)
+        // Pass null as nextId to fetch the first page
+        fetchPosts(nextId = null, isRefreshing = refreshing)
     }
 
     fun getTrendingPostsPaginated() {
-        if (trendingState.trendingPosts.isNotEmpty() && !trendingState.isLoading && !trendingState.endReached) {
-            exploreService.getTrendingPosts(timeRange, trendingState.nextId).onEach { result ->
-                trendingState = when (result) {
-                    is Resource.Success -> {
-                        val endReached = result.data.data.isEmpty()
-
-                        TrendingPostsState(trendingPosts = trendingState.trendingPosts + result.data.data, nextId = result.data.next, endReached = endReached)
-                    }
-
-                    is Resource.Error -> {
-                        TrendingPostsState(error = result.message)
-                    }
-
-                    is Resource.Loading -> {
-                        trendingState.copy(isLoading = true)
-                    }
-                }
-            }.launchIn(viewModelScope)
+        // Guard clause to check if pagination is safe/needed
+        if (trendingState.isLoading || trendingState.endReached || trendingState.trendingPosts.isEmpty()) {
+            return
         }
+
+        fetchPosts(nextId = trendingState.nextId, isRefreshing = false)
+    }
+
+    private fun fetchPosts(nextId: String?, isRefreshing: Boolean) {
+        exploreService.getTrendingPosts(timeRange, nextId).onEach { result ->
+            trendingState = when (result) {
+                is Resource.Success -> {
+                    val newPosts = result.data.data
+                    val updatedPosts = if (nextId == null) newPosts else trendingState.trendingPosts + newPosts
+
+                    trendingState.copy(
+                        isLoading = false,
+                        isRefreshing = false,
+                        trendingPosts = updatedPosts,
+                        nextId = result.data.next,
+                        endReached = newPosts.isEmpty(),
+                        error = ""
+                    )
+                }
+
+                is Resource.Error -> {
+                    trendingState.copy(
+                        isLoading = false,
+                        isRefreshing = false,
+                        error = result.message
+                    )
+                }
+
+                is Resource.Loading -> {
+                    trendingState.copy(
+                        isLoading = true,
+                        isRefreshing = isRefreshing
+                    )
+                }
+            }
+        }.launchIn(viewModelScope)
     }
 
     fun changeTimeRange(range: TrendingRange) {

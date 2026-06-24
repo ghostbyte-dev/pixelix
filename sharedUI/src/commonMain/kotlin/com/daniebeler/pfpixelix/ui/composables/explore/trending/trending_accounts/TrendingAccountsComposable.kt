@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ButtonGroup
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -24,6 +25,7 @@ import com.daniebeler.pfpixelix.ui.composables.states.EmptyStateComposable
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pfpixelix.ui.composables.widgets.CustomPullToRefreshBox
+import com.daniebeler.pfpixelix.ui.composables.widgets.InfiniteListHandler
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
@@ -38,6 +40,7 @@ fun TrendingAccountsComposable(
 ) {
 
     val calendarIcon = vectorResource(Res.drawable.datetime)
+    val lazyListState = rememberLazyListState()
 
     CustomPullToRefreshBox(
         isRefreshing = viewModel.trendingAccountsState.isRefreshing,
@@ -45,6 +48,7 @@ fun TrendingAccountsComposable(
         animatedBox = true
     ) {
         LazyColumn(
+            state = lazyListState,
             modifier = Modifier.fillMaxSize().padding(horizontal = 4.dp),
             contentPadding = PaddingValues(top = 32.dp, bottom = 72.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp),
@@ -114,5 +118,9 @@ fun TrendingAccountsComposable(
         }
     }
 
-
+    InfiniteListHandler(
+        lazyListState = lazyListState
+    ) {
+        viewModel.getTrendingAccountsPaginated()
+    }
 }

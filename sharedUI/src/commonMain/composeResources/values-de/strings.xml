@@ -31,7 +31,10 @@
         <item quantity="one">Beitrag</item>
         <item quantity="other">Beiträge</item>
     </plurals>
-    <string name="posts">Beiträge</string>
+    <plurals name="posts">
+        <item quantity="one">Beitrag</item>
+        <item quantity="other">Beiträge</item>
+    </plurals>
     <string name="hashtags">Hashtags</string>
     <string name="reblogged_your_post">hat deinen Beitrag geteilt</string>
     <string name="liked_your_post">gefällt dein Beitrag</string>
@@ -58,7 +61,7 @@
     <string name="delete_post">Beitrag löschen?</string>
     <string name="this_action_cannot_be_undone">Diese Aktion kann nicht rückgängig gemacht werden</string>
     <string name="delete">Löschen</string>
-    <string name="this_is_the_end">Ende</string>
+    <string name="this_is_the_end">Das ist das Ende!</string>
     <string name="and">und</string>
     <string name="followed_by">Gefolgt von</string>
     <string name="other">anderem</string>
@@ -68,10 +71,10 @@
     <string name="daily">Täglich</string>
     <string name="i_don_t_have_an_account">Ich habe noch keinen Account</string>
     <string name="server_url">Server-URL</string>
-    <string name="are_you_sure_you_want_to_log_out">Bist du dir sicher?</string>
+    <string name="are_you_sure_you_want_to_log_out">Bist du dir sicher, dass du dich ausloggen willst?</string>
     <string name="logout_questionmark">Ausloggen?</string>
     <string name="view_comments">Alle %1$s Kommentare ansehen</string>
-    <string name="comment">Kommentieren…</string>
+    <string name="comment">Kommentar schreiben</string>
     <string name="no_comments_yet">Noch keine Kommentare</string>
     <string name="no_likes_yet">Noch keine Likes</string>
     <string name="no_liked_posts">Noch keine gelikten Beiträge</string>
@@ -116,9 +119,9 @@
     <string name="empty">Leer</string>
     <string name="follow_accounts_or_hashtags_to_fill_your_home_timeline">Folge Benutzern oder Hashtags, um deine Home-Timeline zu füllen</string>
     <string name="no_posts">Keine Beiträge</string>
-    <string name="home_timeline_explained">Die Home-Timeline beinhaltet alle Beiträge von Benutzern und Hashtags, denen du folgst</string>
-    <string name="local_timeline_explained">Die lokale Timeline beinhaltet alle Beiträge von Benutzern von deinem Server</string>
-    <string name="global_timeline_explained">Die globale Timeline beinhaltet Beiträge von allen Servern, mit denen dein Server föderiert</string>
+    <string name="home_timeline_explained">Die Home-Timeline beinhaltet alle Beiträge von Benutzern und Hashtags, denen du folgst.</string>
+    <string name="local_timeline_explained">Die lokale Timeline beinhaltet alle Beiträge von Benutzern von deinem Server.</string>
+    <string name="global_timeline_explained">Die globale Timeline beinhaltet Beiträge von allen Servern, mit denen dein Server föderiert.</string>
     <string name="this_user_has_not_postet_anything_yet">Dieser Benutzer hat noch keine Beiträge</string>
     <string name="you_don_t_have_any_notifications">Du hast keine Benachrichtigungen</string>
     <string name="view_more">mehr anzeigen</string>
@@ -205,7 +208,7 @@
     <string name="profile">Profil</string>
     <string name="alerts">Postfach</string>
     <string name="are_you_sure_you_want_to_remove_this_account">Bist du dir sicher, dass du diesen Account entfernen willst?</string>
-    <string name="remove_account">Account entfernen</string>
+    <string name="remove_account">Account entfernen?</string>
     <string name="remove">Entfernen</string>
     <string name="sure_update_post">Bist du dir sicher, dass du den Post updaten willst?</string>
     <string name="mutual_followers">Gemeinsame Follower</string>
@@ -286,4 +289,9 @@
     <string name="cancel_post_warning">Willst du diesen Post verwerfen?</string>
     <string name="cancel_profile_edit">Willst du die Änderungen verwerfen?</string>
     <string name="cancel_post_edit">Willst du die Änderungen verwerfen?</string>
+    <string name="closed">geschlossen</string>
+    <string name="jump_to_top">Nach oben</string>
+    <string name="license_label">Lizenz</string>
+    <string name="registration">Registrierung</string>
+    <string name="open">offen</string>
 </resources>

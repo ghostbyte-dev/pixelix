@@ -121,9 +121,9 @@
     <string name="empty">Opróżnij</string>
     <string name="follow_accounts_or_hashtags_to_fill_your_home_timeline">Obserwuj profile lub hasztagi, aby wypełnić swoją oś czasu</string>
     <string name="no_posts">Brak wpisów</string>
-    <string name="home_timeline_explained">Twoja oś czasu pokazuje wpisy od osób i z hasztagami, które obserwujesz</string>
-    <string name="local_timeline_explained">Lokalna oś czasu pokazuje wpisy od wszystkich użytkowników na twoim serwerze</string>
-    <string name="global_timeline_explained">Globalna oś czasu pokazuje wpisy od wszystkich użytkowników na wszystkich serwerach, z którymi federuje się twój serwer</string>
+    <string name="home_timeline_explained">Twoja oś czasu pokazuje wpisy od osób i z hasztagami, które obserwujesz.</string>
+    <string name="local_timeline_explained">Lokalna oś czasu pokazuje wpisy od wszystkich użytkowników na twoim serwerze.</string>
+    <string name="global_timeline_explained">Globalna oś czasu pokazuje wpisy od wszystkich użytkowników na wszystkich serwerach, z którymi federuje się twój serwer.</string>
     <string name="this_user_has_not_postet_anything_yet">Ten profil nic jeszcze nic nie opublikował</string>
     <string name="you_don_t_have_any_notifications">Nie masz żadnych powiadomień</string>
     <string name="view_more">zobacz więcej</string>

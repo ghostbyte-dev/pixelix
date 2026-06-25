@@ -10,8 +10,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.daniebeler.pfpixelix.domain.service.general.BackendType
 import com.daniebeler.pfpixelix.ui.composables.widgets.ButtonRowElement
-import com.daniebeler.pfpixelix.ui.composables.widgets.ButtonRowElementWithRoundedImage
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.imageResource
@@ -31,26 +31,24 @@ import pixelix.app.generated.resources.blocked
 import pixelix.app.generated.resources.muted
 import pixelix.app.generated.resources.pixelfed_logo
 import pixelix.app.generated.resources.settings
+import pixelix.app.generated.resources.vernissage_logo
 
 @Composable
 fun ModalBottomSheetContent(
     navController: NavController,
     instanceDomain: String,
     appIcon: DrawableResource,
+    backendType: BackendType,
     closeBottomSheet: () -> Unit,
     openPreferencesDrawer: () -> Unit
 ) {
     Column(
-        Modifier
-            .fillMaxWidth()
-            .verticalScroll(state = rememberScrollState())
+        Modifier.fillMaxWidth().verticalScroll(state = rememberScrollState())
             .padding(bottom = 12.dp)
     ) {
 
         ButtonRowElement(
-            icon = Res.drawable.settings,
-            text = stringResource(Res.string.settings),
-            onClick = {
+            icon = Res.drawable.settings, text = stringResource(Res.string.settings), onClick = {
                 closeBottomSheet()
                 openPreferencesDrawer()
             })
@@ -58,9 +56,7 @@ fun ModalBottomSheetContent(
         HorizontalDivider(Modifier.padding(12.dp))
 
         ButtonRowElement(
-            icon = Res.drawable.heart,
-            text = stringResource(Res.string.liked_posts),
-            onClick = {
+            icon = Res.drawable.heart, text = stringResource(Res.string.liked_posts), onClick = {
                 closeBottomSheet()
                 navController.navigate(Destination.LikedPosts)
             })
@@ -82,9 +78,7 @@ fun ModalBottomSheetContent(
             })
 
         ButtonRowElement(
-            icon = Res.drawable.muted,
-            text = stringResource(Res.string.muted_accounts),
-            onClick = {
+            icon = Res.drawable.muted, text = stringResource(Res.string.muted_accounts), onClick = {
                 closeBottomSheet()
                 navController.navigate(Destination.MutedAccounts)
             })
@@ -99,8 +93,11 @@ fun ModalBottomSheetContent(
 
         HorizontalDivider(Modifier.padding(12.dp))
 
-        ButtonRowElementWithRoundedImage(
-            icon = Res.drawable.pixelfed_logo,
+        ButtonRowElement(
+            image = if (backendType == BackendType.PIXELFED) imageResource(Res.drawable.pixelfed_logo) else imageResource(
+                Res.drawable.vernissage_logo
+            ),
+            roundedImage = false,
             text = stringResource(Res.string.about_x, instanceDomain),
             onClick = {
                 closeBottomSheet()

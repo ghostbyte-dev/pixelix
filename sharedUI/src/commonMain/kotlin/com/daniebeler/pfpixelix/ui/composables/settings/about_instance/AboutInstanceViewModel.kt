@@ -6,7 +6,9 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.domain.service.general.AuthService
+import com.daniebeler.pfpixelix.domain.service.general.BackendType
 import com.daniebeler.pfpixelix.domain.service.general.InstanceService
+import com.daniebeler.pfpixelix.domain.service.general.Session
 import com.daniebeler.pfpixelix.domain.service.platform.Platform
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import kotlinx.coroutines.flow.launchIn
@@ -15,10 +17,11 @@ import me.tatarka.inject.annotations.Inject
 
 class AboutInstanceViewModel @Inject constructor(
     private val instanceService: InstanceService,
-    private val authService: AuthService,
-    private val platform: Platform
+    authService: AuthService,
+    private val platform: Platform,
+    session: Session
 ) : ViewModel() {
-
+    val backendType: BackendType = session.backendType.value
     var instanceState by mutableStateOf(InstanceState())
 
     var ownInstanceDomain by mutableStateOf("")

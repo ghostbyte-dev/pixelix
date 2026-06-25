@@ -14,9 +14,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,10 +33,12 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.di.injectViewModel
+import com.daniebeler.pfpixelix.domain.service.general.BackendType
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pfpixelix.ui.composables.widgets.ScreenScaffold
 import com.daniebeler.pfpixelix.ui.navigation.Destination
+import com.daniebeler.pfpixelix.utils.DomainFormat
 import com.daniebeler.pfpixelix.utils.StringFormat
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -56,7 +62,10 @@ fun AboutInstanceComposable(
 
     val lazyListState = rememberLazyListState()
 
-    ScreenScaffold(title = viewModel.ownInstanceDomain, navController = navController) {
+    ScreenScaffold(
+        title = DomainFormat.formatDomain(viewModel.ownInstanceDomain),
+        navController = navController
+    ) {
         LazyColumn(
             state = lazyListState
         ) {
@@ -78,8 +87,7 @@ fun AboutInstanceComposable(
                                 it.shortDescription
                             } else {
                                 it.description
-                            },
-                            Modifier.padding(12.dp, 0.dp)
+                            }, Modifier.padding(12.dp, 0.dp)
                         )
                     }
 
@@ -127,7 +135,11 @@ fun AboutInstanceComposable(
 
                         Row(
                             modifier = Modifier.clickable {
-                                navController.navigate(Destination.Profile(account.id, account.username))
+                                navController.navigate(
+                                    Destination.Profile(
+                                        account.id, account.username
+                                    )
+                                )
                             }.padding(horizontal = 12.dp, vertical = 8.dp).fillMaxWidth(),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
@@ -156,19 +168,26 @@ fun AboutInstanceComposable(
                         modifier = Modifier.padding(12.dp, 0.dp)
                     )
 
+                    val privacyPath =
+                        if (viewModel.backendType == BackendType.PIXELFED) "/site/privacy" else "/privacy"
+
                     Text(
-                        text = "https://" + viewModel.instanceState.instance?.domain + "/site/privacy",
+                        text = DomainFormat.formatDomain(
+                            viewModel.instanceState.instance?.domain ?: ""
+                        ) + privacyPath,
                         color = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.padding(12.dp, 0.dp).clickable {
                             if (viewModel.instanceState.instance != null) {
                                 viewModel.openUrl(
-                                    url = "https://" + viewModel.instanceState.instance!!.domain + "/site/privacy"
+                                    url = "https://" + DomainFormat.formatDomain(viewModel.instanceState.instance!!.domain) + privacyPath
                                 )
                             }
                         })
 
-
                     Spacer(modifier = Modifier.height(18.dp))
+
+                    val termsPath =
+                        if (viewModel.backendType == BackendType.PIXELFED) "/site/terms" else "/terms"
 
 
                     Text(
@@ -179,12 +198,14 @@ fun AboutInstanceComposable(
                     )
 
                     Text(
-                        text = "https://" + viewModel.instanceState.instance?.domain + "/site/terms",
+                        text = DomainFormat.formatDomain(
+                            viewModel.instanceState.instance?.domain ?: ""
+                        ) + termsPath,
                         color = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.padding(12.dp, 0.dp).clickable {
                             if (viewModel.instanceState.instance != null) {
                                 viewModel.openUrl(
-                                    url = "https://" + viewModel.instanceState.instance!!.domain + "/site/terms"
+                                    url = "https://" + DomainFormat.formatDomain(viewModel.instanceState.instance!!.domain) + termsPath
                                 )
                             }
                         })
@@ -196,21 +217,44 @@ fun AboutInstanceComposable(
                         text = stringResource(Res.string.rules),
                         fontWeight = FontWeight.Bold,
                         fontSize = 18.sp,
-                        modifier = Modifier.padding(12.dp, 0.dp)
+                        modifier = Modifier.padding(start = 12.dp, bottom = 8.dp)
                     )
                 }
 
-                items(viewModel.instanceState.instance?.rules ?: emptyList()) {
-                    Row(modifier = Modifier.padding(vertical = 12.dp, horizontal = 12.dp)) {
-                        Text(
-                            text = it.id,
-                            fontSize = 24.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                        Spacer(modifier = Modifier.width(18.dp))
-                        Text(text = it.text)
+                val rules = viewModel.instanceState.instance?.rules ?: emptyList()
+
+                itemsIndexed(rules) { index, rule ->
+
+                    val shape = when {
+                        rules.size == 1 -> RoundedCornerShape(20.dp)
+                        index == 0 -> RoundedCornerShape(
+                            topStart = 20.dp, topEnd = 20.dp, bottomStart = 4.dp, bottomEnd = 4.dp
+                        ) // Top item
+                        index == rules.lastIndex -> RoundedCornerShape(
+                            topStart = 4.dp, topEnd = 4.dp, bottomStart = 20.dp, bottomEnd = 20.dp
+                        ) // Bottom item
+                        else -> RoundedCornerShape(4.dp) // Middle items
                     }
+
+                    ListItem(
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 1.dp)
+                            .clip(shape), colors = ListItemDefaults.colors(
+                            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
+                        ), leadingContent = {
+                            Text(
+                                text = rule.id,
+                                style = MaterialTheme.typography.headlineSmall,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.padding(vertical = 8.dp)
+                            )
+                        }, headlineContent = {
+                            Text(
+                                text = rule.text,
+                                style = MaterialTheme.typography.bodyMedium,
+                                modifier = Modifier.padding(vertical = 8.dp)
+                            )
+                        })
                 }
 
                 item {
@@ -239,7 +283,10 @@ fun AboutInstanceComposable(
         }
 
         if (viewModel.instanceState.error.isNotBlank()) {
-            ErrorComposable(message = viewModel.instanceState.error, modifier = Modifier.fillMaxSize().padding(36.dp, 20.dp))
+            ErrorComposable(
+                message = viewModel.instanceState.error,
+                modifier = Modifier.fillMaxSize().padding(36.dp, 20.dp)
+            )
         }
     }
 }

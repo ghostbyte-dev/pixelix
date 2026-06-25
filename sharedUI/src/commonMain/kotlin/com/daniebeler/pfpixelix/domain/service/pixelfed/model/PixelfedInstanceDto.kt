@@ -12,11 +12,11 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class PixelfedInstanceDto(
-    @SerialName("domain") val domain: String,
+    @SerialName("uri") val domain: String,
     @SerialName("rules") val rules: List<PixelfedRuleDto>,
-    @SerialName("shortDescription") val shortDescription: String,
+    @SerialName("short_description") val shortDescription: String,
     @SerialName("description") val description: String,
-    @SerialName("thumbnailUrl") val thumbnailUrl: String,
+    @SerialName("thumbnail") val thumbnailUrl: String,
     @SerialName("admin") val admin: PixelfedAccountDto? = null,
     @SerialName("stats") val stats: PixelfedInstanceStatsDto,
     @SerialName("version") val version: String,
@@ -51,9 +51,9 @@ data class PixelfedRuleDto(
 
 @Serializable
 data class PixelfedInstanceStatsDto(
-    @SerialName("userCount") val userCount: Int,
-    @SerialName("statusCount") val statusCount: Int,
-    @SerialName("domainCount") val domainCount: Int
+    @SerialName("user_count") val userCount: Int,
+    @SerialName("status_count") val statusCount: Int,
+    @SerialName("domain_count") val domainCount: Int
 ): DtoMappable<InstanceStats> {
     override fun toDomain() = InstanceStats(
         userCount = this.userCount,
@@ -64,8 +64,8 @@ data class PixelfedInstanceStatsDto(
 
 @Serializable
 data class PixelfedConfigurationDto(
-    @SerialName("mediaAttachmentConfig") val mediaAttachmentConfig: PixelfedMediaAttachmentConfigurationDto,
-    @SerialName("statusConfig") val statusConfig: PixelfedStatusConfigurationDto
+    @SerialName("media_attachments") val mediaAttachmentConfig: PixelfedMediaAttachmentConfigurationDto,
+    @SerialName("statuses") val statusConfig: PixelfedStatusConfigurationDto
 ): DtoMappable<Configuration> {
     override fun toDomain() = Configuration(
         mediaAttachmentConfig = this.mediaAttachmentConfig.toDomain(),
@@ -75,9 +75,9 @@ data class PixelfedConfigurationDto(
 
 @Serializable
 data class PixelfedMediaAttachmentConfigurationDto(
-    @SerialName("supportedMimeTypes") val supportedMimeTypes: List<String>,
-    @SerialName("imageSizeLimit") val imageSizeLimit: Long,
-    @SerialName("videoSizeLimit") val videoSizeLimit: Long
+    @SerialName("supported_mime_types") val supportedMimeTypes: List<String>,
+    @SerialName("image_size_limit") val imageSizeLimit: Long,
+    @SerialName("video_size_limit") val videoSizeLimit: Long
 ): DtoMappable<MediaAttachmentConfiguration> {
     override  fun toDomain() = MediaAttachmentConfiguration(
         supportedMimeTypes = this.supportedMimeTypes,
@@ -88,8 +88,8 @@ data class PixelfedMediaAttachmentConfigurationDto(
 
 @Serializable
 data class PixelfedStatusConfigurationDto(
-    @SerialName("maxMediaAttachments") val maxMediaAttachments: Int,
-    @SerialName("maxCharacters") val maxCharacters: Int?
+    @SerialName("max_media_attachments") val maxMediaAttachments: Int,
+    @SerialName("max_characters") val maxCharacters: Int?
 ): DtoMappable<StatusConfiguration> {
     override fun toDomain() = StatusConfiguration(
         maxMediaAttachments = this.maxMediaAttachments,

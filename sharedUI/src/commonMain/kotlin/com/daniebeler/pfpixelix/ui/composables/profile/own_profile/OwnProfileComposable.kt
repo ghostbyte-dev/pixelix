@@ -91,8 +91,7 @@ fun OwnProfileComposable(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             TopAppBar(
-                scrollBehavior = scrollBehavior,
-                title = {
+                scrollBehavior = scrollBehavior, title = {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -138,8 +137,7 @@ fun OwnProfileComposable(
             CustomPullToRefreshBox(
                 isRefreshing = viewModel.accountState.refreshing || viewModel.postsState.refreshing,
                 onRefresh = { viewModel.loadData(true) },
-                modifier = Modifier.fillMaxSize()
-                    .background(MaterialTheme.colorScheme.background)
+                modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)
             ) {
                 BoxWithConstraints {
                     val gridContentWidth = maxWidth - 8.dp
@@ -172,8 +170,7 @@ fun OwnProfileComposable(
                                         constraints.maxWidth + (horizontalPadding * 2)
                                     val placeable = measurable.measure(
                                         constraints.copy(
-                                            maxWidth = expandedWidth,
-                                            minWidth = expandedWidth
+                                            maxWidth = expandedWidth, minWidth = expandedWidth
                                         )
                                     )
                                     layout(constraints.maxWidth, placeable.height) {
@@ -284,11 +281,9 @@ fun OwnProfileComposable(
 
     if (viewModel.accountState.error.isNotEmpty()) {
         ErrorComposableDialog(
-            viewModel.accountState.error,
-            onDismiss = {
+            viewModel.accountState.error, onDismiss = {
                 viewModel.dismissError()
-            }
-        )
+            })
     }
 
     if (showBottomSheet > 0) {
@@ -301,8 +296,9 @@ fun OwnProfileComposable(
                 val icon = viewModel.appIcon.collectAsState()
                 ModalBottomSheetContent(
                     navController = navController,
-                    instanceDomain = viewModel.ownDomain,
+                    instanceDomain = DomainFormat.formatDomain(viewModel.ownDomain),
                     appIcon = icon.value,
+                    backendType = viewModel.backendType,
                     closeBottomSheet = {
                         showBottomSheet = 0
                     },
@@ -317,5 +313,4 @@ fun OwnProfileComposable(
             }
         }
     }
-
 }

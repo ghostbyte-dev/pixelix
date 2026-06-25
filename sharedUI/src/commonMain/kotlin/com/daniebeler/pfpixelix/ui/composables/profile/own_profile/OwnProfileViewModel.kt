@@ -13,6 +13,7 @@ import com.daniebeler.pfpixelix.domain.service.general.CollectionService
 import com.daniebeler.pfpixelix.domain.service.general.AccountService
 import com.daniebeler.pfpixelix.domain.service.general.AuthService
 import com.daniebeler.pfpixelix.domain.service.general.AppIconService
+import com.daniebeler.pfpixelix.domain.service.general.BackendType
 import com.daniebeler.pfpixelix.domain.service.platform.Platform
 import com.daniebeler.pfpixelix.domain.service.general.PostService
 import com.daniebeler.pfpixelix.domain.service.general.Session
@@ -34,10 +35,11 @@ class OwnProfileViewModel @Inject constructor(
     private val collectionService: CollectionService,
     private val authService: AuthService,
     private val platform: Platform,
-    private val appIconService: AppIconService,
-    private val session: Session
+    appIconService: AppIconService,
+    session: Session
 ) : ViewModel() {
     val capabilities: Capabilities = session.capabilities.value
+    val backendType: BackendType = session.backendType.value
     var accountState by mutableStateOf(AccountState())
     var postsState by mutableStateOf(PostsState())
     var ownDomain by mutableStateOf("")

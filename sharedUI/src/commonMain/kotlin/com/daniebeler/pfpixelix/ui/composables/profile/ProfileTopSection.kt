@@ -3,6 +3,7 @@ package com.daniebeler.pfpixelix.ui.composables.profile
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,8 +17,11 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SegmentedListItem
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -66,6 +70,7 @@ import pixelix.app.generated.resources.muted
 import pixelix.app.generated.resources.ok
 import pixelix.app.generated.resources.posts
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ProfileTopSection(
     account: Account?,
@@ -244,37 +249,44 @@ fun ProfileTopSection(
 
                 if (account.fields.isNotEmpty()) {
                     Spacer(modifier = Modifier.height(12.dp))
-                    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                        account.fields.forEach { field ->
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Text(
-                                    text = field.key,
-                                    fontSize = 13.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    modifier = Modifier.width(100.dp)
-                                )
-                                if (field.isVerified) {
-                                    Icon(
-                                        imageVector = vectorResource(Res.drawable.confirm),
-                                        contentDescription = null,
-                                        tint = Color(0xFF4CAF50),
-                                        modifier = Modifier.size(14.dp)
+                    val colors =
+                        ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh)
+
+                    Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                        account.fields.forEachIndexed { index, field ->
+                            val url = DomainFormat.extractUrl(field.value) ?: field.value
+                            SegmentedListItem(
+                                onClick = { openUrl("https://$url") },
+                                colors = colors,
+                                shapes = ListItemDefaults.segmentedShapes(
+                                    index = index, count = account.fields.size
+                                ),
+                                leadingContent = {
+                                    Text(
+                                        text = field.key,
+                                        fontSize = 13.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        modifier = Modifier.width(100.dp)
                                     )
-                                    Spacer(Modifier.width(4.dp))
-                                }
-                                Text(
-                                    text = DomainFormat.extractUrl(field.value) ?: field.value,
-                                    fontSize = 13.sp,
-                                    color = MaterialTheme.colorScheme.primary,
-                                    modifier = Modifier.clickable {
-                                        openUrl(
-                                            "https://" + (DomainFormat.extractUrl(
-                                                field.value
-                                            ) ?: field.value)
+                                },
+                                trailingContent = {
+                                    if (field.isVerified) {
+                                        Icon(
+                                            imageVector = vectorResource(Res.drawable.confirm),
+                                            contentDescription = null,
+                                            tint = Color(0xFF4CAF50),
+                                            modifier = Modifier.size(14.dp)
                                         )
-                                    })
-                            }
+                                    }
+                                },
+                                content = {
+                                    Text(
+                                        text = url,
+                                        fontSize = 13.sp,
+                                        color = MaterialTheme.colorScheme.primary
+                                    )
+                                })
                         }
                     }
                 }

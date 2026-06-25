@@ -130,7 +130,7 @@ fun AccountSwitchBottomSheet(
             }
             Spacer(modifier = Modifier.width(10.dp))
             Text(
-                text = stringResource(Res.string.add_pixelfed_account),
+                text = "Add account",
                 lineHeight = 8.sp,
                 fontWeight = FontWeight.Bold
             )

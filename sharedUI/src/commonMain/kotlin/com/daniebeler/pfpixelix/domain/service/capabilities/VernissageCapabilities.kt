@@ -3,12 +3,12 @@ package com.daniebeler.pfpixelix.domain.service.capabilities
 val VernissageCapabilities = Capabilities(
     general = GeneralCapabilities(supportsDMs = false, supportsPosting = false),
     post = PostCapabilities(
-        showCameraMetadata = true,
-        showLikedBy = false
+        showCameraMetadata = true, showLikedBy = false
     ),
     profile = ProfileCapabilities(
         showCollectionsOwnProfile = false,
         showAdvancedMuteOptions = true,
+        showRepostSettings = false,
         blockReason = true
     ),
     notification = NotificationCapabilities(
@@ -22,7 +22,6 @@ val VernissageCapabilities = Capabilities(
         websiteField = false
     ),
     trending = TrendingCapabilities(
-        supportsMultipleProfileTimeRanges = true,
-        supportsMultipleHashtagTimeRanges = true
+        supportsMultipleProfileTimeRanges = true, supportsMultipleHashtagTimeRanges = true
     )
 )

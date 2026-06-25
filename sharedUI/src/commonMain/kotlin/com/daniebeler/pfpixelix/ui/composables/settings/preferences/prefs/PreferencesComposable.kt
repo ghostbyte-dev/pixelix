@@ -1,4 +1,4 @@
-package com.daniebeler.pfpixelix.ui.composables.settings.preferences
+package com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -32,19 +32,8 @@ import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.service.platform.PlatformFeatures
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.AutoplayVideoPref
-import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.ClearCachePref
-import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.CustomizeAppIconPref
-import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.DeleteAccountPref
-import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.FocusModePref
-import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.HideAltTextButtonPref
-import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.HideSensitiveContentPref
-import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.LogoutPref
-import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.MoreSettingsPref
-import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.PreferencesViewModel
-import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.RepostSettingsPref
+import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.MoreSettingsPref
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.SwipeBetweenTimelines
-import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.ThemePref
-import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.UseInAppBrowserPref
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
@@ -66,7 +55,11 @@ fun PreferencesComposable(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             TopAppBar(scrollBehavior = scrollBehavior, title = {
-                Text(text = stringResource(Res.string.settings), fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                Text(
+                    text = stringResource(Res.string.settings),
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp
+                )
             }, navigationIcon = {
                 IconButton(onClick = {
                     closePreferencesDrawer()
@@ -98,7 +91,10 @@ fun PreferencesComposable(
 
             SwipeBetweenTimelines()
 
-            RepostSettingsPref { viewModel.openRepostSettings() }
+
+            if (viewModel.capabilities.profile.showRepostSettings) {
+                RepostSettingsPref { viewModel.openRepostSettings() }
+            }
 
             HorizontalDivider(modifier = Modifier.padding(12.dp))
 

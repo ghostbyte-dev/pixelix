@@ -9,6 +9,7 @@ val PixelfedCapabilities = Capabilities(
     profile = ProfileCapabilities(
         showCollectionsOwnProfile = true,
         showAdvancedMuteOptions = false,
+        showRepostSettings = true,
         blockReason = false
     ),
     notification = NotificationCapabilities(

@@ -27,7 +27,8 @@ data class PostCapabilities(
 data class ProfileCapabilities(
     val showCollectionsOwnProfile: Boolean,
     val showAdvancedMuteOptions: Boolean,
-    val blockReason: Boolean
+    val blockReason: Boolean,
+    val showRepostSettings: Boolean
 )
 
 data class EditProfileCapabilities(

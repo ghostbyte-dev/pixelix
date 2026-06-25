@@ -19,9 +19,11 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SegmentedListItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -53,7 +55,7 @@ import pixelix.app.generated.resources.stats
 import pixelix.app.generated.resources.terms_of_use
 import pixelix.app.generated.resources.users
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AboutInstanceComposable(
     navController: NavController,
@@ -61,6 +63,10 @@ fun AboutInstanceComposable(
 ) {
 
     val lazyListState = rememberLazyListState()
+
+    val colors =
+        ListItemDefaults.colors(disabledContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh)
+
 
     ScreenScaffold(
         title = DomainFormat.formatDomain(viewModel.ownInstanceDomain),
@@ -162,61 +168,50 @@ fun AboutInstanceComposable(
                     Spacer(modifier = Modifier.height(18.dp))
 
                     Text(
-                        text = stringResource(Res.string.privacy_policy),
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp,
-                        modifier = Modifier.padding(12.dp, 0.dp)
+                        text = "Legal",
+                        style = MaterialTheme.typography.headlineSmall,
+                        modifier = Modifier.padding(start = 12.dp, bottom = 8.dp)
                     )
 
                     val privacyPath =
                         if (viewModel.backendType == BackendType.PIXELFED) "/site/privacy" else "/privacy"
-
-                    Text(
-                        text = DomainFormat.formatDomain(
-                            viewModel.instanceState.instance?.domain ?: ""
-                        ) + privacyPath,
-                        color = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.padding(12.dp, 0.dp).clickable {
-                            if (viewModel.instanceState.instance != null) {
-                                viewModel.openUrl(
-                                    url = "https://" + DomainFormat.formatDomain(viewModel.instanceState.instance!!.domain) + privacyPath
-                                )
-                            }
-                        })
-
-                    Spacer(modifier = Modifier.height(18.dp))
-
                     val termsPath =
                         if (viewModel.backendType == BackendType.PIXELFED) "/site/terms" else "/terms"
+                    val domain =
+                        DomainFormat.formatDomain(viewModel.instanceState.instance?.domain ?: "")
 
+                    val linkColors =
+                        ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh)
 
-                    Text(
-                        text = stringResource(Res.string.terms_of_use),
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp,
-                        modifier = Modifier.padding(12.dp, 0.dp)
-                    )
-
-                    Text(
-                        text = DomainFormat.formatDomain(
-                            viewModel.instanceState.instance?.domain ?: ""
-                        ) + termsPath,
-                        color = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.padding(12.dp, 0.dp).clickable {
-                            if (viewModel.instanceState.instance != null) {
-                                viewModel.openUrl(
-                                    url = "https://" + DomainFormat.formatDomain(viewModel.instanceState.instance!!.domain) + termsPath
-                                )
-                            }
+                    SegmentedListItem(
+                        onClick = { viewModel.instanceState.instance?.let { viewModel.openUrl("https://$domain$privacyPath") } },
+                        colors = linkColors,
+                        shapes = ListItemDefaults.segmentedShapes(index = 0, count = 2),
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 1.dp),
+                        content = {
+                            Text(
+                                text = stringResource(Res.string.privacy_policy),
+                                color = MaterialTheme.colorScheme.primary
+                            )
                         })
 
+                    SegmentedListItem(
+                        onClick = { viewModel.instanceState.instance?.let { viewModel.openUrl("https://$domain$termsPath") } },
+                        colors = linkColors,
+                        shapes = ListItemDefaults.segmentedShapes(index = 1, count = 2),
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 1.dp),
+                        content = {
+                            Text(
+                                text = stringResource(Res.string.terms_of_use),
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        })
 
                     Spacer(modifier = Modifier.height(18.dp))
 
                     Text(
                         text = stringResource(Res.string.rules),
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp,
+                        style = MaterialTheme.typography.headlineSmall,
                         modifier = Modifier.padding(start = 12.dp, bottom = 8.dp)
                     )
                 }
@@ -224,38 +219,31 @@ fun AboutInstanceComposable(
                 val rules = viewModel.instanceState.instance?.rules ?: emptyList()
 
                 itemsIndexed(rules) { index, rule ->
-
-                    val shape = when {
-                        rules.size == 1 -> RoundedCornerShape(20.dp)
-                        index == 0 -> RoundedCornerShape(
-                            topStart = 20.dp, topEnd = 20.dp, bottomStart = 4.dp, bottomEnd = 4.dp
-                        ) // Top item
-                        index == rules.lastIndex -> RoundedCornerShape(
-                            topStart = 4.dp, topEnd = 4.dp, bottomStart = 20.dp, bottomEnd = 20.dp
-                        ) // Bottom item
-                        else -> RoundedCornerShape(4.dp) // Middle items
-                    }
-
-                    ListItem(
-                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 1.dp)
-                            .clip(shape), colors = ListItemDefaults.colors(
-                            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
-                        ), leadingContent = {
+                    SegmentedListItem(
+                        enabled = false,
+                        onClick = {},
+                        colors = colors,
+                        shapes = ListItemDefaults.segmentedShapes(
+                            index = index, count = rules.size
+                        ),
+                        modifier = Modifier.padding(12.dp, 1.dp),
+                        leadingContent = {
                             Text(
                                 text = rule.id,
                                 style = MaterialTheme.typography.headlineSmall,
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.padding(vertical = 8.dp)
                             )
-                        }, headlineContent = {
+                        },
+                        content = {
                             Text(
                                 text = rule.text,
                                 style = MaterialTheme.typography.bodyMedium,
-                                modifier = Modifier.padding(vertical = 8.dp)
+                                color = MaterialTheme.colorScheme.onSurface,
                             )
                         })
                 }
+
 
                 item {
                     Spacer(modifier = Modifier.height(18.dp))

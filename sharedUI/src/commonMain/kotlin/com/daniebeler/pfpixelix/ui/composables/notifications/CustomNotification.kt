@@ -15,9 +15,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SegmentedListItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -51,11 +53,14 @@ import pixelix.app.generated.resources.mentioned_you_in_a_post
 import pixelix.app.generated.resources.reblogged_your_post
 import pixelix.app.generated.resources.sent_a_dm
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun CustomNotification(
     notification: Notification,
     navController: NavController,
     removeNotification: () -> Unit,
+    index: Int,
+    count: Int,
     viewModel: CustomNotificationViewModel = injectViewModel(key = "custom-notification-viewmodel-key${notification.id}") { customNotificationViewModel }
 ) {
     var showImage = false
@@ -134,8 +139,9 @@ fun CustomNotification(
         }
     }
 
-    ListItem(
-        headlineContent = {
+    SegmentedListItem(
+        shapes = ListItemDefaults.segmentedShapes(index, count),
+        content = {
             ClickableText(
                 text = annotatedText,
                 style = MaterialTheme.typography.bodyMedium,
@@ -165,7 +171,8 @@ fun CustomNotification(
                         }
                     }
                 })
-        }, supportingContent = {
+        },
+        supportingContent = {
             if (notification.type == NotificationType.FOLLOW_REQUEST && viewModel.capabilities.notification.supportsFollowRequestActions) {
                 Row {
                     Button(
@@ -216,7 +223,8 @@ fun CustomNotification(
                     color = MaterialTheme.colorScheme.primary
                 )
             }
-        }, leadingContent = {
+        },
+        leadingContent = {
             AsyncImage(
                 model = notification.account.avatar,
                 error = painterResource(Res.drawable.default_avatar),
@@ -228,7 +236,8 @@ fun CustomNotification(
                         )
                     )
                 })
-        }, trailingContent = {
+        },
+        trailingContent = {
             val doesMediaAttachmentExsist = (notification.post?.mediaAttachments?.size ?: 0) > 0
             if (showImage && (doesMediaAttachmentExsist || (viewModel.ancestor != null && viewModel.ancestor!!.mediaAttachments.isNotEmpty()))) {
                 val previewUrl = if (doesMediaAttachmentExsist) {
@@ -254,7 +263,12 @@ fun CustomNotification(
                             )
                         })
             }
-        }, modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp).clip(RoundedCornerShape(16.dp)).clickable {
+        },
+        modifier = Modifier.fillMaxWidth().padding(vertical = 1.dp),
+        colors = ListItemDefaults.colors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainerLow
+        ),
+        onClick = {
             if (notification.post != null && notification.post.mediaAttachments.isEmpty()) {
                 navController.navigate(Destination.Mention(notification.post.id))
             } else if (notification.post != null && notification.post.mediaAttachments.isNotEmpty()) {
@@ -266,10 +280,7 @@ fun CustomNotification(
                     )
                 )
             }
-        }, colors = ListItemDefaults.colors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainerLow
-        )
-    )
+        })
 
 
 

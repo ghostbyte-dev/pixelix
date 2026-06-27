@@ -23,6 +23,7 @@ import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
 import androidx.compose.foundation.lazy.staggeredgrid.items
+import androidx.compose.foundation.lazy.staggeredgrid.itemsIndexed
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -44,6 +45,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -86,6 +88,19 @@ fun NotificationsComposable(
     val staggeredGridState = rememberLazyStaggeredGridState()
     val scrollState = rememberScrollState()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+
+    val filteredNotifications = remember(viewModel.notificationsState.notifications, viewModel.filter) {
+        viewModel.notificationsState.notifications.filter {
+            when (viewModel.filter) {
+                NotificationsFilterEnum.All -> true
+                NotificationsFilterEnum.Likes -> it.type == NotificationType.FAVOURITE
+                NotificationsFilterEnum.Followers -> it.type == NotificationType.FOLLOW
+                NotificationsFilterEnum.Reposts -> it.type == NotificationType.REBLOG
+                NotificationsFilterEnum.Mentions -> it.type == NotificationType.MENTION
+                else -> false
+            }
+        }
+    }
 
     Scaffold(
         contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top),
@@ -224,35 +239,14 @@ fun NotificationsComposable(
                         modifier = Modifier.fillMaxSize()
                     ) {
                         if (viewModel.notificationsState.notifications.isNotEmpty()) {
-                            items(viewModel.notificationsState.notifications, key = {
-                                it.id
-                            }) {
-                                if (viewModel.filter == NotificationsFilterEnum.All) {
-                                    CustomNotification(
-                                        notification = it,
-                                        navController = navController,
-                                        { viewModel.removeNotification(it) })
-                                } else if (viewModel.filter == NotificationsFilterEnum.Likes && it.type == NotificationType.FAVOURITE) {
-                                    CustomNotification(
-                                        notification = it,
-                                        navController = navController,
-                                        { viewModel.removeNotification(it) })
-                                } else if (viewModel.filter == NotificationsFilterEnum.Followers && it.type == NotificationType.FOLLOW) {
-                                    CustomNotification(
-                                        notification = it,
-                                        navController = navController,
-                                        { viewModel.removeNotification(it) })
-                                } else if (viewModel.filter == NotificationsFilterEnum.Reposts && it.type == NotificationType.REBLOG) {
-                                    CustomNotification(
-                                        notification = it,
-                                        navController = navController,
-                                        { viewModel.removeNotification(it) })
-                                } else if (viewModel.filter == NotificationsFilterEnum.Mentions && it.type == NotificationType.MENTION) {
-                                    CustomNotification(
-                                        notification = it,
-                                        navController = navController,
-                                        { viewModel.removeNotification(it) })
-                                }
+                            itemsIndexed(filteredNotifications, key = { _, it -> it.id }) { index, notification ->
+                                CustomNotification(
+                                    notification = notification,
+                                    navController = navController,
+                                    removeNotification = { viewModel.removeNotification(notification) },
+                                    index = index,
+                                    count = filteredNotifications.size
+                                )
                             }
 
                             if (viewModel.notificationsState.isLoading && !viewModel.notificationsState.isRefreshing) {

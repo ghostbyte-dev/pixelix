@@ -115,9 +115,9 @@
     <string name="empty">Üres</string>
     <string name="follow_accounts_or_hashtags_to_fill_your_home_timeline">Kövess profilokat vagy hashtageket, hogy megteljen a kezdőlapod</string>
     <string name="no_posts">Nincs bejegyzés</string>
-    <string name="home_timeline_explained">A Kezdőlap idővonalán az általad követett emberek bejegyzéseid találod, vagy amelyek tartalmazzák a követett hashtagjeid</string>
-    <string name="local_timeline_explained">A Helyi idővonalon az általad használt szerver összes felhasználójának bejegyzéseit láthatod</string>
-    <string name="global_timeline_explained">A Globális idővonal mutatja minden felhasználó bejegyzését azokról a szerverekről is, amelyekkel a te kiszolgálód együttműködik</string>
+    <string name="home_timeline_explained">A Kezdőlap idővonalán az általad követett emberek bejegyzéseid találod, vagy amelyek tartalmazzák a követett hashtagjeid.</string>
+    <string name="local_timeline_explained">A Helyi idővonalon az általad használt szerver összes felhasználójának bejegyzéseit láthatod.</string>
+    <string name="global_timeline_explained">A Globális idővonal mutatja minden felhasználó bejegyzését azokról a szerverekről is, amelyekkel a te kiszolgálód együttműködik.</string>
     <string name="this_user_has_not_postet_anything_yet">Ez a felhasználó még nem tett közzé semmit</string>
     <string name="you_don_t_have_any_notifications">Nincs értesítésed</string>
     <string name="view_more">tovább</string>
@@ -290,4 +290,7 @@
     <string name="jump_to_top">Ugrás a lap tetejére</string>
     <string name="open">nyílt</string>
     <string name="closed">zárt</string>
+    <string name="manually_accept_new_followers">Követési kérelmek kézi elbírálása</string>
+    <string name="include_public_posts_in_search_engines">Nyilvános bejegyzések megjelenítése a kereső motorokban</string>
+    <string name="include_profile_in_search_engines">Fiók megjelenítése a kereső motorokban</string>
 </resources>

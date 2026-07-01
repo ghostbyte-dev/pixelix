@@ -28,6 +28,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,12 +42,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
+import com.daniebeler.pfpixelix.di.LocalAppComponent
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.ui.composables.contribute.ContributeBottomSheet
 import com.daniebeler.pfpixelix.ui.composables.timelines.global_timeline.GlobalTimelineComposable
 import com.daniebeler.pfpixelix.ui.composables.timelines.home_timeline.HomeTimelineComposable
 import com.daniebeler.pfpixelix.ui.composables.timelines.local_timeline.LocalTimelineComposable
 import com.daniebeler.pfpixelix.ui.navigation.Destination
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
@@ -78,6 +81,7 @@ fun HomeComposable(
     val donationSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showDonationBottomSheet by remember { mutableStateOf(false) }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -182,17 +186,18 @@ fun HomeComposable(
                 modifier = Modifier.padding(top = 24.dp)
                     .background(MaterialTheme.colorScheme.background).zIndex(0f)
             ) { tabIndex ->
+                val isCurrentTab = pagerState.currentPage == tabIndex
                 when (tabIndex) {
                     0 -> Box(modifier = Modifier.fillMaxSize()) {
-                        HomeTimelineComposable(navController)
+                        HomeTimelineComposable(pagerState, tabIndex, navController)
                     }
 
                     1 -> Box(modifier = Modifier.fillMaxSize()) {
-                        LocalTimelineComposable(navController)
+                        LocalTimelineComposable(pagerState, tabIndex,  navController)
                     }
 
                     2 -> Box(modifier = Modifier.fillMaxSize()) {
-                        GlobalTimelineComposable(navController)
+                        GlobalTimelineComposable(pagerState, tabIndex, navController)
                     }
                 }
             }

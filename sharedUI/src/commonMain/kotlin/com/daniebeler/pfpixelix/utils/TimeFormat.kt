@@ -79,3 +79,4 @@ suspend fun timeAgo(dataDate: String): String {
 
 
 expect fun formatLocalized(dataDate: String): String
+expect fun formatLocalizedOnlyDate(dataDate: String): String

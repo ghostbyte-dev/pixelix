@@ -9,8 +9,8 @@ data class UserMuteRequest(
     val muteNotifications: Boolean? = null,
     val removeStatusesFromTimeline: Boolean? = null,
     val removeReblogsFromTimeline: Boolean? = null,
+    val endDate: kotlin.time.Instant? = null
 )
-//TODO: add endDate
 
 fun UserMuteRequest.toVernissage(): VernissageUserMuteRequest {
     return VernissageUserMuteRequest(
@@ -18,6 +18,7 @@ fun UserMuteRequest.toVernissage(): VernissageUserMuteRequest {
         muteReblogs = this.muteReblogs ?: false,
         muteNotifications = this.muteNotifications ?: false,
         removeStatusesFromTimeline = this.removeStatusesFromTimeline ?: false,
-        removeReblogsFromTimeline = this.removeReblogsFromTimeline ?: false
+        removeReblogsFromTimeline = this.removeReblogsFromTimeline ?: false,
+        endDate = this.endDate
     )
 }

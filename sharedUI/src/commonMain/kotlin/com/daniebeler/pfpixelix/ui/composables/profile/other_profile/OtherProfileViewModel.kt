@@ -90,7 +90,6 @@ class OtherProfileViewModel(
         }
         if (userId == null) {
             loadDataByUsername(username, false, navController)
-            //TODO: if vernissage, just do normal (normal for getting account and posts)
             return
         }
         val credentials = authService.getCurrentSession()

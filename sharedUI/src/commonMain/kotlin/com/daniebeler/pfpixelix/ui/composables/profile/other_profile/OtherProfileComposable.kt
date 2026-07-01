@@ -658,14 +658,6 @@ fun BlockAccountAlert(
     })
 }
 
-@Composable
-fun MuteOptionRow(label: String, checked: Boolean, onCheckedChange: (Boolean) -> Unit) {
-    Row(modifier = Modifier.fillMaxWidth().clickable { onCheckedChange(!checked) }
-        .padding(vertical = 8.dp), verticalAlignment = Alignment.CenterVertically) {
-        Text(text = label, modifier = Modifier.weight(1f))
-        Switch(checked = checked, onCheckedChange = onCheckedChange)
-    }
-}
 
 @Composable
 fun UnBlockAccountAlert(

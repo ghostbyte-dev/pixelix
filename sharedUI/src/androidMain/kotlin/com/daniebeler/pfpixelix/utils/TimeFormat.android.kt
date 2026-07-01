@@ -16,3 +16,17 @@ actual fun formatLocalized(dataDate: String): String {
         ""
     }
 }
+
+actual fun formatLocalizedOnlyDate(dataDate: String): String {
+    if (dataDate.isEmpty()) return ""
+    return try {
+        val instant = Instant.parse(dataDate)
+        val date = java.util.Date(instant.toEpochMilliseconds())
+        java.text.DateFormat.getDateInstance(
+            java.text.DateFormat.SHORT
+        ).format(date)
+    } catch (e: Exception) {
+        e.printStackTrace()
+        ""
+    }
+}

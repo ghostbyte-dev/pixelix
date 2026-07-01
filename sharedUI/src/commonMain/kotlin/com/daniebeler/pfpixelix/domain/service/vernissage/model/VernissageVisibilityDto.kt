@@ -5,7 +5,6 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 
-//TODO: check and find middle ground for pixelfed and vernissage, and show correct for each platform in ui
 @Serializable
 enum class VernissageVisibilityDto {
     @SerialName("public") PUBLIC,

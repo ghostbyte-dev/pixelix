@@ -303,4 +303,7 @@
     <string name="new_status">created a new post</string>
     <string name="boosted_status_updated">boosted post got updated</string>
     <string name="notification">Notification</string>
+    <string name="accept_follow_request">Accept Follow Request</string>
+    <string name="reject_follow_request">Reject Follow Request</string>
+    <string name="reason">Reason</string>
 </resources>

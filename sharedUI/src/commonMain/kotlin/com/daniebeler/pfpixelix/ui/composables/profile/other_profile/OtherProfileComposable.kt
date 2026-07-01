@@ -88,6 +88,7 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
+import pixelix.app.generated.resources.accept_follow_request
 import pixelix.app.generated.resources.arrow_left
 import pixelix.app.generated.resources.block
 import pixelix.app.generated.resources.block_account
@@ -120,6 +121,8 @@ import pixelix.app.generated.resources.open_in_browser
 import pixelix.app.generated.resources.photo
 import pixelix.app.generated.resources.blocked
 import pixelix.app.generated.resources.muted
+import pixelix.app.generated.resources.reason
+import pixelix.app.generated.resources.reject_follow_request
 import pixelix.app.generated.resources.requested
 import pixelix.app.generated.resources.share
 import pixelix.app.generated.resources.share_this_profile
@@ -378,8 +381,7 @@ fun OtherProfileComposable(
                                                         color = MaterialTheme.colorScheme.onPrimary
                                                     )
                                                 } else {
-                                                    //TODO: String resource
-                                                    Text("Accept Follow Request")
+                                                    Text(stringResource(Res.string.accept_follow_request))
                                                 }
                                             }
 
@@ -403,8 +405,7 @@ fun OtherProfileComposable(
                                                         color = MaterialTheme.colorScheme.onPrimary
                                                     )
                                                 } else {
-                                                    //TODO: string resource
-                                                    Text(text = "Reject Follow Request")
+                                                    Text(text = stringResource(Res.string.reject_follow_request))
                                                 }
                                             }
                                         }
@@ -612,7 +613,6 @@ fun BlockAccountAlert(
             }
 
             if (capabilities.profile.blockReason) {
-                //TODO: translate, style
                 TextField(
                     value = reason,
                     singleLine = false,
@@ -620,7 +620,7 @@ fun BlockAccountAlert(
                         reason = it
                     },
                     shape = MaterialTheme.shapes.medium,
-                    placeholder = { Text("Reason") },
+                    placeholder = { Text(stringResource(Res.string.reason)) },
                 )
             } else {
 

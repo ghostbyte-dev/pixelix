@@ -30,9 +30,6 @@ class HashtagTimelineViewModel @Inject constructor(
     var hashtagState by mutableStateOf(HashtagState())
     var view by mutableStateOf(ViewEnum.Grid)
 
-    var relatedHashtags by mutableStateOf<List<RelatedHashtag>>(emptyList())
-
-
     init {
         viewModelScope.launch {
             prefs.showUserGridTimelineFlow.collect { res ->
@@ -136,17 +133,6 @@ class HashtagTimelineViewModel @Inject constructor(
                 }
             }.launchIn(viewModelScope)
         }
-    }
-
-    fun getRelatedHashtags(hashtag: String) {
-        exploreService.getRelatedHashtags(hashtag).onEach { result ->
-            if (result is Resource.Success) {
-                relatedHashtags = result.data
-                Logger.v("juhuu" + result.data)
-            } else {
-                Logger.v("fief" + result.message)
-            }
-        }.launchIn(viewModelScope)
     }
 
     fun postGetsDeleted(postId: String) {

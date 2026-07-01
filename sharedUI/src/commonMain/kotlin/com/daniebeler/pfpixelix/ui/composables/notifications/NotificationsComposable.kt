@@ -186,8 +186,6 @@ fun NotificationsComposable(
                             Text(likesText)
                         })
 
-                    //TODO: add vernissage notification types filters
-
                     Spacer(modifier = Modifier.width(12.dp))
 
                     ToggleButton(

@@ -21,8 +21,6 @@ fun HashtagTimelineComposable(
     LaunchedEffect(hashtag) {
         viewModel.getItemsFirstLoad(hashtag)
         viewModel.getHashtagInfo(hashtag)
-        //TODO: not used, maybe use again or remove completely
-        //viewModel.getRelatedHashtags(hashtag)
     }
 
     ScreenScaffold(

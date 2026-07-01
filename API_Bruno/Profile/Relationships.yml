@@ -5,10 +5,10 @@ info:
 
 http:
   method: GET
-  url: "{{baseUrl}}/api/v1/relationships?id[]=7653560897461291465"
+  url: "{{baseUrl}}/api/v1/relationships?id[]=7469923982968359406"
   params:
     - name: id[]
-      value: "7653560897461291465"
+      value: "7469923982968359406"
       type: query
   auth: inherit
 

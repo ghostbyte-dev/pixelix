@@ -91,6 +91,14 @@ class PixelfedAccountService(
         refreshSignal.emit(Unit)
     }
 
+    override fun updateHeader(
+        username: String,
+        header: ImageBitmap?
+    ): Flow<Resource<Unit>> = flow {
+       emit(Resource.Loading())
+    }
+
+
     override fun getAccount(accountId: String, username: String) =
         loadResource { api.getAccount(accountId).toDomain() }
 

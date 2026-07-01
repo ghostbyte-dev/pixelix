@@ -46,7 +46,7 @@ class EditProfileViewModel @Inject constructor(
         !(displayName.text == (accountState.account?.displayname
             ?: "") && note.text == (accountState.account?.note
             ?: "") && ("https://${website.text}" == (accountState.account?.website
-            ?: "") || (accountState.account?.website.isNullOrEmpty() && website.text.isEmpty())) && avatarState.newImage == null && privateProfile == accountState.account?.locked && manuallyAcceptNewFollowers == accountState.account?.manuallyApprovesFollowers && includeProfileInSearchEngine == accountState.account?.includeProfilePageInSearchEngines && includePublicPostsInSearchEngine == accountState.account?.includePublicPostsInSearchEngines)
+            ?: "") || (accountState.account?.website.isNullOrEmpty() && website.text.isEmpty())) && avatarState.newImage == null && headerState.newImage == null && privateProfile == accountState.account?.locked && manuallyAcceptNewFollowers == accountState.account?.manuallyApprovesFollowers && includeProfileInSearchEngine == accountState.account?.includeProfilePageInSearchEngines && includePublicPostsInSearchEngine == accountState.account?.includePublicPostsInSearchEngines)
     }
 
     init {
@@ -64,6 +64,7 @@ class EditProfileViewModel @Inject constructor(
                     website =
                         TextFieldValue(accountState.account?.website?.replace("https://", "") ?: "")
                     avatarUri = accountState.account?.avatar!!.toKmpUri()
+                    headerUri = accountState.account?.headerUrl?.toKmpUri() ?: EmptyKmpUri
                     privateProfile = accountState.account?.locked ?: false
                     manuallyAcceptNewFollowers =
                         accountState.account?.manuallyApprovesFollowers
@@ -86,7 +87,29 @@ class EditProfileViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    //TODO: implement update header for vernissage
+
+    fun updateHeader(header: ImageBitmap) {
+        accountService.updateHeader(
+            username = accountState.account!!.username, header
+        ).onEach { result ->
+            headerState = when (result) {
+                is Resource.Success -> {
+                    headerState.copy(
+                        isLoading = false, newImage = null, newUploadedImage = header
+                    )
+                }
+
+                is Resource.Error -> {
+                    headerState.copy(isLoading = false, error = result.message)
+                }
+
+                is Resource.Loading -> {
+                    headerState.copy(isLoading = true)
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
+
     fun updateAvatar(avatar: ImageBitmap) {
         accountService.updateAvatar(
             username = accountState.account!!.username, avatar
@@ -116,6 +139,9 @@ class EditProfileViewModel @Inject constructor(
         }
         if (avatarState.newImage != null) {
             updateAvatar(avatarState.newImage!!)
+        }
+        if (headerState.newImage != null) {
+            updateHeader(headerState.newImage!!)
         }
         val updateUserRequest = UpdateUserRequest(
             displayName = displayName.text,

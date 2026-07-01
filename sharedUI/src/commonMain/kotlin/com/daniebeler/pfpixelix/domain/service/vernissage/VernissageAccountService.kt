@@ -88,6 +88,31 @@ class VernissageAccountService(
         refreshSignal.emit(Unit)
     }
 
+    override fun updateHeader(
+        username: String,
+        header: ImageBitmap?
+    ): Flow<Resource<Unit>> = loadResource{
+        val bytes = withContext(Dispatchers.Default) {
+            header?.encodeToPngBytes()
+        }
+        val body = MultiPartFormDataContent(formData {
+            if (bytes != null) {
+                try {
+                    val fileName = "filename=header"
+                    val fileType = "image/png"
+                    append("file", bytes, Headers.build {
+                        append(HttpHeaders.ContentType, fileType)
+                        append(HttpHeaders.ContentDisposition, fileName)
+                    })
+                } catch (e: Exception) {
+                    Logger.e("AccountService.updateHeader error", e)
+                }
+            }
+        })
+        api.updateHeader(username, body)
+        refreshSignal.emit(Unit)
+    }
+
     override fun getAccount(accountId: String, username: String) = loadResource {
         api.getUser(username).toDomain()
     }

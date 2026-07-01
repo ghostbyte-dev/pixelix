@@ -29,6 +29,9 @@ interface AccountService {
         username: String, avatar: ImageBitmap?
     ): Flow<Resource<Unit>>
 
+    fun updateHeader(
+        username: String, header: ImageBitmap?
+    ): Flow<Resource<Unit>>
     fun getAccount(accountId: String, username: String): Flow<Resource<Account>>
     fun getAccountByUsername(username: String): Flow<Resource<Account>>
     fun getRelationships(userIds: List<String>): Flow<Resource<List<Relationship>>>
@@ -82,6 +85,11 @@ class AccountServiceDelegate(
 
     override fun updateAvatar(username: String, avatar: ImageBitmap?) =
         current.updateAvatar(username, avatar)
+
+    override fun updateHeader(
+        username: String,
+        header: ImageBitmap?
+    ) = current.updateHeader(username, header)
 
     override fun getAccount(accountId: String, username: String): Flow<Resource<Account>> =
         current.getAccount(accountId, username)

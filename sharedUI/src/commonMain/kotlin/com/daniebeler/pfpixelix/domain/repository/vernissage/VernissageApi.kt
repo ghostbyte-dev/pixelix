@@ -193,6 +193,10 @@ interface VernissageApi {
         @Path("username") username: String, @Body body: MultiPartFormDataContent
     )
 
+    @POST("api/v1/headers/{username}")
+    suspend fun updateHeader(
+        @Path("username") username: String, @Body body: MultiPartFormDataContent
+    )
     @POST("api/v1/users/{username}/follow")
     suspend fun followUser(
         @Path("username") username: String

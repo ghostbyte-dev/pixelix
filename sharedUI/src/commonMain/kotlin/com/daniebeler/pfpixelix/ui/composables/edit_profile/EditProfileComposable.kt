@@ -64,10 +64,12 @@ import androidx.navigationevent.NavigationEventInfo
 import androidx.navigationevent.compose.NavigationBackHandler
 import androidx.navigationevent.compose.rememberNavigationEventState
 import coil3.compose.AsyncImage
+import com.attafitamim.krop.core.crop.AspectRatio
 import com.attafitamim.krop.core.crop.CropResult
 import com.attafitamim.krop.core.crop.CropState
 import com.attafitamim.krop.core.crop.DefaultCropperStyle
 import com.attafitamim.krop.core.crop.LocalCropperStyle
+import com.attafitamim.krop.core.crop.cropperStyle
 import com.attafitamim.krop.core.crop.rememberImageCropper
 import com.attafitamim.krop.core.images.ImageBitmapSrc
 import com.attafitamim.krop.ui.CropperPreview
@@ -145,7 +147,7 @@ fun EditProfileComposable(
                         val imageCropper = rememberImageCropper()
                         val cropState = imageCropper.cropState
                         if (cropState != null) {
-                            ImageCropperFullscreenDialog(cropState)
+                            ImageCropperFullscreenDialog(cropState, listOf(AspectRatio(3, 1)))
                         }
 
                         val filePicker = rememberFilePickerLauncher(
@@ -195,24 +197,25 @@ fun EditProfileComposable(
                             Image(
                                 bitmap = viewModel.headerState.newUploadedImage!!,
                                 contentDescription = "",
-                                modifier = Modifier.fillMaxWidth().clip(CircleShape)
+                                modifier = Modifier.fillMaxWidth()
                                     .clickable { filePicker.launch() })
                         } else {
                             AsyncImage(
                                 model = viewModel.headerUri.toString(),
                                 contentDescription = "",
-                                modifier = Modifier.fillMaxWidth().clip(CircleShape)
+                                modifier = Modifier.fillMaxWidth()
                                     .clickable { filePicker.launch() })
                         }
                     }
 
+                    Spacer(modifier = Modifier.height(18.dp))
 
                     Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                         val coroutineScope = rememberCoroutineScope()
                         val imageCropper = rememberImageCropper()
                         val cropState = imageCropper.cropState
                         if (cropState != null) {
-                            ImageCropperFullscreenDialog(cropState)
+                            ImageCropperFullscreenDialog(cropState, listOf(AspectRatio(1, 1)))
                         }
 
                         val filePicker = rememberFilePickerLauncher(
@@ -407,6 +410,12 @@ fun EditProfileComposable(
                     viewModel.avatarState = EditImageState()
                     viewModel.getAccount()
                 })
+
+            ErrorComposableDialog(
+                errorMessage = viewModel.headerState.error, onDismiss = {
+                    viewModel.headerState = EditImageState()
+                    viewModel.getAccount()
+                })
         }
 
         TopAppBar(
@@ -539,9 +548,12 @@ private fun EditProfileSwitch(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ImageCropperFullscreenDialog(
-    state: CropState
+    state: CropState, aspects: List<AspectRatio>
 ) {
-    val style = DefaultCropperStyle
+    val style = cropperStyle(
+        aspects = aspects
+    )
+
     LaunchedEffect(Unit) {
         state.setInitialState(style)
         state.aspectLock = true

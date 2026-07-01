@@ -1,6 +1,8 @@
 package com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs
 
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -8,7 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import com.daniebeler.pfpixelix.ui.composables.settings.preferences.basic.SettingPref
+import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.basic.SettingPref
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -19,6 +21,7 @@ import pixelix.app.generated.resources.cancel
 import pixelix.app.generated.resources.logout
 import pixelix.app.generated.resources.logout_questionmark
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun LogoutPref(logout: () -> Unit) {
     val showAlert = remember { mutableStateOf(false) }
@@ -26,11 +29,11 @@ fun LogoutPref(logout: () -> Unit) {
     LogoutAlert(showAlert, logout)
 
     SettingPref(
-        leadingIcon = Res.drawable.logout,
+        icon = Res.drawable.logout,
         title = stringResource(Res.string.logout),
         trailingContent = null,
         onClick = { showAlert.value = true },
-        textColor = MaterialTheme.colorScheme.error
+        shapes = ListItemDefaults.segmentedShapes(index = 2, count = 4),
     )
 }
 

@@ -1,28 +1,20 @@
 package com.daniebeler.pfpixelix.ui.composables.settings.preferences.basic
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.spring
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
+import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.shape.CornerBasedShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ListItemDefaults
+import androidx.compose.material3.ListItemShapes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
+import androidx.compose.material3.SegmentedListItem
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,221 +23,134 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.daniebeler.pfpixelix.utils.bottom
-import com.daniebeler.pfpixelix.utils.top
+import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.basic.SettingPref
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.chevron_down
 import pixelix.app.generated.resources.chevron_right
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ExpandOptionsPref(
     leadingIcon: DrawableResource,
     title: String,
+    modifier: Modifier = Modifier,
     desc: String? = null,
     initializeExpanded: Boolean = false,
-    options: @Composable ColumnScope.() -> Unit
+    options: @Composable () -> Unit // Passes the final count to children
 ) {
     var expanded by rememberSaveable { mutableStateOf(initializeExpanded) }
     val rotate by animateFloatAsState(targetValue = if (expanded) 180f else 0f, label = "Arrow")
-    SettingPref(
-        leadingIcon = leadingIcon,
-        title = title,
-        desc = desc,
-        trailingContent = {
-            Box(modifier = Modifier.padding(end = 12.dp)) {
+
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap)
+    ) {
+        SettingPref(
+            icon = leadingIcon,
+            title = title,
+            desc = desc,
+            shapes = ListItemDefaults.segmentedShapes(index = 0, count = 4),
+            trailingContent = {
                 Icon(
                     imageVector = vectorResource(Res.drawable.chevron_down),
                     contentDescription = null,
                     modifier = Modifier.rotate(rotate)
                 )
-            }
-        },
-        onClick = {
-            expanded = !expanded
-        },
-    ) {
+            },
+            onClick = {
+                expanded = !expanded
+            },
+        )
+
         AnimatedVisibility(
             visible = expanded,
-            enter = slideInVertically() + fadeIn(),
-            exit = shrinkVertically(animationSpec = spring(stiffness = Spring.StiffnessMedium)) + fadeOut(),
+            enter = expandVertically(MaterialTheme.motionScheme.fastSpatialSpec()),
+            exit = shrinkVertically(MaterialTheme.motionScheme.fastSpatialSpec()),
         ) {
             Column(
-                modifier = Modifier
-                    .padding(horizontal = 10.dp)
-                    .padding(top = 4.dp, bottom = 10.dp),
-                verticalArrangement = Arrangement.spacedBy(4.dp),
-                content = options
-            )
+                verticalArrangement = Arrangement.spacedBy(ListItemDefaults.SegmentedGap),
+            ) {
+                options()
+            }
         }
     }
 }
-
-object OptionShapes {
-
-    val defaultShape: CornerBasedShape
-        @Composable
-        get() = MaterialTheme.shapes.small
-
-    val borderShape: CornerBasedShape
-        @Composable
-        get() = MaterialTheme.shapes.medium
-
-    @Composable
-    fun indexOfShape(index: Int, optionsCount: Int): Shape {
-        return if (optionsCount == 1) {
-            borderShape
-        } else if (index == 0 && optionsCount > 1) {
-            firstShape()
-        } else if (index == optionsCount - 1 && optionsCount > 1) {
-            lastShape()
-        } else {
-            defaultShape
-        }
-    }
-
-    @Composable
-    fun lastShape(): Shape {
-        return defaultShape.bottom(borderShape)
-    }
-
-    @Composable
-    fun firstShape(): Shape {
-        return defaultShape.top(borderShape)
-    }
-}
-
 
 @Composable
 fun imageVectorIconBlock(
-    imageVector: ImageVector,
-    contentDescription: String? = null
-): @Composable () -> Unit {
-    return {
-        Icon(imageVector = imageVector, contentDescription = contentDescription)
-    }
+    imageVector: ImageVector, contentDescription: String? = null
+): @Composable () -> Unit = {
+    Icon(imageVector = imageVector, contentDescription = contentDescription)
 }
 
 @Composable
-fun radioButtonBlock(selected: Boolean): @Composable () -> Unit {
-    return {
-        RadioButton(selected = selected, onClick = null)
-    }
+fun radioButtonBlock(selected: Boolean): @Composable () -> Unit = {
+    RadioButton(selected = selected, onClick = null)
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun <T : Any> ValueOption(
-    leadingIcon: (@Composable () -> Unit)?,
     title: String,
-    desc: String? = null,
-    trailingContent: (@Composable () -> Unit)?,
-    shape: Shape = OptionShapes.defaultShape,
-    onOptionClick: (value: T) -> Unit,
+    shapes: ListItemShapes,
     value: T,
+    onOptionClick: (value: T) -> Unit,
+    leadingIcon: (@Composable () -> Unit)? = null,
+    desc: String? = null,
+    trailingContent: (@Composable () -> Unit)? = null,
 ) {
     Option(
-        leadingIcon = leadingIcon,
         title = title,
+        shapes = shapes,
+        leadingIcon = leadingIcon,
         desc = desc,
         trailingContent = trailingContent,
-        shape = shape,
-        onClick = {
-            onOptionClick(value)
-        }
-    )
+        onClick = { onOptionClick(value) })
 }
 
-@Composable
-fun SwitchOption(
-    leadingIcon: (@Composable () -> Unit)?,
-    title: String,
-    desc: String? = null,
-    shape: Shape = OptionShapes.defaultShape,
-    value: Boolean = false,
-    onCheckedChange: (checked: Boolean) -> Unit
-) {
-    var isChecked by remember { mutableStateOf(value) }
-    Option(
-        shape = shape,
-        leadingIcon = leadingIcon,
-        title = title,
-        desc = desc,
-        trailingContent = {
-            Switch(
-                checked = isChecked,
-                onCheckedChange = {
-                    isChecked = it
-                    onCheckedChange(it)
-                },
-            )
-        },
-        onClick = {
-            isChecked = !isChecked
-            onCheckedChange(isChecked)
-        }
-    )
-}
-
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun Option(
-    modifier: Modifier = Modifier,
-    leadingIcon: (@Composable () -> Unit)?,
     title: String,
+    shapes: ListItemShapes,
+    modifier: Modifier = Modifier,
+    leadingIcon: (@Composable () -> Unit)? = null,
     desc: String? = null,
     trailingContent: (@Composable () -> Unit)? = {
         Icon(imageVector = vectorResource(Res.drawable.chevron_right), contentDescription = title)
     },
-    shape: Shape = OptionShapes.defaultShape,
     onClick: () -> Unit = {},
 ) {
-    Card(
+    SegmentedListItem(
         onClick = onClick,
-        shape = shape,
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        modifier = modifier
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .defaultMinSize(minHeight = 48.dp)
-                .padding(start = 12.dp, top = 8.dp, end = 12.dp, bottom = 8.dp)
-        ) {
-            if (leadingIcon != null) {
-                Box(modifier = Modifier.widthIn(0.dp, 30.dp)) {
-                    leadingIcon()
-                }
-            }
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(horizontal = 10.dp)
-                    .animateContentSize()
-            ) {
+        shapes = shapes,
+        colors = ListItemDefaults.segmentedColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainerLow
+        ),
+        modifier = modifier,
+        leadingContent = leadingIcon,
+        trailingContent = trailingContent,
+        content = {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.titleSmall,
+            )
+        },
+        supportingContent = desc?.let {
+            {
                 Text(
-                    text = title,
-                    style = MaterialTheme.typography.titleSmall,
+                    text = it,
+                    style = MaterialTheme.typography.bodySmall,
+                    maxLines = 5,
+                    overflow = TextOverflow.Ellipsis
                 )
-                if (desc != null) {
-                    Text(
-                        text = desc,
-                        style = MaterialTheme.typography.bodySmall,
-                        modifier = Modifier.padding(top = 2.dp),
-                        maxLines = 5,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
             }
-            if (trailingContent != null) {
-                trailingContent()
-            }
-        }
-    }
+        })
 }

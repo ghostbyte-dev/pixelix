@@ -296,4 +296,11 @@
     <string name="manually_accept_new_followers">Manually accept new followers</string>
     <string name="include_public_posts_in_search_engines">Include public posts in search engines</string>
     <string name="include_profile_in_search_engines">Include profile in search engines</string>
+    <string name="optional_end_date">optional end date</string>
+    <string name="requested">Requested</string>
+    <string name="new_comment">wrote a new comment</string>
+    <string name="follow_request">requested to follow you</string>
+    <string name="new_status">created a new post</string>
+    <string name="boosted_status_updated">boosted post got updated</string>
+    <string name="notification">Notification</string>
 </resources>

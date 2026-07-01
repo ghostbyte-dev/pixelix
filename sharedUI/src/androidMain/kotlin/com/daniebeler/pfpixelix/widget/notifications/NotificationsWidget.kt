@@ -189,23 +189,17 @@ class NotificationsWidget : GlanceAppWidget() {
         val size = LocalSize.current
         val destinationKey = ActionParameters.Key<String>("navigation_destination")
         val destinationKeyParam = ActionParameters.Key<String>("account_id")
+        val usernameKeyParam = ActionParameters.Key<String>("username")
         Box(
             modifier = GlanceModifier.clickable(
                 actionStartActivity<AppActivity>(
                     actionParametersOf(
                         destinationKey to "profile",
-                        destinationKeyParam to notification.accountId
+                        destinationKeyParam to notification.accountId,
+                        usernameKeyParam to notification.accountUsername
                     )
                 )
             )
-//            modifier = GlanceModifier.clickable(
-//                actionStartActivity<MainActivity>(
-//                    actionParametersOf(
-//                        destinationKey to MainActivity.Companion.StartNavigation.Profile.toString(),
-//                        destinationKeyParam to notification.accountId
-//                    )
-//                )
-//            )
         ) {
             Column {
                 Spacer(GlanceModifier.height(12.dp))
@@ -256,14 +250,17 @@ class NotificationsWidget : GlanceAppWidget() {
     }
 
     private fun getNotificationText(type: NotificationType): Int {
-        //TODO: add all notification types
         return when (type) {
             NotificationType.FAVOURITE  -> R.string.liked_your_post
             NotificationType.MENTION -> R.string.mentioned_you
             NotificationType.FOLLOW -> R.string.followed_you
             NotificationType.DIRECT_MESSAGE -> R.string.sent_a_dm
             NotificationType.REBLOG -> R.string.reblogged_your_post
-            else -> R.string.notifications
+            NotificationType.FOLLOW_REQUEST -> R.string.follow_request
+            NotificationType.NEW_COMMENT -> R.string.new_comment
+            NotificationType.STATUS -> R.string.new_status
+            NotificationType.UPDATE -> R.string.boosted_status_updated
+            NotificationType.UNDEFINED -> R.string.notification
         }
     }
 }

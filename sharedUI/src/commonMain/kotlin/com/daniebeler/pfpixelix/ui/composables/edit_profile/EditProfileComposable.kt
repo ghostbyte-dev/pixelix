@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
@@ -28,7 +27,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -53,7 +51,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.decodeToImageBitmap
 import androidx.compose.ui.text.font.FontWeight
@@ -94,9 +91,7 @@ import pixelix.app.generated.resources.are_you_sure
 import pixelix.app.generated.resources.arrow_left
 import pixelix.app.generated.resources.bio
 import pixelix.app.generated.resources.cancel
-import pixelix.app.generated.resources.cancel_post_warning
 import pixelix.app.generated.resources.cancel_profile_edit
-import pixelix.app.generated.resources.caption
 import pixelix.app.generated.resources.confirm
 import pixelix.app.generated.resources.discard
 import pixelix.app.generated.resources.displayname
@@ -144,6 +139,74 @@ fun EditProfileComposable(
 
                     Spacer(Modifier.height(32.dp))
 
+
+                    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                        val coroutineScope = rememberCoroutineScope()
+                        val imageCropper = rememberImageCropper()
+                        val cropState = imageCropper.cropState
+                        if (cropState != null) {
+                            ImageCropperFullscreenDialog(cropState)
+                        }
+
+                        val filePicker = rememberFilePickerLauncher(
+                            type = FileKitType.Image, mode = FileKitMode.Single
+                        ) { file ->
+                            file ?: return@rememberFilePickerLauncher
+                            coroutineScope.launch {
+                                val cropResult = imageCropper.crop {
+                                    ImageBitmapSrc(file.readBytes().decodeToImageBitmap())
+                                }
+                                if (cropResult is CropResult.Success) {
+                                    viewModel.headerState =
+                                        viewModel.headerState.copy(newImage = cropResult.bitmap)
+                                }
+                            }
+                        }
+
+                        val newHeader = viewModel.headerState.newImage
+                        if (newHeader != null) {
+                            Box(
+                                contentAlignment = Alignment.Center,
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Image(
+                                    bitmap = newHeader,
+                                    contentDescription = "",
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .clickable(enabled = !viewModel.headerState.isLoading) { filePicker.launch() }
+                                )
+
+                                if (viewModel.headerState.isLoading) {
+                                    Box(
+                                        contentAlignment = Alignment.Center,
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                            .background(Color.Black.copy(alpha = 0.4f))
+                                    ) {
+                                        LoadingComposable(
+                                            color = Color.White,
+                                            size = 32.dp
+                                        )
+                                    }
+                                }
+                            }
+                        } else if (viewModel.headerState.newUploadedImage != null) {
+                            Image(
+                                bitmap = viewModel.headerState.newUploadedImage!!,
+                                contentDescription = "",
+                                modifier = Modifier.fillMaxWidth().clip(CircleShape)
+                                    .clickable { filePicker.launch() })
+                        } else {
+                            AsyncImage(
+                                model = viewModel.headerUri.toString(),
+                                contentDescription = "",
+                                modifier = Modifier.fillMaxWidth().clip(CircleShape)
+                                    .clickable { filePicker.launch() })
+                        }
+                    }
+
+
                     Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                         val coroutineScope = rememberCoroutineScope()
                         val imageCropper = rememberImageCropper()
@@ -162,12 +225,12 @@ fun EditProfileComposable(
                                 }
                                 if (cropResult is CropResult.Success) {
                                     viewModel.avatarState =
-                                        viewModel.avatarState.copy(newAvatar = cropResult.bitmap)
+                                        viewModel.avatarState.copy(newImage = cropResult.bitmap)
                                 }
                             }
                         }
 
-                        val newAvatar = viewModel.avatarState.newAvatar
+                        val newAvatar = viewModel.avatarState.newImage
                         if (newAvatar != null) {
                             Box(
                                 contentAlignment = Alignment.Center,
@@ -200,9 +263,9 @@ fun EditProfileComposable(
                                     }
                                 }
                             }
-                        } else if (viewModel.avatarState.newUploadedAvatar != null) {
+                        } else if (viewModel.avatarState.newUploadedImage != null) {
                             Image(
-                                bitmap = viewModel.avatarState.newUploadedAvatar!!,
+                                bitmap = viewModel.avatarState.newUploadedImage!!,
                                 contentDescription = "",
                                 modifier = Modifier.height(112.dp).width(112.dp).clip(CircleShape)
                                     .clickable { filePicker.launch() })
@@ -341,7 +404,7 @@ fun EditProfileComposable(
 
             ErrorComposableDialog(
                 errorMessage = viewModel.avatarState.error, onDismiss = {
-                    viewModel.avatarState = EditAvatarState()
+                    viewModel.avatarState = EditImageState()
                     viewModel.getAccount()
                 })
         }

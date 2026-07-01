@@ -279,12 +279,11 @@ fun App(
                 }
 
                 LaunchedEffect(Unit) {
-                    appComponent.accountIntentHandler.pendingAccountId.collect { accountId ->
-                        if (accountId.isNotEmpty()) {
-                            //TODO: navigate to profile, with accountId and username
-                            /*navController.navigate(
-                                Destination.Profile(accountId)
-                            )*/
+                    appComponent.accountIntentHandler.pendingAccount.collect { accountPair ->
+                        if (accountPair.first.isNotEmpty() && accountPair.second.isNotEmpty()) {
+                            navController.navigate(
+                                Destination.Profile(accountPair.first, accountPair.second)
+                            )
                         }
                     }
                 }

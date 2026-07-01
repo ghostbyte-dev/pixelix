@@ -37,13 +37,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.unit.dp
 import com.daniebeler.pfpixelix.domain.model.MutedAccount
 import com.daniebeler.pfpixelix.domain.model.request.UserMuteRequest
 import com.daniebeler.pfpixelix.domain.service.capabilities.Capabilities
 import com.daniebeler.pfpixelix.ui.composables.profile.other_profile.AlertTopSection
-import com.daniebeler.pfpixelix.utils.formatLocalized
 import com.daniebeler.pfpixelix.utils.formatLocalizedOnlyDate
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
@@ -57,6 +55,7 @@ import pixelix.app.generated.resources.mute_consequence_2
 import pixelix.app.generated.resources.mute_consequence_3
 import pixelix.app.generated.resources.mute_consequence_4
 import pixelix.app.generated.resources.mute_consequence_5
+import pixelix.app.generated.resources.optional_end_date
 import pixelix.app.generated.resources.unmute_account
 import pixelix.app.generated.resources.unmute_caps
 import kotlin.time.Instant
@@ -196,7 +195,7 @@ fun DatePickerFieldToModal(onDateSelected: (Instant?) -> Unit, modifier: Modifie
     OutlinedTextField(
         value = selectedDate?.let { formatLocalizedOnlyDate(it.toString()) } ?: "",
         onValueChange = { },
-        label = { Text("optional end date") },
+        label = { Text(stringResource(Res.string.optional_end_date)) },
         placeholder = { Text("MM/DD/YYYY") },
         trailingIcon = {
             Icon(vectorResource(Res.drawable.datetime), contentDescription = "Select date")

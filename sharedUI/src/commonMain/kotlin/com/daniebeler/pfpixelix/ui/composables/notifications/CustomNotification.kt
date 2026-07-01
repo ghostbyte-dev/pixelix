@@ -46,10 +46,15 @@ import com.daniebeler.pfpixelix.utils.timeAgo
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import pixelix.app.generated.resources.Res
+import pixelix.app.generated.resources.boosted_status_updated
 import pixelix.app.generated.resources.default_avatar
+import pixelix.app.generated.resources.follow_request
 import pixelix.app.generated.resources.followed_you
 import pixelix.app.generated.resources.liked_your_post
 import pixelix.app.generated.resources.mentioned_you_in_a_post
+import pixelix.app.generated.resources.new_comment
+import pixelix.app.generated.resources.new_status
+import pixelix.app.generated.resources.notification
 import pixelix.app.generated.resources.reblogged_your_post
 import pixelix.app.generated.resources.sent_a_dm
 
@@ -90,26 +95,26 @@ fun CustomNotification(
         }
 
         NotificationType.NEW_COMMENT -> {
-            text = " " + "wrote a new comment"
+            text = " " + stringResource(Res.string.new_comment)
             showImage = true
         }
 
         NotificationType.FOLLOW_REQUEST -> {
-            text = " " + "sent you a follow request"
+            text = " " + stringResource(Res.string.follow_request)
         }
 
         NotificationType.STATUS -> {
-            text = " " + "posted a new status"
+            text = " " + stringResource(Res.string.new_status)
             showImage = true
         }
 
         NotificationType.UPDATE -> {
-            text = " " + "boosted status got updated"
+            text = " " + stringResource(Res.string.boosted_status_updated)
             showImage = true
         }
 
         NotificationType.UNDEFINED -> {
-            text = " " + "undefined"
+            text = " " + stringResource(Res.string.notification)
         }
     }
 
@@ -150,7 +155,6 @@ fun CustomNotification(
                         tag = "username", start = offset, end = offset
                     ).firstOrNull()?.let { annotation ->
                         if (annotation.tag == "username") {
-                            //TODO: check if this is correct
                             navController.navigate(
                                 Destination.Profile(
                                     annotation.item, notification.account.username

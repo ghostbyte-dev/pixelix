@@ -16,7 +16,6 @@ import me.tatarka.inject.annotations.Inject
 class VernissageNotificationService(
     private val api: VernissageApi
 ) : NotificationService {
-    //TODO: find sollution for follow requests, there is a own follow request api endpoint
     override fun getNotifications(maxNotificationId: String?) = loadVernissagePaginatedListResources {
         api.getNotifications(maxNotificationId)
     }

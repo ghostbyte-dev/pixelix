@@ -13,7 +13,6 @@ import com.daniebeler.pfpixelix.domain.service.general.AccountService
 import com.daniebeler.pfpixelix.domain.service.general.Session
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.domain.service.suggestions.HashtagMentionsSuggestionsManager
-import com.daniebeler.pfpixelix.ui.composables.profile.AccountState
 import com.daniebeler.pfpixelix.utils.EmptyKmpUri
 import com.daniebeler.pfpixelix.utils.toKmpUri
 import kotlinx.coroutines.flow.launchIn
@@ -27,13 +26,15 @@ class EditProfileViewModel @Inject constructor(
 ) : ViewModel() {
     val capabilities = session.capabilities.value
     var accountState by mutableStateOf(EditProfileState())
-    var avatarState by mutableStateOf(EditAvatarState())
+    var avatarState by mutableStateOf(EditImageState())
 
+    var headerState by mutableStateOf(EditImageState())
     var firstLoaded by mutableStateOf(false)
     var displayName by mutableStateOf(TextFieldValue())
     var note by mutableStateOf(TextFieldValue())
     var website by mutableStateOf(TextFieldValue())
     var avatarUri by mutableStateOf(EmptyKmpUri)
+    var headerUri by mutableStateOf(EmptyKmpUri)
     var privateProfile by mutableStateOf(false)
     var manuallyAcceptNewFollowers by mutableStateOf<Boolean?>(null)
     var includePublicPostsInSearchEngine by mutableStateOf<Boolean?>(null)
@@ -45,7 +46,7 @@ class EditProfileViewModel @Inject constructor(
         !(displayName.text == (accountState.account?.displayname
             ?: "") && note.text == (accountState.account?.note
             ?: "") && ("https://${website.text}" == (accountState.account?.website
-            ?: "") || (accountState.account?.website.isNullOrEmpty() && website.text.isEmpty())) && avatarState.newAvatar == null && privateProfile == accountState.account?.locked && manuallyAcceptNewFollowers == accountState.account?.manuallyApprovesFollowers && includeProfileInSearchEngine == accountState.account?.includeProfilePageInSearchEngines && includePublicPostsInSearchEngine == accountState.account?.includePublicPostsInSearchEngines)
+            ?: "") || (accountState.account?.website.isNullOrEmpty() && website.text.isEmpty())) && avatarState.newImage == null && privateProfile == accountState.account?.locked && manuallyAcceptNewFollowers == accountState.account?.manuallyApprovesFollowers && includeProfileInSearchEngine == accountState.account?.includeProfilePageInSearchEngines && includePublicPostsInSearchEngine == accountState.account?.includePublicPostsInSearchEngines)
     }
 
     init {
@@ -93,7 +94,7 @@ class EditProfileViewModel @Inject constructor(
             avatarState = when (result) {
                 is Resource.Success -> {
                     avatarState.copy(
-                        isLoading = false, newAvatar = null, newUploadedAvatar = avatar
+                        isLoading = false, newImage = null, newUploadedImage = avatar
                     )
                 }
 
@@ -113,8 +114,8 @@ class EditProfileViewModel @Inject constructor(
             accountState = EditProfileState(error = "No user found")
             return
         }
-        if (avatarState.newAvatar != null) {
-            updateAvatar(avatarState.newAvatar!!)
+        if (avatarState.newImage != null) {
+            updateAvatar(avatarState.newImage!!)
         }
         val updateUserRequest = UpdateUserRequest(
             displayName = displayName.text,

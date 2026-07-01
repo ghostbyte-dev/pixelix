@@ -120,6 +120,7 @@ import pixelix.app.generated.resources.open_in_browser
 import pixelix.app.generated.resources.photo
 import pixelix.app.generated.resources.blocked
 import pixelix.app.generated.resources.muted
+import pixelix.app.generated.resources.requested
 import pixelix.app.generated.resources.share
 import pixelix.app.generated.resources.share_this_profile
 import pixelix.app.generated.resources.unblock_account
@@ -292,7 +293,6 @@ fun OtherProfileComposable(
                                         contentColor = MaterialTheme.colorScheme.onPrimary
                                     }
 
-                                    //TODO: show state request (if user has setting follow request, if trying to follow, state requested is returned
                                     Button(
                                         onClick = {
                                             if (!viewModel.relationshipState.isLoading && viewModel.relationshipState.accountRelationship != null) {
@@ -323,8 +323,7 @@ fun OtherProfileComposable(
                                             if (viewModel.relationshipState.accountRelationship?.following == true) {
                                                 Text(text = stringResource(Res.string.unfollow))
                                             } else if (viewModel.relationshipState.accountRelationship?.requested == true) {
-                                                //TODO: string resource
-                                                Text(text = "Requested")
+                                                Text(text = stringResource(Res.string.requested))
                                             } else {
                                                 Text(text = stringResource(Res.string.follow))
                                             }

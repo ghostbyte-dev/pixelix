@@ -67,9 +67,9 @@ class AppActivity : ComponentActivity() {
 
         val destination = intent.getStringExtra("navigation_destination")
         val accountId = intent.getStringExtra("account_id")
-
-        if (destination == "profile" && accountId != null) {
-            onExternalNotification(accountId)
+        val username = intent.getStringExtra("username")
+        if (destination == "profile" && accountId != null && username != null) {
+            onExternalNotification(accountId, username)
         }
     }
 
@@ -83,9 +83,9 @@ class AppActivity : ComponentActivity() {
         systemFileShare.share(uris)
     }
 
-    private fun onExternalNotification(accountId: String) {
+    private fun onExternalNotification(accountId: String, username: String) {
         val accountIntentHandler = MyApplication.appComponent.accountIntentHandler
-        accountIntentHandler.onAccountOpen(accountId);
+        accountIntentHandler.onAccountOpen(accountId, username)
     }
 }
 

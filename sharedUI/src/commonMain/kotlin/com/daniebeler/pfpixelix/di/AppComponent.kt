@@ -161,6 +161,10 @@ abstract class AppComponent(
     @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.VALUE_PARAMETER)
     annotation class VernissageClient
 
+    @Qualifier
+    @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.VALUE_PARAMETER)
+    annotation class SimpleClient
+
     @Provides
     @AppSingleton
     @PixelfedClient
@@ -258,6 +262,15 @@ abstract class AppComponent(
                 }
                 with(authInterceptor) { intercept(request) }
             }
+        }
+    }
+
+    @Provides
+    @AppSingleton
+    @SimpleClient
+    fun provideSimpleHttpClient(): HttpClient {
+        return HttpClient {
+            expectSuccess = true
         }
     }
 

@@ -29,7 +29,7 @@ class VernissageAuthInterceptor(
     private val json: Json,
     private val sessionStorage: DataStore<SessionStorage>,
     private val globalNavigator: GlobalNavigator
-): AuthInterceptor {
+) : AuthInterceptor {
     private val refreshMutex = Mutex()
     override suspend fun Sender.intercept(request: HttpRequestBuilder): HttpClientCall {
         val token = session.credentials.value?.token
@@ -39,36 +39,23 @@ class VernissageAuthInterceptor(
         val executedRequest = execute(request)
 
         if (executedRequest.response.status == HttpStatusCode.Unauthorized) {
-            Logger.Companion.i(tag = "Unauthorized") {
-                "try refreshing token"
-            }
 
-            //TODO: Catch expired token exception
-            val errorBodyText = executedRequest.response.bodyAsText()
-            val isUnauthenticated = try {
-                val json = Json.Default.parseToJsonElement(errorBodyText).jsonObject
-                json["error"]?.jsonPrimitive?.content == "Unauthenticated."
-            } catch (e: Exception) {
-                false
-            }
-            if (isUnauthenticated) {
-                return try {
-                    refreshToken()
-                    val newToken = session.credentials.value?.token
-                    if (newToken != null) {
-                        request.headers[HttpHeaders.Authorization] = "Bearer $newToken"
-                        execute(request)
-                    } else {
-                        globalNavigator.emit(GlobalNavigationEvent.NavigateToLogin)
-                        executedRequest
-                    }
-                } catch (e: Exception) {
-                    Logger.Companion.e(tag = "Unauthorized") {
-                        "error refreshing token" + e.message
-                    }
+            return try {
+                refreshToken()
+                val newToken = session.credentials.value?.token
+                if (newToken != null) {
+                    request.headers[HttpHeaders.Authorization] = "Bearer $newToken"
+                    execute(request)
+                } else {
                     globalNavigator.emit(GlobalNavigationEvent.NavigateToLogin)
                     executedRequest
                 }
+            } catch (e: Exception) {
+                Logger.e(tag = "Unauthorized") {
+                    "error refreshing token" + e.message
+                }
+                globalNavigator.emit(GlobalNavigationEvent.NavigateToLogin)
+                executedRequest
             }
         }
         return executedRequest
@@ -89,47 +76,22 @@ class VernissageAuthInterceptor(
                 return
             }
 
-            //TODO: make authApi.createAuthApi return vernissageAuthApi or pixelfedAuthApi, or fix it differently
-            if (session.backendType.value == BackendType.PIXELFED) {
-                val authApi =
-                    PixelfedAuthApi.createPixelfedAuthApi(Url(currentCredentials.serverUrl), json)
+            val authApi = VernissageAuthApi.createVernissageAuthApi(
+                Url(currentCredentials.serverUrl), json
+            )
 
-                val token = authApi.getTokenRefresh(
-                    clientId = currentCredentials.clientId,
-                    clientSecret = currentCredentials.clientSecret,
-                    refreshToken = currentCredentials.refreshToken,
-                    grantType = "refresh_token"
+            val token = authApi.getTokenRefresh(
+                clientId = currentCredentials.clientId,
+                refreshToken = currentCredentials.refreshToken,
+                grantType = "refresh_token"
+            )
+
+            updateSession(
+                currentCredentials.copy(
+                    token = token.accessToken,
+                    refreshToken = token.refreshToken
                 )
-
-                updateSession(
-                    currentCredentials.copy(
-                        token = token.accessToken,
-                        refreshToken = token.refreshToken,
-                        createdAt = token.createdAt
-                    )
-                )
-            } else {
-                val authApi = VernissageAuthApi.createVernissageAuthApi(
-                    Url(currentCredentials.serverUrl), json
-                )
-
-                val token = authApi.getTokenRefresh(
-                    clientId = currentCredentials.clientId,
-                    clientSecret = currentCredentials.clientSecret,
-                    refreshToken = currentCredentials.refreshToken,
-                    grantType = "refresh_token"
-                )
-
-                updateSession(
-                    currentCredentials.copy(
-                        token = token.accessToken,
-                        refreshToken = token.refreshToken,
-                        createdAt = token.createdAt
-                    )
-                )
-            }
-
-
+            )
         }
     }
 

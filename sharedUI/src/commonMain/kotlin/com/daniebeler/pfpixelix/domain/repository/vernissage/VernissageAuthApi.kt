@@ -66,13 +66,12 @@ interface VernissageAuthApi {
     ): AuthTokenVernissage
 
     @FormUrlEncoded
-    @POST("oauth/token")
+    @POST("api/v1/oauth/token")
     suspend fun getTokenRefresh(
         @Field("client_id") clientId: String,
-        @Field("client_secret") clientSecret: String,
         @Field("refresh_token") refreshToken: String,
         @Field("grant_type") grantType: String
-    ): AuthToken
+    ): AuthTokenVernissage
 
     @GET("api/v1/users/{username}")
     suspend fun verify(

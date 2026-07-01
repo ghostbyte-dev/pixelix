@@ -28,10 +28,9 @@ import okio.Path
 import okio.Path.Companion.toPath
 
 
-//TODO: Use other HttpClient (simple http client)
 @Inject
 class FileService(
-    @AppComponent.PixelfedClient private val httpClient: HttpClient
+    @AppComponent.SimpleClient private val httpClient: HttpClient
 ) {
     companion object {
         val dataStoreDir = FileKit.filesDir.resolve("datastore")

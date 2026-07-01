@@ -103,7 +103,7 @@ class VernissageAuthService(
             displayName = account.displayname ?: account.username,
             avatar = account.avatar,
             serverUrl = serverUrl.toString(),
-            token = tokenResponse.accessToken,
+            token = tokenResponse.accessToken + "test",
             refreshToken = tokenResponse.refreshToken,
             clientId = authData.clientId,
             clientSecret = "authData.clientSecret",

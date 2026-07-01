@@ -29,7 +29,7 @@ class PixelfedAuthInterceptor(
     private val json: Json,
     private val sessionStorage: DataStore<SessionStorage>,
     private val globalNavigator: GlobalNavigator
-): AuthInterceptor {
+) : AuthInterceptor {
     private val refreshMutex = Mutex()
     override suspend fun Sender.intercept(request: HttpRequestBuilder): HttpClientCall {
         val token = session.credentials.value?.token
@@ -87,47 +87,23 @@ class PixelfedAuthInterceptor(
                 return
             }
 
-            //TODO: make authApi.createAuthApi return vernissageAuthApi or pixelfedAuthApi, or fix it differently
-            if (session.backendType.value == BackendType.PIXELFED) {
-                val authApi =
-                    PixelfedAuthApi.createPixelfedAuthApi(Url(currentCredentials.serverUrl), json)
+            val authApi =
+                PixelfedAuthApi.createPixelfedAuthApi(Url(currentCredentials.serverUrl), json)
 
-                val token = authApi.getTokenRefresh(
-                    clientId = currentCredentials.clientId,
-                    clientSecret = currentCredentials.clientSecret,
-                    refreshToken = currentCredentials.refreshToken,
-                    grantType = "refresh_token"
+            val token = authApi.getTokenRefresh(
+                clientId = currentCredentials.clientId,
+                clientSecret = currentCredentials.clientSecret,
+                refreshToken = currentCredentials.refreshToken,
+                grantType = "refresh_token"
+            )
+
+            updateSession(
+                currentCredentials.copy(
+                    token = token.accessToken,
+                    refreshToken = token.refreshToken,
+                    createdAt = token.createdAt
                 )
-
-                updateSession(
-                    currentCredentials.copy(
-                        token = token.accessToken,
-                        refreshToken = token.refreshToken,
-                        createdAt = token.createdAt
-                    )
-                )
-            } else {
-                val authApi = VernissageAuthApi.createVernissageAuthApi(
-                    Url(currentCredentials.serverUrl), json
-                )
-
-                val token = authApi.getTokenRefresh(
-                    clientId = currentCredentials.clientId,
-                    clientSecret = currentCredentials.clientSecret,
-                    refreshToken = currentCredentials.refreshToken,
-                    grantType = "refresh_token"
-                )
-
-                updateSession(
-                    currentCredentials.copy(
-                        token = token.accessToken,
-                        refreshToken = token.refreshToken,
-                        createdAt = token.createdAt
-                    )
-                )
-            }
-
-
+            )
         }
     }
 

@@ -21,6 +21,5 @@ data class NotificationStoreItem(
     val accountId: String,
     val accountUsername: String,
     val timeAgo: String,
-    //TODO: check if it works, if serializer is needed
     val type: NotificationType
 )

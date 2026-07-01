@@ -65,7 +65,7 @@ fun AboutInstanceComposable(
     val lazyListState = rememberLazyListState()
 
     val colors =
-        ListItemDefaults.colors(disabledContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh)
+        ListItemDefaults.colors(disabledContainerColor = MaterialTheme.colorScheme.surfaceContainer)
 
 
     ScreenScaffold(
@@ -181,7 +181,7 @@ fun AboutInstanceComposable(
                         DomainFormat.formatDomain(viewModel.instanceState.instance?.domain ?: "")
 
                     val linkColors =
-                        ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh)
+                        ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.surfaceContainer)
 
                     SegmentedListItem(
                         onClick = { viewModel.instanceState.instance?.let { viewModel.openUrl("https://$domain$privacyPath") } },

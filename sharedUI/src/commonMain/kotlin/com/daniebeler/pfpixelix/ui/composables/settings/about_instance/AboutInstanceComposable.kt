@@ -36,6 +36,7 @@ import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.service.general.BackendType
+import com.daniebeler.pfpixelix.ui.composables.custom_account.AccountListItem
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pfpixelix.ui.composables.widgets.ScreenScaffold
@@ -139,29 +140,20 @@ fun AboutInstanceComposable(
                             modifier = Modifier.padding(12.dp, 0.dp)
                         )
 
-                        Row(
-                            modifier = Modifier.clickable {
-                                navController.navigate(
-                                    Destination.Profile(
-                                        account.id, account.username
+                        Box(Modifier.padding(8.dp)) {
+                            AccountListItem(
+                                account = account,
+                                relationship = null,
+                                navController = navController,
+                                index = 0,
+                                count = 1,
+                                onClick = {
+                                    navController.navigate(
+                                        Destination.Profile(
+                                            account.id, account.username
+                                        )
                                     )
-                                )
-                            }.padding(horizontal = 12.dp, vertical = 8.dp).fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            AsyncImage(
-                                model = account.avatar,
-                                error = painterResource(Res.drawable.default_avatar),
-                                contentDescription = "",
-                                modifier = Modifier.height(46.dp).width(46.dp).clip(CircleShape)
-                            )
-                            Spacer(modifier = Modifier.width(10.dp))
-                            Column {
-                                if (account.displayname != null) {
-                                    Text(text = account.displayname)
-                                }
-                                Text(text = "@${account.username}")
-                            }
+                                })
                         }
                     }
 
@@ -169,7 +161,8 @@ fun AboutInstanceComposable(
 
                     Text(
                         text = "Legal",
-                        style = MaterialTheme.typography.headlineSmall,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp,
                         modifier = Modifier.padding(start = 12.dp, bottom = 8.dp)
                     )
 
@@ -187,7 +180,7 @@ fun AboutInstanceComposable(
                         onClick = { viewModel.instanceState.instance?.let { viewModel.openUrl("https://$domain$privacyPath") } },
                         colors = linkColors,
                         shapes = ListItemDefaults.segmentedShapes(index = 0, count = 2),
-                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 1.dp),
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 1.dp),
                         content = {
                             Text(
                                 text = stringResource(Res.string.privacy_policy),
@@ -199,7 +192,7 @@ fun AboutInstanceComposable(
                         onClick = { viewModel.instanceState.instance?.let { viewModel.openUrl("https://$domain$termsPath") } },
                         colors = linkColors,
                         shapes = ListItemDefaults.segmentedShapes(index = 1, count = 2),
-                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 1.dp),
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 1.dp),
                         content = {
                             Text(
                                 text = stringResource(Res.string.terms_of_use),
@@ -211,7 +204,8 @@ fun AboutInstanceComposable(
 
                     Text(
                         text = stringResource(Res.string.rules),
-                        style = MaterialTheme.typography.headlineSmall,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp,
                         modifier = Modifier.padding(start = 12.dp, bottom = 8.dp)
                     )
                 }
@@ -226,7 +220,7 @@ fun AboutInstanceComposable(
                         shapes = ListItemDefaults.segmentedShapes(
                             index = index, count = rules.size
                         ),
-                        modifier = Modifier.padding(12.dp, 1.dp),
+                        modifier = Modifier.padding(8.dp, 1.dp),
                         leadingContent = {
                             Text(
                                 text = rule.id,

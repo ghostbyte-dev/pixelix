@@ -3,7 +3,6 @@ package com.daniebeler.pfpixelix.ui.composables.profile
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -86,7 +86,8 @@ fun ProfileTopSection(
                 AsyncImage(
                     model = account.headerUrl,
                     contentDescription = "",
-                    modifier = Modifier.fillMaxWidth().padding(bottom = 24.dp)
+                    modifier = Modifier.fillMaxWidth().padding(bottom = 24.dp),
+                    contentScale = ContentScale.Crop
                 )
             } else {
                 Spacer(Modifier.height(24.dp))
@@ -232,32 +233,61 @@ fun ProfileTopSection(
                         openUrl = { url -> openUrl(url) })
                 }
 
-                if (account.website.isNotBlank()) {
-                    Row(
-                        Modifier.padding(top = 12.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-
-                        Text(
-                            text = account.website.substringAfter("https://"),
-                            color = MaterialTheme.colorScheme.primary,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.clickable(onClick = { openUrl(account.website) })
-                        )
+                if (account.createdAt.isNotBlank()) {
+                    val date: LocalDate = LocalDate.parse(account.createdAt.substringBefore("T"))
+                    val formatter = LocalDate.Format {
+                        monthName(MonthNames.ENGLISH_ABBREVIATED)
+                        char(' ')
+                        dayOfMonth()
+                        chars(", ")
+                        year()
                     }
+                    Text(
+                        text = stringResource(
+                            Res.string.joined_date, formatter.format(date)
+                        ), color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 10.sp
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                val fieldColors =
+                    ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh)
+
+                if (account.website.isNotBlank()) {
+                    val url = DomainFormat.extractUrl(account.website) ?: account.website
+
+                    SegmentedListItem(
+                        onClick = { openUrl("https://$url") },
+                        colors = fieldColors,
+                        shapes = ListItemDefaults.segmentedShapes(
+                            index = 0, count = 1
+                        ),
+                        leadingContent = {
+                            Text(
+                                text = "Website",
+                                fontSize = 13.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier.width(100.dp)
+                            )
+                        },
+                        content = {
+                            Text(
+                                text = url,
+                                fontSize = 13.sp,
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        })
                 }
 
                 if (account.fields.isNotEmpty()) {
-                    Spacer(modifier = Modifier.height(12.dp))
-                    val colors =
-                        ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh)
-
                     Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                         account.fields.forEachIndexed { index, field ->
                             val url = DomainFormat.extractUrl(field.value) ?: field.value
                             SegmentedListItem(
                                 onClick = { openUrl("https://$url") },
-                                colors = colors,
+                                colors = fieldColors,
                                 shapes = ListItemDefaults.segmentedShapes(
                                     index = index, count = account.fields.size
                                 ),
@@ -289,22 +319,6 @@ fun ProfileTopSection(
                                 })
                         }
                     }
-                }
-
-                if (account.createdAt.isNotBlank()) {
-                    val date: LocalDate = LocalDate.parse(account.createdAt.substringBefore("T"))
-                    val formatter = LocalDate.Format {
-                        monthName(MonthNames.ENGLISH_ABBREVIATED)
-                        char(' ')
-                        dayOfMonth()
-                        chars(", ")
-                        year()
-                    }
-                    Text(
-                        text = stringResource(
-                            Res.string.joined_date, formatter.format(date)
-                        ), color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 10.sp
-                    )
                 }
             }
         }

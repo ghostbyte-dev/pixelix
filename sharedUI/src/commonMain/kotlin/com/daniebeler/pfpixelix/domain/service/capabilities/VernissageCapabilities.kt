@@ -23,5 +23,8 @@ val VernissageCapabilities = Capabilities(
     ),
     trending = TrendingCapabilities(
         supportsMultipleProfileTimeRanges = true, supportsMultipleHashtagTimeRanges = true
+    ),
+    newPost = NewPostCapabilities(
+        supportsAdvancedMediaMetadata = true
     )
 )

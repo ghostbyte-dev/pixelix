@@ -248,7 +248,6 @@ private fun SearchResultComposable(
     val pagerState = rememberPagerState(initialPage = 0, pageCount = { 2 })
     val scope = rememberCoroutineScope()
     Column {
-
         PrimaryTabRow(selectedTabIndex = pagerState.currentPage) {
             Tab(
                 text = { Text(stringResource(Res.string.accounts)) },

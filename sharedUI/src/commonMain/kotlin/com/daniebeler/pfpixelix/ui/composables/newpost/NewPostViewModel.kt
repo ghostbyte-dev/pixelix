@@ -13,6 +13,7 @@ import co.touchlab.kermit.Logger
 import com.daniebeler.pfpixelix.domain.model.Instance
 import com.daniebeler.pfpixelix.domain.model.NewPost
 import com.daniebeler.pfpixelix.domain.model.Visibility
+import com.daniebeler.pfpixelix.domain.model.request.MediaAttachmentMetadataRequest
 import com.daniebeler.pfpixelix.domain.service.general.PostEditorService
 import com.daniebeler.pfpixelix.domain.service.file.FileService
 import com.daniebeler.pfpixelix.domain.service.file.PlatformFile
@@ -59,8 +60,8 @@ class NewPostViewModel @Inject constructor(
         val imageUri: KmpUri,
         val mimeType: String,
         var id: String?,
-        var text: String = "",
-        var isLoading: Boolean
+        var isLoading: Boolean,
+        var metadata: MediaAttachmentMetadataRequest
     )
 
     val capabilities = session.capabilities.value
@@ -128,9 +129,9 @@ class NewPostViewModel @Inject constructor(
     }
 
 
-    fun updateAltTextVariable(index: Int, newAltText: String) {
+    fun updateImageMetadata(index: Int, newMetadata: MediaAttachmentMetadataRequest) {
         images = images.also {
-            it[index] = it[index].copy(text = newAltText)
+            it[index] = it[index].copy(metadata = newMetadata)
         }
     }
 
@@ -207,8 +208,8 @@ class NewPostViewModel @Inject constructor(
             )
             return
         }
-        images += ImageItem(uri, fileType, null, "", true)
-        uploadImage(uri, "")
+        images += ImageItem(uri, fileType, null, true, MediaAttachmentMetadataRequest())
+        uploadImage(uri)
     }
 
     suspend fun compressImage(uri: KmpUri) {
@@ -307,8 +308,8 @@ class NewPostViewModel @Inject constructor(
         }
     }
 
-    private fun uploadImage(uri: KmpUri, text: String) {
-        postEditorService.uploadMedia(uri, text).onEach { result ->
+    private fun uploadImage(uri: KmpUri) {
+        postEditorService.uploadMedia(uri).onEach { result ->
             mediaUploadState = when (result) {
                 is Resource.Success -> {
                     if (result.data?.type?.take(5) == "video") {
@@ -354,9 +355,8 @@ class NewPostViewModel @Inject constructor(
         createPostState = CreatePostState(isLoading = true)
         if (images.size == mediaUploadState.mediaAttachments.size) {
             images.forEachIndexed { index, it ->
-                if (it.text != "") {
-                    updateAltText(index, it.text)
-                }
+                //TODO: check if metadata has changed from default empty metadata
+                updateMetadata(index, it.metadata)
             }
             mediaUploadState = sortMediaUploadState(mediaUploadState)
             createNewPost(mediaUploadState, navController)
@@ -373,12 +373,12 @@ class NewPostViewModel @Inject constructor(
         return newMediaUploadState
     }
 
-    private fun updateAltText(index: Int, altText: String) {
+    private fun updateMetadata(index: Int, metadata: MediaAttachmentMetadataRequest) {
         val image = images[index]
         if (image.id == null) {
             return
         }
-        postEditorService.updateMedia(image.id!!, image.text).onEach { result ->
+        postEditorService.updateMedia(image.id!!, image.metadata).onEach { result ->
             mediaUploadState = when (result) {
                 is Resource.Success -> {
                     images.find { it.imageUri == image.imageUri }?.isLoading = false
@@ -390,13 +390,13 @@ class NewPostViewModel @Inject constructor(
                     }
                     mediaUploadState.copy(
                         mediaAttachments = mediaUploadState.mediaAttachments.toMutableList().also {
-                            it[index] = result.data!!
+                            it[index] = result.data
                         }, isLoading = false
                     )
                 }
 
                 is Resource.Error -> {
-                    if (!result.message.isNullOrEmpty()) {
+                    if (result.message.isNotEmpty()) {
                         MediaUploadState(error = result.message)
                     } else {
                         MediaUploadState(error = "An unexpected error occured")

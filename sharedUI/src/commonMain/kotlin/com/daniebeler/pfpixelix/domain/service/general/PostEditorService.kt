@@ -5,6 +5,7 @@ import com.daniebeler.pfpixelix.domain.model.MediaAttachment
 import com.daniebeler.pfpixelix.domain.model.NewPost
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.model.UpdatePost
+import com.daniebeler.pfpixelix.domain.model.request.MediaAttachmentMetadataRequest
 import com.daniebeler.pfpixelix.domain.service.pixelfed.PixelfedPostEditorService
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.utils.KmpUri
@@ -13,9 +14,9 @@ import me.tatarka.inject.annotations.Inject
 
 interface PostEditorService {
 
-    fun uploadMedia(uri: KmpUri, description: String): Flow<Resource<MediaAttachment>>
+    fun uploadMedia(uri: KmpUri): Flow<Resource<MediaAttachment>>
 
-    fun updateMedia(id: String, description: String): Flow<Resource<MediaAttachment>>
+    fun updateMedia(id: String, metadata: MediaAttachmentMetadataRequest): Flow<Resource<MediaAttachment>>
 
     fun createPost(createPostDto: NewPost): Flow<Resource<Post>>
 
@@ -39,12 +40,12 @@ class PostEditorServiceDelegate(
         }
 
     override fun uploadMedia(
-        uri: KmpUri, description: String
-    ): Flow<Resource<MediaAttachment>> = current.uploadMedia(uri, description)
+        uri: KmpUri
+    ): Flow<Resource<MediaAttachment>> = current.uploadMedia(uri)
 
     override fun updateMedia(
-        id: String, description: String
-    ): Flow<Resource<MediaAttachment>> = current.updateMedia(id, description)
+        id: String, metadata: MediaAttachmentMetadataRequest
+    ): Flow<Resource<MediaAttachment>> = current.updateMedia(id, metadata)
 
     override fun createPost(createPostDto: NewPost): Flow<Resource<Post>> =
         current.createPost(createPostDto)

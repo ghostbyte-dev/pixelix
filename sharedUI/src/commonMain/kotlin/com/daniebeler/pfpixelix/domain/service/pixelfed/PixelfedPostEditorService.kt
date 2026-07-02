@@ -2,6 +2,7 @@ package com.daniebeler.pfpixelix.domain.service.pixelfed
 
 import com.daniebeler.pfpixelix.domain.model.NewPost
 import com.daniebeler.pfpixelix.domain.model.UpdatePost
+import com.daniebeler.pfpixelix.domain.model.request.MediaAttachmentMetadataRequest
 import com.daniebeler.pfpixelix.domain.repository.pixelfed.PixelfedApi
 import com.daniebeler.pfpixelix.domain.service.file.FileService
 import com.daniebeler.pfpixelix.domain.service.file.PlatformFile
@@ -27,7 +28,7 @@ class PixelfedPostEditorService(
     private val api: PixelfedApi, private val fileService: FileService, private val json: Json
 ) : PostEditorService {
 
-    override fun uploadMedia(uri: KmpUri, description: String) = loadResource {
+    override fun uploadMedia(uri: KmpUri) = loadResource {
         val file = PlatformFile(uri)
         if (!file.exists()) error("File doesn't exist")
         val bytes = file.readBytes()
@@ -44,7 +45,7 @@ class PixelfedPostEditorService(
 
         val data = MultiPartFormDataContent(
             parts = formData {
-                append("description", description)
+                append("description", "")
                 append("file", bytes, Headers.build {
                     append(HttpHeaders.ContentType, mimeType)
                     append(HttpHeaders.ContentDisposition, "filename=${file.nameWithoutExtension}")
@@ -60,8 +61,8 @@ class PixelfedPostEditorService(
         api.uploadMedia(data).toDomain()
     }
 
-    override fun updateMedia(id: String, description: String) = loadResource {
-        api.updateMedia(id, description).toDomain()
+    override fun updateMedia(id: String, metadata: MediaAttachmentMetadataRequest) = loadResource {
+        api.updateMedia(id, metadata.description ?: "").toDomain()
     }
 
     override fun createPost(createPostDto: NewPost) = loadResource {

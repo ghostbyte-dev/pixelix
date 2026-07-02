@@ -6,7 +6,8 @@ data class Capabilities(
     val profile: ProfileCapabilities,
     val editProfile: EditProfileCapabilities,
     val notification: NotificationCapabilities,
-    val trending: TrendingCapabilities
+    val trending: TrendingCapabilities,
+    val newPost: NewPostCapabilities
 )
 
 data class GeneralCapabilities(
@@ -41,4 +42,8 @@ data class EditProfileCapabilities(
 
 data class NotificationCapabilities(
     val supportsFollowRequestActions: Boolean
+)
+
+data class NewPostCapabilities(
+    val supportsAdvancedMediaMetadata: Boolean
 )

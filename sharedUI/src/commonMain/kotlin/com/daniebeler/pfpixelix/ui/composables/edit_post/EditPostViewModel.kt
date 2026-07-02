@@ -13,6 +13,7 @@ import com.daniebeler.pfpixelix.domain.model.Instance
 import com.daniebeler.pfpixelix.domain.model.MediaAttachment
 import com.daniebeler.pfpixelix.domain.model.Location
 import com.daniebeler.pfpixelix.domain.model.UpdatePost
+import com.daniebeler.pfpixelix.domain.model.request.MediaAttachmentMetadataRequest
 import com.daniebeler.pfpixelix.domain.service.general.PostEditorService
 import com.daniebeler.pfpixelix.domain.service.general.InstanceService
 import com.daniebeler.pfpixelix.domain.service.general.PostService
@@ -158,7 +159,7 @@ class EditPostViewModel @Inject constructor(
 
     private fun updateMedia(mediaDescriptionItem: MediaDescriptionItem) {
         postEditorService.updateMedia(
-            mediaDescriptionItem.imageId, mediaDescriptionItem.description
+            mediaDescriptionItem.imageId, MediaAttachmentMetadataRequest(description = mediaDescriptionItem.description)
         ).onEach { result ->
             when (result) {
                 is Resource.Success -> {

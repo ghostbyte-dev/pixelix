@@ -23,5 +23,8 @@ val NoCapabilities = Capabilities(
     ),
     trending = TrendingCapabilities(
         supportsMultipleProfileTimeRanges = false, supportsMultipleHashtagTimeRanges = false
+    ),
+    newPost = NewPostCapabilities(
+        supportsAdvancedMediaMetadata = false
     )
 )

@@ -36,13 +36,13 @@ fun SettingPref(
         trailingContent = trailingContent,
         content = {
             Text(
-                text = title, fontWeight = FontWeight.Medium
+                text = title, style = MaterialTheme.typography.bodyMedium
             )
         },
         supportingContent = desc?.let {
             {
                 Text(
-                    text = it, maxLines = 5, overflow = TextOverflow.Ellipsis
+                    text = it, style = MaterialTheme.typography.bodySmall
                 )
             }
         })

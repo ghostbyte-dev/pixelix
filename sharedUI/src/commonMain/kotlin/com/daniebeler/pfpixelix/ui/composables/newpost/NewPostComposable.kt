@@ -56,11 +56,15 @@ import com.daniebeler.pfpixelix.domain.model.request.MediaAttachmentMetadataRequ
 import com.daniebeler.pfpixelix.utils.KmpUri
 import com.daniebeler.pfpixelix.utils.getPlatformUriObject
 import com.daniebeler.pfpixelix.utils.imeAwareInsets
+import com.daniebeler.pfpixelix.utils.parseExifMetadata
 import com.daniebeler.pfpixelix.utils.toKmpUri
 import io.github.vinceglb.filekit.dialogs.FileKitMode
 import io.github.vinceglb.filekit.dialogs.FileKitType
 import io.github.vinceglb.filekit.dialogs.compose.rememberFilePickerLauncher
+import io.github.vinceglb.filekit.readBytes
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
@@ -84,7 +88,7 @@ fun NewPostComposable(
     val scope = rememberCoroutineScope()
     LaunchedEffect(uris) {
         uris?.let {
-            uris.forEach { viewModel.addImage(uri = it) }
+            uris.forEach { viewModel.addImage(uri = it, metadata = MediaAttachmentMetadataRequest()) }
         }
     }
     val pagerState = rememberPagerState(initialPage = 0, pageCount = { viewModel.images.size + 1 })
@@ -103,9 +107,21 @@ fun NewPostComposable(
                     val launcher = rememberFilePickerLauncher(
                         type = FileKitType.ImageAndVideo, mode = FileKitMode.Multiple()
                     ) { files ->
-                        files?.forEach { file ->
-                            viewModel.addImage(file.toKmpUri())
-                        }
+                            files?.forEach { file ->
+                                scope.launch(Dispatchers.Default) {
+                                    try {
+                                        val bytes = file.readBytes()
+
+                                        val extractedMetadata = parseExifMetadata(bytes)
+
+                                        withContext(Dispatchers.Main) {
+                                            viewModel.addImage(file.toKmpUri(), extractedMetadata)
+                                        }
+                                    } catch (e: Exception) {
+                                        e.printStackTrace()
+                                    }
+                                }
+                            }
                     }
                     if (viewModel.images.size != pagerState.currentPage) {
                         Button(
@@ -130,8 +146,9 @@ fun NewPostComposable(
 
             val navigationBarPadding =
                 WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
-            Column(Modifier.imeAwareInsets(60.dp)
-                .padding(bottom = 60.dp + navigationBarPadding),
+            Column(
+                Modifier.imeAwareInsets(60.dp)
+                    .padding(bottom = 60.dp + navigationBarPadding),
             ) {
 
                 PrimaryScrollableTabRow(selectedTabIndex = pagerState.currentPage) {
@@ -178,10 +195,12 @@ fun NewPostComposable(
                     modifier = Modifier.weight(1f).background(MaterialTheme.colorScheme.background)
                 ) { tabIndex ->
                     if (viewModel.images.isEmpty()) {
-                        EmptyImageTab { viewModel.addImage(it) }
+                        EmptyImageTab { file, metadata -> viewModel.addImage(file, metadata) }
                     } else {
                         if (tabIndex < viewModel.images.size) {
-                            ImageTab(viewModel.images[tabIndex], {viewModel.updateImageMetadata(tabIndex, it)})
+                            ImageTab(
+                                viewModel.images[tabIndex],
+                                { viewModel.updateImageMetadata(tabIndex, it) })
                         } else {
                             Text("general")
                         }
@@ -656,13 +675,26 @@ fun NewPostComposable(
 }
 
 @Composable
-fun EmptyImageTab(addImage: (KmpUri) -> Unit) {
+fun EmptyImageTab(addImage: (KmpUri, MediaAttachmentMetadataRequest) -> Unit) {
+    val scope = rememberCoroutineScope()
     Column {
         val launcher = rememberFilePickerLauncher(
             type = FileKitType.ImageAndVideo, mode = FileKitMode.Multiple()
         ) { files ->
             files?.forEach { file ->
-                addImage(file.toKmpUri())
+                scope.launch(Dispatchers.Default) {
+                    try {
+                        val bytes = file.readBytes()
+
+                        val extractedMetadata = parseExifMetadata(bytes)
+
+                        withContext(Dispatchers.Main) {
+                            addImage(file.toKmpUri(), extractedMetadata)
+                        }
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                }
             }
         }
 
@@ -679,7 +711,10 @@ fun EmptyImageTab(addImage: (KmpUri) -> Unit) {
 }
 
 @Composable
-fun ImageTab(image: NewPostViewModel.ImageItem, updateMetadata: (MediaAttachmentMetadataRequest) -> Unit) {
+fun ImageTab(
+    image: NewPostViewModel.ImageItem,
+    updateMetadata: (MediaAttachmentMetadataRequest) -> Unit
+) {
     val verticalScrollState = rememberScrollState()
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -692,22 +727,70 @@ fun ImageTab(image: NewPostViewModel.ImageItem, updateMetadata: (MediaAttachment
                 modifier = Modifier.fillMaxWidth(),
                 contentScale = ContentScale.Inside
             )
-
-            TextField(
+            CustomTextField(
                 value = image.metadata.description ?: "",
-                onValueChange = { updateMetadata(
-                    image.metadata.copy(description = it)
-                ) },
-                modifier = Modifier.fillMaxWidth().padding(top = 20.dp),
-                shape = RoundedCornerShape(16.dp),
-                colors = TextFieldDefaults.colors(
-                    unfocusedIndicatorColor = Color.Transparent,
-                    focusedIndicatorColor = Color.Transparent,
-                    focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
-                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer
-                ),
-                label = { Text(stringResource(Res.string.alt_text)) },
+                onValueChange = {
+                    updateMetadata(
+                        image.metadata.copy(description = it)
+                    )
+                },
+                label = stringResource(Res.string.alt_text),
+                singleLine = false
+            )
+            CustomTextField(
+                value = image.metadata.make ?: "",
+                onValueChange = {
+                    updateMetadata(
+                        image.metadata.copy(make = it)
+                    )
+                },
+                label = "Brand",
+            )
+
+            CustomTextField(
+                value = image.metadata.model ?: "",
+                onValueChange = {
+                    updateMetadata(
+                        image.metadata.copy(model = it)
+                    )
+                },
+                label = "Model",
+            )
+            CustomTextField(
+                value = image.metadata.flash ?: "",
+                onValueChange = {
+                    updateMetadata(
+                        image.metadata.copy(flash = it)
+                    )
+                },
+                label = "Flash",
             )
         }
     }
+}
+
+@Composable
+fun CustomTextField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    label: String,
+    modifier: Modifier = Modifier,
+    singleLine: Boolean = false
+) {
+    TextField(
+        value = value,
+        onValueChange = onValueChange,
+        singleLine = singleLine,
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(top = 20.dp),
+        shape = RoundedCornerShape(16.dp),
+        colors = TextFieldDefaults.colors(
+            unfocusedIndicatorColor = Color.Transparent,
+            focusedIndicatorColor = Color.Transparent,
+            focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer
+        ),
+        label = { Text(text = label) }
+    )
 }

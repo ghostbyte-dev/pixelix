@@ -1,17 +1,14 @@
 package com.daniebeler.pfpixelix.utils
 
-import android.annotation.SuppressLint
-import android.content.ContentResolver
 import android.content.Context
 import android.net.Uri
-import android.webkit.MimeTypeMap
-import androidx.core.content.FileProvider
 import androidx.core.net.toUri
+import androidx.exifinterface.media.ExifInterface
 import coil3.PlatformContext
+import com.daniebeler.pfpixelix.domain.model.request.MediaAttachmentMetadataRequest
 import io.github.kdroidfilter.composemediaplayer.util.getUri
 import io.github.vinceglb.filekit.PlatformFile
-import io.github.vinceglb.filekit.path
-import java.io.File
+import java.io.ByteArrayInputStream
 
 actual typealias KmpUri = Uri
 actual val EmptyKmpUri: KmpUri = Uri.EMPTY
@@ -22,3 +19,24 @@ actual fun KmpUri.toPlatformFile(): PlatformFile = PlatformFile(this)
 
 actual typealias KmpContext = Context
 actual val KmpContext.coilContext: PlatformContext get() = this
+actual fun parseExifMetadata(bytes: ByteArray): MediaAttachmentMetadataRequest{
+    return try {
+        val inputStream = ByteArrayInputStream(bytes)
+        val exif = ExifInterface(inputStream)
+
+        MediaAttachmentMetadataRequest(
+            make = exif.getAttribute(ExifInterface.TAG_MAKE),
+            model = exif.getAttribute(ExifInterface.TAG_MODEL),
+//            lens = exif.getAttribute(ExifInterface.TAG_LE),
+            createDate = exif.getAttribute(ExifInterface.TAG_DATETIME),
+            focalLength = exif.getAttribute(ExifInterface.TAG_FOCAL_LENGTH),
+//            fNumber = exif.getAttribute(ExifInterface.TAG_FNUMBER),
+            exposureTime = exif.getAttribute(ExifInterface.TAG_EXPOSURE_TIME),
+//            photographicSensitivity = exif.getAttribute(ExifInterface.TAG_PHOTOGRAPHIC_SENSITIVITY),
+            software = exif.getAttribute(ExifInterface.TAG_SOFTWARE),
+            flash = getFlashReadableString(exif.getAttribute(ExifInterface.TAG_FLASH))
+        )
+    } catch (e: Exception) {
+        MediaAttachmentMetadataRequest()
+    }
+}

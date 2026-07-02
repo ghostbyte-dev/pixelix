@@ -155,7 +155,7 @@ class NewPostViewModel @Inject constructor(
         }
     }
 
-    fun addImage(uri: KmpUri) {
+    fun addImage(uri: KmpUri, metadata: MediaAttachmentMetadataRequest) {
         val file = PlatformFile(uri)
         if (!file.exists()) {
             return
@@ -208,7 +208,7 @@ class NewPostViewModel @Inject constructor(
             )
             return
         }
-        images += ImageItem(uri, fileType, null, true, MediaAttachmentMetadataRequest())
+        images += ImageItem(uri, fileType, null, true, metadata)
         uploadImage(uri)
     }
 
@@ -238,7 +238,8 @@ class NewPostViewModel @Inject constructor(
             compressedFile.write(compressedBytes)
             val safeUri = platform.toSafeUri(compressedFile)
             compressionLoading = false
-            addImage(safeUri)
+            //TODO: fix compress, (metadata has to be kept the same)
+            addImage(safeUri, MediaAttachmentMetadataRequest())
         } catch (exception: Exception) {
             Logger.e(exception.message ?: "unexpected error", null, "compression")
         }

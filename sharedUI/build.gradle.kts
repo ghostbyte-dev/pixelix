@@ -117,6 +117,7 @@ kotlin {
         }
 
         androidMain.dependencies {
+            implementation(libs.androidx.exifinterface)
             implementation(libs.kotlinx.coroutines.android)
             implementation(libs.ktor.client.okhttp)
 

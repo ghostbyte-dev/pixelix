@@ -8,6 +8,16 @@ import com.daniebeler.pfpixelix.domain.model.Location
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
+
+@Serializable
+data class VernissageUploadedAttachment(
+    @SerialName("id") val id: String,
+    @SerialName("url") val url: String?,
+    @SerialName("preview_url") val previewUrl: String?,
+    @SerialName("blurhash") val blurHash: String?,
+    @SerialName("description") val description: String?,
+)
+
 @Serializable
 data class VernissageMediaAttachmentDto(
     @SerialName("id") val id: String,
@@ -16,7 +26,7 @@ data class VernissageMediaAttachmentDto(
     @SerialName("metadata") val metadata: VernissageMetaDto?,
     @SerialName("blurhash") val blurHash: String?,
     @SerialName("description") val description: String?,
-    @SerialName ("license") val license: VernissageLicenseDto?,
+    @SerialName("license") val license: VernissageLicenseDto?,
     @SerialName("location") val location: VernissageLocationDto?
 )
 
@@ -69,6 +79,21 @@ data class VernissageExifDto(
     @SerialName("photographicSensitivity") val photographicSensitivity: String? = null,
     @SerialName("software") val software: String? = null
 )
+
+fun VernissageUploadedAttachment.toDomain(): MediaAttachment {
+    return MediaAttachment(
+        id = this.id,
+        url = this.url,
+        previewUrl = this.previewUrl,
+        blurHash = this.blurHash,
+        description = this.description,
+        metadata = null,
+        type = null,
+        location = null,
+        license = null,
+        aspectRatio = null
+    )
+}
 
 fun VernissageMediaAttachmentDto.toDomain(): MediaAttachment {
     return MediaAttachment(

@@ -1,10 +1,14 @@
 package com.daniebeler.pfpixelix.domain.repository.vernissage
 
+import VernissageMediaAttachmentMetadataRequest
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedNodeInfoDto
+import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedPostDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageAccountDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageBlockedAccountDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageInstanceDto
+import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageMediaAttachmentDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageMutedAccountDto
+import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageNewPostRequest
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageNotificationDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissagePagePaginatedResponse
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissagePaginatedResponse
@@ -13,12 +17,14 @@ import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissagePostDt
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageRelationshipDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageSearchDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageTagDto
+import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageUploadedAttachment
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageVisibilityDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.request.VernissageReblogRequest
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.request.VernissageUpdateUserRequest
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.request.VernissageUserBlockRequest
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.request.VernissageUserMuteRequest
 import de.jensklingenberg.ktorfit.http.Body
+import de.jensklingenberg.ktorfit.http.DELETE
 import de.jensklingenberg.ktorfit.http.GET
 import de.jensklingenberg.ktorfit.http.Headers
 import de.jensklingenberg.ktorfit.http.POST
@@ -279,6 +285,34 @@ interface VernissageApi {
 
     @GET("api/v1/user-mutes")
     suspend fun getMutedAccounts(): VernissagePagePaginatedResponse<List<VernissageMutedAccountDto>>
+
+    @POST("api/v1/attachments")
+    suspend fun uploadMedia(
+        @Body body: MultiPartFormDataContent
+    ): VernissageUploadedAttachment
+
+    @Headers("Content-Type: application/json")
+    @PUT("api/v1/attachments/{attachmentId}")
+    suspend fun updateMedia(
+        @Path("attachmentId") attachmentId: String, @Body mediaAttachmentMetadata: VernissageMediaAttachmentMetadataRequest
+    )
+
+    @Headers("Content-Type: application/json")
+    @POST("api/v1/statuses")
+    suspend fun createPost(
+        @Body createPost: VernissageNewPostRequest
+    ): VernissagePostDto
+
+    @Headers("Content-Type: application/json")
+    @PUT("api/v1/statuses/{id}")
+    suspend fun updatePost(
+        @Path("id") postId: String, @Body updatePost: VernissageNewPostRequest
+    )
+
+    @DELETE("api/v1/statuses/{id}")
+    suspend fun deletePost(
+        @Path("id") postid: String
+    ): VernissagePostDto
 
     @GET
     suspend fun getNodeInfo(@Url domain: String): PixelfedNodeInfoDto

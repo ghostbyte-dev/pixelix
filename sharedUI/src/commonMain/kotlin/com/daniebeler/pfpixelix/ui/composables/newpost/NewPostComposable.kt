@@ -1,10 +1,18 @@
 package com.daniebeler.pfpixelix.ui.composables.newpost
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.asPaddingValues
@@ -22,15 +30,21 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.PrimaryScrollableTabRow
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
@@ -44,15 +58,25 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import androidx.navigationevent.NavigationEventInfo
+import androidx.navigationevent.compose.NavigationBackHandler
+import androidx.navigationevent.compose.rememberNavigationEventState
 import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.di.injectViewModel
+import com.daniebeler.pfpixelix.domain.model.Visibility
 import com.daniebeler.pfpixelix.domain.model.request.MediaAttachmentMetadataRequest
+import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposableDialog
+import com.daniebeler.pfpixelix.ui.composables.widgets.CustomLoader
+import com.daniebeler.pfpixelix.ui.composables.widgets.MaxLengthTextField
+import com.daniebeler.pfpixelix.ui.composables.widgets.SuggestionsBar
 import com.daniebeler.pfpixelix.utils.KmpUri
 import com.daniebeler.pfpixelix.utils.getPlatformUriObject
 import com.daniebeler.pfpixelix.utils.imeAwareInsets
@@ -70,8 +94,22 @@ import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.add
 import pixelix.app.generated.resources.alt_text
+import pixelix.app.generated.resources.are_you_sure
+import pixelix.app.generated.resources.audience
+import pixelix.app.generated.resources.audience_public
+import pixelix.app.generated.resources.cancel
+import pixelix.app.generated.resources.cancel_post_warning
+import pixelix.app.generated.resources.caption
+import pixelix.app.generated.resources.confirm
+import pixelix.app.generated.resources.content_warning_or_spoiler_text
+import pixelix.app.generated.resources.discard
+import pixelix.app.generated.resources.followers_only
 import pixelix.app.generated.resources.new_post
+import pixelix.app.generated.resources.ok
 import pixelix.app.generated.resources.release
+import pixelix.app.generated.resources.sensitive_content
+import pixelix.app.generated.resources.sensitive_nsfw_media
+import pixelix.app.generated.resources.unlisted
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -88,7 +126,12 @@ fun NewPostComposable(
     val scope = rememberCoroutineScope()
     LaunchedEffect(uris) {
         uris?.let {
-            uris.forEach { viewModel.addImage(uri = it, metadata = MediaAttachmentMetadataRequest()) }
+            uris.forEach {
+                viewModel.addImage(
+                    uri = it,
+                    metadata = MediaAttachmentMetadataRequest()
+                )
+            }
         }
     }
     val pagerState = rememberPagerState(initialPage = 0, pageCount = { viewModel.images.size + 1 })
@@ -107,21 +150,21 @@ fun NewPostComposable(
                     val launcher = rememberFilePickerLauncher(
                         type = FileKitType.ImageAndVideo, mode = FileKitMode.Multiple()
                     ) { files ->
-                            files?.forEach { file ->
-                                scope.launch(Dispatchers.Default) {
-                                    try {
-                                        val bytes = file.readBytes()
+                        files?.forEach { file ->
+                            scope.launch(Dispatchers.Default) {
+                                try {
+                                    val bytes = file.readBytes()
 
-                                        val extractedMetadata = parseExifMetadata(bytes)
+                                    val extractedMetadata = parseExifMetadata(bytes)
 
-                                        withContext(Dispatchers.Main) {
-                                            viewModel.addImage(file.toKmpUri(), extractedMetadata)
-                                        }
-                                    } catch (e: Exception) {
-                                        e.printStackTrace()
+                                    withContext(Dispatchers.Main) {
+                                        viewModel.addImage(file.toKmpUri(), extractedMetadata)
                                     }
+                                } catch (e: Exception) {
+                                    e.printStackTrace()
                                 }
                             }
+                        }
                     }
                     if (viewModel.images.size != pagerState.currentPage) {
                         Button(
@@ -143,6 +186,13 @@ fun NewPostComposable(
             )
         }) { paddingValues ->
         Box(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
+
+            NavigationBackHandler(
+                state = rememberNavigationEventState(NavigationEventInfo.None),
+                isBackEnabled = viewModel.images.isNotEmpty() || viewModel.caption.text.isNotBlank() || viewModel.caption.text.isNotBlank() || viewModel.locationId.isNotBlank(),
+                onBackCompleted = {
+                    isCancelAlertOpen = true
+                })
 
             val navigationBarPadding =
                 WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
@@ -202,7 +252,7 @@ fun NewPostComposable(
                                 viewModel.images[tabIndex],
                                 { viewModel.updateImageMetadata(tabIndex, it) })
                         } else {
-                            Text("general")
+                            GeneralTab(viewModel)
                         }
                     }
                 }
@@ -671,6 +721,115 @@ fun NewPostComposable(
                  }*/
             }
         }
+
+
+        if (viewModel.addImageError.type == AddMediaErrorType.ERROR) {
+            AlertDialog(title = {
+                Text(text = viewModel.addImageError.title)
+            }, text = {
+                Text(text = viewModel.addImageError.description)
+            }, onDismissRequest = {
+                viewModel.addImageError = AddMediaError()
+            }, confirmButton = {
+                TextButton(onClick = {
+                    viewModel.addImageError = AddMediaError()
+                }) {
+                    Text(stringResource(Res.string.ok))
+                }
+            })
+        }
+
+        if (viewModel.addImageError.type == AddMediaErrorType.TOO_BIG_MEDIA) {
+            AlertDialog(title = {
+                Text(text = viewModel.addImageError.title)
+            }, text = {
+                Text(text = viewModel.addImageError.description)
+            }, onDismissRequest = {
+                viewModel.addImageError = AddMediaError()
+            }, dismissButton = {
+                TextButton(onClick = {
+                    viewModel.addImageError = AddMediaError()
+                }) {
+                    Text(stringResource(Res.string.cancel))
+                }
+            }, confirmButton = {
+                TextButton(onClick = {
+                    scope.launch {
+                        viewModel.compressImage(viewModel.addImageError.uri)
+                    }
+                }) {
+                    Text("Compress")
+                }
+            })
+        }
+
+        if (showReleaseAlert) {
+            AlertDialog(title = {
+                Text(text = stringResource(Res.string.are_you_sure))
+            }, onDismissRequest = {
+                showReleaseAlert = false
+            }, dismissButton = {
+                TextButton(onClick = {
+                    showReleaseAlert = false
+                }) {
+                    Text(stringResource(Res.string.cancel))
+                }
+            }, confirmButton = {
+                TextButton(onClick = {
+                    showReleaseAlert = false
+                    viewModel.post(navController)
+                }) {
+                    Text(stringResource(Res.string.release))
+                }
+            })
+        }
+
+        if (viewModel.compressionLoading) {
+            AlertDialog(title = {
+                Text(text = "Compressing...")
+            }, text = {
+                CustomLoader()
+            }, onDismissRequest = {
+                null
+            }, dismissButton = {
+                null
+            }, confirmButton = {
+                null
+            })
+        }
+
+        if (isCancelAlertOpen) {
+            AlertDialog(title = {
+                Text(text = stringResource(Res.string.are_you_sure))
+            }, text = {
+                Text(text = stringResource(Res.string.cancel_post_warning))
+            }, onDismissRequest = {
+                isCancelAlertOpen = false
+            }, dismissButton = {
+                TextButton(onClick = {
+                    isCancelAlertOpen = false
+                }) {
+                    Text(stringResource(Res.string.cancel))
+                }
+            }, confirmButton = {
+                TextButton(onClick = {
+                    isCancelAlertOpen = false
+                    navController.navigateUp()
+                }) {
+                    Text(stringResource(Res.string.discard))
+                }
+            })
+        }
+
+        ErrorComposableDialog(
+            errorMessage = viewModel.mediaUploadState.error, onDismiss = {
+                viewModel.mediaUploadState = viewModel.mediaUploadState.copy(error = "")
+            })
+
+        ErrorComposableDialog(
+            errorMessage = viewModel.createPostState.error, onDismiss = {
+                viewModel.createPostState = viewModel.createPostState.copy(error = "")
+            })
     }
 }
 
@@ -765,6 +924,74 @@ fun ImageTab(
                 },
                 label = "Flash",
             )
+
+            CustomTextField(
+                value = image.metadata.lens ?: "",
+                onValueChange = {
+                    updateMetadata(
+                        image.metadata.copy(lens = it)
+                    )
+                },
+                label = "Lens",
+            )
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                CustomTextField(
+                    value = image.metadata.focalLength ?: "",
+                    onValueChange = {
+                        updateMetadata(
+                            image.metadata.copy(focalLength = it)
+                        )
+                    },
+                    label = "Focal length",
+                    modifier = Modifier.weight(1f)
+                )
+                CustomTextField(
+                    value = image.metadata.focalLenIn35mmFilm ?: "",
+                    onValueChange = {
+                        updateMetadata(
+                            image.metadata.copy(focalLenIn35mmFilm = it)
+                        )
+                    },
+                    label = "Focal length 35 mm",
+                    modifier = Modifier.weight(1f)
+                )
+            }
+            CustomTextField(
+                value = image.metadata.fNumber ?: "",
+                onValueChange = {
+                    updateMetadata(
+                        image.metadata.copy(fNumber = it)
+                    )
+                },
+                label = "Aperture",
+            )
+            CustomTextField(
+                value = image.metadata.exposureTime ?: "",
+                onValueChange = {
+                    updateMetadata(
+                        image.metadata.copy(exposureTime = it)
+                    )
+                },
+                label = "Exposure time",
+            )
+            CustomTextField(
+                value = image.metadata.photographicSensitivity ?: "",
+                onValueChange = {
+                    updateMetadata(
+                        image.metadata.copy(photographicSensitivity = it)
+                    )
+                },
+                label = "ISO",
+            )
+            CustomTextField(
+                value = image.metadata.software ?: "",
+                onValueChange = {
+                    updateMetadata(
+                        image.metadata.copy(software = it)
+                    )
+                },
+                label = "Software",
+            )
         }
     }
 }
@@ -793,4 +1020,137 @@ fun CustomTextField(
         ),
         label = { Text(text = label) }
     )
+}
+
+@Composable
+fun GeneralTab(
+    viewModel: NewPostViewModel
+) {
+
+    val suggestionsState by viewModel.hashtagMentionsSuggestionsManager.suggestionsState.collectAsStateWithLifecycle()
+    val verticalScrollState = rememberScrollState()
+    Box(modifier = Modifier.fillMaxSize()) {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+            modifier = Modifier.verticalScroll(verticalScrollState)
+        ) {
+
+            MaxLengthTextField(
+                value = viewModel.caption,
+                onValueChange = { viewModel.updateCaption(it) },
+                textFieldModifier = Modifier.fillMaxWidth()
+                    .onFocusChanged { focusState ->
+                        viewModel.hashtagMentionsSuggestionsManager.onFocusChanged(
+                            focusState.isFocused
+                        )
+                    },
+                label = Res.string.caption,
+                maxLength = viewModel.instance?.configuration?.statusConfig?.maxCharacters,
+                submit = {})
+            NewPostPref(
+                leadingIcon = Res.drawable.sensitive_content,
+                title = stringResource(Res.string.sensitive_nsfw_media),
+                trailingContent = {
+                    Switch(
+                        checked = viewModel.sensitive,
+                        onCheckedChange = { viewModel.sensitive = it })
+                })
+            AnimatedVisibility(
+                visible = viewModel.sensitive,
+                enter = slideInVertically() + fadeIn(),
+                exit = shrinkVertically(animationSpec = spring(stiffness = Spring.StiffnessMedium)) + fadeOut(),
+            ) {
+                NewPostTextField(
+                    value = viewModel.sensitiveText,
+                    onChange = { viewModel.sensitiveText = it },
+                    label = stringResource(Res.string.content_warning_or_spoiler_text)
+                )
+            }
+
+            var isExpandedVisibility by remember { mutableStateOf(false) }
+            NewPostPref(
+                leadingIcon = Res.drawable.audience,
+                title = stringResource(Res.string.audience),
+                trailingContent = {
+                    Box {
+                        OutlinedButton(onClick = {
+                            isExpandedVisibility = !isExpandedVisibility
+                        }) {
+                            val buttonText: String = when (viewModel.audience) {
+                                Visibility.PUBLIC -> stringResource(Res.string.audience_public)
+                                Visibility.UNLISTED -> stringResource(Res.string.unlisted)
+                                Visibility.PRIVATE -> stringResource(Res.string.followers_only)
+                                else -> ""
+                            }
+                            Text(text = buttonText)
+                        }
+                        DropdownMenu(
+                            expanded = isExpandedVisibility,
+                            onDismissRequest = {
+                                isExpandedVisibility = false
+                            }) {
+                            if (!(viewModel.accountState.account?.locked
+                                    ?: false)
+                            ) {
+                                DropdownMenuItem(
+                                    text = { Text(stringResource(Res.string.audience_public)) },
+                                    onClick = {
+                                        viewModel.audience = Visibility.PUBLIC
+                                    },
+                                    trailingIcon = {
+                                        if (viewModel.audience == Visibility.PUBLIC) {
+                                            Icon(
+                                                imageVector = vectorResource(Res.drawable.confirm),
+                                                contentDescription = null,
+                                                tint = MaterialTheme.colorScheme.primary
+                                            )
+                                        }
+                                    })
+                                DropdownMenuItem(
+                                    text = { Text(stringResource(Res.string.unlisted)) },
+                                    onClick = {
+                                        viewModel.audience = Visibility.UNLISTED
+                                    },
+                                    trailingIcon = {
+                                        if (viewModel.audience == Visibility.UNLISTED) {
+                                            Icon(
+                                                imageVector = vectorResource(Res.drawable.confirm),
+                                                contentDescription = null,
+                                                tint = MaterialTheme.colorScheme.primary
+                                            )
+                                        }
+                                    })
+                            }
+                            DropdownMenuItem(
+                                text = { Text(stringResource(Res.string.followers_only)) },
+                                onClick = {
+                                    viewModel.audience = Visibility.PRIVATE
+                                },
+                                trailingIcon = {
+                                    if (viewModel.audience == Visibility.PRIVATE) {
+                                        Icon(
+                                            imageVector = vectorResource(Res.drawable.confirm),
+                                            contentDescription = null,
+                                            tint = MaterialTheme.colorScheme.primary
+                                        )
+                                    }
+                                })
+                        }
+                    }
+                })
+        }
+
+        if (viewModel.hashtagMentionsSuggestionsManager.suggestionsOpen) {
+            SuggestionsBar(
+                state = suggestionsState,
+                bottomBarPadding = true,
+                onSelected = { selected ->
+                    viewModel.caption =
+                        viewModel.hashtagMentionsSuggestionsManager.selectSuggestion(
+                            selected, viewModel.caption
+                        )
+                })
+
+        }
+    }
 }

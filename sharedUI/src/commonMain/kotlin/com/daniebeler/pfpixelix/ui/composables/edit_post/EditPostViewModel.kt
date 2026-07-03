@@ -13,7 +13,9 @@ import com.daniebeler.pfpixelix.domain.model.Instance
 import com.daniebeler.pfpixelix.domain.model.MediaAttachment
 import com.daniebeler.pfpixelix.domain.model.Location
 import com.daniebeler.pfpixelix.domain.model.UpdatePost
+import com.daniebeler.pfpixelix.domain.model.Visibility
 import com.daniebeler.pfpixelix.domain.model.request.MediaAttachmentMetadataRequest
+import com.daniebeler.pfpixelix.domain.model.request.NewPostRequest
 import com.daniebeler.pfpixelix.domain.service.general.PostEditorService
 import com.daniebeler.pfpixelix.domain.service.general.InstanceService
 import com.daniebeler.pfpixelix.domain.service.general.PostService
@@ -119,12 +121,15 @@ class EditPostViewModel @Inject constructor(
                 null
             }
 
-            val updatePostDto = UpdatePost(
-                status = caption.text,
+            val updatePostDto = NewPostRequest(
+                note = caption.text,
                 sensitive = sensitive,
-                spoilerText = sensitiveText,
+                contentWarning = sensitiveText,
                 mediaIds = mediaAttachmentsEdit.map { it.id },
-                location = placeDto
+                placeId = placeDto?.id,
+                categoryId = null,
+                commentsDisabled = false,
+                visibility = Visibility.PUBLIC
             )
 
             mediaDescriptionItems.onEach { mediaDescriptionItem ->

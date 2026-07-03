@@ -42,7 +42,7 @@ fun MediaAttachmentMetadataRequest.toVernissage(): VernissageMediaAttachmentMeta
         make = this.make,
         model = this.model,
         lens = this.lens,
-        createDate = this.createDate,
+//        createDate = this.createDate,
         focalLength = this.focalLength,
         focalLenIn35mmFilm = this.focalLenIn35mmFilm,
         fNumber = this.fNumber,

@@ -56,9 +56,9 @@ class LatestImageTask(
                 return Result.failure()
             }
             val res = widgetService.getLatestImage().last()
-            if (res is Resource.Success && res.data != null) {
+            if (res is Resource.Success && res.data.mediaAttachments.first().previewUrl != null) {
 
-                val bitmap = getBitmap(context, res.data.mediaAttachments.first().previewUrl)
+                val bitmap = getBitmap(context, res.data.mediaAttachments.first().previewUrl!!)
                 updateLatestImageWidget(bitmap, res.data.id, context)
             } else {
                 throw Exception()

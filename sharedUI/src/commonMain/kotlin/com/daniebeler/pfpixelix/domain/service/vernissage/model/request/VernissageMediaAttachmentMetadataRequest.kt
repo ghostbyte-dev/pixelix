@@ -4,14 +4,14 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class VernissageMediaAttachmentMetadataRequest(
     @SerialName("id") val id: String = "",
-//    @SerialName("url") val url: String = "",
+    @SerialName("url") val url: String = "",
     @SerialName("previewUrl") val previewUrl: String = "",
     @SerialName("description") val description: String? = null,
 //    @SerialName("blurhash") val blurhash: String? = null,
     @SerialName("make") val make: String? = null,
     @SerialName("model") val model: String? = null,
     @SerialName("lens") val lens: String? = null,
-    @SerialName("createDate") val createDate: String? = null,
+//    @SerialName("createDate") val createDate: String? = null,
     @SerialName("focalLength") val focalLength: String? = null,
     @SerialName("focalLenIn35mmFilm") val focalLenIn35mmFilm: String? = null,
     @SerialName("fNumber") val fNumber: String? = null,

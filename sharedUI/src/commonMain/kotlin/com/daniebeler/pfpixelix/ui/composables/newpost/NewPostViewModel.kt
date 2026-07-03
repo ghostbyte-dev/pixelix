@@ -11,7 +11,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import co.touchlab.kermit.Logger
 import com.daniebeler.pfpixelix.domain.model.Instance
-import com.daniebeler.pfpixelix.domain.model.NewPost
+import com.daniebeler.pfpixelix.domain.model.request.NewPostRequest
 import com.daniebeler.pfpixelix.domain.model.Visibility
 import com.daniebeler.pfpixelix.domain.model.request.MediaAttachmentMetadataRequest
 import com.daniebeler.pfpixelix.domain.service.general.PostEditorService
@@ -44,6 +44,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
+import kotlin.also
 import kotlin.time.Clock
 
 
@@ -313,19 +314,20 @@ class NewPostViewModel @Inject constructor(
         postEditorService.uploadMedia(uri).onEach { result ->
             mediaUploadState = when (result) {
                 is Resource.Success -> {
-                    if (result.data?.type?.take(5) == "video") {
+                    if (result.data.type?.take(5) == "video") {
                         //Thread.sleep(1500) todo KMP
                     }
                     val index = images.indexOfFirst { it.imageUri == uri }
                     if (index != -1) {
                         images[index] = images[index].copy(
                             isLoading = false,
-                            id = result.data?.id
+                            id = result.data.id,
+                            metadata = images[index].metadata.copy(id = result.data.id)
                         )
                     }
 
                     mediaUploadState.copy(
-                        mediaAttachments = mediaUploadState.mediaAttachments + result.data!!,
+                        mediaAttachments = mediaUploadState.mediaAttachments + result.data,
                         isLoading = false
                     )
                 }
@@ -335,7 +337,7 @@ class NewPostViewModel @Inject constructor(
                     if (index != -1) {
                         images.removeAt(index)
                     }
-                    MediaUploadState(error = "An unexpected error occured")
+                    MediaUploadState(error = result.message)
                 }
 
                 is Resource.Loading -> {
@@ -382,17 +384,8 @@ class NewPostViewModel @Inject constructor(
         postEditorService.updateMedia(image.id!!, image.metadata).onEach { result ->
             mediaUploadState = when (result) {
                 is Resource.Success -> {
-                    images.find { it.imageUri == image.imageUri }?.isLoading = false
-                    var index: Int = 0
-                    mediaUploadState.mediaAttachments.forEachIndexed { i, it ->
-                        if (it.id == image.id) {
-                            index = i
-                        }
-                    }
                     mediaUploadState.copy(
-                        mediaAttachments = mediaUploadState.mediaAttachments.toMutableList().also {
-                            it[index] = result.data
-                        }, isLoading = false
+                        isLoading = false
                     )
                 }
 
@@ -421,7 +414,16 @@ class NewPostViewModel @Inject constructor(
             null
         }
         val createPostDto =
-            NewPost(caption.text, mediaIds, sensitive, audience, sensitiveText, locationIdNullable)
+            NewPostRequest(
+                note = caption.text,
+                mediaIds = mediaIds,
+                sensitive = sensitive,
+                visibility = audience,
+                contentWarning = sensitiveText,
+                placeId = locationIdNullable,
+                commentsDisabled = false,
+                categoryId = null
+            )
         postEditorService.createPost(createPostDto).onEach { result ->
             createPostState = when (result) {
                 is Resource.Success -> {

@@ -3,7 +3,6 @@ package com.daniebeler.pfpixelix.domain.repository.pixelfed
 import com.daniebeler.pfpixelix.domain.model.FediseaInstance
 import com.daniebeler.pfpixelix.domain.model.FediseaServersResponse
 import com.daniebeler.pfpixelix.domain.model.FediseaSoftware
-import com.daniebeler.pfpixelix.domain.model.Instance
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedAccountDto
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedChatDto
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedCollectionDto
@@ -11,6 +10,7 @@ import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedConversati
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedInstanceDto
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedMediaAttachmentDto
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedMessageDto
+import com.daniebeler.pfpixelix.domain.service.pixelfed.model.request.PixelfedNewPostRequest
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedNodeInfoDto
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedNotificationDto
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedPlaceDto
@@ -355,12 +355,12 @@ interface PixelfedApi {
     suspend fun updateMedia(
         @Path("id") mediaAttachmentid: String,
         @Field("description") description: String,
-    ): PixelfedMediaAttachmentDto
+    )
 
     @Headers("Content-Type: application/json")
     @POST("api/v1/statuses")
     suspend fun createPost(
-        @Body createPost: String
+        @Body createPost: PixelfedNewPostRequest
     ): PixelfedPostDto
 
     @Headers("Content-Type: application/json")
@@ -372,7 +372,7 @@ interface PixelfedApi {
     @Headers("Content-Type: application/json")
     @PUT("api/v1/statuses/{id}")
     suspend fun updatePost(
-        @Path("id") postId: String, @Body updatePost: String
+        @Path("id") postId: String, @Body updatePost: PixelfedNewPostRequest
     )
 
     @DELETE("api/v1/statuses/{id}")

@@ -9,6 +9,9 @@ import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.gestures.waitForUpOrCancellation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,6 +36,9 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -47,8 +53,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.TimePicker
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberDatePickerState
+import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -60,6 +69,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.PointerEventPass
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -72,12 +83,14 @@ import androidx.navigationevent.compose.rememberNavigationEventState
 import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.model.Visibility
+import com.daniebeler.pfpixelix.domain.model.request.FieldState
 import com.daniebeler.pfpixelix.domain.model.request.MediaAttachmentMetadataRequest
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposableDialog
 import com.daniebeler.pfpixelix.ui.composables.widgets.CustomLoader
 import com.daniebeler.pfpixelix.ui.composables.widgets.MaxLengthTextField
 import com.daniebeler.pfpixelix.ui.composables.widgets.SuggestionsBar
 import com.daniebeler.pfpixelix.utils.KmpUri
+import com.daniebeler.pfpixelix.utils.formatLocalizedOnlyDate
 import com.daniebeler.pfpixelix.utils.getPlatformUriObject
 import com.daniebeler.pfpixelix.utils.imeAwareInsets
 import com.daniebeler.pfpixelix.utils.parseExifMetadata
@@ -89,6 +102,11 @@ import io.github.vinceglb.filekit.readBytes
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.number
+import kotlinx.datetime.toInstant
+import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
@@ -102,6 +120,7 @@ import pixelix.app.generated.resources.cancel_post_warning
 import pixelix.app.generated.resources.caption
 import pixelix.app.generated.resources.confirm
 import pixelix.app.generated.resources.content_warning_or_spoiler_text
+import pixelix.app.generated.resources.datetime
 import pixelix.app.generated.resources.discard
 import pixelix.app.generated.resources.followers_only
 import pixelix.app.generated.resources.new_post
@@ -110,6 +129,8 @@ import pixelix.app.generated.resources.release
 import pixelix.app.generated.resources.sensitive_content
 import pixelix.app.generated.resources.sensitive_nsfw_media
 import pixelix.app.generated.resources.unlisted
+import kotlin.time.Clock
+import kotlin.time.Instant
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -886,57 +907,95 @@ fun ImageTab(
                 modifier = Modifier.fillMaxWidth(),
                 contentScale = ContentScale.Inside
             )
-            CustomTextField(
+
+            TextField(
                 value = image.metadata.description ?: "",
                 onValueChange = {
                     updateMetadata(
                         image.metadata.copy(description = it)
                     )
                 },
-                label = stringResource(Res.string.alt_text),
-                singleLine = false
+                singleLine = true,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 20.dp),
+                shape = RoundedCornerShape(16.dp),
+                colors = TextFieldDefaults.colors(
+                    unfocusedIndicatorColor = Color.Transparent,
+                    focusedIndicatorColor = Color.Transparent,
+                    focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer
+                ),
+                label = { Text(text = stringResource(Res.string.alt_text)) }
             )
-            CustomTextField(
-                value = image.metadata.make ?: "",
-                onValueChange = {
-                    updateMetadata(
-                        image.metadata.copy(make = it)
-                    )
-                },
-                label = "Brand",
-            )
-
-            CustomTextField(
-                value = image.metadata.model ?: "",
-                onValueChange = {
-                    updateMetadata(
-                        image.metadata.copy(model = it)
-                    )
-                },
-                label = "Model",
-            )
-            CustomTextField(
-                value = image.metadata.flash ?: "",
-                onValueChange = {
-                    updateMetadata(
-                        image.metadata.copy(flash = it)
-                    )
-                },
-                label = "Flash",
-            )
-
-            CustomTextField(
-                value = image.metadata.lens ?: "",
-                onValueChange = {
-                    updateMetadata(
-                        image.metadata.copy(lens = it)
-                    )
-                },
-                label = "Lens",
-            )
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            IsIncludedField(
+                image.metadata.make.isIncluded,
+                { updateMetadata(image.metadata.copy(make = image.metadata.make.copy(isIncluded = it))) }) {
                 CustomTextField(
-                    value = image.metadata.focalLength ?: "",
+                    value = image.metadata.make,
+                    onValueChange = {
+                        updateMetadata(
+                            image.metadata.copy(make = it)
+                        )
+                    },
+                    label = "Brand",
+                )
+            }
+
+            IsIncludedField(
+                image.metadata.model.isIncluded,
+                { updateMetadata(image.metadata.copy(model = image.metadata.model.copy(isIncluded = it))) }) {
+                CustomTextField(
+                    value = image.metadata.model,
+                    onValueChange = {
+                        updateMetadata(
+                            image.metadata.copy(model = it)
+                        )
+                    },
+                    label = "Model",
+                )
+            }
+
+            IsIncludedField(
+                image.metadata.flash.isIncluded,
+                { updateMetadata(image.metadata.copy(flash = image.metadata.flash.copy(isIncluded = it))) }) {
+                CustomTextField(
+                    value = image.metadata.flash,
+                    onValueChange = {
+                        updateMetadata(
+                            image.metadata.copy(flash = it)
+                        )
+                    },
+                    label = "Flash",
+                )
+            }
+
+            IsIncludedField(
+                image.metadata.lens.isIncluded,
+                { updateMetadata(image.metadata.copy(lens = image.metadata.lens.copy(isIncluded = it))) }) {
+                CustomTextField(
+                    value = image.metadata.lens,
+                    onValueChange = {
+                        updateMetadata(
+                            image.metadata.copy(lens = it)
+                        )
+                    },
+                    label = "Lens",
+                )
+            }
+
+            IsIncludedField(
+                image.metadata.focalLength.isIncluded || image.metadata.focalLenIn35mmFilm.isIncluded,
+                {
+                    updateMetadata(
+                        image.metadata.copy(
+                            focalLength = image.metadata.focalLength.copy(isIncluded = it),
+                            focalLenIn35mmFilm = image.metadata.focalLenIn35mmFilm.copy(isIncluded = it)
+                        ),
+                    )
+                }) {
+                CustomTextField(
+                    value = image.metadata.focalLength,
                     onValueChange = {
                         updateMetadata(
                             image.metadata.copy(focalLength = it)
@@ -946,7 +1005,7 @@ fun ImageTab(
                     modifier = Modifier.weight(1f)
                 )
                 CustomTextField(
-                    value = image.metadata.focalLenIn35mmFilm ?: "",
+                    value = image.metadata.focalLenIn35mmFilm,
                     onValueChange = {
                         updateMetadata(
                             image.metadata.copy(focalLenIn35mmFilm = it)
@@ -956,61 +1015,180 @@ fun ImageTab(
                     modifier = Modifier.weight(1f)
                 )
             }
-            CustomTextField(
-                value = image.metadata.fNumber ?: "",
-                onValueChange = {
+
+            IsIncludedField(
+                image.metadata.fNumber.isIncluded,
+                {
                     updateMetadata(
-                        image.metadata.copy(fNumber = it)
+                        image.metadata.copy(
+                            fNumber = image.metadata.fNumber.copy(
+                                isIncluded = it
+                            )
+                        )
                     )
-                },
-                label = "Aperture",
-            )
-            CustomTextField(
-                value = image.metadata.exposureTime ?: "",
-                onValueChange = {
+                }) {
+                CustomTextField(
+                    value = image.metadata.fNumber,
+                    onValueChange = {
+                        updateMetadata(
+                            image.metadata.copy(fNumber = it)
+                        )
+                    },
+                    label = "Aperture",
+                )
+            }
+
+            IsIncludedField(
+                image.metadata.exposureTime.isIncluded,
+                {
                     updateMetadata(
-                        image.metadata.copy(exposureTime = it)
+                        image.metadata.copy(
+                            exposureTime = image.metadata.exposureTime.copy(
+                                isIncluded = it
+                            )
+                        )
                     )
-                },
-                label = "Exposure time",
-            )
-            CustomTextField(
-                value = image.metadata.photographicSensitivity ?: "",
-                onValueChange = {
+                }) {
+                CustomTextField(
+                    value = image.metadata.exposureTime,
+                    onValueChange = {
+                        updateMetadata(
+                            image.metadata.copy(exposureTime = it)
+                        )
+                    },
+                    label = "Exposure time",
+                )
+            }
+
+            IsIncludedField(
+                image.metadata.photographicSensitivity.isIncluded,
+                {
                     updateMetadata(
-                        image.metadata.copy(photographicSensitivity = it)
+                        image.metadata.copy(
+                            photographicSensitivity = image.metadata.photographicSensitivity.copy(
+                                isIncluded = it
+                            )
+                        )
                     )
-                },
-                label = "ISO",
-            )
-            CustomTextField(
-                value = image.metadata.software ?: "",
-                onValueChange = {
+                }) {
+                CustomTextField(
+                    value = image.metadata.photographicSensitivity,
+                    onValueChange = {
+                        updateMetadata(
+                            image.metadata.copy(photographicSensitivity = it)
+                        )
+                    },
+                    label = "ISO",
+                )
+            }
+
+            IsIncludedField(
+                image.metadata.software.isIncluded,
+                {
                     updateMetadata(
-                        image.metadata.copy(software = it)
+                        image.metadata.copy(
+                            software = image.metadata.software.copy(
+                                isIncluded = it
+                            )
+                        )
                     )
-                },
-                label = "Software",
-            )
+                }) {
+                CustomTextField(
+                    value = image.metadata.software,
+                    onValueChange = {
+                        updateMetadata(
+                            image.metadata.copy(software = it)
+                        )
+                    },
+                    label = "Software",
+                )
+            }
+
+            IsIncludedField(
+                image.metadata.createDate.isIncluded,
+                {
+                    updateMetadata(
+                        image.metadata.copy(
+                            createDate = image.metadata.createDate.copy(
+                                isIncluded = it
+                            )
+                        )
+                    )
+                }) {
+                DatePickerFieldToModal(image.metadata.createDate, {
+                    updateMetadata(
+                        image.metadata.copy(createDate = image.metadata.createDate.copy(value = it))
+                    )
+                }, modifier = Modifier.weight(1f))
+                TimePickerFieldToModal(
+                    image.metadata.createDate,
+                    modifier = Modifier.weight(1f),
+                    onDateSelected = { hour, min ->
+                        val currentInstant = image.metadata.createDate.value ?: Clock.System.now()
+                        val timeZone = TimeZone.currentSystemDefault()
+
+                        val localDateTime = currentInstant.toLocalDateTime(timeZone)
+
+                        val updatedLocalDateTime = LocalDateTime(
+                            year = localDateTime.year,
+                            month = localDateTime.month.number,
+                            day = localDateTime.day,
+                            hour = hour,
+                            minute = min,
+                            second = localDateTime.second,
+                            nanosecond = localDateTime.nanosecond
+                        )
+
+                        val updatedInstant = updatedLocalDateTime.toInstant(timeZone)
+
+                        updateMetadata(
+                            image.metadata.copy(createDate = image.metadata.createDate.copy(value = updatedInstant))
+                        )
+
+                    })
+
+            }
+        }
+    }
+}
+
+@Composable
+fun IsIncludedField(
+    value: Boolean,
+    onValueChange: (Boolean) -> Unit,
+    content: @Composable (() -> Unit)
+) {
+    Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+        Checkbox(
+            checked = value,
+            onCheckedChange = {
+                onValueChange(it)
+            }
+        )
+        Row(Modifier.weight(1f)) {
+            content()
         }
     }
 }
 
 @Composable
 fun CustomTextField(
-    value: String,
-    onValueChange: (String) -> Unit,
+    value: FieldState<String>,
+    onValueChange: (FieldState<String>) -> Unit,
     label: String,
     modifier: Modifier = Modifier,
-    singleLine: Boolean = false
+    singleLine: Boolean = false,
 ) {
     TextField(
-        value = value,
-        onValueChange = onValueChange,
+        value = value.value ?: "",
+        onValueChange = {
+            onValueChange(
+                value.copy(value = it)
+            )
+        },
         singleLine = singleLine,
         modifier = modifier
-            .fillMaxWidth()
-            .padding(top = 20.dp),
+            .fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
         colors = TextFieldDefaults.colors(
             unfocusedIndicatorColor = Color.Transparent,
@@ -1018,7 +1196,191 @@ fun CustomTextField(
             focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
             unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer
         ),
-        label = { Text(text = label) }
+        label = { Text(text = label) },
+        enabled = value.isIncluded
+    )
+}
+
+@Composable
+fun DatePickerFieldToModal(
+    date: FieldState<Instant>,
+    onDateSelected: (Instant?) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    var showModal by remember { mutableStateOf(false) }
+
+    TextField(
+        value = formatLocalizedOnlyDate(date.value.toString()),
+        onValueChange = { },
+        label = { Text("Date") },
+        placeholder = { Text("MM/DD/YYYY") },
+        trailingIcon = {
+            Icon(vectorResource(Res.drawable.datetime), contentDescription = "Select date")
+        },
+        shape = RoundedCornerShape(16.dp),
+        colors = TextFieldDefaults.colors(
+            unfocusedIndicatorColor = Color.Transparent,
+            focusedIndicatorColor = Color.Transparent,
+            focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer
+        ),
+        readOnly = true,
+        enabled = date.isIncluded,
+        modifier = modifier
+            .fillMaxWidth()
+            .pointerInput(date) {
+                awaitEachGesture {
+                    awaitFirstDown(pass = PointerEventPass.Initial)
+                    val upEvent = waitForUpOrCancellation(pass = PointerEventPass.Initial)
+                    if (upEvent != null) {
+                        showModal = true
+                    }
+                }
+            }
+    )
+
+    if (showModal) {
+        DatePickerModal(
+            onDateSelected = {
+                onDateSelected(it)
+            },
+            onDismiss = { showModal = false }
+        )
+    }
+}
+
+@Composable
+fun DatePickerModal(
+    onDateSelected: (Instant?) -> Unit,
+    onDismiss: () -> Unit
+) {
+    val datePickerState = rememberDatePickerState()
+
+    DatePickerDialog(
+        onDismissRequest = onDismiss,
+        confirmButton = {
+            TextButton(onClick = {
+                onDateSelected(datePickerState.selectedDateMillis?.let {
+                    Instant.fromEpochMilliseconds(
+                        it
+                    )
+                })
+                onDismiss()
+            }) {
+                Text("OK")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Cancel")
+            }
+        }
+    ) {
+        DatePicker(state = datePickerState)
+    }
+}
+
+
+@Composable
+fun TimePickerFieldToModal(
+    date: FieldState<Instant>,
+    onDateSelected: (Int, Int) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    var showModal by remember { mutableStateOf(false) }
+
+    TextField(
+        value = date.value?.let { instant ->
+            val timeZone = TimeZone.currentSystemDefault()
+            val localDateTime = instant.toLocalDateTime(timeZone)
+
+            val hour = localDateTime.hour.toString().padStart(2, '0')
+            val minute = localDateTime.minute.toString().padStart(2, '0')
+
+            "$hour:$minute"
+        } ?: "",
+        onValueChange = { },
+        label = { Text("Time") },
+        placeholder = { Text("HH:MM") },
+        trailingIcon = {
+            Icon(vectorResource(Res.drawable.datetime), contentDescription = "Select time")
+        },
+        shape = RoundedCornerShape(16.dp),
+        colors = TextFieldDefaults.colors(
+            unfocusedIndicatorColor = Color.Transparent,
+            focusedIndicatorColor = Color.Transparent,
+            focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer
+        ),
+        readOnly = true,
+        enabled = date.isIncluded,
+        modifier = modifier
+            .fillMaxWidth()
+            .pointerInput(date) {
+                awaitEachGesture {
+                    awaitFirstDown(pass = PointerEventPass.Initial)
+                    val upEvent = waitForUpOrCancellation(pass = PointerEventPass.Initial)
+                    if (upEvent != null) {
+                        showModal = true
+                    }
+                }
+            }
+    )
+
+    if (showModal) {
+        TimePickerModal(
+            initialInstant = date.value,
+            onConfirm = { hour, min ->
+                onDateSelected(hour, min)
+                showModal = false
+            },
+            onDismiss = { showModal = false }
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TimePickerModal(
+    initialInstant: Instant?,
+    onConfirm: (hour: Int, minute: Int) -> Unit,
+    onDismiss: () -> Unit,
+) {
+    val timeZone = remember { TimeZone.currentSystemDefault() }
+    val localDateTime = remember(initialInstant) {
+        val targetInstant = initialInstant ?: Clock.System.now()
+        targetInstant.toLocalDateTime(timeZone)
+    }
+
+    val timePickerState = rememberTimePickerState(
+        initialHour = localDateTime.hour,
+        initialMinute = localDateTime.minute,
+        is24Hour = true,
+    )
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Cancel")
+            }
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    onConfirm(timePickerState.hour, timePickerState.minute)
+                }
+            ) {
+                Text("OK")
+            }
+        },
+        text = {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.padding(top = 8.dp)
+            ) {
+                TimePicker(state = timePickerState)
+            }
+        }
     )
 }
 

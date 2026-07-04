@@ -1,6 +1,7 @@
 package com.daniebeler.pfpixelix.utils
 
 import coil3.PlatformContext
+import com.daniebeler.pfpixelix.domain.model.request.FieldState
 import com.daniebeler.pfpixelix.domain.model.request.MediaAttachmentMetadataRequest
 import io.github.vinceglb.filekit.PlatformFile
 import kotlinx.cinterop.ExperimentalForeignApi
@@ -34,6 +35,7 @@ actual abstract class KmpUri {
     abstract val url: NSURL
     actual abstract override fun toString(): String
 }
+
 actual val EmptyKmpUri: KmpUri = IosUri(NSURL(string = ""))
 actual fun KmpUri.getPlatformUriObject(): Any = url
 actual fun String.toKmpUri(): KmpUri = IosUri(NSURL(string = this))
@@ -43,30 +45,42 @@ actual fun KmpUri.toPlatformFile(): PlatformFile = PlatformFile(url)
 actual abstract class KmpContext {
     abstract val viewController: UIViewController
 }
+
 actual val KmpContext.coilContext get() = PlatformContext.INSTANCE
+
 @OptIn(ExperimentalForeignApi::class)
 actual fun parseExifMetadata(bytes: ByteArray): MediaAttachmentMetadataRequest {
     return try {
-        val nsData = bytes.usePinned { NSData.create(bytes = it.addressOf(0), length = bytes.size.toULong()) }
-        val imageSource = CGImageSourceCreateWithData(nsData as CFDataRef, null) ?: return MediaAttachmentMetadataRequest()
-
-        val properties = CGImageSourceCopyPropertiesAtIndex(imageSource, 0u, null) as? Map<Any?, Any?>
+        val nsData = bytes.usePinned {
+            NSData.create(
+                bytes = it.addressOf(0),
+                length = bytes.size.toULong()
+            )
+        }
+        val imageSource = CGImageSourceCreateWithData(nsData as CFDataRef, null)
             ?: return MediaAttachmentMetadataRequest()
+
+        val properties =
+            CGImageSourceCopyPropertiesAtIndex(imageSource, 0u, null) as? Map<Any?, Any?>
+                ?: return MediaAttachmentMetadataRequest()
 
         val exifDict = properties[kCGImagePropertyExifDictionary] as? Map<Any?, Any?>
         val tiffDict = properties[kCGImagePropertyTIFFDictionary] as? Map<Any?, Any?>
 
         MediaAttachmentMetadataRequest(
-            make = tiffDict?.get("Make") as? String,
-            model = tiffDict?.get("Model") as? String,
-            lens = exifDict?.get("LensModel") as? String,
-            createDate = exifDict?.get("DateTimeOriginal") as? String,
-            focalLength = exifDict?.get("FocalLength")?.toString(),
-            fNumber = exifDict?.get("FNumber")?.toString(),
-            exposureTime = exifDict?.get("ExposureTime")?.toString(),
-            photographicSensitivity = (exifDict?.get("ISOSpeedRatings") as? List<*>)?.firstOrNull()?.toString(),
-            software = tiffDict?.get("Software") as? String,
-            flash = getFlashReadableString(exifDict?.get(kCGImagePropertyExifFlash)?.toString())
+            make = FieldState(
+                tiffDict?.get("Make") as? String
+            ),
+            model = FieldState(tiffDict?.get("Model") as? String),
+            lens = FieldState(exifDict?.get("LensModel") as? String),
+//            createDate = FieldState(exifDict?.get("DateTimeOriginal") as? String),
+            focalLength = FieldState(exifDict?.get("FocalLength")?.toString()),
+            fNumber = FieldState(exifDict?.get("FNumber")?.toString()),
+            exposureTime = FieldState(exifDict?.get("ExposureTime")?.toString()),
+            photographicSensitivity = FieldState((exifDict?.get("ISOSpeedRatings") as? List<*>)?.firstOrNull()
+                ?.toString()),
+            software = FieldState(tiffDict?.get("Software") as? String),
+            flash = FieldState(getFlashReadableString(exifDict?.get(kCGImagePropertyExifFlash)?.toString()))
         )
     } catch (e: Exception) {
         MediaAttachmentMetadataRequest()

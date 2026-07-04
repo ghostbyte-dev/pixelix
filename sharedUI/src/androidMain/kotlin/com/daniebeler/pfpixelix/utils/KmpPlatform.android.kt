@@ -5,10 +5,18 @@ import android.net.Uri
 import androidx.core.net.toUri
 import androidx.exifinterface.media.ExifInterface
 import coil3.PlatformContext
+import com.daniebeler.pfpixelix.domain.model.request.FieldState
 import com.daniebeler.pfpixelix.domain.model.request.MediaAttachmentMetadataRequest
 import io.github.kdroidfilter.composemediaplayer.util.getUri
 import io.github.vinceglb.filekit.PlatformFile
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toInstant
 import java.io.ByteArrayInputStream
+import kotlin.math.pow
+import kotlin.math.roundToInt
+import kotlin.math.sqrt
+import kotlin.time.Instant
 
 actual typealias KmpUri = Uri
 
@@ -26,22 +34,74 @@ actual fun parseExifMetadata(bytes: ByteArray): MediaAttachmentMetadataRequest {
         val inputStream = ByteArrayInputStream(bytes)
         val exif = ExifInterface(inputStream)
 
+        val lensMake = exif.getAttribute(ExifInterface.TAG_LENS_MAKE)?.trim()
+        val lensModel = exif.getAttribute(ExifInterface.TAG_LENS_MODEL)?.trim()
         MediaAttachmentMetadataRequest(
-            make = exif.getAttribute(ExifInterface.TAG_MAKE),
-            model = exif.getAttribute(ExifInterface.TAG_MODEL),
-            createDate = exif.getAttribute(ExifInterface.TAG_DATETIME),
-            focalLength = exif.getAttribute(ExifInterface.TAG_FOCAL_LENGTH),
-            fNumber = exif.getAttribute(ExifInterface.TAG_APERTURE_VALUE),
-            exposureTime = exif.getAttribute(ExifInterface.TAG_EXPOSURE_TIME),
-            photographicSensitivity = exif.getAttribute(ExifInterface.TAG_PHOTOGRAPHIC_SENSITIVITY),
-            software = exif.getAttribute(ExifInterface.TAG_SOFTWARE),
-            flash = getFlashReadableString(exif.getAttribute(ExifInterface.TAG_FLASH)),
-            lens = exif.getAttribute(ExifInterface.TAG_LENS_MAKE) + " " + exif.getAttribute(
-                ExifInterface.TAG_LENS_MODEL
-            ),
-            focalLenIn35mmFilm = exif.getAttribute(ExifInterface.TAG_FOCAL_LENGTH_IN_35MM_FILM)
+            make = FieldState(exif.getAttribute(ExifInterface.TAG_MAKE)),
+            model = FieldState(exif.getAttribute(ExifInterface.TAG_MODEL)),
+            createDate = FieldState(parseExifDateTime(exif.getAttribute(ExifInterface.TAG_DATETIME))),
+            focalLength = FieldState(exif.getAttribute(ExifInterface.TAG_FOCAL_LENGTH)),
+            fNumber = FieldState(convertApexToFNumber(
+                exif.getAttribute(ExifInterface.TAG_APERTURE_VALUE) ?: ""
+            ).toString()),
+            exposureTime = FieldState(formatDecimalToExposureFraction(exif.getAttribute(ExifInterface.TAG_EXPOSURE_TIME))),
+            photographicSensitivity = FieldState(exif.getAttribute(ExifInterface.TAG_PHOTOGRAPHIC_SENSITIVITY)),
+            software = FieldState(exif.getAttribute(ExifInterface.TAG_SOFTWARE)),
+            flash = FieldState(getFlashReadableString(exif.getAttribute(ExifInterface.TAG_FLASH))),
+            lens = FieldState(if (!lensMake.isNullOrBlank() && !lensModel.isNullOrBlank()) {
+                "$lensMake $lensModel"
+            } else {
+                null
+            }),
+            focalLenIn35mmFilm = FieldState(exif.getAttribute(ExifInterface.TAG_FOCAL_LENGTH_IN_35MM_FILM))
         )
     } catch (e: Exception) {
         MediaAttachmentMetadataRequest()
+    }
+}
+
+fun convertApexToFNumber(apertureValueStr: String): String? {
+    val parts = apertureValueStr.split("/")
+    val apexValue = if (parts.size == 2) {
+        parts[0].toDoubleOrNull()?.div(parts[1].toDouble())
+    } else {
+        apertureValueStr.toDoubleOrNull()
+    } ?: return null
+    val fNumber = sqrt(2.0.pow(apexValue))
+
+    return "f/" + String.format(java.util.Locale.US, "%.1f", fNumber)
+}
+
+fun formatDecimalToExposureFraction(decimalStr: String?): String? {
+    val exposureDecimal = decimalStr?.toDoubleOrNull() ?: return null
+
+    return when {
+        exposureDecimal >= 1.0 -> {
+            exposureDecimal.roundToInt().toString() + "s"
+        }
+
+        exposureDecimal > 0.0 -> {
+            val denominator = (1.0 / exposureDecimal).roundToInt()
+            "1/$denominator" + "s"
+        }
+
+        else -> decimalStr + "s"
+    }
+}
+
+fun parseExifDateTime(exifString: String?): Instant? {
+    if (exifString.isNullOrBlank()) return null
+
+    return try {
+        val isoString = exifString
+            .replaceFirst(':', '-')
+            .replaceFirst(':', '-')
+            .replace(' ', 'T')
+
+        val localDateTime = LocalDateTime.parse(isoString)
+
+        localDateTime.toInstant(TimeZone.UTC)
+    } catch (e: Exception) {
+        null
     }
 }

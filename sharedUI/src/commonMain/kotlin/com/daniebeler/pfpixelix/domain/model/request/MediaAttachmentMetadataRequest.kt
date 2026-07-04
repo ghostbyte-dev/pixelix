@@ -2,6 +2,7 @@ package com.daniebeler.pfpixelix.domain.model.request
 
 import VernissageMediaAttachmentMetadataRequest
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedMediaAttachmentMetadataRequest
+import kotlin.time.Instant
 
 data class MediaAttachmentMetadataRequest(
     val id: String? = null,
@@ -9,25 +10,46 @@ data class MediaAttachmentMetadataRequest(
 //    val previewUrl: String = "",
     val description: String? = null,
 //    @SerialName("blurhash") val blurhash: String? = null,
-    val make: String? = null,
-    val model: String? = null,
-    val lens: String? = null,
-    val createDate: String? = null,
-    val focalLength: String? = null,
-    val focalLenIn35mmFilm: String? = null,
-    val fNumber: String? = null,
-    val exposureTime: String? = null,
-    val photographicSensitivity: String? = null,
-    val software: String? = null,
-    val film: String? = null,
-    val chemistry: String? = null,
-    val scanner: String? = null,
+    val make: FieldState<String> = FieldState(),
+    val model: FieldState<String> = FieldState(),
+    val lens: FieldState<String> = FieldState(),
+    val createDate: FieldState<Instant> = FieldState(),
+    val focalLength: FieldState<String> = FieldState(),
+    val focalLenIn35mmFilm: FieldState<String> = FieldState(),
+    val fNumber: FieldState<String> = FieldState(),
+    val exposureTime: FieldState<String> = FieldState(),
+    val photographicSensitivity: FieldState<String> = FieldState(),
+    val software: FieldState<String> = FieldState(),
+    val film: FieldState<String> = FieldState(),
+    val chemistry: FieldState<String> = FieldState(),
+    val scanner: FieldState<String> = FieldState(),
 //    @SerialName("locationId") val locationId: String? = null,
 //    @SerialName("licenseId") val licenseId: String? = null,
 //    @SerialName("latitude") val latitude: String? = null,
 //    @SerialName("longitude") val longitude: String? = null,
-    val flash: String? = null
+    val flash: FieldState<String> = FieldState()
 )
+
+data class FieldState<T>(
+    val value: T?,
+    val isIncluded: Boolean = true // The "checked off" tracking switch
+) {
+    val valueIfIncluded: T?
+        get() = if (isIncluded) value else null
+
+    constructor(value: T?) : this(
+        value = value,
+        isIncluded = when (value) {
+            null -> false
+            is String -> value.isNotBlank() // Extra safety for empty strings
+            else -> true
+        }
+    )
+    constructor(): this(
+        value = null,
+        isIncluded = false
+    )
+}
 
 fun MediaAttachmentMetadataRequest.toPixelfed(): PixelfedMediaAttachmentMetadataRequest {
     return PixelfedMediaAttachmentMetadataRequest(
@@ -39,19 +61,19 @@ fun MediaAttachmentMetadataRequest.toVernissage(): VernissageMediaAttachmentMeta
     return VernissageMediaAttachmentMetadataRequest(
         id = this.id ?: "",
         description = this.description,
-        make = this.make,
-        model = this.model,
-        lens = this.lens,
-//        createDate = this.createDate,
-        focalLength = this.focalLength,
-        focalLenIn35mmFilm = this.focalLenIn35mmFilm,
-        fNumber = this.fNumber,
-        exposureTime = this.exposureTime,
-        photographicSensitivity = this.photographicSensitivity,
-        software = this.software,
-        film = this.film,
-        chemistry = this.chemistry,
-        scanner = this.scanner,
-        flash = this.flash
+        make = this.make.valueIfIncluded,
+        model = this.model.valueIfIncluded,
+        lens = this.lens.valueIfIncluded,
+        createDate = this.createDate.valueIfIncluded.toString(),
+        focalLength = this.focalLength.valueIfIncluded,
+        focalLenIn35mmFilm = this.focalLenIn35mmFilm.valueIfIncluded,
+        fNumber = this.fNumber.valueIfIncluded,
+        exposureTime = this.exposureTime.valueIfIncluded,
+        photographicSensitivity = this.photographicSensitivity.valueIfIncluded,
+        software = this.software.valueIfIncluded,
+        film = this.film.valueIfIncluded,
+        chemistry = this.chemistry.valueIfIncluded,
+        scanner = this.scanner.valueIfIncluded,
+        flash = this.flash.valueIfIncluded
     )
 }

@@ -11,7 +11,7 @@ data class VernissageMediaAttachmentMetadataRequest(
     @SerialName("make") val make: String? = null,
     @SerialName("model") val model: String? = null,
     @SerialName("lens") val lens: String? = null,
-//    @SerialName("createDate") val createDate: String? = null,
+    @SerialName("createDate") val createDate: String? = null,
     @SerialName("focalLength") val focalLength: String? = null,
     @SerialName("focalLenIn35mmFilm") val focalLenIn35mmFilm: String? = null,
     @SerialName("fNumber") val fNumber: String? = null,

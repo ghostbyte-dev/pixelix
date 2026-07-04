@@ -24,7 +24,7 @@ fun SwipeBetweenTimelines() {
     SwitchPref(
         icon =  Res.drawable.swipe_gesture,
         title = stringResource(Res.string.swipe_between_tabs),
-        shapes = ListItemDefaults.segmentedShapes(index = 2, count = 7),
+        shapes = ListItemDefaults.segmentedShapes(index = 6, count = 7),
         state = state
     )
 }

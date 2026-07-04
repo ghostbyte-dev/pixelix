@@ -20,6 +20,7 @@ fun SettingPref(
     title: String,
     shapes: ListItemShapes,
     modifier: Modifier = Modifier,
+    danger: Boolean = false,
     desc: String? = null,
     leadingContent: @Composable (() -> Unit)? = null,
     trailingContent: @Composable (() -> Unit)? = null,
@@ -29,7 +30,8 @@ fun SettingPref(
         onClick = onClick,
         shapes = shapes,
         colors = ListItemDefaults.segmentedColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainerLow
+            containerColor = if (danger) MaterialTheme.colorScheme.errorContainer else MaterialTheme.colorScheme.surfaceContainer,
+            contentColor = if (danger) MaterialTheme.colorScheme.onErrorContainer else MaterialTheme.colorScheme.onSurface
         ),
         modifier = modifier,
         leadingContent = leadingContent,
@@ -54,6 +56,7 @@ fun SettingPref(
     title: String,
     shapes: ListItemShapes,
     icon: DrawableResource, // Accept the resource directly
+    danger: Boolean = false,
     modifier: Modifier = Modifier,
     desc: String? = null,
     trailingContent: @Composable (() -> Unit)? = null,
@@ -64,6 +67,7 @@ fun SettingPref(
         title = title,
         shapes = shapes,
         modifier = modifier,
+        danger,
         desc = desc,
         trailingContent = trailingContent,
         onClick = onClick,

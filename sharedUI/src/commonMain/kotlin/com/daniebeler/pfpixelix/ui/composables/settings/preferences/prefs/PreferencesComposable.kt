@@ -26,7 +26,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -47,7 +46,7 @@ import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.close
 import pixelix.app.generated.resources.settings
-//TODO: make logout and remove account red
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PreferencesComposable(
@@ -72,8 +71,7 @@ fun PreferencesComposable(
                     closePreferencesDrawer()
                 }) {
                     Icon(
-                        imageVector = vectorResource(Res.drawable.close),
-                        contentDescription = ""
+                        imageVector = vectorResource(Res.drawable.close), contentDescription = ""
                     )
                 }
             })

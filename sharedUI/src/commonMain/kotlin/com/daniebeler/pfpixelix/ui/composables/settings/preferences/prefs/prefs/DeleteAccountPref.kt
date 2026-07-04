@@ -20,6 +20,7 @@ fun DeleteAccountPref(openUrl: () -> Unit) {
     SettingPref(
         icon = Res.drawable.trash,
         title = stringResource(Res.string.delete_account),
+        danger = true,
         trailingContent = {
             Icon(
                 imageVector = vectorResource(Res.drawable.open), contentDescription = null

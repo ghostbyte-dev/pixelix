@@ -1,15 +1,15 @@
-package com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs
+package com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs
 
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.ListItemDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.tooling.preview.Preview
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.basic.SettingPref
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -64,6 +64,7 @@ fun LogoutAlert(show: MutableState<Boolean>, logout: () -> Unit) {
     }
 }
 
+@Preview
 @Composable
 private fun LogoutAlertPreview() {
     val showAlert = remember { mutableStateOf(true) }

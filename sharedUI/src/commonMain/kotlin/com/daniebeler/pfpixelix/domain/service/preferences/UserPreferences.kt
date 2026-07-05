@@ -2,6 +2,7 @@ package com.daniebeler.pfpixelix.domain.service.preferences
 
 import com.daniebeler.pfpixelix.domain.model.AppAccentColor
 import com.daniebeler.pfpixelix.domain.model.AppThemeMode
+import com.daniebeler.pfpixelix.domain.model.Visibility
 import com.russhwolf.settings.ExperimentalSettingsApi
 import com.russhwolf.settings.ExperimentalSettingsImplementation
 import com.russhwolf.settings.boolean
@@ -9,6 +10,9 @@ import com.russhwolf.settings.coroutines.toBlockingSettings
 import com.russhwolf.settings.datastore.DataStoreSettings
 import com.russhwolf.settings.int
 import com.russhwolf.settings.long
+import com.russhwolf.settings.string
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import me.tatarka.inject.annotations.Inject
 
 @OptIn(ExperimentalSettingsApi::class, ExperimentalSettingsImplementation::class)
@@ -55,4 +59,21 @@ class UserPreferences(observableSettings: DataStoreSettings) {
 
     var showGlobalTimelineHelp by settings.boolean("k_show_global_timeline_help", true)
     val showGlobalTimelineHelpFlow = observableSettings.getBooleanFlow("k_show_global_timeline_help", showGlobalTimelineHelp)
+
+    var captionTemplate by settings.string("k_caption_template", "")
+    val captionTemplateFlow = observableSettings.getStringFlow("k_caption_template", captionTemplate)
+
+    var defaultVisibility: Visibility
+        get() = Visibility.entries.getOrElse(
+            settings.getInt("k_default_visibility", Visibility.PUBLIC.ordinal)
+        ) { Visibility.PUBLIC }
+        set(value) {
+            settings.putInt("k_default_visibility", value.ordinal)
+        }
+
+    val defaultVisibilityFlow: Flow<Visibility> = observableSettings
+        .getIntFlow("k_default_visibility", Visibility.PUBLIC.ordinal)
+        .map { ordinal ->
+            Visibility.entries.getOrElse(ordinal) { Visibility.PUBLIC }
+        }
 }

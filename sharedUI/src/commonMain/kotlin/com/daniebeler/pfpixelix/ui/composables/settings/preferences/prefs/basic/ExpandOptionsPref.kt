@@ -40,6 +40,8 @@ import pixelix.app.generated.resources.chevron_right
 fun ExpandOptionsPref(
     leadingIcon: DrawableResource,
     title: String,
+    index: Int,
+    count: Int,
     modifier: Modifier = Modifier,
     desc: String? = null,
     initializeExpanded: Boolean = false,
@@ -56,7 +58,7 @@ fun ExpandOptionsPref(
             icon = leadingIcon,
             title = title,
             desc = desc,
-            shapes = ListItemDefaults.segmentedShapes(index = 0, count = 4),
+            shapes = ListItemDefaults.segmentedShapes(index = index, count = if (expanded) {count + 1} else {count}),
             trailingContent = {
                 Icon(
                     imageVector = vectorResource(Res.drawable.chevron_down),

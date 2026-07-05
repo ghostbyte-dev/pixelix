@@ -33,14 +33,20 @@ import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.service.platform.PlatformFeatures
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.AutoplayVideoPref
+import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.CaptionTemplate
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.ClearCachePref
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.CustomizeAppIconPref
+import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.DefaultVisibilityPref
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.DeleteAccountPref
+import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.FocusModePref
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.HideAltTextButtonPref
+import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.HideSensitiveContentPref
+import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.LogoutPref
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.MoreSettingsPref
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.RepostSettingsPref
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.SwipeBetweenTimelines
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.ThemePref
+import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.UseInAppBrowserPref
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
@@ -109,6 +115,11 @@ fun PreferencesComposable(
                 val icon = viewModel.appIcon.collectAsState()
                 CustomizeAppIconPref(navController, closePreferencesDrawer, icon.value)
             }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            CaptionTemplate(viewModel.suggestionsManager)
+            DefaultVisibilityPref()
 
             Spacer(modifier = Modifier.height(12.dp))
 

@@ -3,14 +3,13 @@ package com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItemDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.basic.SettingPref
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
-import pixelix.app.generated.resources.open
 import pixelix.app.generated.resources.delete_account
+import pixelix.app.generated.resources.open
 import pixelix.app.generated.resources.trash
 
 

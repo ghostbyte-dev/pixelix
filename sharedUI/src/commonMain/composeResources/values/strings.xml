@@ -306,4 +306,7 @@
     <string name="accept_follow_request">Accept Follow Request</string>
     <string name="reject_follow_request">Reject Follow Request</string>
     <string name="reason">Reason</string>
+    <string name="caption_template">Caption template</string>
+    <string name="send">Send</string>
+    <string name="default_visibility">Default visibility</string>
 </resources>

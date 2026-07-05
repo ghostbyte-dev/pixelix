@@ -1,4 +1,4 @@
-package com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs
+package com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs
 
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.ListItemDefaults
@@ -22,7 +22,7 @@ fun UseInAppBrowserPref() {
         prefs.useInAppBrowser = state.value
     }
     SwitchPref(
-        icon =  Res.drawable.browser,
+        icon = Res.drawable.browser,
         title = stringResource(Res.string.use_in_app_browser),
         shapes = ListItemDefaults.segmentedShapes(index = 2, count = 7),
         state = state

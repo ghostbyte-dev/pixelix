@@ -80,6 +80,7 @@ import pixelix.app.generated.resources.no_comments_yet
 import pixelix.app.generated.resources.edit
 import pixelix.app.generated.resources.reply
 import pixelix.app.generated.resources.send
+import pixelix.app.generated.resources.send_message
 import pixelix.app.generated.resources.this_action_cannot_be_undone
 import pixelix.app.generated.resources.trash
 
@@ -484,7 +485,7 @@ fun AddReplyDialog(
                     Row(
                         modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End
                     ) {
-                        TextButton(onClick = onDismissRequest) { Text("Dismiss") }
+                    TextButton(onClick = onDismissRequest) { Text(stringResource(Res.string.cancel)) }
                         TextButton(
                             onClick = {
                                 viewModel.replyText = TextFieldValue()
@@ -492,7 +493,7 @@ fun AddReplyDialog(
                             },
                             enabled = (instance?.configuration?.statusConfig?.maxCharacters
                                 ?: Int.MAX_VALUE) > viewModel.replyText.text.length
-                        ) { Text("Send") }
+                        ) { Text(stringResource(Res.string.send)) }
                     }
                 }
             }

@@ -8,6 +8,7 @@ import com.daniebeler.pfpixelix.domain.service.general.AppIconService
 import com.daniebeler.pfpixelix.domain.service.general.BackendType
 import com.daniebeler.pfpixelix.domain.service.general.Session
 import com.daniebeler.pfpixelix.domain.service.platform.Platform
+import com.daniebeler.pfpixelix.domain.service.suggestions.HashtagMentionsSuggestionsManager
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 
@@ -15,6 +16,7 @@ import me.tatarka.inject.annotations.Inject
 class PreferencesViewModel(
     private val authService: AuthService,
     private val platform: Platform,
+    val suggestionsManager: HashtagMentionsSuggestionsManager,
     appIconService: AppIconService,
     session: Session
 ) : ViewModel() {

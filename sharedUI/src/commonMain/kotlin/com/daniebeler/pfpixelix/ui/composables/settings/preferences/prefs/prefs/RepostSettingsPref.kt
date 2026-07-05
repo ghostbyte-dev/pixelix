@@ -9,8 +9,8 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.open
-import pixelix.app.generated.resources.repost_settings
 import pixelix.app.generated.resources.repost
+import pixelix.app.generated.resources.repost_settings
 
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)

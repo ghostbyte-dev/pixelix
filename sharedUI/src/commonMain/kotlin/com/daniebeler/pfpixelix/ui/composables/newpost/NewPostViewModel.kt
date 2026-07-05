@@ -11,16 +11,17 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import co.touchlab.kermit.Logger
 import com.daniebeler.pfpixelix.domain.model.Instance
-import com.daniebeler.pfpixelix.domain.model.request.NewPostRequest
 import com.daniebeler.pfpixelix.domain.model.Visibility
 import com.daniebeler.pfpixelix.domain.model.request.MediaAttachmentMetadataRequest
-import com.daniebeler.pfpixelix.domain.service.general.PostEditorService
+import com.daniebeler.pfpixelix.domain.model.request.NewPostRequest
 import com.daniebeler.pfpixelix.domain.service.file.FileService
 import com.daniebeler.pfpixelix.domain.service.file.PlatformFile
 import com.daniebeler.pfpixelix.domain.service.general.AccountService
 import com.daniebeler.pfpixelix.domain.service.general.InstanceService
+import com.daniebeler.pfpixelix.domain.service.general.PostEditorService
 import com.daniebeler.pfpixelix.domain.service.general.Session
 import com.daniebeler.pfpixelix.domain.service.platform.Platform
+import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
 import com.daniebeler.pfpixelix.domain.service.suggestions.HashtagMentionsSuggestionsManager
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.ui.composables.profile.AccountState
@@ -44,7 +45,6 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
-import kotlin.also
 import kotlin.time.Clock
 
 
@@ -55,7 +55,8 @@ class NewPostViewModel @Inject constructor(
     private val platform: Platform,
     val hashtagMentionsSuggestionsManager: HashtagMentionsSuggestionsManager,
     private val accountService: AccountService,
-    private val session: Session
+    private val session: Session,
+    private val userPreferences: UserPreferences
 ) : ViewModel() {
     data class ImageItem(
         val imageUri: KmpUri,
@@ -85,6 +86,14 @@ class NewPostViewModel @Inject constructor(
             getInstance()
             getAccount()
         }
+
+        userPreferences.captionTemplateFlow
+            .onEach { caption = TextFieldValue(it) }
+            .launchIn(viewModelScope)
+
+        userPreferences.defaultVisibilityFlow
+            .onEach { audience = it }
+            .launchIn(viewModelScope)
     }
 
     fun updateCaption(newCaption: TextFieldValue) {

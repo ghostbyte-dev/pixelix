@@ -1,4 +1,4 @@
-package com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs
+package com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs
 
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.ListItemDefaults

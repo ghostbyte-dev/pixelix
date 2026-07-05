@@ -4,6 +4,7 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.tooling.preview.Preview
 import co.touchlab.kermit.Logger
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.basic.SettingPref
 import org.jetbrains.compose.resources.stringResource
@@ -29,6 +30,7 @@ fun MoreSettingsPref(openUrl: () -> Unit) {
     )
 }
 
+@Preview
 @Composable
 private fun MoreSettingsPrefPreview() {
     MoreSettingsPref(openUrl = {

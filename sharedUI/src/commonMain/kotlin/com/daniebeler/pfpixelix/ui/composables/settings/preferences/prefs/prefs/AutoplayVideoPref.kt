@@ -22,7 +22,7 @@ fun AutoplayVideoPref() {
         prefs.autoplayVideo = state.value
     }
     SwitchPref(
-        icon =  Res.drawable.autoplay,
+        icon = Res.drawable.autoplay,
         title = stringResource(Res.string.autoplay_videos),
         shapes = ListItemDefaults.segmentedShapes(index = 4, count = 7),
         state = state

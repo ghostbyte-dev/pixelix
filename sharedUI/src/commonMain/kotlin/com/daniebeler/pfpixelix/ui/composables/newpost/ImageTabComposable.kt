@@ -1,5 +1,8 @@
 package com.daniebeler.pfpixelix.ui.composables.newpost
 
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.gestures.waitForUpOrCancellation
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,21 +18,38 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.TimePicker
+import androidx.compose.material3.rememberDatePickerState
+import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.PointerEventPass
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import com.daniebeler.pfpixelix.domain.model.request.FieldState
 import com.daniebeler.pfpixelix.domain.model.request.MediaAttachmentMetadataRequest
+import com.daniebeler.pfpixelix.utils.formatLocalizedOnlyDate
 import com.daniebeler.pfpixelix.utils.getPlatformUriObject
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
@@ -37,9 +57,12 @@ import kotlinx.datetime.number
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.alt_text
+import pixelix.app.generated.resources.datetime
 import kotlin.time.Clock
+import kotlin.time.Instant
 
 @Composable
 fun ImageTab(
@@ -246,7 +269,7 @@ fun ImageTab(
                             image.metadata.copy(software = it)
                         )
                     },
-                    label = "Software",
+                    placeholder = "Software",
                 )
             }
 
@@ -323,4 +346,190 @@ fun IsIncludedField(
         }
 
     }
+}
+
+@Composable
+fun CustomTextField(
+    value: FieldState<String>,
+    onValueChange: (FieldState<String>) -> Unit,
+    label: String = "",
+    placeholder: String = "",
+    modifier: Modifier = Modifier,
+    singleLine: Boolean = false,
+) {
+    TextField(
+        value = value.value ?: "",
+        onValueChange = {
+            onValueChange(
+                value.copy(value = it)
+            )
+        },
+        singleLine = singleLine,
+        modifier = modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(16.dp),
+        colors = TextFieldDefaults.colors(
+            unfocusedIndicatorColor = Color.Transparent,
+            focusedIndicatorColor = Color.Transparent,
+            focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer
+        ),
+        label = { if (label.isNotBlank()) Text(text = label) },
+        placeholder = { if (placeholder.isNotBlank()) Text(text = placeholder) },
+        enabled = value.isIncluded
+    )
+}
+
+@Composable
+fun DatePickerFieldToModal(
+    date: FieldState<Instant>, onDateSelected: (Instant?) -> Unit, modifier: Modifier = Modifier
+) {
+    var showModal by remember { mutableStateOf(false) }
+
+    TextField(
+        value = formatLocalizedOnlyDate(date.value.toString()),
+        onValueChange = { },
+        label = { Text("Date") },
+        placeholder = { Text("MM/DD/YYYY") },
+        trailingIcon = {
+            Icon(vectorResource(Res.drawable.datetime), contentDescription = "Select date")
+        },
+        shape = RoundedCornerShape(16.dp),
+        colors = TextFieldDefaults.colors(
+            unfocusedIndicatorColor = Color.Transparent,
+            focusedIndicatorColor = Color.Transparent,
+            focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer
+        ),
+        readOnly = true,
+        enabled = date.isIncluded,
+        modifier = modifier.fillMaxWidth().pointerInput(date) {
+            awaitEachGesture {
+                awaitFirstDown(pass = PointerEventPass.Initial)
+                val upEvent = waitForUpOrCancellation(pass = PointerEventPass.Initial)
+                if (upEvent != null) {
+                    showModal = true
+                }
+            }
+        })
+
+    if (showModal) {
+        DatePickerModal(onDateSelected = {
+            onDateSelected(it)
+        }, onDismiss = { showModal = false })
+    }
+}
+
+@Composable
+fun DatePickerModal(
+    onDateSelected: (Instant?) -> Unit, onDismiss: () -> Unit
+) {
+    val datePickerState = rememberDatePickerState()
+
+    DatePickerDialog(onDismissRequest = onDismiss, confirmButton = {
+        TextButton(onClick = {
+            onDateSelected(datePickerState.selectedDateMillis?.let {
+                Instant.fromEpochMilliseconds(
+                    it
+                )
+            })
+            onDismiss()
+        }) {
+            Text("OK")
+        }
+    }, dismissButton = {
+        TextButton(onClick = onDismiss) {
+            Text("Cancel")
+        }
+    }) {
+        DatePicker(state = datePickerState)
+    }
+}
+
+
+@Composable
+fun TimePickerFieldToModal(
+    date: FieldState<Instant>, onDateSelected: (Int, Int) -> Unit, modifier: Modifier = Modifier
+) {
+    var showModal by remember { mutableStateOf(false) }
+
+    TextField(
+        value = date.value?.let { instant ->
+            val timeZone = TimeZone.currentSystemDefault()
+            val localDateTime = instant.toLocalDateTime(timeZone)
+
+            val hour = localDateTime.hour.toString().padStart(2, '0')
+            val minute = localDateTime.minute.toString().padStart(2, '0')
+
+            "$hour:$minute"
+        } ?: "",
+        onValueChange = { },
+        label = { Text("Time") },
+        placeholder = { Text("HH:MM") },
+        trailingIcon = {
+            Icon(vectorResource(Res.drawable.datetime), contentDescription = "Select time")
+        },
+        shape = RoundedCornerShape(16.dp),
+        colors = TextFieldDefaults.colors(
+            unfocusedIndicatorColor = Color.Transparent,
+            focusedIndicatorColor = Color.Transparent,
+            focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer
+        ),
+        readOnly = true,
+        enabled = date.isIncluded,
+        modifier = modifier.fillMaxWidth().pointerInput(date) {
+            awaitEachGesture {
+                awaitFirstDown(pass = PointerEventPass.Initial)
+                val upEvent = waitForUpOrCancellation(pass = PointerEventPass.Initial)
+                if (upEvent != null) {
+                    showModal = true
+                }
+            }
+        })
+
+    if (showModal) {
+        TimePickerModal(initialInstant = date.value, onConfirm = { hour, min ->
+            onDateSelected(hour, min)
+            showModal = false
+        }, onDismiss = { showModal = false })
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TimePickerModal(
+    initialInstant: Instant?,
+    onConfirm: (hour: Int, minute: Int) -> Unit,
+    onDismiss: () -> Unit,
+) {
+    val timeZone = remember { TimeZone.currentSystemDefault() }
+    val localDateTime = remember(initialInstant) {
+        val targetInstant = initialInstant ?: Clock.System.now()
+        targetInstant.toLocalDateTime(timeZone)
+    }
+
+    val timePickerState = rememberTimePickerState(
+        initialHour = localDateTime.hour,
+        initialMinute = localDateTime.minute,
+        is24Hour = true,
+    )
+    AlertDialog(onDismissRequest = onDismiss, dismissButton = {
+        TextButton(onClick = onDismiss) {
+            Text("Cancel")
+        }
+    }, confirmButton = {
+        TextButton(
+            onClick = {
+                onConfirm(timePickerState.hour, timePickerState.minute)
+            }) {
+            Text("OK")
+        }
+    }, text = {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.padding(top = 8.dp)
+        ) {
+            TimePicker(state = timePickerState)
+        }
+    })
 }

@@ -293,4 +293,17 @@
     <string name="manually_accept_new_followers">Követési kérelmek kézi elbírálása</string>
     <string name="include_public_posts_in_search_engines">Nyilvános bejegyzések megjelenítése a kereső motorokban</string>
     <string name="include_profile_in_search_engines">Fiók megjelenítése a kereső motorokban</string>
+    <string name="new_comment">új hozzászólást írt</string>
+    <string name="follow_request">kérelmezi, hogy követhessen</string>
+    <string name="new_status">új bejegyzést tett közzé</string>
+    <string name="boosted_status_updated">megosztott bejegyzés frissült</string>
+    <string name="notification">Értesítés</string>
+    <string name="accept_follow_request">Követési kérelem jóváhagyása</string>
+    <string name="reject_follow_request">Követési kérelem elutasítása</string>
+    <string name="reason">Ok</string>
+    <string name="caption_template">Felirat sablon</string>
+    <string name="send">Küldés</string>
+    <string name="default_visibility">Alapértelmezett láthatóság</string>
+    <string name="mentioned_only">Csak a megemlített</string>
+    <string name="requested">Kérelmezve</string>
 </resources>

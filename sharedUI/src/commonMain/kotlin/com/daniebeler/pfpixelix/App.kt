@@ -28,9 +28,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MaterialTheme.shapes
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.ModalDrawerSheet
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -62,17 +59,16 @@ import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.di.AppComponent
 import com.daniebeler.pfpixelix.di.LocalAppComponent
-import com.daniebeler.pfpixelix.ui.events.GlobalNavigationEvent
 import com.daniebeler.pfpixelix.ui.composables.profile.own_profile.AccountSwitchBottomSheet
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.PreferencesComposable
 import com.daniebeler.pfpixelix.ui.composables.widgets.ReverseModalNavigationDrawer
+import com.daniebeler.pfpixelix.ui.events.GlobalNavigationEvent
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import com.daniebeler.pfpixelix.ui.navigation.appGraph
 import com.daniebeler.pfpixelix.ui.theme.PixelixTheme
@@ -87,19 +83,16 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
-import pixelix.app.generated.resources.add_circle_strong
-import pixelix.app.generated.resources.add_circle
 import pixelix.app.generated.resources.bookmark
 import pixelix.app.generated.resources.default_avatar
 import pixelix.app.generated.resources.home
 import pixelix.app.generated.resources.house
 import pixelix.app.generated.resources.house_strong
-import pixelix.app.generated.resources.new_post
-import pixelix.app.generated.resources.notifications_strong
 import pixelix.app.generated.resources.notifications
+import pixelix.app.generated.resources.notifications_strong
 import pixelix.app.generated.resources.profile
-import pixelix.app.generated.resources.search_strong
 import pixelix.app.generated.resources.search
+import pixelix.app.generated.resources.search_strong
 
 val LocalSnackbarPresenter = compositionLocalOf<(String) -> Unit> {
     error("No LocalSnackbarPresenter provided")
@@ -238,32 +231,25 @@ fun App(
                                         )
                                     })
 
-                                /* Box(
-                                     modifier = Modifier.align(Alignment.BottomCenter)
-                                         .clip(RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp))
-                                         .background(MaterialTheme.colorScheme.surface)
-                                 ) {
-                                     BottomBar(
-                                         navController = navController,
-                                         openAccountSwitchBottomSheet = {
-                                             showAccountSwitchBottomSheet = true
-                                         },
-                                     )
-                                 }*/
-                                Box(
-                                    modifier = Modifier.align(Alignment.BottomCenter)
-                                ) {
-                                    BottomBarFloating(
-                                        navController,
-                                        openAccountSwitchBottomSheet = {
-                                            showAccountSwitchBottomSheet = true
-                                        },
-                                        scrollBehaviorBottom
-                                    )
+                                val navBackStackEntry by navController.currentBackStackEntryAsState()
+                                val currentDestination = navBackStackEntry?.destination
 
+                                val showBottomBar =
+                                    currentDestination?.hasRoute<Destination.OwnProfile>() == true || currentDestination?.hasRoute<Destination.Feeds>() == true || currentDestination?.hasRoute<Destination.Search>() == true || currentDestination?.hasRoute<Destination.Notifications>() == true
+
+                                if (showBottomBar) {
+                                    Box(
+                                        modifier = Modifier.align(Alignment.BottomCenter)
+                                    ) {
+                                        BottomBarFloating(
+                                            navController, openAccountSwitchBottomSheet = {
+                                                showAccountSwitchBottomSheet = true
+                                            }, scrollBehaviorBottom
+                                        )
+
+                                    }
                                 }
                             }
-
                         }
                     }
                 }
@@ -320,12 +306,6 @@ private enum class HomeTab(
         Res.drawable.search,
         Res.drawable.search_strong,
         Res.string.search
-    ),
-    NewPost(
-        Destination.HomeTabNewPost,
-        Res.drawable.add_circle,
-        Res.drawable.add_circle_strong,
-        Res.string.new_post
     ),
     Notifications(
         Destination.HomeTabNotifications,
@@ -410,10 +390,8 @@ private fun BottomBarFloating(
 
             IconButton(
                 colors = IconButtonDefaults.iconButtonColors(
-                    containerColor = containerColor,
-                    contentColor = contentColor
-                ),
-                onClick = {
+                    containerColor = containerColor, contentColor = contentColor
+                ), onClick = {
 
                     if (!isLongPress) {
                         if (!isSelected) {
@@ -439,8 +417,7 @@ private fun BottomBarFloating(
                             }
                         }
                     }
-                }
-            ) {
+                }) {
                 if (tab == HomeTab.OwnProfile && avatar != null) {
                     AsyncImage(
                         model = avatar,

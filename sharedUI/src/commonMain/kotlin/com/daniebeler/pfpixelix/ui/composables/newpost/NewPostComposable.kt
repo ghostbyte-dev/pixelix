@@ -8,7 +8,6 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.waitForUpOrCancellation
@@ -16,10 +15,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.asPaddingValues
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -35,7 +34,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
@@ -110,7 +108,6 @@ import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
-import pixelix.app.generated.resources.add
 import pixelix.app.generated.resources.alt_text
 import pixelix.app.generated.resources.are_you_sure
 import pixelix.app.generated.resources.audience
@@ -149,16 +146,14 @@ fun NewPostComposable(
         uris?.let {
             uris.forEach {
                 viewModel.addImage(
-                    uri = it,
-                    metadata = MediaAttachmentMetadataRequest()
+                    uri = it, metadata = MediaAttachmentMetadataRequest()
                 )
             }
         }
     }
     val pagerState = rememberPagerState(initialPage = 0, pageCount = { viewModel.images.size + 1 })
     Scaffold(
-        contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top),
-        topBar = {
+        contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top), topBar = {
             TopAppBar(
                 title = {
                     Text(
@@ -218,8 +213,7 @@ fun NewPostComposable(
             val navigationBarPadding =
                 WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
             Column(
-                Modifier.imeAwareInsets(60.dp)
-                    .padding(bottom = 60.dp + navigationBarPadding),
+                Modifier.imeAwareInsets(60.dp).padding(bottom = 60.dp + navigationBarPadding),
             ) {
 
                 PrimaryScrollableTabRow(selectedTabIndex = pagerState.currentPage) {
@@ -276,8 +270,7 @@ fun NewPostComposable(
                             GeneralTab(viewModel)
                         }
                     }
-                }
-                /* var isExpandedVisibility by remember { mutableStateOf(false) }
+                }/* var isExpandedVisibility by remember { mutableStateOf(false) }
                  var showReleaseAlert by remember {
                      mutableStateOf(false)
                  }
@@ -854,322 +847,6 @@ fun NewPostComposable(
     }
 }
 
-@Composable
-fun EmptyImageTab(addImage: (KmpUri, MediaAttachmentMetadataRequest) -> Unit) {
-    val scope = rememberCoroutineScope()
-    Column {
-        val launcher = rememberFilePickerLauncher(
-            type = FileKitType.ImageAndVideo, mode = FileKitMode.Multiple()
-        ) { files ->
-            files?.forEach { file ->
-                scope.launch(Dispatchers.Default) {
-                    try {
-                        val bytes = file.readBytes()
-
-                        val extractedMetadata = parseExifMetadata(bytes)
-
-                        withContext(Dispatchers.Main) {
-                            addImage(file.toKmpUri(), extractedMetadata)
-                        }
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    }
-                }
-            }
-        }
-
-        Card(Modifier.fillMaxWidth().aspectRatio(1f).clickable { launcher.launch() }) {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Icon(
-                    modifier = Modifier.height(50.dp).width(50.dp),
-                    imageVector = vectorResource(Res.drawable.add),
-                    contentDescription = null,
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun ImageTab(
-    image: NewPostViewModel.ImageItem,
-    updateMetadata: (MediaAttachmentMetadataRequest) -> Unit
-) {
-    val verticalScrollState = rememberScrollState()
-    Box(modifier = Modifier.fillMaxSize()) {
-        Column(
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-            modifier = Modifier.verticalScroll(verticalScrollState)
-        ) {
-            AsyncImage(
-                model = image.imageUri.getPlatformUriObject(),
-                contentDescription = null,
-                modifier = Modifier.fillMaxWidth(),
-                contentScale = ContentScale.Inside
-            )
-
-            TextField(
-                value = image.metadata.description ?: "",
-                onValueChange = {
-                    updateMetadata(
-                        image.metadata.copy(description = it)
-                    )
-                },
-                singleLine = true,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 20.dp),
-                shape = RoundedCornerShape(16.dp),
-                colors = TextFieldDefaults.colors(
-                    unfocusedIndicatorColor = Color.Transparent,
-                    focusedIndicatorColor = Color.Transparent,
-                    focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
-                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer
-                ),
-                label = { Text(text = stringResource(Res.string.alt_text)) }
-            )
-            IsIncludedField(
-                image.metadata.make.isIncluded,
-                { updateMetadata(image.metadata.copy(make = image.metadata.make.copy(isIncluded = it))) }) {
-                CustomTextField(
-                    value = image.metadata.make,
-                    onValueChange = {
-                        updateMetadata(
-                            image.metadata.copy(make = it)
-                        )
-                    },
-                    label = "Brand",
-                )
-            }
-
-            IsIncludedField(
-                image.metadata.model.isIncluded,
-                { updateMetadata(image.metadata.copy(model = image.metadata.model.copy(isIncluded = it))) }) {
-                CustomTextField(
-                    value = image.metadata.model,
-                    onValueChange = {
-                        updateMetadata(
-                            image.metadata.copy(model = it)
-                        )
-                    },
-                    label = "Model",
-                )
-            }
-
-            IsIncludedField(
-                image.metadata.flash.isIncluded,
-                { updateMetadata(image.metadata.copy(flash = image.metadata.flash.copy(isIncluded = it))) }) {
-                CustomTextField(
-                    value = image.metadata.flash,
-                    onValueChange = {
-                        updateMetadata(
-                            image.metadata.copy(flash = it)
-                        )
-                    },
-                    label = "Flash",
-                )
-            }
-
-            IsIncludedField(
-                image.metadata.lens.isIncluded,
-                { updateMetadata(image.metadata.copy(lens = image.metadata.lens.copy(isIncluded = it))) }) {
-                CustomTextField(
-                    value = image.metadata.lens,
-                    onValueChange = {
-                        updateMetadata(
-                            image.metadata.copy(lens = it)
-                        )
-                    },
-                    label = "Lens",
-                )
-            }
-
-            IsIncludedField(
-                image.metadata.focalLength.isIncluded || image.metadata.focalLenIn35mmFilm.isIncluded,
-                {
-                    updateMetadata(
-                        image.metadata.copy(
-                            focalLength = image.metadata.focalLength.copy(isIncluded = it),
-                            focalLenIn35mmFilm = image.metadata.focalLenIn35mmFilm.copy(isIncluded = it)
-                        ),
-                    )
-                }) {
-                CustomTextField(
-                    value = image.metadata.focalLength,
-                    onValueChange = {
-                        updateMetadata(
-                            image.metadata.copy(focalLength = it)
-                        )
-                    },
-                    label = "Focal length",
-                    modifier = Modifier.weight(1f)
-                )
-                CustomTextField(
-                    value = image.metadata.focalLenIn35mmFilm,
-                    onValueChange = {
-                        updateMetadata(
-                            image.metadata.copy(focalLenIn35mmFilm = it)
-                        )
-                    },
-                    label = "Focal length 35 mm",
-                    modifier = Modifier.weight(1f)
-                )
-            }
-
-            IsIncludedField(
-                image.metadata.fNumber.isIncluded,
-                {
-                    updateMetadata(
-                        image.metadata.copy(
-                            fNumber = image.metadata.fNumber.copy(
-                                isIncluded = it
-                            )
-                        )
-                    )
-                }) {
-                CustomTextField(
-                    value = image.metadata.fNumber,
-                    onValueChange = {
-                        updateMetadata(
-                            image.metadata.copy(fNumber = it)
-                        )
-                    },
-                    label = "Aperture",
-                )
-            }
-
-            IsIncludedField(
-                image.metadata.exposureTime.isIncluded,
-                {
-                    updateMetadata(
-                        image.metadata.copy(
-                            exposureTime = image.metadata.exposureTime.copy(
-                                isIncluded = it
-                            )
-                        )
-                    )
-                }) {
-                CustomTextField(
-                    value = image.metadata.exposureTime,
-                    onValueChange = {
-                        updateMetadata(
-                            image.metadata.copy(exposureTime = it)
-                        )
-                    },
-                    label = "Exposure time",
-                )
-            }
-
-            IsIncludedField(
-                image.metadata.photographicSensitivity.isIncluded,
-                {
-                    updateMetadata(
-                        image.metadata.copy(
-                            photographicSensitivity = image.metadata.photographicSensitivity.copy(
-                                isIncluded = it
-                            )
-                        )
-                    )
-                }) {
-                CustomTextField(
-                    value = image.metadata.photographicSensitivity,
-                    onValueChange = {
-                        updateMetadata(
-                            image.metadata.copy(photographicSensitivity = it)
-                        )
-                    },
-                    label = "ISO",
-                )
-            }
-
-            IsIncludedField(
-                image.metadata.software.isIncluded,
-                {
-                    updateMetadata(
-                        image.metadata.copy(
-                            software = image.metadata.software.copy(
-                                isIncluded = it
-                            )
-                        )
-                    )
-                }) {
-                CustomTextField(
-                    value = image.metadata.software,
-                    onValueChange = {
-                        updateMetadata(
-                            image.metadata.copy(software = it)
-                        )
-                    },
-                    label = "Software",
-                )
-            }
-
-            IsIncludedField(
-                image.metadata.createDate.isIncluded,
-                {
-                    updateMetadata(
-                        image.metadata.copy(
-                            createDate = image.metadata.createDate.copy(
-                                isIncluded = it
-                            )
-                        )
-                    )
-                }) {
-                DatePickerFieldToModal(image.metadata.createDate, {
-                    updateMetadata(
-                        image.metadata.copy(createDate = image.metadata.createDate.copy(value = it))
-                    )
-                }, modifier = Modifier.weight(1f))
-                TimePickerFieldToModal(
-                    image.metadata.createDate,
-                    modifier = Modifier.weight(1f),
-                    onDateSelected = { hour, min ->
-                        val currentInstant = image.metadata.createDate.value ?: Clock.System.now()
-                        val timeZone = TimeZone.currentSystemDefault()
-
-                        val localDateTime = currentInstant.toLocalDateTime(timeZone)
-
-                        val updatedLocalDateTime = LocalDateTime(
-                            year = localDateTime.year,
-                            month = localDateTime.month.number,
-                            day = localDateTime.day,
-                            hour = hour,
-                            minute = min,
-                            second = localDateTime.second,
-                            nanosecond = localDateTime.nanosecond
-                        )
-
-                        val updatedInstant = updatedLocalDateTime.toInstant(timeZone)
-
-                        updateMetadata(
-                            image.metadata.copy(createDate = image.metadata.createDate.copy(value = updatedInstant))
-                        )
-
-                    })
-
-            }
-        }
-    }
-}
-
-@Composable
-fun IsIncludedField(
-    value: Boolean,
-    onValueChange: (Boolean) -> Unit,
-    content: @Composable (() -> Unit)
-) {
-    Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-        Checkbox(
-            checked = value,
-            onCheckedChange = {
-                onValueChange(it)
-            }
-        )
-        Row(Modifier.weight(1f)) {
-            content()
-        }
-    }
-}
 
 @Composable
 fun CustomTextField(
@@ -1187,8 +864,7 @@ fun CustomTextField(
             )
         },
         singleLine = singleLine,
-        modifier = modifier
-            .fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
         colors = TextFieldDefaults.colors(
             unfocusedIndicatorColor = Color.Transparent,
@@ -1203,9 +879,7 @@ fun CustomTextField(
 
 @Composable
 fun DatePickerFieldToModal(
-    date: FieldState<Instant>,
-    onDateSelected: (Instant?) -> Unit,
-    modifier: Modifier = Modifier
+    date: FieldState<Instant>, onDateSelected: (Instant?) -> Unit, modifier: Modifier = Modifier
 ) {
     var showModal by remember { mutableStateOf(false) }
 
@@ -1226,56 +900,45 @@ fun DatePickerFieldToModal(
         ),
         readOnly = true,
         enabled = date.isIncluded,
-        modifier = modifier
-            .fillMaxWidth()
-            .pointerInput(date) {
-                awaitEachGesture {
-                    awaitFirstDown(pass = PointerEventPass.Initial)
-                    val upEvent = waitForUpOrCancellation(pass = PointerEventPass.Initial)
-                    if (upEvent != null) {
-                        showModal = true
-                    }
+        modifier = modifier.fillMaxWidth().pointerInput(date) {
+            awaitEachGesture {
+                awaitFirstDown(pass = PointerEventPass.Initial)
+                val upEvent = waitForUpOrCancellation(pass = PointerEventPass.Initial)
+                if (upEvent != null) {
+                    showModal = true
                 }
             }
-    )
+        })
 
     if (showModal) {
-        DatePickerModal(
-            onDateSelected = {
-                onDateSelected(it)
-            },
-            onDismiss = { showModal = false }
-        )
+        DatePickerModal(onDateSelected = {
+            onDateSelected(it)
+        }, onDismiss = { showModal = false })
     }
 }
 
 @Composable
 fun DatePickerModal(
-    onDateSelected: (Instant?) -> Unit,
-    onDismiss: () -> Unit
+    onDateSelected: (Instant?) -> Unit, onDismiss: () -> Unit
 ) {
     val datePickerState = rememberDatePickerState()
 
-    DatePickerDialog(
-        onDismissRequest = onDismiss,
-        confirmButton = {
-            TextButton(onClick = {
-                onDateSelected(datePickerState.selectedDateMillis?.let {
-                    Instant.fromEpochMilliseconds(
-                        it
-                    )
-                })
-                onDismiss()
-            }) {
-                Text("OK")
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text("Cancel")
-            }
+    DatePickerDialog(onDismissRequest = onDismiss, confirmButton = {
+        TextButton(onClick = {
+            onDateSelected(datePickerState.selectedDateMillis?.let {
+                Instant.fromEpochMilliseconds(
+                    it
+                )
+            })
+            onDismiss()
+        }) {
+            Text("OK")
         }
-    ) {
+    }, dismissButton = {
+        TextButton(onClick = onDismiss) {
+            Text("Cancel")
+        }
+    }) {
         DatePicker(state = datePickerState)
     }
 }
@@ -1283,9 +946,7 @@ fun DatePickerModal(
 
 @Composable
 fun TimePickerFieldToModal(
-    date: FieldState<Instant>,
-    onDateSelected: (Int, Int) -> Unit,
-    modifier: Modifier = Modifier
+    date: FieldState<Instant>, onDateSelected: (Int, Int) -> Unit, modifier: Modifier = Modifier
 ) {
     var showModal by remember { mutableStateOf(false) }
 
@@ -1314,28 +975,21 @@ fun TimePickerFieldToModal(
         ),
         readOnly = true,
         enabled = date.isIncluded,
-        modifier = modifier
-            .fillMaxWidth()
-            .pointerInput(date) {
-                awaitEachGesture {
-                    awaitFirstDown(pass = PointerEventPass.Initial)
-                    val upEvent = waitForUpOrCancellation(pass = PointerEventPass.Initial)
-                    if (upEvent != null) {
-                        showModal = true
-                    }
+        modifier = modifier.fillMaxWidth().pointerInput(date) {
+            awaitEachGesture {
+                awaitFirstDown(pass = PointerEventPass.Initial)
+                val upEvent = waitForUpOrCancellation(pass = PointerEventPass.Initial)
+                if (upEvent != null) {
+                    showModal = true
                 }
             }
-    )
+        })
 
     if (showModal) {
-        TimePickerModal(
-            initialInstant = date.value,
-            onConfirm = { hour, min ->
-                onDateSelected(hour, min)
-                showModal = false
-            },
-            onDismiss = { showModal = false }
-        )
+        TimePickerModal(initialInstant = date.value, onConfirm = { hour, min ->
+            onDateSelected(hour, min)
+            showModal = false
+        }, onDismiss = { showModal = false })
     }
 }
 
@@ -1357,162 +1011,24 @@ fun TimePickerModal(
         initialMinute = localDateTime.minute,
         is24Hour = true,
     )
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text("Cancel")
-            }
-        },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    onConfirm(timePickerState.hour, timePickerState.minute)
-                }
-            ) {
-                Text("OK")
-            }
-        },
-        text = {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.padding(top = 8.dp)
-            ) {
-                TimePicker(state = timePickerState)
-            }
+    AlertDialog(onDismissRequest = onDismiss, dismissButton = {
+        TextButton(onClick = onDismiss) {
+            Text("Cancel")
         }
-    )
-}
-
-@Composable
-fun GeneralTab(
-    viewModel: NewPostViewModel
-) {
-
-    val suggestionsState by viewModel.hashtagMentionsSuggestionsManager.suggestionsState.collectAsStateWithLifecycle()
-    val verticalScrollState = rememberScrollState()
-    Box(modifier = Modifier.fillMaxSize()) {
+    }, confirmButton = {
+        TextButton(
+            onClick = {
+                onConfirm(timePickerState.hour, timePickerState.minute)
+            }) {
+            Text("OK")
+        }
+    }, text = {
         Column(
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-            modifier = Modifier.verticalScroll(verticalScrollState)
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.padding(top = 8.dp)
         ) {
-
-            MaxLengthTextField(
-                value = viewModel.caption,
-                onValueChange = { viewModel.updateCaption(it) },
-                textFieldModifier = Modifier.fillMaxWidth()
-                    .onFocusChanged { focusState ->
-                        viewModel.hashtagMentionsSuggestionsManager.onFocusChanged(
-                            focusState.isFocused
-                        )
-                    },
-                label = Res.string.caption,
-                maxLength = viewModel.instance?.configuration?.statusConfig?.maxCharacters,
-                submit = {})
-            NewPostPref(
-                leadingIcon = Res.drawable.sensitive_content,
-                title = stringResource(Res.string.sensitive_nsfw_media),
-                trailingContent = {
-                    Switch(
-                        checked = viewModel.sensitive,
-                        onCheckedChange = { viewModel.sensitive = it })
-                })
-            AnimatedVisibility(
-                visible = viewModel.sensitive,
-                enter = slideInVertically() + fadeIn(),
-                exit = shrinkVertically(animationSpec = spring(stiffness = Spring.StiffnessMedium)) + fadeOut(),
-            ) {
-                NewPostTextField(
-                    value = viewModel.sensitiveText,
-                    onChange = { viewModel.sensitiveText = it },
-                    label = stringResource(Res.string.content_warning_or_spoiler_text)
-                )
-            }
-
-            var isExpandedVisibility by remember { mutableStateOf(false) }
-            NewPostPref(
-                leadingIcon = Res.drawable.audience,
-                title = stringResource(Res.string.audience),
-                trailingContent = {
-                    Box {
-                        OutlinedButton(onClick = {
-                            isExpandedVisibility = !isExpandedVisibility
-                        }) {
-                            val buttonText: String = when (viewModel.audience) {
-                                Visibility.PUBLIC -> stringResource(Res.string.audience_public)
-                                Visibility.UNLISTED -> stringResource(Res.string.unlisted)
-                                Visibility.PRIVATE -> stringResource(Res.string.followers_only)
-                                else -> ""
-                            }
-                            Text(text = buttonText)
-                        }
-                        DropdownMenu(
-                            expanded = isExpandedVisibility,
-                            onDismissRequest = {
-                                isExpandedVisibility = false
-                            }) {
-                            if (!(viewModel.accountState.account?.locked
-                                    ?: false)
-                            ) {
-                                DropdownMenuItem(
-                                    text = { Text(stringResource(Res.string.audience_public)) },
-                                    onClick = {
-                                        viewModel.audience = Visibility.PUBLIC
-                                    },
-                                    trailingIcon = {
-                                        if (viewModel.audience == Visibility.PUBLIC) {
-                                            Icon(
-                                                imageVector = vectorResource(Res.drawable.confirm),
-                                                contentDescription = null,
-                                                tint = MaterialTheme.colorScheme.primary
-                                            )
-                                        }
-                                    })
-                                DropdownMenuItem(
-                                    text = { Text(stringResource(Res.string.unlisted)) },
-                                    onClick = {
-                                        viewModel.audience = Visibility.UNLISTED
-                                    },
-                                    trailingIcon = {
-                                        if (viewModel.audience == Visibility.UNLISTED) {
-                                            Icon(
-                                                imageVector = vectorResource(Res.drawable.confirm),
-                                                contentDescription = null,
-                                                tint = MaterialTheme.colorScheme.primary
-                                            )
-                                        }
-                                    })
-                            }
-                            DropdownMenuItem(
-                                text = { Text(stringResource(Res.string.followers_only)) },
-                                onClick = {
-                                    viewModel.audience = Visibility.PRIVATE
-                                },
-                                trailingIcon = {
-                                    if (viewModel.audience == Visibility.PRIVATE) {
-                                        Icon(
-                                            imageVector = vectorResource(Res.drawable.confirm),
-                                            contentDescription = null,
-                                            tint = MaterialTheme.colorScheme.primary
-                                        )
-                                    }
-                                })
-                        }
-                    }
-                })
+            TimePicker(state = timePickerState)
         }
-
-        if (viewModel.hashtagMentionsSuggestionsManager.suggestionsOpen) {
-            SuggestionsBar(
-                state = suggestionsState,
-                bottomBarPadding = true,
-                onSelected = { selected ->
-                    viewModel.caption =
-                        viewModel.hashtagMentionsSuggestionsManager.selectSuggestion(
-                            selected, viewModel.caption
-                        )
-                })
-
-        }
-    }
+    })
 }
+

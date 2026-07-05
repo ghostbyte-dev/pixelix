@@ -54,6 +54,7 @@ import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
+import pixelix.app.generated.resources.add_circle
 import pixelix.app.generated.resources.app_name
 import pixelix.app.generated.resources.global
 import pixelix.app.generated.resources.global_timeline_explained
@@ -102,6 +103,15 @@ fun HomeComposable(
                             Icon(
                                 imageVector = vectorResource(Res.drawable.coffee),
                                 contentDescription = "Coffee"
+                            )
+                        }
+
+                        IconButton(onClick = {
+                            navController.navigate(Destination.HomeTabNewPost)
+                        }) {
+                            Icon(
+                                imageVector = vectorResource(Res.drawable.add_circle),
+                                contentDescription = "New Post"
                             )
                         }
 

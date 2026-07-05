@@ -121,9 +121,9 @@ class NewPostViewModel @Inject constructor(
         accountService.getOwnAccount().onEach { result ->
             accountState = when (result) {
                 is Resource.Success -> {
-                    if (result.data.locked) {
-                        audience = Visibility.PRIVATE
-                    }
+//                    if (result.data.locked) {
+//                        audience = Visibility.PRIVATE
+//                    }
                     AccountState(account = result.data)
                 }
 

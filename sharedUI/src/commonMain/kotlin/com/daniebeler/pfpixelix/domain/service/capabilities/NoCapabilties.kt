@@ -25,6 +25,7 @@ val NoCapabilities = Capabilities(
         supportsMultipleProfileTimeRanges = false, supportsMultipleHashtagTimeRanges = false
     ),
     newPost = NewPostCapabilities(
-        supportsAdvancedMediaMetadata = false
+        supportsAdvancedMediaMetadata = false,
+        includeDirectVisibility = false
     )
 )

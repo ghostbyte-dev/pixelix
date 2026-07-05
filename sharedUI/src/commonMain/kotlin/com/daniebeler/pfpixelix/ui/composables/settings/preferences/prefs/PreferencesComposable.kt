@@ -119,7 +119,7 @@ fun PreferencesComposable(
             Spacer(modifier = Modifier.height(12.dp))
 
             CaptionTemplate(viewModel.suggestionsManager)
-            DefaultVisibilityPref()
+            DefaultVisibilityPref(viewModel.capabilities)
 
             Spacer(modifier = Modifier.height(12.dp))
 

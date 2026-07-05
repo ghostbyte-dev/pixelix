@@ -1,5 +1,6 @@
 package com.daniebeler.pfpixelix.domain.service.capabilities
 
+//TODO: capabilities are not reloaded after account switch
 data class Capabilities(
     val general: GeneralCapabilities,
     val post: PostCapabilities,
@@ -37,7 +38,7 @@ data class EditProfileCapabilities(
     val manuallyAcceptNewFollowersToggle: Boolean,
     val includePostsInSearchEngineToggle: Boolean,
     val includeProfileInSearchEngineToggle: Boolean,
-    val websiteField: Boolean,
+    val websiteField: Boolean
 )
 
 data class NotificationCapabilities(
@@ -45,5 +46,6 @@ data class NotificationCapabilities(
 )
 
 data class NewPostCapabilities(
-    val supportsAdvancedMediaMetadata: Boolean
+    val supportsAdvancedMediaMetadata: Boolean,
+    val includeDirectVisibility: Boolean
 )

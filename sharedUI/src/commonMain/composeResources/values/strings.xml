@@ -96,9 +96,9 @@
     <string name="sensitive_nsfw_media">Sensitive/NSFW Media</string>
     <string name="content_warning_or_spoiler_text">content warning or spoiler text</string>
     <string name="audience">Audience</string>
-    <string name="unlisted">unlisted</string>
-    <string name="followers_only">followers only</string>
-    <string name="audience_public">public</string>
+    <string name="unlisted">Unlisted</string>
+    <string name="followers_only">Followers only</string>
+    <string name="audience_public">Public</string>
     <string name="no_followed_hashtags">No followed hashtags</string>
     <string name="no_muted_accounts">No muted profiles</string>
     <string name="visibility_x">Visibility: %1$s</string>
@@ -309,4 +309,5 @@
     <string name="caption_template">Caption template</string>
     <string name="send">Send</string>
     <string name="default_visibility">Default visibility</string>
+    <string name="mentioned_only">Mentioned only</string>
 </resources>

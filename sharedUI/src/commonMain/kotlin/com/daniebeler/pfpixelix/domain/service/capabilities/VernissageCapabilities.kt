@@ -25,6 +25,7 @@ val VernissageCapabilities = Capabilities(
         supportsMultipleProfileTimeRanges = true, supportsMultipleHashtagTimeRanges = true
     ),
     newPost = NewPostCapabilities(
-        supportsAdvancedMediaMetadata = true
+        supportsAdvancedMediaMetadata = true,
+        includeDirectVisibility = true
     )
 )

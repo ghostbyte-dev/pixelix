@@ -27,6 +27,7 @@ val PixelfedCapabilities = Capabilities(
         supportsMultipleHashtagTimeRanges = false
     ),
     newPost = NewPostCapabilities(
-        supportsAdvancedMediaMetadata = false
+        supportsAdvancedMediaMetadata = false,
+        includeDirectVisibility = false
     )
 )

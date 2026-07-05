@@ -42,6 +42,7 @@ import pixelix.app.generated.resources.caption
 import pixelix.app.generated.resources.confirm
 import pixelix.app.generated.resources.content_warning_or_spoiler_text
 import pixelix.app.generated.resources.followers_only
+import pixelix.app.generated.resources.mentioned_only
 import pixelix.app.generated.resources.sensitive_content
 import pixelix.app.generated.resources.sensitive_nsfw_media
 import pixelix.app.generated.resources.unlisted
@@ -156,6 +157,22 @@ fun GeneralTab(
                                         )
                                     }
                                 })
+                            if (viewModel.capabilities.newPost.includeDirectVisibility) {
+                                DropdownMenuItem(
+                                    text = { Text(stringResource(Res.string.mentioned_only)) },
+                                    onClick = {
+                                        viewModel.audience = Visibility.DIRECT
+                                    },
+                                    trailingIcon = {
+                                        if (viewModel.audience == Visibility.DIRECT) {
+                                            Icon(
+                                                imageVector = vectorResource(Res.drawable.confirm),
+                                                contentDescription = null,
+                                                tint = MaterialTheme.colorScheme.primary
+                                            )
+                                        }
+                                    })
+                            }
                         }
                     }
                 })

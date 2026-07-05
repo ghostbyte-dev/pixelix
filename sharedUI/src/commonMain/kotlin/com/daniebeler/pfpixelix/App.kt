@@ -453,7 +453,7 @@ private fun BottomBarFloating(
                         imageVector = vectorResource(
                             if (isSelected) tab.activeIcon else tab.icon
                         ),
-                        modifier = Modifier.size(30.dp),
+                        modifier = Modifier.size(28.dp),
                         contentDescription = stringResource(tab.label)
                     )
                 }

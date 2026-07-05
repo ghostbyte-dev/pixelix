@@ -77,7 +77,7 @@ fun PreferencesComposable(
             })
         }) { paddingValues ->
         Column(
-            Modifier.padding(paddingValues).padding(horizontal = 18.dp).padding(bottom = 18.dp)
+            Modifier.padding(paddingValues).padding(horizontal = 18.dp)
                 .fillMaxSize().verticalScroll(state = rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(2.dp),
         ) {
@@ -128,6 +128,8 @@ fun PreferencesComposable(
                 textAlign = TextAlign.Center,
                 fontSize = 12.sp
             )
+
+            Spacer(modifier = Modifier.height(24.dp))
         }
     }
 }

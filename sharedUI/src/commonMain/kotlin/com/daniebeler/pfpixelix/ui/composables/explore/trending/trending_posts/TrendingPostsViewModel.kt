@@ -14,6 +14,7 @@ import com.daniebeler.pfpixelix.ui.composables.explore.trending.TrendingRange
 import com.daniebeler.pfpixelix.ui.composables.profile.ViewEnum
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 
 class TrendingPostsViewModel @Inject constructor(
@@ -30,6 +31,12 @@ class TrendingPostsViewModel @Inject constructor(
 
     init {
         getTrendingPosts()
+
+        viewModelScope.launch {
+            prefs.showUserGridTimelineFlow.collect { res ->
+                view = ViewEnum.getView(res)
+            }
+        }
     }
 
     fun getTrendingPosts(refreshing: Boolean = false) {
@@ -54,7 +61,8 @@ class TrendingPostsViewModel @Inject constructor(
             trendingState = when (result) {
                 is Resource.Success -> {
                     val newPosts = result.data.data
-                    val updatedPosts = if (nextId == null) newPosts else trendingState.trendingPosts + newPosts
+                    val updatedPosts =
+                        if (nextId == null) newPosts else trendingState.trendingPosts + newPosts
 
                     trendingState.copy(
                         isLoading = false,
@@ -68,16 +76,13 @@ class TrendingPostsViewModel @Inject constructor(
 
                 is Resource.Error -> {
                     trendingState.copy(
-                        isLoading = false,
-                        isRefreshing = false,
-                        error = result.message
+                        isLoading = false, isRefreshing = false, error = result.message
                     )
                 }
 
                 is Resource.Loading -> {
                     trendingState.copy(
-                        isLoading = true,
-                        isRefreshing = isRefreshing
+                        isLoading = true, isRefreshing = isRefreshing
                     )
                 }
             }

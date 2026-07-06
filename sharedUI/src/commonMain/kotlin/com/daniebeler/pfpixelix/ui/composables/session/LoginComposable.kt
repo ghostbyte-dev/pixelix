@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.ime
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -96,109 +98,120 @@ fun LoginComposable(
         onBackCompleted = {
             viewModel.goBackToPlatformSelection()
         })
-
-    Scaffold(contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top)) { innerPadding ->
-
-        Column(
-            modifier = Modifier.fillMaxWidth()
-                .background(MaterialTheme.colorScheme.surfaceContainer)
-                .padding(paddingValues = innerPadding).verticalScroll(rememberScrollState())
-        ) {
-            Box(
-                modifier = Modifier.padding(start = 16.dp, top = 12.dp),
-            ) {
-                if (isCloseable) {
-                    IconButton(
-                        onClick = {
-                            navController.popBackStack()
-                        },
-                        modifier = Modifier.clip(CircleShape)
-                            .background(MaterialTheme.colorScheme.primary)
-                    ) {
-                        Icon(
-                            imageVector = vectorResource(Res.drawable.close),
-                            contentDescription = "",
-                            tint = MaterialTheme.colorScheme.onPrimary
-                        )
-                    }
-                }
-            }
-
-            if (!isCloseable) {
-                Spacer(Modifier.height(48.dp))
-            }
-
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Image(
-                    modifier = Modifier.size(100.dp).clip(CircleShape), painter = painterResource(
-                        if (dark) {
-                            Res.drawable.pixelix_logo_black_xxl
-                        } else {
-                            Res.drawable.pixelix_logo_white_xxl
-                        }
-                    ), contentDescription = null
-                )
-
-                Spacer(modifier = Modifier.height(12.dp))
-
-                Text(
-                    text = "Welcome to Pixelix", style = MaterialTheme.typography.titleLarge
-                )
-
-                Spacer(modifier = Modifier.height(36.dp))
-
+    Box(Modifier.imePadding().fillMaxSize()) {
+        Scaffold(contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top)) { innerPadding ->
+            Column(Modifier.imePadding().fillMaxSize()) {
                 Column(
-                    modifier = Modifier.fillMaxWidth().clip(
-                        RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)
-                    ).background(MaterialTheme.colorScheme.background)
-
+                    modifier = Modifier.fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.surfaceContainer)
+                        .padding(paddingValues = innerPadding)
+                        .verticalScroll(rememberScrollState())
                 ) {
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    viewModel.error?.let { err ->
-                        if (err.isNotBlank()) {
-                            Row(
-                                Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center
+                    Box(
+                        modifier = Modifier.padding(start = 16.dp, top = 12.dp),
+                    ) {
+                        if (isCloseable) {
+                            IconButton(
+                                onClick = {
+                                    navController.popBackStack()
+                                },
+                                modifier = Modifier.clip(CircleShape)
+                                    .background(MaterialTheme.colorScheme.primary)
                             ) {
-                                Text(text = err)
+                                Icon(
+                                    imageVector = vectorResource(Res.drawable.close),
+                                    contentDescription = "",
+                                    tint = MaterialTheme.colorScheme.onPrimary
+                                )
                             }
                         }
                     }
 
-                    when (viewModel.currentStep) {
-                        LoginStep.PLATFORM_SELECTION -> {
-                            PlatformSelectionLayout(
-                                onPlatformSelected = { platform ->
-                                    viewModel.selectPlatform(platform)
-                                })
-                        }
-
-                        LoginStep.SERVER_INPUT -> {
-                            ServerInputLayout(
-                                viewModel = viewModel
-                            )
-                        }
-
+                    if (!isCloseable) {
+                        Spacer(Modifier.height(48.dp))
                     }
 
-                }
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Image(
+                            modifier = Modifier.size(100.dp).clip(CircleShape),
+                            painter = painterResource(
+                                if (dark) {
+                                    Res.drawable.pixelix_logo_black_xxl
+                                } else {
+                                    Res.drawable.pixelix_logo_white_xxl
+                                }
+                            ),
+                            contentDescription = null
+                        )
 
-                if (viewModel.serversSuggestionsManager.suggestionsOpen) {
-                    SuggestionsBar(
-                        state = suggestionsState,
-                        bottomBarPadding = false,
-                        onSelected = { selected ->
-                            viewModel.selectSuggestion(
-                                viewModel.serversSuggestionsManager.selectSuggestion(
-                                    selected
-                                )
-                            )
-                        })
+                        Spacer(modifier = Modifier.height(12.dp))
+
+                        Text(
+                            text = "Welcome to Pixelix", style = MaterialTheme.typography.titleLarge
+                        )
+
+                        Spacer(modifier = Modifier.height(36.dp))
+
+                        Column(
+                            modifier = Modifier.fillMaxWidth().clip(
+                                RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)
+                            ).background(MaterialTheme.colorScheme.background)
+
+                        ) {
+
+                            Spacer(modifier = Modifier.height(16.dp))
+
+                            viewModel.error?.let { err ->
+                                if (err.isNotBlank()) {
+                                    Row(
+                                        Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.Center
+                                    ) {
+                                        Text(text = err)
+                                    }
+                                }
+                            }
+
+                            when (viewModel.currentStep) {
+                                LoginStep.PLATFORM_SELECTION -> {
+                                    PlatformSelectionLayout(
+                                        onPlatformSelected = { platform ->
+                                            viewModel.selectPlatform(platform)
+                                        })
+                                }
+
+                                LoginStep.SERVER_INPUT -> {
+                                    ServerInputLayout(
+                                        viewModel = viewModel
+                                    )
+                                }
+
+                            }
+
+                        }
+                    }
                 }
             }
-        }
 
+        }
+        if (viewModel.serversSuggestionsManager.suggestionsOpen) {
+
+            Box(
+                modifier = Modifier.align(Alignment.BottomCenter).fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.surfaceContainerHighest)
+            ) {
+                SuggestionsBar(
+                    state = suggestionsState,
+                    bottomBarPadding = false,
+                    onSelected = { selected ->
+                        viewModel.selectSuggestion(
+                            viewModel.serversSuggestionsManager.selectSuggestion(
+                                selected
+                            )
+                        )
+                    })
+            }
+        }
     }
 
 

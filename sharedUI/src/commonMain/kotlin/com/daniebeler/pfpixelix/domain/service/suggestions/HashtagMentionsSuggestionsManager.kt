@@ -57,9 +57,9 @@ class HashtagMentionsSuggestionsManager @Inject constructor(
                     is Resource.Success -> {
                         SuggestionsState(
                             suggestions = if (type == "accounts") {
-                                result.data.accounts.map { "@" + it.acct }
+                                result.data.accounts.map { Pair("@" + it.acct, it.avatar) }
                             } else {
-                                result.data.tags.map { "#" + it.name }
+                                result.data.tags.map { Pair("#" + it.name, null) }
                             }
                         )
                     }

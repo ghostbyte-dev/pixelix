@@ -4,6 +4,9 @@ import com.daniebeler.pfpixelix.domain.model.Account
 
 data class SuggestionsState(
     val isLoading: Boolean = false,
-    val suggestions: List<String> = emptyList(),
+    /**
+     * suggestions: Pair of text, imageUrl
+     */
+    val suggestions: List<Pair<String, String?>> = emptyList(),
     val error: String = ""
 )

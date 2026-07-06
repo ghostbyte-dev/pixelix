@@ -44,7 +44,7 @@ class ServersSuggestionsManager @Inject constructor(
                         is Resource.Success -> {
                             suggestionsOpen = true
                             SuggestionsState(
-                                suggestions = result.data.data.map { it.domain })
+                                suggestions = result.data.data.map { Pair(it.domain, null) })
                         }
 
                         is Resource.Error -> {

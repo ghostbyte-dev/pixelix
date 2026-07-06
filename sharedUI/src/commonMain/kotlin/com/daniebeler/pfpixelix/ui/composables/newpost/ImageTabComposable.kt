@@ -24,6 +24,8 @@ import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -60,13 +62,22 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.alt_text
+import pixelix.app.generated.resources.arrow_left
+import pixelix.app.generated.resources.arrow_right
 import pixelix.app.generated.resources.datetime
+import pixelix.app.generated.resources.trash
 import kotlin.time.Clock
 import kotlin.time.Instant
 
 @Composable
 fun ImageTab(
-    image: NewPostViewModel.ImageItem, updateMetadata: (MediaAttachmentMetadataRequest) -> Unit
+    image: NewPostViewModel.ImageItem,
+    canMoveLeft: Boolean,
+    canMoveRight: Boolean,
+    onMoveLeft: () -> Unit,
+    onMoveRight: () -> Unit,
+    onDelete: () -> Unit,
+    updateMetadata: (MediaAttachmentMetadataRequest) -> Unit
 ) {
     val verticalScrollState = rememberScrollState()
     Box(modifier = Modifier.fillMaxSize().padding(16.dp)) {
@@ -80,10 +91,46 @@ fun ImageTab(
                     contentDescription = null,
                     modifier = Modifier.sizeIn(maxWidth = 300.dp, maxHeight = 300.dp).fillMaxWidth()
                         .clip(RoundedCornerShape(16.dp)),
-                    contentScale = ContentScale.Inside
+                    contentScale = ContentScale.Fit
                 )
             }
 
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(
+                    onClick = onMoveLeft,
+                    enabled = canMoveLeft,
+                    colors = IconButtonDefaults.iconButtonColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant
+                    )
+                ) {
+                    Icon(vectorResource(Res.drawable.arrow_left), contentDescription = "Move Left")
+                }
+
+                IconButton(
+                    onClick = onDelete, colors = IconButtonDefaults.iconButtonColors(
+                        containerColor = MaterialTheme.colorScheme.errorContainer,
+                        contentColor = MaterialTheme.colorScheme.onErrorContainer
+                    )
+                ) {
+                    Icon(vectorResource(Res.drawable.trash), contentDescription = "Delete Image")
+                }
+
+                IconButton(
+                    onClick = onMoveRight,
+                    enabled = canMoveRight,
+                    colors = IconButtonDefaults.iconButtonColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceVariant
+                    )
+                ) {
+                    Icon(
+                        vectorResource(Res.drawable.arrow_right), contentDescription = "Move Right"
+                    )
+                }
+            }
 
             TextField(
                 value = image.metadata.description ?: "",

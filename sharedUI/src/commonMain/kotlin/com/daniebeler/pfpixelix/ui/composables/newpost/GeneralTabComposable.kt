@@ -10,9 +10,15 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -27,12 +33,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.domain.model.Visibility
 import com.daniebeler.pfpixelix.ui.composables.widgets.MaxLengthTextField
 import com.daniebeler.pfpixelix.ui.composables.widgets.SuggestionsBar
+import com.daniebeler.pfpixelix.utils.getPlatformUriObject
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
@@ -55,11 +65,26 @@ fun GeneralTab(
 
     val suggestionsState by viewModel.hashtagMentionsSuggestionsManager.suggestionsState.collectAsStateWithLifecycle()
     val verticalScrollState = rememberScrollState()
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(modifier = Modifier.fillMaxSize().padding(top = 12.dp, start = 12.dp, end = 12.dp)) {
         Column(
             verticalArrangement = Arrangement.spacedBy(12.dp),
             modifier = Modifier.verticalScroll(verticalScrollState)
         ) {
+
+            LazyRow(
+                modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                contentPadding = PaddingValues(horizontal = 16.dp)
+            ) {
+                itemsIndexed(viewModel.images) { index, image ->
+                    AsyncImage(
+                        model = image.imageUri.getPlatformUriObject(),
+                        contentDescription = "Thumbnail $index",
+                        contentScale = ContentScale.Fit,
+                        modifier = Modifier.size(80.dp).clip(RoundedCornerShape(12.dp))
+                    )
+                }
+            }
 
             MaxLengthTextField(
                 value = viewModel.caption,
@@ -71,6 +96,7 @@ fun GeneralTab(
                 },
                 label = Res.string.caption,
                 maxLength = viewModel.instance?.configuration?.statusConfig?.maxCharacters,
+                minLines = 4,
                 submit = {})
             NewPostPref(
                 leadingIcon = Res.drawable.sensitive_content,

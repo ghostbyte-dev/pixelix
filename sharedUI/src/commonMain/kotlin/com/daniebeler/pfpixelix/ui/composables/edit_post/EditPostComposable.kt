@@ -444,14 +444,14 @@ fun ImagesPagerEditPost(
                                 model = image.url.toKmpUri().getPlatformUriObject(),
                                 contentDescription = "video thumbnail",
                                 modifier = Modifier.fillMaxWidth(),
-                                contentScale = ContentScale.Inside
+                                contentScale = ContentScale.Fit
                             )
                         } else {
                             AsyncImage(
                                 model = image.url.toKmpUri().getPlatformUriObject(),
                                 contentDescription = null,
                                 modifier = Modifier.fillMaxWidth(),
-                                contentScale = ContentScale.Inside
+                                contentScale = ContentScale.Fit
                             )
                         }
                     } else {

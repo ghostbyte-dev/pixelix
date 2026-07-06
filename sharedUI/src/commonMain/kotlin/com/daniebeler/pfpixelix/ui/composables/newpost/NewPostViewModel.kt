@@ -81,6 +81,8 @@ class NewPostViewModel @Inject constructor(
     var compressionLoading by mutableStateOf(false)
     var accountState by mutableStateOf(AccountState())
 
+    var isOnGeneralPage by mutableStateOf(false)
+
     init {
         viewModelScope.launch {
             getInstance()
@@ -299,23 +301,18 @@ class NewPostViewModel @Inject constructor(
         return currentBytes
     }
 
-    fun deleteMedia(index: Int) {
-        images.removeAt(index)
-    }
 
-    fun moveMediaAttachmentUp(index: Int) {
-        if (index >= 1) {
-            val copy = images[index]
-            images[index] = images[index - 1]
-            images[index - 1] = copy
+
+    fun moveImage(fromIndex: Int, toIndex: Int) {
+        if (fromIndex in images.indices && toIndex in images.indices) {
+            val item = images.removeAt(fromIndex)
+            images.add(toIndex, item)
         }
     }
 
-    fun moveMediaAttachmentDown(index: Int) {
-        if (index < images.size - 1) {
-            val copy = images[index]
-            images[index] = images[index + 1]
-            images[index + 1] = copy
+    fun removeImage(index: Int) {
+        if (index in images.indices) {
+            images.removeAt(index)
         }
     }
 

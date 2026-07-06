@@ -36,6 +36,7 @@ fun MaxLengthTextField(
     textFieldModifier: Modifier = Modifier,
     imeAction: ImeAction = ImeAction.Default,
     maxLength: Int? = null,
+    minLines: Int = 1,
     shape: CornerBasedShape = MaterialTheme.shapes.medium,
     colors: TextFieldColors = TextFieldDefaults.colors(
         unfocusedIndicatorColor = Color.Transparent,
@@ -58,6 +59,7 @@ fun MaxLengthTextField(
             placeholder = { Text(stringResource(label)) },
             modifier = textFieldModifier.heightIn(max = 200.dp),
             colors = colors,
+            minLines = minLines,
             keyboardOptions = KeyboardOptions(imeAction = imeAction),
             keyboardActions = KeyboardActions(onDone = {
                 if ((maxLength ?: Int.MAX_VALUE) <= value.text.length && value.text.isNotEmpty()) {

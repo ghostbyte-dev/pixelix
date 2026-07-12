@@ -2,6 +2,7 @@ package com.daniebeler.pfpixelix.domain.service.general
 
 import com.daniebeler.pfpixelix.di.AppSingleton
 import com.daniebeler.pfpixelix.domain.model.Account
+import com.daniebeler.pfpixelix.domain.model.Country
 import com.daniebeler.pfpixelix.domain.model.PaginatedResponse
 import com.daniebeler.pfpixelix.domain.model.Location
 import com.daniebeler.pfpixelix.domain.model.Post
@@ -23,7 +24,8 @@ interface ExploreService {
 
     fun search(searchText: String, type: String? = null, limit: Int = 5): Flow<Resource<Search>>
 
-    fun searchLocations(searchText: String): Flow<Resource<List<Location>>>
+    fun searchLocations(searchText: String, countryCode: String?): Flow<Resource<List<Location>>>
+    fun getAllCountries(): Flow<Resource<List<Country>>>
 
     fun getTrendingHashtags(range: TrendingRange, maxId: String? = null): Flow<Resource<PaginatedResponse<List<Tag>>>>
 
@@ -75,7 +77,9 @@ class ExploreServiceDelegate(
         limit: Int
     ): Flow<Resource<Search>> = current.search(searchText, type, limit)
 
-    override fun searchLocations(searchText: String): Flow<Resource<List<Location>>> = current.searchLocations(searchText)
+    override fun searchLocations(searchText: String, countryCode: String?): Flow<Resource<List<Location>>> = current.searchLocations(searchText, countryCode)
+
+    override fun getAllCountries(): Flow<Resource<List<Country>>> = current.getAllCountries()
 
     override fun getTrendingHashtags(range: TrendingRange, maxId: String?): Flow<Resource<PaginatedResponse<List<Tag>>>> = current.getTrendingHashtags(range, maxId)
 

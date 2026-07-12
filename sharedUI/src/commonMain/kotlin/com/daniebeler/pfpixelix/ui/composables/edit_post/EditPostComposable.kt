@@ -258,8 +258,7 @@ fun EditPostComposable(
                             )
                         }
                         TextFieldLocationsComposable(
-                            submit = {},
-                            submitPlace = { viewModel._setLocation(it) },
+                            submit = { viewModel._setLocation(it) },
                             initialValue = viewModel.editPostState.post!!.location,
                             labelStringId = Res.string.location,
                             modifier = Modifier.fillMaxWidth(),

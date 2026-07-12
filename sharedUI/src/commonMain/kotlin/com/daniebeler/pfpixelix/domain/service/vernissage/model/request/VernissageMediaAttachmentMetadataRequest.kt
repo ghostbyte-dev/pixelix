@@ -21,7 +21,7 @@ data class VernissageMediaAttachmentMetadataRequest(
     @SerialName("film") val film: String? = null,
     @SerialName("chemistry") val chemistry: String? = null,
     @SerialName("scanner") val scanner: String? = null,
-//    @SerialName("locationId") val locationId: String? = null,
+    @SerialName("locationId") val locationId: String? = null,
 //    @SerialName("licenseId") val licenseId: String? = null,
 //    @SerialName("latitude") val latitude: String? = null,
 //    @SerialName("longitude") val longitude: String? = null,

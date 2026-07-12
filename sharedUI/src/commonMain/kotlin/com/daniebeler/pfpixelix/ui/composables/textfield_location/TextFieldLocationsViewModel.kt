@@ -6,37 +6,60 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.daniebeler.pfpixelix.domain.model.Country
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.domain.model.Location
 import com.daniebeler.pfpixelix.domain.service.general.ExploreService
+import com.daniebeler.pfpixelix.domain.service.general.Session
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import me.tatarka.inject.annotations.Inject
 
 class TextFieldLocationsViewModel @Inject constructor(
-    private val exploreService: ExploreService
+    private val exploreService: ExploreService,
+    private val session: Session
 ) : ViewModel() {
-    var text by mutableStateOf(TextFieldValue(""))
+    val capabilities = session.capabilities.value
+    var locationText by mutableStateOf("")
+    var countryText by mutableStateOf("")
     var locationsDropdownOpen by mutableStateOf(false)
     var locationsSuggestions by mutableStateOf(LocationsState())
+    var countriesState by mutableStateOf(CountriesState())
+
+
+    init {
+        if (capabilities.newPost.showCountryDropdown) {
+            loadCountries()
+        }
+    }
 
     fun initializePlace(initialPlace: Location) {
         locationsSuggestions = LocationsState(location = initialPlace)
-        text = TextFieldValue(initialPlace.name!!)
+        locationText = initialPlace.name!!
     }
 
-    fun changeText(newText: TextFieldValue) {
-        text = newText
+    fun changeLocationText(newText: String) {
+        locationText = newText
 
         locationsDropdownOpen = true
-        searchLocations(text.text)
+        searchLocations(locationText)
+    }
+
+    fun changeCountryText(newText: String) {
+        countryText = newText
+        countriesState = countriesState.copy(
+            filteredCountries = countriesState.countries.filter { country ->
+                country.name.startsWith(newText, ignoreCase = true)
+            },
+            country = null
+        )
     }
 
     private fun searchLocations(location: String?) {
         if (location == null) {
             return
         }
-        exploreService.searchLocations(location).onEach { result ->
+        exploreService.searchLocations(location, countriesState.country?.code).onEach { result ->
             locationsSuggestions = when (result) {
                 is Resource.Success -> {
                     LocationsState(locations = result.data)
@@ -60,12 +83,40 @@ class TextFieldLocationsViewModel @Inject constructor(
         locationsSuggestions = locationsSuggestions.copy(location = location)
     }
 
+    fun selectCountry(country: Country) {
+        countriesState = countriesState.copy(
+            country = country
+        )
+    }
+
     fun removeLocation() {
-        text = TextFieldValue()
+        locationText = ""
         locationsSuggestions = LocationsState()
     }
 
     fun edit() {
         locationsSuggestions = locationsSuggestions.copy(location = null)
     }
+
+
+    private fun loadCountries() {
+        exploreService.getAllCountries().onEach { result ->
+            countriesState = when (result) {
+                is Resource.Success -> {
+                    CountriesState(countries = result.data)
+                }
+
+                is Resource.Error -> {
+                    CountriesState(
+                        error = result.message
+                    )
+                }
+
+                is Resource.Loading -> {
+                    CountriesState(isLoading = true)
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
+
 }

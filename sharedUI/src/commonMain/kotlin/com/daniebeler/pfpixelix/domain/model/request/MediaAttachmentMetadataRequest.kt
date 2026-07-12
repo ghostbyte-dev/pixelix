@@ -23,7 +23,7 @@ data class MediaAttachmentMetadataRequest(
     val film: FieldState<String> = FieldState(),
     val chemistry: FieldState<String> = FieldState(),
     val scanner: FieldState<String> = FieldState(),
-//    @SerialName("locationId") val locationId: String? = null,
+    val locationId: String? = null,
 //    @SerialName("licenseId") val licenseId: String? = null,
 //    @SerialName("latitude") val latitude: String? = null,
 //    @SerialName("longitude") val longitude: String? = null,
@@ -32,7 +32,7 @@ data class MediaAttachmentMetadataRequest(
 
 data class FieldState<T>(
     val value: T?,
-    val isIncluded: Boolean = true // The "checked off" tracking switch
+    val isIncluded: Boolean = true
 ) {
     val valueIfIncluded: T?
         get() = if (isIncluded) value else null
@@ -41,7 +41,7 @@ data class FieldState<T>(
         value = value,
         isIncluded = when (value) {
             null -> false
-            is String -> value.isNotBlank() // Extra safety for empty strings
+            is String -> value.isNotBlank()
             else -> true
         }
     )
@@ -74,6 +74,7 @@ fun MediaAttachmentMetadataRequest.toVernissage(): VernissageMediaAttachmentMeta
         film = this.film.valueIfIncluded,
         chemistry = this.chemistry.valueIfIncluded,
         scanner = this.scanner.valueIfIncluded,
-        flash = this.flash.valueIfIncluded
+        flash = this.flash.valueIfIncluded,
+        locationId = this.locationId
     )
 }

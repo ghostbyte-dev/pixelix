@@ -49,9 +49,9 @@ data class VernissageLocationDto(
 
 @Serializable
 data class VernissageCountryDto(
-    @SerialName("name") val name: String?,
-    @SerialName("code") val code: String?,
-    @SerialName("id") val id: String?
+    @SerialName("name") val name: String,
+    @SerialName("code") val code: String,
+    @SerialName("id") val id: String
 )
 
 @Serializable

@@ -47,10 +47,13 @@ import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.domain.model.request.FieldState
 import com.daniebeler.pfpixelix.domain.model.request.MediaAttachmentMetadataRequest
+import com.daniebeler.pfpixelix.domain.service.capabilities.Capabilities
+import com.daniebeler.pfpixelix.ui.composables.textfield_location.TextFieldLocationsComposable
 import com.daniebeler.pfpixelix.utils.formatLocalizedOnlyDate
 import com.daniebeler.pfpixelix.utils.getPlatformUriObject
 import kotlinx.datetime.LocalDateTime
@@ -65,6 +68,7 @@ import pixelix.app.generated.resources.alt_text
 import pixelix.app.generated.resources.arrow_left
 import pixelix.app.generated.resources.arrow_right
 import pixelix.app.generated.resources.datetime
+import pixelix.app.generated.resources.location
 import pixelix.app.generated.resources.trash
 import kotlin.time.Clock
 import kotlin.time.Instant
@@ -77,7 +81,8 @@ fun ImageTab(
     onMoveLeft: () -> Unit,
     onMoveRight: () -> Unit,
     onDelete: () -> Unit,
-    updateMetadata: (MediaAttachmentMetadataRequest) -> Unit
+    updateMetadata: (MediaAttachmentMetadataRequest) -> Unit,
+    capabilities: Capabilities
 ) {
     val verticalScrollState = rememberScrollState()
     Box(modifier = Modifier.fillMaxSize().padding(16.dp)) {
@@ -149,6 +154,25 @@ fun ImageTab(
                     unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer
                 ),
                 label = { Text(text = stringResource(Res.string.alt_text)) })
+
+            if (capabilities.newPost.showLocationInputInImageTab) {
+                TextFieldLocationsComposable(
+                    submit = {
+                        updateMetadata(
+                            image.metadata.copy(
+                                locationId = it.id
+                            )
+                        )
+                    },
+                    initialValue = null,
+                    labelStringId = Res.string.location,
+                    modifier = Modifier.fillMaxWidth(),
+                    imeAction = ImeAction.Default,
+                    suggestionsBoxColor = MaterialTheme.colorScheme.surfaceContainer,
+                    submitButton = null
+                )
+            }
+
             IsIncludedField(
                 label = "Brand",
                 image.metadata.make.isIncluded,

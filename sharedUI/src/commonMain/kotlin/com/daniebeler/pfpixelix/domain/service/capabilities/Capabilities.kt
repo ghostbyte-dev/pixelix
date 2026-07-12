@@ -47,5 +47,8 @@ data class NotificationCapabilities(
 
 data class NewPostCapabilities(
     val supportsAdvancedMediaMetadata: Boolean,
-    val includeDirectVisibility: Boolean
+    val includeDirectVisibility: Boolean,
+    val showCountryDropdown: Boolean,
+    val showLocationInputInGeneral: Boolean,
+    val showLocationInputInImageTab: Boolean
 )

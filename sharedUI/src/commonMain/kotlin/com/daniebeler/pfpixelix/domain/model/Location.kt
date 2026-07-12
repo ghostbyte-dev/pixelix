@@ -9,5 +9,5 @@ data class Location(
 )
 
 data class Country(
-    val id: String?, val name: String?, val code: String?
+    val id: String?, val name: String, val code: String?
 )

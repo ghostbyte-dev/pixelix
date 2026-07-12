@@ -36,10 +36,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.domain.model.Visibility
+import com.daniebeler.pfpixelix.ui.composables.textfield_location.TextFieldLocationsComposable
 import com.daniebeler.pfpixelix.ui.composables.widgets.MaxLengthTextField
 import com.daniebeler.pfpixelix.ui.composables.widgets.SuggestionsBar
 import com.daniebeler.pfpixelix.utils.getPlatformUriObject
@@ -52,6 +54,7 @@ import pixelix.app.generated.resources.caption
 import pixelix.app.generated.resources.confirm
 import pixelix.app.generated.resources.content_warning_or_spoiler_text
 import pixelix.app.generated.resources.followers_only
+import pixelix.app.generated.resources.location
 import pixelix.app.generated.resources.mentioned_only
 import pixelix.app.generated.resources.sensitive_content
 import pixelix.app.generated.resources.sensitive_nsfw_media
@@ -202,6 +205,20 @@ fun GeneralTab(
                         }
                     }
                 })
+
+            if (viewModel.capabilities.newPost.showLocationInputInGeneral) {
+                TextFieldLocationsComposable(
+                    submit = {
+                        viewModel.locationId = it.id
+                    },
+                    initialValue = null,
+                    labelStringId = Res.string.location,
+                    modifier = Modifier.fillMaxWidth(),
+                    imeAction = ImeAction.Default,
+                    suggestionsBoxColor = MaterialTheme.colorScheme.surfaceContainer,
+                    submitButton = null
+                )
+            }
         }
 
         if (viewModel.hashtagMentionsSuggestionsManager.suggestionsOpen) {

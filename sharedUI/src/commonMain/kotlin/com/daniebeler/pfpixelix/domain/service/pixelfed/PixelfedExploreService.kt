@@ -1,13 +1,16 @@
 package com.daniebeler.pfpixelix.domain.service.pixelfed
 
+import com.daniebeler.pfpixelix.domain.model.Country
 import com.daniebeler.pfpixelix.domain.repository.pixelfed.PixelfedApi
 import com.daniebeler.pfpixelix.domain.service.general.ExploreService
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.toDomain
 import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
+import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.domain.service.utils.loadListResources
 import com.daniebeler.pfpixelix.domain.service.utils.loadPaginatedListResources
 import com.daniebeler.pfpixelix.domain.service.utils.loadResource
 import com.daniebeler.pfpixelix.ui.composables.explore.trending.TrendingRange
+import kotlinx.coroutines.flow.Flow
 import me.tatarka.inject.annotations.Inject
 
 @Inject
@@ -36,8 +39,12 @@ class PixelfedExploreService(
         api.getSearch(searchText, type, limit).toDomain()
     }
 
-    override fun searchLocations(searchText: String) = loadListResources {
+    override fun searchLocations(searchText: String, countryCode: String?) = loadListResources {
         api.searchLocations(searchText).map { it.toDomain() }
+    }
+
+    override fun getAllCountries(): Flow<Resource<List<Country>>> = loadResource {
+        emptyList()
     }
 
     override fun getTrendingHashtags(range: TrendingRange, maxId: String?) =

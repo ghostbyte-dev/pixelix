@@ -5,7 +5,9 @@ import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedNodeInfoDt
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedPostDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageAccountDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageBlockedAccountDto
+import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageCountryDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageInstanceDto
+import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageLocationDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageMediaAttachmentDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageMutedAccountDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageNewPostRequest
@@ -314,6 +316,14 @@ interface VernissageApi {
         @Path("id") postid: String
     ): VernissagePostDto
 
+    @GET("api/v1/countries")
+    suspend fun getCountries(): List<VernissageCountryDto>
+
+    @GET("api/v1/locations")
+    suspend fun getLocations(
+        @Query("code") countryCode: String?,
+        @Query("query") query: String
+    ): List<VernissageLocationDto>
     @GET
     suspend fun getNodeInfo(@Url domain: String): PixelfedNodeInfoDto
 }

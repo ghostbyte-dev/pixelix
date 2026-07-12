@@ -26,6 +26,9 @@ val VernissageCapabilities = Capabilities(
     ),
     newPost = NewPostCapabilities(
         supportsAdvancedMediaMetadata = true,
-        includeDirectVisibility = true
+        includeDirectVisibility = true,
+        showCountryDropdown = true,
+        showLocationInputInGeneral = false,
+        showLocationInputInImageTab = true
     )
 )

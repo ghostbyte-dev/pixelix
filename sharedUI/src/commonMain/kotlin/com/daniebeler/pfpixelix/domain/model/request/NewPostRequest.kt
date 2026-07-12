@@ -35,7 +35,6 @@ fun NewPostRequest.toVernissage(): VernissageNewPostRequest {
         sensitive = this.sensitive,
         contentWarning = this.contentWarning,
         visibility = this.visibility.toVernissage(),
-        placeId = this.placeId,
         commentsDisabled = this.commentsDisabled,
         categoryId = this.categoryId
     )

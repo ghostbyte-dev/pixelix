@@ -26,6 +26,9 @@ val NoCapabilities = Capabilities(
     ),
     newPost = NewPostCapabilities(
         supportsAdvancedMediaMetadata = false,
-        includeDirectVisibility = false
+        includeDirectVisibility = false,
+        showCountryDropdown = false,
+        showLocationInputInGeneral = false,
+        showLocationInputInImageTab = false
     )
 )

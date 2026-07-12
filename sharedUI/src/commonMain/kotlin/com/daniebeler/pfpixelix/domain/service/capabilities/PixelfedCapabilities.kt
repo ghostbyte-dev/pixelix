@@ -28,6 +28,9 @@ val PixelfedCapabilities = Capabilities(
     ),
     newPost = NewPostCapabilities(
         supportsAdvancedMediaMetadata = false,
-        includeDirectVisibility = false
+        includeDirectVisibility = false,
+        showCountryDropdown = false,
+        showLocationInputInGeneral = true,
+        showLocationInputInImageTab = false
     )
 )

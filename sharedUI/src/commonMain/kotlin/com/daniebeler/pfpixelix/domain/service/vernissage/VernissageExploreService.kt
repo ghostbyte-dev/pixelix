@@ -1,5 +1,6 @@
 package com.daniebeler.pfpixelix.domain.service.vernissage
 
+import com.daniebeler.pfpixelix.domain.model.Country
 import com.daniebeler.pfpixelix.domain.model.Location
 import com.daniebeler.pfpixelix.domain.model.RelatedHashtag
 import com.daniebeler.pfpixelix.domain.model.Search
@@ -7,6 +8,7 @@ import com.daniebeler.pfpixelix.domain.model.Tag
 import com.daniebeler.pfpixelix.domain.repository.vernissage.VernissageApi
 import com.daniebeler.pfpixelix.domain.service.general.ExploreService
 import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
+import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.domain.service.utils.loadListResources
 import com.daniebeler.pfpixelix.domain.service.utils.loadResource
 import com.daniebeler.pfpixelix.domain.service.utils.loadVernissagePaginatedListResources
@@ -14,6 +16,7 @@ import com.daniebeler.pfpixelix.domain.service.vernissage.model.toDomain
 import com.daniebeler.pfpixelix.ui.composables.explore.trending.TrendingRange
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.Flow
 import me.tatarka.inject.annotations.Inject
 import kotlin.collections.emptyList
 
@@ -50,9 +53,12 @@ class VernissageExploreService(
         }
     }
 
-    override fun searchLocations(searchText: String) = loadListResources {
-        //api.searchLocations(searchText).map { it.toDomain() }
-        emptyList<Location>()
+    override fun searchLocations(searchText: String, countryCode: String?) = loadListResources {
+        api.getLocations(countryCode,searchText).map { it.toDomain() }
+    }
+
+    override fun getAllCountries(): Flow<Resource<List<Country>>> = loadResource {
+        api.getCountries().map { it.toDomain() }
     }
 
     override fun getTrendingHashtags(range: TrendingRange, maxId: String?) = loadVernissagePaginatedListResources {

@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
@@ -196,8 +197,7 @@ fun NewPostComposable(
                 )
             )
         }) { paddingValues ->
-        Box(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
-
+        Box(modifier = Modifier.fillMaxSize().padding(paddingValues).imePadding()) {
             NavigationBackHandler(
                 state = rememberNavigationEventState(NavigationEventInfo.None),
                 isBackEnabled = viewModel.images.isNotEmpty() || viewModel.caption.text.isNotBlank() || viewModel.caption.text.isNotBlank() || viewModel.locationId.isNotBlank(),
@@ -288,7 +288,6 @@ fun NewPostComposable(
                                     canMoveLeft = tabIndex > 0,
                                     canMoveRight = tabIndex < viewModel.images.size - 1,
                                     onMoveLeft = {
-                                        // You'll need to create this function in your ViewModel
                                         viewModel.moveImage(tabIndex, tabIndex - 1)
                                         scope.launch { pagerState.animateScrollToPage(tabIndex - 1) }
                                     },
@@ -297,14 +296,15 @@ fun NewPostComposable(
                                         scope.launch { pagerState.animateScrollToPage(tabIndex + 1) }
                                     },
                                     onDelete = {
-                                        // You'll need to create this function in your ViewModel
                                         viewModel.removeImage(tabIndex)
                                     },
                                     updateMetadata = {
                                         viewModel.updateImageMetadata(
                                             tabIndex, it
                                         )
-                                    })
+                                    },
+                                    capabilities = viewModel.capabilities
+                                )
                             } else {
                                 EmptyImageTab { file, metadata ->
                                     viewModel.addImage(

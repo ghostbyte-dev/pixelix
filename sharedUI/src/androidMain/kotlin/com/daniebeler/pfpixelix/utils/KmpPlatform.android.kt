@@ -55,7 +55,7 @@ actual fun parseExifMetadata(bytes: ByteArray): MediaAttachmentMetadataRequest {
             }),
             focalLenIn35mmFilm = FieldState(exif.getAttribute(ExifInterface.TAG_FOCAL_LENGTH_IN_35MM_FILM))
         )
-    } catch (e: Exception) {
+    } catch (e: Throwable) {
         MediaAttachmentMetadataRequest()
     }
 }
@@ -101,7 +101,7 @@ fun parseExifDateTime(exifString: String?): Instant? {
         val localDateTime = LocalDateTime.parse(isoString)
 
         localDateTime.toInstant(TimeZone.UTC)
-    } catch (e: Exception) {
+    } catch (e: Throwable) {
         null
     }
 }

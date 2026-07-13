@@ -114,7 +114,7 @@ private fun saveUriToCache(uri: Uri, contentResolver: ContentResolver, cacheDir:
                 file
             )
         }
-    } catch (e: Exception) {
+    } catch (e: Throwable) {
         e.printStackTrace()
     }
     return null

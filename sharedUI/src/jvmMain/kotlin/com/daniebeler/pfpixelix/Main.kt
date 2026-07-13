@@ -79,7 +79,7 @@ private fun isAppAlreadyRunning(url: String?): Boolean {
         url?.let { socket.getOutputStream().write(it.toByteArray()) }
         socket.close()
         true
-    } catch (e: Exception) {
+    } catch (e: Throwable) {
         false
     }
 }

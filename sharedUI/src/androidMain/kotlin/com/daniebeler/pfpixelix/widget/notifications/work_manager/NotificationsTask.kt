@@ -60,7 +60,7 @@ class NotificationsTask(
             } else {
                 throw Exception()
             }
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             if (runAttemptCount < 4) {
                 updateNotificationsWidget(
                     emptyList(),

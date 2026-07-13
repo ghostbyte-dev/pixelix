@@ -203,7 +203,7 @@ class VernissageAuthService(
             val decoded = Base64.decode(payload).decodeToString()
 
             Json { ignoreUnknownKeys = true }.decodeFromString<JwtClaims>(decoded)
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             null
         }
     }

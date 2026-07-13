@@ -252,7 +252,7 @@ class NewPostViewModel @Inject constructor(
             compressionLoading = false
             //TODO: fix compress, (metadata has to be kept the same)
             addImage(safeUri, MediaAttachmentMetadataRequest())
-        } catch (exception: Exception) {
+        } catch (exception: Throwable) {
             Logger.e(exception.message ?: "unexpected error", null, "compression")
         }
     }
@@ -282,7 +282,7 @@ class NewPostViewModel @Inject constructor(
                     maxHeight = currentMaxHeight,
                     imageFormat = ImageFormat.JPEG
                 )
-            } catch (exception: Exception) {
+            } catch (exception: Throwable) {
                 Logger.e(exception.message ?: "unexpected error", null, "compression")
                 break
             }

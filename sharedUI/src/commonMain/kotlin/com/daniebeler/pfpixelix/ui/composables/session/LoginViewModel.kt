@@ -75,7 +75,7 @@ class LoginViewModel(
                 isLoading = true
                 error = null
                 authService.auth(serverHost.text)
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 error = e.message
             } finally {
                 isLoading = false

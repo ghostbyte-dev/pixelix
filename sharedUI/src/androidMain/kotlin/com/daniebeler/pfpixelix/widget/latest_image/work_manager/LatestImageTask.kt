@@ -63,7 +63,7 @@ class LatestImageTask(
             } else {
                 throw Exception()
             }
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             if (runAttemptCount < 4) {
                 updateLatestImageWidget(
                     null,

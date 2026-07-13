@@ -45,7 +45,7 @@ class GetImageProvider {
                 val imageSource: ImageDecoder.Source =
                     ImageDecoder.createSource(context.contentResolver, imagePath.toUri())
                 return ImageProvider(ImageDecoder.decodeBitmap(imageSource, listener))
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 return oldWayToGetBitmap(context, imagePath, radius)
             }
         }

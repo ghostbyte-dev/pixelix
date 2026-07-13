@@ -70,7 +70,7 @@ suspend fun timeAgo(dataDate: String): String {
                 "$count ${getPluralString(Res.plurals.year, count)} $suffix"
             }
         }
-    } catch (e: Exception) {
+    } catch (e: Throwable) {
         // Instant.parse can throw DateTimeFormatException or IllegalArgumentException
         e.printStackTrace()
     }

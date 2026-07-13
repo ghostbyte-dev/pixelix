@@ -76,7 +76,7 @@ object SessionStorageSerializer : OkioSerializer<SessionStorage> {
                     sessions = migratedMap,
                     activeKey = migratedActiveKey
                 )
-            } catch (fallbackException: Exception) {
+            } catch (fallbackException: Throwable) {
                 fallbackException.printStackTrace()
                 defaultValue
             }

@@ -79,7 +79,7 @@ class VernissageAccountService(
                         append(HttpHeaders.ContentType, fileType)
                         append(HttpHeaders.ContentDisposition, fileName)
                     })
-                } catch (e: Exception) {
+                } catch (e: Throwable) {
                     Logger.e("AccountService.updateAccount error", e)
                 }
             }
@@ -104,7 +104,7 @@ class VernissageAccountService(
                         append(HttpHeaders.ContentType, fileType)
                         append(HttpHeaders.ContentDisposition, fileName)
                     })
-                } catch (e: Exception) {
+                } catch (e: Throwable) {
                     Logger.e("AccountService.updateHeader error", e)
                 }
             }

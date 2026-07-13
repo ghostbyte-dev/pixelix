@@ -23,7 +23,7 @@ actual fun formatLocalized(dataDate: String): String {
             locale = NSLocale.currentLocale
         }
         formatter.stringFromDate(nsDate)
-    } catch (e: Exception) {
+    } catch (e: Throwable) {
         e.printStackTrace()
         ""
     }
@@ -42,7 +42,7 @@ actual fun formatLocalizedOnlyDate(dataDate: String): String {
             locale = NSLocale.currentLocale
         }
         formatter.stringFromDate(nsDate)
-    } catch (e: Exception) {
+    } catch (e: Throwable) {
         e.printStackTrace()
         ""
     }

@@ -1,8 +1,7 @@
 package com.daniebeler.pfpixelix.domain.service.pixelfed
 
-import com.daniebeler.pfpixelix.domain.model.request.NewPostRequest
-import com.daniebeler.pfpixelix.domain.model.UpdatePost
 import com.daniebeler.pfpixelix.domain.model.request.MediaAttachmentMetadataRequest
+import com.daniebeler.pfpixelix.domain.model.request.NewPostRequest
 import com.daniebeler.pfpixelix.domain.model.request.toPixelfed
 import com.daniebeler.pfpixelix.domain.repository.pixelfed.PixelfedApi
 import com.daniebeler.pfpixelix.domain.service.file.FileService
@@ -11,16 +10,11 @@ import com.daniebeler.pfpixelix.domain.service.general.PostEditorService
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.toDomain
 import com.daniebeler.pfpixelix.domain.service.utils.loadResource
 import com.daniebeler.pfpixelix.utils.KmpUri
-import io.github.vinceglb.filekit.FileKit
 import io.github.vinceglb.filekit.ImageFormat
-import io.github.vinceglb.filekit.compressImage
-import io.github.vinceglb.filekit.exists
 import io.github.vinceglb.filekit.nameWithoutExtension
 import io.github.vinceglb.filekit.readBytes
-import io.ktor.client.request.forms.MultiPartFormDataContent
-import io.ktor.client.request.forms.formData
-import io.ktor.http.Headers
-import io.ktor.http.HttpHeaders
+import io.ktor.client.request.forms.*
+import io.ktor.http.*
 import kotlinx.serialization.json.Json
 import me.tatarka.inject.annotations.Inject
 
@@ -31,11 +25,11 @@ class PixelfedPostEditorService(
 
     override fun uploadMedia(uri: KmpUri) = loadResource {
         val file = PlatformFile(uri)
-        if (!file.exists()) error("File doesn't exist")
+        if (!fileService.exists(file)) error("File doesn't exist")
         val bytes = file.readBytes()
         val mimeType = fileService.getMimeType(file)
         val thumbnail = if (mimeType.startsWith("image")) {
-            FileKit.compressImage(
+            fileService.compressImage(
                 bytes = bytes,
                 quality = 85,
                 maxWidth = 400,

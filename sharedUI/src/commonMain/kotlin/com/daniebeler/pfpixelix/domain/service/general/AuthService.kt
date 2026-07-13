@@ -13,7 +13,6 @@ interface AuthService {
     companion object {
         const val clientName = "pixelix"
         const val grantType = "authorization_code"
-        const val redirectUrl = "dev.ghostbyte.pixelix://callback"
         val domainRegex: Regex =
             "^((\\*)|((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)|((\\*\\.)?([a-zA-Z0-9-]+\\.){0,5}[a-zA-Z0-9-][a-zA-Z0-9-]+\\.[a-zA-Z]{2,63}?))\$".toRegex()
     }

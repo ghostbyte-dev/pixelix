@@ -19,7 +19,6 @@ import com.daniebeler.pfpixelix.domain.repository.serializers.SessionStorageSeri
 import com.daniebeler.pfpixelix.domain.repository.vernissage.VernissageApi
 import com.daniebeler.pfpixelix.domain.repository.vernissage.createVernissageApi
 import com.daniebeler.pfpixelix.domain.service.file.FileService
-import com.daniebeler.pfpixelix.domain.service.file.toOkIoPath
 import com.daniebeler.pfpixelix.domain.service.general.AccountService
 import com.daniebeler.pfpixelix.domain.service.general.AccountServiceDelegate
 import com.daniebeler.pfpixelix.domain.service.general.AuthServiceDelegate
@@ -58,9 +57,9 @@ import com.daniebeler.pfpixelix.domain.service.pixelfed.PixelfedAuthInterceptor
 import com.daniebeler.pfpixelix.domain.service.vernissage.VernissageAuthInterceptor
 import com.daniebeler.pfpixelix.utils.KmpContext
 import com.daniebeler.pfpixelix.utils.coilContext
+import com.daniebeler.pfpixelix.utils.toKmpUri
 import de.jensklingenberg.ktorfit.Ktorfit
 import de.jensklingenberg.ktorfit.converter.CallConverterFactory
-import io.github.vinceglb.filekit.resolve
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.HttpSend
 import io.ktor.client.plugins.HttpTimeout
@@ -78,7 +77,6 @@ import me.tatarka.inject.annotations.Provides
 import me.tatarka.inject.annotations.Qualifier
 import me.tatarka.inject.annotations.Scope
 import okio.FileSystem
-import okio.SYSTEM
 
 @Scope
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER)
@@ -283,41 +281,18 @@ abstract class AppComponent(
 
     @Provides
     @AppSingleton
-    fun providePreferences(context: KmpContext): DataStore<Preferences> =
-        PreferenceDataStoreFactory.createWithPath(
-            corruptionHandler = null,
-            migrations = emptyList(),
-            produceFile = {
-                FileService.dataStoreDir.resolve("settings.preferences_pb").toOkIoPath()
-            },
-        )
+    fun providePreferences(): DataStore<Preferences> =
+        FileService.createPreferences("settings.preferences_pb")
 
     @Provides
     @AppSingleton
-    fun provideSavedSearchesDataStore(context: KmpContext): DataStore<SavedSearches> =
-        DataStoreFactory.create(
-            storage = OkioStorage(
-                fileSystem = FileSystem.SYSTEM,
-                producePath = {
-                    FileService.dataStoreDir.resolve("saved_searches_2.json").toOkIoPath()
-                },
-                serializer = SavedSearchesSerializer,
-            )
-        )
+    fun provideSavedSearchesDataStore(): DataStore<SavedSearches> =
+        FileService.createDataStore("saved_searches_2.json", SavedSearchesSerializer)
 
     @Provides
     @AppSingleton
-    fun provideSessionStorageDataStore(context: KmpContext): DataStore<SessionStorage> =
-        DataStoreFactory.create(
-            storage = OkioStorage(
-                fileSystem = FileSystem.SYSTEM,
-                producePath = {
-                    FileService.dataStoreDir.resolve("session_storage_datastore.json")
-                        .toOkIoPath()
-                },
-                serializer = SessionStorageSerializer,
-            )
-        )
+    fun provideSessionStorageDataStore(): DataStore<SessionStorage> =
+        FileService.createDataStore("session_storage_datastore.json", SessionStorageSerializer)
 
     @Provides
     @AppSingleton
@@ -330,12 +305,7 @@ abstract class AppComponent(
                     .build()
             )
             .diskCachePolicy(CachePolicy.ENABLED)
-            .diskCache(
-                DiskCache.Builder()
-                    .maxSizeBytes(50L * 1024L * 1024L)
-                    .directory(FileService.imageCacheDir.toOkIoPath())
-                    .build()
-            )
+            .diskCache(FileService.createDiskCache())
             .build()
 
     companion object

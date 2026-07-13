@@ -18,3 +18,5 @@ expect class Platform(
     fun getAppVersion(): String
     fun pinWidget()
 }
+
+internal expect val Platform.redirectUrl: String

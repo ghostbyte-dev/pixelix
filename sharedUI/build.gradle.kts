@@ -79,13 +79,7 @@ kotlin {
             implementation(libs.kotlin.inject.runtime)
 
             //datastore
-            implementation(libs.androidx.datastore)
             implementation(libs.androidx.datastore.preferences)
-
-            //shared preferences
-            implementation(libs.multiplatform.settings)
-            implementation(libs.multiplatform.settings.coroutines)
-            implementation(libs.multiplatform.settings.datastore)
 
             //file picker
             implementation(libs.filekit.compose)

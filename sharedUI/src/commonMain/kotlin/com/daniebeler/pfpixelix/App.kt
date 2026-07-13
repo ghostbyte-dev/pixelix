@@ -141,6 +141,7 @@ fun App(
         PixelixTheme {
             var activeUser by remember { mutableStateOf<String?>("unknown") }
             LaunchedEffect(Unit) {
+                appComponent.preferences.preload()
                 val authService = appComponent.authService
                 authService.openSessionIfExist()
                 authService.activeUser.collect {

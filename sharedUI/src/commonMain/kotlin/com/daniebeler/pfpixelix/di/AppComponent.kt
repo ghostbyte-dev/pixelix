@@ -58,9 +58,6 @@ import com.daniebeler.pfpixelix.domain.service.pixelfed.PixelfedAuthInterceptor
 import com.daniebeler.pfpixelix.domain.service.vernissage.VernissageAuthInterceptor
 import com.daniebeler.pfpixelix.utils.KmpContext
 import com.daniebeler.pfpixelix.utils.coilContext
-import com.russhwolf.settings.ExperimentalSettingsApi
-import com.russhwolf.settings.ExperimentalSettingsImplementation
-import com.russhwolf.settings.datastore.DataStoreSettings
 import de.jensklingenberg.ktorfit.Ktorfit
 import de.jensklingenberg.ktorfit.converter.CallConverterFactory
 import io.github.vinceglb.filekit.resolve
@@ -321,11 +318,6 @@ abstract class AppComponent(
                 serializer = SessionStorageSerializer,
             )
         )
-
-    @OptIn(ExperimentalSettingsApi::class, ExperimentalSettingsImplementation::class)
-    @Provides
-    @AppSingleton
-    fun provideSettings(ds: DataStore<Preferences>) = DataStoreSettings(ds)
 
     @Provides
     @AppSingleton

@@ -51,7 +51,7 @@ val LocalSnackbarPresenter = compositionLocalOf<(String) -> Unit> {
 @Composable
 fun App(
     appComponent: AppComponent,
-    onNavHostReady: suspend (NavController) -> Unit,
+    onNavHostReady: suspend (NavController) -> Unit = {},
     exitApp: () -> Unit
 ) {
     val uriHandler = LocalUriHandler.current

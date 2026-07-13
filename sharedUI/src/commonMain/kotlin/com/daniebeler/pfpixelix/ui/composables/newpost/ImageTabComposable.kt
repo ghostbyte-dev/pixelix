@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
@@ -88,7 +87,7 @@ fun ImageTab(
     Box(modifier = Modifier.fillMaxSize().padding(16.dp)) {
         Column(
             verticalArrangement = Arrangement.spacedBy(12.dp),
-            modifier = Modifier.verticalScroll(verticalScrollState)
+            modifier = Modifier.verticalScroll(verticalScrollState).padding(bottom = 24.dp)
         ) {
             Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()) {
                 AsyncImage(
@@ -173,218 +172,241 @@ fun ImageTab(
                 )
             }
 
-            IsIncludedField(
-                label = "Brand",
-                image.metadata.make.isIncluded,
-                { updateMetadata(image.metadata.copy(make = image.metadata.make.copy(isIncluded = it))) }) {
-                CustomTextField(
-                    value = image.metadata.make,
-                    onValueChange = {
-                        updateMetadata(
-                            image.metadata.copy(make = it)
-                        )
-                    },
+            if (capabilities.newPost.showMetadata) {
+                IsIncludedField(
                     label = "Brand",
-                )
-            }
-
-            IsIncludedField(
-                label = "Model",
-                image.metadata.model.isIncluded,
-                { updateMetadata(image.metadata.copy(model = image.metadata.model.copy(isIncluded = it))) }) {
-                CustomTextField(
-                    value = image.metadata.model,
-                    onValueChange = {
-                        updateMetadata(
-                            image.metadata.copy(model = it)
-                        )
-                    },
+                    image.metadata.make.isIncluded,
+                    { updateMetadata(image.metadata.copy(make = image.metadata.make.copy(isIncluded = it))) }) {
+                    CustomTextField(
+                        value = image.metadata.make,
+                        onValueChange = {
+                            updateMetadata(
+                                image.metadata.copy(make = it)
+                            )
+                        },
+                        label = "Brand",
+                    )
+                }
+                IsIncludedField(
                     label = "Model",
-                )
-            }
-
-            IsIncludedField(
-                label = "Flash",
-                image.metadata.flash.isIncluded,
-                { updateMetadata(image.metadata.copy(flash = image.metadata.flash.copy(isIncluded = it))) }) {
-                CustomTextField(
-                    value = image.metadata.flash,
-                    onValueChange = {
+                    image.metadata.model.isIncluded,
+                    {
                         updateMetadata(
-                            image.metadata.copy(flash = it)
+                            image.metadata.copy(
+                                model = image.metadata.model.copy(
+                                    isIncluded = it
+                                )
+                            )
                         )
-                    },
+                    }) {
+                    CustomTextField(
+                        value = image.metadata.model,
+                        onValueChange = {
+                            updateMetadata(
+                                image.metadata.copy(model = it)
+                            )
+                        },
+                        label = "Model",
+                    )
+                }
+                IsIncludedField(
                     label = "Flash",
-                )
-            }
-
-            IsIncludedField(
-                label = "Lens",
-                image.metadata.lens.isIncluded,
-                { updateMetadata(image.metadata.copy(lens = image.metadata.lens.copy(isIncluded = it))) }) {
-                CustomTextField(
-                    value = image.metadata.lens,
-                    onValueChange = {
+                    image.metadata.flash.isIncluded,
+                    {
                         updateMetadata(
-                            image.metadata.copy(lens = it)
+                            image.metadata.copy(
+                                flash = image.metadata.flash.copy(
+                                    isIncluded = it
+                                )
+                            )
                         )
-                    },
+                    }) {
+                    CustomTextField(
+                        value = image.metadata.flash,
+                        onValueChange = {
+                            updateMetadata(
+                                image.metadata.copy(flash = it)
+                            )
+                        },
+                        label = "Flash",
+                    )
+                }
+
+
+                IsIncludedField(
                     label = "Lens",
-                )
-            }
-
-            IsIncludedField(
-                label = "Focal length",
-                image.metadata.focalLength.isIncluded || image.metadata.focalLenIn35mmFilm.isIncluded,
-                {
-                    updateMetadata(
-                        image.metadata.copy(
-                            focalLength = image.metadata.focalLength.copy(isIncluded = it),
-                            focalLenIn35mmFilm = image.metadata.focalLenIn35mmFilm.copy(isIncluded = it)
-                        ),
+                    image.metadata.lens.isIncluded,
+                    { updateMetadata(image.metadata.copy(lens = image.metadata.lens.copy(isIncluded = it))) }) {
+                    CustomTextField(
+                        value = image.metadata.lens,
+                        onValueChange = {
+                            updateMetadata(
+                                image.metadata.copy(lens = it)
+                            )
+                        },
+                        label = "Lens",
                     )
-                }) {
-                CustomTextField(
-                    value = image.metadata.focalLength, onValueChange = {
+                }
+                IsIncludedField(
+                    label = "Focal length",
+                    image.metadata.focalLength.isIncluded || image.metadata.focalLenIn35mmFilm.isIncluded,
+                    {
                         updateMetadata(
-                            image.metadata.copy(focalLength = it)
+                            image.metadata.copy(
+                                focalLength = image.metadata.focalLength.copy(isIncluded = it),
+                                focalLenIn35mmFilm = image.metadata.focalLenIn35mmFilm.copy(
+                                    isIncluded = it
+                                )
+                            ),
                         )
-                    }, label = "Focal length", modifier = Modifier.weight(1f)
-                )
-                CustomTextField(
-                    value = image.metadata.focalLenIn35mmFilm, onValueChange = {
+                    }) {
+                    CustomTextField(
+                        value = image.metadata.focalLength, onValueChange = {
+                            updateMetadata(
+                                image.metadata.copy(focalLength = it)
+                            )
+                        }, label = "Focal length", modifier = Modifier.weight(1f)
+                    )
+                    CustomTextField(
+                        value = image.metadata.focalLenIn35mmFilm, onValueChange = {
+                            updateMetadata(
+                                image.metadata.copy(focalLenIn35mmFilm = it)
+                            )
+                        }, label = "Focal length 35 mm", modifier = Modifier.weight(1f)
+                    )
+                }
+                IsIncludedField(
+                    label = "Aperture", image.metadata.fNumber.isIncluded, {
                         updateMetadata(
-                            image.metadata.copy(focalLenIn35mmFilm = it)
-                        )
-                    }, label = "Focal length 35 mm", modifier = Modifier.weight(1f)
-                )
-            }
-
-            IsIncludedField(
-                label = "Aperture", image.metadata.fNumber.isIncluded, {
-                    updateMetadata(
-                        image.metadata.copy(
-                            fNumber = image.metadata.fNumber.copy(
-                                isIncluded = it
+                            image.metadata.copy(
+                                fNumber = image.metadata.fNumber.copy(
+                                    isIncluded = it
+                                )
                             )
                         )
+                    }) {
+                    CustomTextField(
+                        value = image.metadata.fNumber,
+                        onValueChange = {
+                            updateMetadata(
+                                image.metadata.copy(fNumber = it)
+                            )
+                        },
+                        label = "Aperture",
                     )
-                }) {
-                CustomTextField(
-                    value = image.metadata.fNumber,
-                    onValueChange = {
-                        updateMetadata(
-                            image.metadata.copy(fNumber = it)
-                        )
-                    },
-                    label = "Aperture",
-                )
-            }
+                }
 
-            IsIncludedField(
-                label = "Exposure time", image.metadata.exposureTime.isIncluded, {
-                    updateMetadata(
-                        image.metadata.copy(
-                            exposureTime = image.metadata.exposureTime.copy(
-                                isIncluded = it
+                IsIncludedField(
+                    label = "Exposure time", image.metadata.exposureTime.isIncluded, {
+                        updateMetadata(
+                            image.metadata.copy(
+                                exposureTime = image.metadata.exposureTime.copy(
+                                    isIncluded = it
+                                )
                             )
                         )
+                    }) {
+                    CustomTextField(
+                        value = image.metadata.exposureTime,
+                        onValueChange = {
+                            updateMetadata(
+                                image.metadata.copy(exposureTime = it)
+                            )
+                        },
+                        label = "Exposure time",
                     )
-                }) {
-                CustomTextField(
-                    value = image.metadata.exposureTime,
-                    onValueChange = {
-                        updateMetadata(
-                            image.metadata.copy(exposureTime = it)
-                        )
-                    },
-                    label = "Exposure time",
-                )
-            }
+                }
 
-            IsIncludedField(
-                label = "ISO", image.metadata.photographicSensitivity.isIncluded, {
-                    updateMetadata(
-                        image.metadata.copy(
-                            photographicSensitivity = image.metadata.photographicSensitivity.copy(
-                                isIncluded = it
+                IsIncludedField(
+                    label = "ISO", image.metadata.photographicSensitivity.isIncluded, {
+                        updateMetadata(
+                            image.metadata.copy(
+                                photographicSensitivity = image.metadata.photographicSensitivity.copy(
+                                    isIncluded = it
+                                )
                             )
                         )
+                    }) {
+                    CustomTextField(
+                        value = image.metadata.photographicSensitivity,
+                        onValueChange = {
+                            updateMetadata(
+                                image.metadata.copy(photographicSensitivity = it)
+                            )
+                        },
+                        label = "ISO",
                     )
-                }) {
-                CustomTextField(
-                    value = image.metadata.photographicSensitivity,
-                    onValueChange = {
-                        updateMetadata(
-                            image.metadata.copy(photographicSensitivity = it)
-                        )
-                    },
-                    label = "ISO",
-                )
-            }
+                }
 
-            IsIncludedField(
-                label = "Software", image.metadata.software.isIncluded, {
-                    updateMetadata(
-                        image.metadata.copy(
-                            software = image.metadata.software.copy(
-                                isIncluded = it
+                IsIncludedField(
+                    label = "Software", image.metadata.software.isIncluded, {
+                        updateMetadata(
+                            image.metadata.copy(
+                                software = image.metadata.software.copy(
+                                    isIncluded = it
+                                )
                             )
                         )
+                    }) {
+                    CustomTextField(
+                        value = image.metadata.software,
+                        onValueChange = {
+                            updateMetadata(
+                                image.metadata.copy(software = it)
+                            )
+                        },
+                        placeholder = "Software",
                     )
-                }) {
-                CustomTextField(
-                    value = image.metadata.software,
-                    onValueChange = {
-                        updateMetadata(
-                            image.metadata.copy(software = it)
-                        )
-                    },
-                    placeholder = "Software",
-                )
-            }
+                }
 
-            IsIncludedField(
-                "Creation date", image.metadata.createDate.isIncluded, {
-                    updateMetadata(
-                        image.metadata.copy(
-                            createDate = image.metadata.createDate.copy(
-                                isIncluded = it
+                IsIncludedField(
+                    "Creation date", image.metadata.createDate.isIncluded, {
+                        updateMetadata(
+                            image.metadata.copy(
+                                createDate = image.metadata.createDate.copy(
+                                    isIncluded = it
+                                )
                             )
                         )
-                    )
-                }) {
-                DatePickerFieldToModal(image.metadata.createDate, {
-                    updateMetadata(
-                        image.metadata.copy(createDate = image.metadata.createDate.copy(value = it))
-                    )
-                }, modifier = Modifier.weight(1f))
-                TimePickerFieldToModal(
-                    image.metadata.createDate,
-                    modifier = Modifier.weight(1f),
-                    onDateSelected = { hour, min ->
-                        val currentInstant = image.metadata.createDate.value ?: Clock.System.now()
-                        val timeZone = TimeZone.currentSystemDefault()
-
-                        val localDateTime = currentInstant.toLocalDateTime(timeZone)
-
-                        val updatedLocalDateTime = LocalDateTime(
-                            year = localDateTime.year,
-                            month = localDateTime.month.number,
-                            day = localDateTime.day,
-                            hour = hour,
-                            minute = min,
-                            second = localDateTime.second,
-                            nanosecond = localDateTime.nanosecond
-                        )
-
-                        val updatedInstant = updatedLocalDateTime.toInstant(timeZone)
-
+                    }) {
+                    DatePickerFieldToModal(image.metadata.createDate, {
                         updateMetadata(
-                            image.metadata.copy(createDate = image.metadata.createDate.copy(value = updatedInstant))
+                            image.metadata.copy(createDate = image.metadata.createDate.copy(value = it))
                         )
+                    }, modifier = Modifier.weight(1f))
+                    TimePickerFieldToModal(
+                        image.metadata.createDate,
+                        modifier = Modifier.weight(1f),
+                        onDateSelected = { hour, min ->
+                            val currentInstant =
+                                image.metadata.createDate.value ?: Clock.System.now()
+                            val timeZone = TimeZone.currentSystemDefault()
 
-                    })
+                            val localDateTime = currentInstant.toLocalDateTime(timeZone)
+
+                            val updatedLocalDateTime = LocalDateTime(
+                                year = localDateTime.year,
+                                month = localDateTime.month.number,
+                                day = localDateTime.day,
+                                hour = hour,
+                                minute = min,
+                                second = localDateTime.second,
+                                nanosecond = localDateTime.nanosecond
+                            )
+
+                            val updatedInstant = updatedLocalDateTime.toInstant(timeZone)
+
+                            updateMetadata(
+                                image.metadata.copy(
+                                    createDate = image.metadata.createDate.copy(
+                                        value = updatedInstant
+                                    )
+                                )
+                            )
+
+                        })
+
+                }
 
             }
         }
@@ -412,7 +434,7 @@ fun IsIncludedField(
 
         Spacer(Modifier.height(3.dp))
 
-        Row {
+        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             content()
         }
 

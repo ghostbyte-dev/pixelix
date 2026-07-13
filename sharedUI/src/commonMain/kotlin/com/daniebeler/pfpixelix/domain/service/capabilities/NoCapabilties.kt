@@ -29,6 +29,7 @@ val NoCapabilities = Capabilities(
         includeDirectVisibility = false,
         showCountryDropdown = false,
         showLocationInputInGeneral = false,
-        showLocationInputInImageTab = false
+        showLocationInputInImageTab = false,
+        showMetadata = false
     )
 )

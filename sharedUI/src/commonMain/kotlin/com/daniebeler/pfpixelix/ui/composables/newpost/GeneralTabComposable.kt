@@ -63,15 +63,16 @@ import pixelix.app.generated.resources.unlisted
 
 @Composable
 fun GeneralTab(
-    viewModel: NewPostViewModel
+    viewModel: NewPostViewModel,
+    paddingValues: PaddingValues
 ) {
-
     val suggestionsState by viewModel.hashtagMentionsSuggestionsManager.suggestionsState.collectAsStateWithLifecycle()
     val verticalScrollState = rememberScrollState()
-    Box(modifier = Modifier.fillMaxSize().padding(top = 12.dp, start = 12.dp, end = 12.dp)) {
+    Column(Modifier.fillMaxSize()) {
         Column(
             verticalArrangement = Arrangement.spacedBy(12.dp),
-            modifier = Modifier.verticalScroll(verticalScrollState)
+            modifier = Modifier.verticalScroll(verticalScrollState).weight(1f)
+                .padding(paddingValues).padding(all = 12.dp)
         ) {
 
             LazyRow(
@@ -220,16 +221,15 @@ fun GeneralTab(
                 )
             }
         }
-
         if (viewModel.hashtagMentionsSuggestionsManager.suggestionsOpen) {
             SuggestionsBar(
-                state = suggestionsState, bottomBarPadding = true, onSelected = { selected ->
+                state = suggestionsState, bottomBarPadding = false, onSelected = { selected ->
                     viewModel.caption =
                         viewModel.hashtagMentionsSuggestionsManager.selectSuggestion(
                             selected, viewModel.caption
                         )
                 })
-
         }
     }
+
 }

@@ -50,5 +50,6 @@ data class NewPostCapabilities(
     val includeDirectVisibility: Boolean,
     val showCountryDropdown: Boolean,
     val showLocationInputInGeneral: Boolean,
-    val showLocationInputInImageTab: Boolean
+    val showLocationInputInImageTab: Boolean,
+    val showMetadata: Boolean
 )

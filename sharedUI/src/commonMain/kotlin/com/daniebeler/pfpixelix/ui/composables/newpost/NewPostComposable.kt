@@ -10,11 +10,9 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -33,13 +31,9 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.PrimaryScrollableTabRow
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SegmentedButtonDefaults.Icon
-import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -52,7 +46,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.BlendMode.Companion.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -68,16 +61,7 @@ import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposableDialog
 import com.daniebeler.pfpixelix.ui.composables.widgets.CustomLoader
 import com.daniebeler.pfpixelix.utils.KmpUri
 import com.daniebeler.pfpixelix.utils.getPlatformUriObject
-import com.daniebeler.pfpixelix.utils.imeAwareInsets
-import com.daniebeler.pfpixelix.utils.parseExifMetadata
-import com.daniebeler.pfpixelix.utils.toKmpUri
-import io.github.vinceglb.filekit.dialogs.FileKitMode
-import io.github.vinceglb.filekit.dialogs.FileKitType
-import io.github.vinceglb.filekit.dialogs.compose.rememberFilePickerLauncher
-import io.github.vinceglb.filekit.readBytes
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
@@ -85,15 +69,12 @@ import pixelix.app.generated.resources.add
 import pixelix.app.generated.resources.are_you_sure
 import pixelix.app.generated.resources.arrow_left
 import pixelix.app.generated.resources.arrow_right
-import pixelix.app.generated.resources.bookmark
 import pixelix.app.generated.resources.cancel
 import pixelix.app.generated.resources.cancel_post_warning
 import pixelix.app.generated.resources.discard
 import pixelix.app.generated.resources.new_post
 import pixelix.app.generated.resources.ok
-import pixelix.app.generated.resources.photo
 import pixelix.app.generated.resources.release
-import pixelix.app.generated.resources.send
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -197,7 +178,7 @@ fun NewPostComposable(
                 )
             )
         }) { paddingValues ->
-        Box(modifier = Modifier.fillMaxSize().padding(paddingValues).imePadding()) {
+        Box(modifier = Modifier.fillMaxSize().imePadding()) {
             NavigationBackHandler(
                 state = rememberNavigationEventState(NavigationEventInfo.None),
                 isBackEnabled = viewModel.images.isNotEmpty() || viewModel.caption.text.isNotBlank() || viewModel.caption.text.isNotBlank() || viewModel.locationId.isNotBlank(),
@@ -206,9 +187,9 @@ fun NewPostComposable(
                 })
 
             if (viewModel.isOnGeneralPage) {
-                GeneralTab(viewModel)
+                GeneralTab(viewModel, paddingValues)
             } else {
-                Column {
+                Column(Modifier.padding(paddingValues)) {
                     if (viewModel.images.isNotEmpty()) {
                         LazyRow(
                             modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp),
@@ -386,11 +367,8 @@ fun NewPostComposable(
             }, text = {
                 CustomLoader()
             }, onDismissRequest = {
-                null
             }, dismissButton = {
-                null
             }, confirmButton = {
-                null
             })
         }
 

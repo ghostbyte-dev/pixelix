@@ -28,6 +28,7 @@ import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposableDialog
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
+import pixelix.app.generated.resources.globe
 import pixelix.app.generated.resources.location
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -42,6 +43,12 @@ fun TextFieldLocationsComposable(
     suggestionsBoxColor: Color,
     viewModel: TextFieldLocationsViewModel = injectViewModel("textFieldLocationsViewModel") { textFieldLocationsViewModel }
 ) {
+
+    LaunchedEffect(viewModel.locationsSuggestions.location) {
+        viewModel.locationsSuggestions.location?.let { location ->
+            submit(location)
+        }
+    }
 
     LaunchedEffect(initialValue) {
         initialValue?.let {
@@ -70,6 +77,12 @@ fun TextFieldLocationsComposable(
                 label = { Text("Country") },
                 trailingIcon = {
                     ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+                },
+                leadingIcon = {
+                    Icon(
+                        imageVector = vectorResource(Res.drawable.globe),
+                        contentDescription = null
+                    )
                 },
                 colors = TextFieldDefaults.colors(
                     unfocusedIndicatorColor = Color.Transparent,
@@ -121,7 +134,7 @@ fun TextFieldLocationsComposable(
         onExpandedChange = { viewModel.locationsDropdownOpen = it }
     ) {
         TextField(
-            value = viewModel.locationsSuggestions.location?.name ?:  viewModel.locationText,
+            value = viewModel.locationsSuggestions.location?.name ?: viewModel.locationText,
             onValueChange = { text ->
                 viewModel.changeLocationText(text)
                 viewModel.locationsDropdownOpen = true
@@ -134,12 +147,10 @@ fun TextFieldLocationsComposable(
                 ExposedDropdownMenuDefaults.TrailingIcon(expanded = viewModel.locationsDropdownOpen)
             },
             leadingIcon = {
-                if (!viewModel.capabilities.newPost.showCountryDropdown) {
-                    Icon(
-                        imageVector = vectorResource(Res.drawable.location),
-                        contentDescription = null
-                    )
-                }
+                Icon(
+                    imageVector = vectorResource(Res.drawable.location),
+                    contentDescription = null
+                )
             },
             colors = TextFieldDefaults.colors(
                 unfocusedIndicatorColor = Color.Transparent,

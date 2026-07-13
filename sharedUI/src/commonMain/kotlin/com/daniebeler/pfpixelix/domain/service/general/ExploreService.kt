@@ -4,6 +4,7 @@ import com.daniebeler.pfpixelix.di.AppSingleton
 import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.model.Category
 import com.daniebeler.pfpixelix.domain.model.Country
+import com.daniebeler.pfpixelix.domain.model.License
 import com.daniebeler.pfpixelix.domain.model.PaginatedResponse
 import com.daniebeler.pfpixelix.domain.model.Location
 import com.daniebeler.pfpixelix.domain.model.Post
@@ -41,6 +42,7 @@ interface ExploreService {
     fun unfollowHashtag(tagId: String): Flow<Resource<Unit>>
 
     fun getCategories(): Flow<Resource<List<Category>>>
+    fun getLicenses(): Flow<Resource<List<License>>>
 
     fun Flow<Resource<PaginatedResponse<List<Post>>>>.filterSensitive(hideSensitiveContent: Boolean) =
         this.map { event ->
@@ -96,4 +98,6 @@ class ExploreServiceDelegate(
     override fun unfollowHashtag(tagId: String): Flow<Resource<Unit>> = current.unfollowHashtag(tagId)
 
     override fun getCategories(): Flow<Resource<List<Category>>> = current.getCategories()
+
+    override fun getLicenses(): Flow<Resource<List<License>>> = current.getLicenses()
 }

@@ -8,6 +8,7 @@ import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageBlocke
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageCategory
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageCountryDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageInstanceDto
+import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageLicenseDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageLocationDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageMediaAttachmentDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageMutedAccountDto
@@ -330,6 +331,9 @@ interface VernissageApi {
     suspend fun getAllCategories(
         @Query("onlyUsed") onlyUsed: Boolean = false
     ): List<VernissageCategory>
+
+    @GET("api/v1/licenses?page=1&size=100")
+    suspend fun getAllLicenses(): VernissagePagePaginatedResponse<List<VernissageLicenseDto>>
 
     @GET
     suspend fun getNodeInfo(@Url domain: String): PixelfedNodeInfoDto

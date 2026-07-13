@@ -2,6 +2,7 @@ package com.daniebeler.pfpixelix.domain.service.pixelfed
 
 import com.daniebeler.pfpixelix.domain.model.Category
 import com.daniebeler.pfpixelix.domain.model.Country
+import com.daniebeler.pfpixelix.domain.model.License
 import com.daniebeler.pfpixelix.domain.repository.pixelfed.PixelfedApi
 import com.daniebeler.pfpixelix.domain.service.general.ExploreService
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.toDomain
@@ -81,5 +82,9 @@ class PixelfedExploreService(
 
     override fun getCategories(): Flow<Resource<List<Category>>> = loadListResources {
         emptyList()
+    }
+
+    override fun getLicenses(): Flow<Resource<List<License>>> {
+        TODO("Not yet implemented")
     }
 }

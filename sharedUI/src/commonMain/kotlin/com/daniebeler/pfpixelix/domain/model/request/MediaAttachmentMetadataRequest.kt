@@ -1,6 +1,7 @@
 package com.daniebeler.pfpixelix.domain.model.request
 
 import VernissageMediaAttachmentMetadataRequest
+import com.daniebeler.pfpixelix.domain.model.License
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedMediaAttachmentMetadataRequest
 import kotlin.time.Instant
 
@@ -24,7 +25,7 @@ data class MediaAttachmentMetadataRequest(
     val chemistry: FieldState<String> = FieldState(),
     val scanner: FieldState<String> = FieldState(),
     val locationId: String? = null,
-//    @SerialName("licenseId") val licenseId: String? = null,
+    val license: License? = null,
 //    @SerialName("latitude") val latitude: String? = null,
 //    @SerialName("longitude") val longitude: String? = null,
     val flash: FieldState<String> = FieldState()
@@ -75,6 +76,7 @@ fun MediaAttachmentMetadataRequest.toVernissage(): VernissageMediaAttachmentMeta
         chemistry = this.chemistry.valueIfIncluded,
         scanner = this.scanner.valueIfIncluded,
         flash = this.flash.valueIfIncluded,
-        locationId = this.locationId
+        locationId = this.locationId,
+        licenseId = this.license?.id
     )
 }

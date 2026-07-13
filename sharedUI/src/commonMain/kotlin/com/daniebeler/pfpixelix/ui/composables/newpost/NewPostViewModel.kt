@@ -12,6 +12,7 @@ import androidx.navigation.NavController
 import co.touchlab.kermit.Logger
 import com.daniebeler.pfpixelix.domain.model.Category
 import com.daniebeler.pfpixelix.domain.model.Instance
+import com.daniebeler.pfpixelix.domain.model.License
 import com.daniebeler.pfpixelix.domain.model.Visibility
 import com.daniebeler.pfpixelix.domain.model.request.MediaAttachmentMetadataRequest
 import com.daniebeler.pfpixelix.domain.model.request.NewPostRequest
@@ -81,11 +82,14 @@ class NewPostViewModel @Inject constructor(
 
     var isOnGeneralPage by mutableStateOf(false)
     var categoriesState by mutableStateOf(CategoriesState())
+    var licensesState by mutableStateOf(LicensesState())
+
     init {
         viewModelScope.launch {
             getInstance()
             getAccount()
             getCategories()
+            getLicenses()
         }
 
         userPreferences.captionTemplateFlow
@@ -103,6 +107,25 @@ class NewPostViewModel @Inject constructor(
     }
 
 
+    private fun getLicenses() {
+        exploreService.getLicenses().onEach { result ->
+            licensesState = when (result) {
+                is Resource.Success -> {
+                    LicensesState(licenses = result.data)
+                }
+
+                is Resource.Error -> {
+                    LicensesState(
+                        error = result.message
+                    )
+                }
+
+                is Resource.Loading -> {
+                    LicensesState(isLoading = true)
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
     private fun getCategories() {
         exploreService.getCategories().onEach { result ->
             categoriesState = when (result) {

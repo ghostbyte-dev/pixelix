@@ -284,7 +284,8 @@ fun NewPostComposable(
                                             tabIndex, it
                                         )
                                     },
-                                    capabilities = viewModel.capabilities
+                                    capabilities = viewModel.capabilities,
+                                    availableLicenses = viewModel.licensesState.licenses
                                 )
                             } else {
                                 EmptyImageTab { file, metadata ->

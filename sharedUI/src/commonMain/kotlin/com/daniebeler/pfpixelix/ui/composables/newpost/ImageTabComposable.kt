@@ -22,6 +22,7 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -49,9 +50,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import com.daniebeler.pfpixelix.domain.model.License
 import com.daniebeler.pfpixelix.domain.model.request.FieldState
 import com.daniebeler.pfpixelix.domain.model.request.MediaAttachmentMetadataRequest
 import com.daniebeler.pfpixelix.domain.service.capabilities.Capabilities
+import com.daniebeler.pfpixelix.ui.composables.licences_dropdown.LicensesDropdownComposable
 import com.daniebeler.pfpixelix.ui.composables.textfield_location.TextFieldLocationsComposable
 import com.daniebeler.pfpixelix.utils.formatLocalizedOnlyDate
 import com.daniebeler.pfpixelix.utils.getPlatformUriObject
@@ -95,7 +98,8 @@ fun ImageTab(
     onMoveRight: () -> Unit,
     onDelete: () -> Unit,
     updateMetadata: (MediaAttachmentMetadataRequest) -> Unit,
-    capabilities: Capabilities
+    capabilities: Capabilities,
+    availableLicenses: List<License>
 ) {
     val verticalScrollState = rememberScrollState()
     Box(modifier = Modifier.fillMaxSize().padding(16.dp)) {
@@ -186,6 +190,18 @@ fun ImageTab(
                 )
             }
 
+            LicensesDropdownComposable(
+                licenses = availableLicenses,
+                selectedLicense = image.metadata.license,
+                onLicenseSelected = {
+                    updateMetadata(
+                        image.metadata.copy(
+                            license = it
+                        )
+                    )
+                }
+            )
+
             if (capabilities.newPost.showMetadata) {
                 IsIncludedField(
                     label = stringResource(Res.string.brand),
@@ -275,22 +291,30 @@ fun ImageTab(
                         )
                     }) {
                     CustomTextField(
-                        value = image.metadata.focalLength, onValueChange = {
+                        value = image.metadata.focalLength,
+                        onValueChange = {
                             updateMetadata(
                                 image.metadata.copy(focalLength = it)
                             )
-                        }, label = stringResource(Res.string.focal_length), modifier = Modifier.weight(1f)
+                        },
+                        label = stringResource(Res.string.focal_length),
+                        modifier = Modifier.weight(1f)
                     )
                     CustomTextField(
-                        value = image.metadata.focalLenIn35mmFilm, onValueChange = {
+                        value = image.metadata.focalLenIn35mmFilm,
+                        onValueChange = {
                             updateMetadata(
                                 image.metadata.copy(focalLenIn35mmFilm = it)
                             )
-                        }, label = stringResource(Res.string.focal_length_35mm), modifier = Modifier.weight(1f)
+                        },
+                        label = stringResource(Res.string.focal_length_35mm),
+                        modifier = Modifier.weight(1f)
                     )
                 }
                 IsIncludedField(
-                    label = stringResource(Res.string.aperture), image.metadata.fNumber.isIncluded, {
+                    label = stringResource(Res.string.aperture),
+                    image.metadata.fNumber.isIncluded,
+                    {
                         updateMetadata(
                             image.metadata.copy(
                                 fNumber = image.metadata.fNumber.copy(
@@ -311,7 +335,9 @@ fun ImageTab(
                 }
 
                 IsIncludedField(
-                    label = stringResource(Res.string.exposure_time), image.metadata.exposureTime.isIncluded, {
+                    label = stringResource(Res.string.exposure_time),
+                    image.metadata.exposureTime.isIncluded,
+                    {
                         updateMetadata(
                             image.metadata.copy(
                                 exposureTime = image.metadata.exposureTime.copy(
@@ -332,7 +358,9 @@ fun ImageTab(
                 }
 
                 IsIncludedField(
-                    label = stringResource(Res.string.iso), image.metadata.photographicSensitivity.isIncluded, {
+                    label = stringResource(Res.string.iso),
+                    image.metadata.photographicSensitivity.isIncluded,
+                    {
                         updateMetadata(
                             image.metadata.copy(
                                 photographicSensitivity = image.metadata.photographicSensitivity.copy(
@@ -353,7 +381,9 @@ fun ImageTab(
                 }
 
                 IsIncludedField(
-                    label = stringResource(Res.string.software), image.metadata.software.isIncluded, {
+                    label = stringResource(Res.string.software),
+                    image.metadata.software.isIncluded,
+                    {
                         updateMetadata(
                             image.metadata.copy(
                                 software = image.metadata.software.copy(
@@ -374,7 +404,9 @@ fun ImageTab(
                 }
 
                 IsIncludedField(
-                    stringResource(Res.string.creation_date), image.metadata.createDate.isIncluded, {
+                    stringResource(Res.string.creation_date),
+                    image.metadata.createDate.isIncluded,
+                    {
                         updateMetadata(
                             image.metadata.copy(
                                 createDate = image.metadata.createDate.copy(
@@ -383,11 +415,20 @@ fun ImageTab(
                             )
                         )
                     }) {
-                    DatePickerFieldToModal(image.metadata.createDate, {
-                        updateMetadata(
-                            image.metadata.copy(createDate = image.metadata.createDate.copy(value = it))
-                        )
-                    }, label = stringResource(Res.string.creation_date), modifier = Modifier.weight(1f))
+                    DatePickerFieldToModal(
+                        image.metadata.createDate,
+                        {
+                            updateMetadata(
+                                image.metadata.copy(
+                                    createDate = image.metadata.createDate.copy(
+                                        value = it
+                                    )
+                                )
+                            )
+                        },
+                        label = stringResource(Res.string.creation_date),
+                        modifier = Modifier.weight(1f)
+                    )
                     TimePickerFieldToModal(
                         image.metadata.createDate,
                         label = stringResource(Res.string.creation_time),
@@ -489,7 +530,10 @@ fun CustomTextField(
 
 @Composable
 fun DatePickerFieldToModal(
-    date: FieldState<Instant>, onDateSelected: (Instant?) -> Unit, label: String,modifier: Modifier = Modifier
+    date: FieldState<Instant>,
+    onDateSelected: (Instant?) -> Unit,
+    label: String,
+    modifier: Modifier = Modifier
 ) {
     var showModal by remember { mutableStateOf(false) }
 
@@ -556,7 +600,10 @@ fun DatePickerModal(
 
 @Composable
 fun TimePickerFieldToModal(
-    date: FieldState<Instant>, onDateSelected: (Int, Int) -> Unit, label: String, modifier: Modifier = Modifier
+    date: FieldState<Instant>,
+    onDateSelected: (Int, Int) -> Unit,
+    label: String,
+    modifier: Modifier = Modifier
 ) {
     var showModal by remember { mutableStateOf(false) }
 

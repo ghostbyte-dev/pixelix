@@ -2,6 +2,7 @@ package com.daniebeler.pfpixelix.domain.service.vernissage
 
 import com.daniebeler.pfpixelix.domain.model.Category
 import com.daniebeler.pfpixelix.domain.model.Country
+import com.daniebeler.pfpixelix.domain.model.License
 import com.daniebeler.pfpixelix.domain.model.Location
 import com.daniebeler.pfpixelix.domain.model.RelatedHashtag
 import com.daniebeler.pfpixelix.domain.model.Search
@@ -107,5 +108,9 @@ class VernissageExploreService(
 
     override fun getCategories(): Flow<Resource<List<Category>>> = loadListResources {
         api.getAllCategories().map { it.toDomain() }
+    }
+
+    override fun getLicenses(): Flow<Resource<List<License>>> = loadListResources {
+        api.getAllLicenses().data.map { it.toDomain() }
     }
 }

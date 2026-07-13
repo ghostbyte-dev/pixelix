@@ -3,7 +3,9 @@ package com.daniebeler.pfpixelix.utils
 import coil3.PlatformContext
 import com.daniebeler.pfpixelix.domain.model.request.MediaAttachmentMetadataRequest
 import io.github.vinceglb.filekit.PlatformFile
+import io.github.vinceglb.filekit.WebFile
 import io.github.vinceglb.filekit.path
+import org.w3c.dom.url.URL
 
 /**
  * Browser URIs. Unlike the desktop target there is no `java.net.URI` and no reconstructable file
@@ -26,12 +28,24 @@ actual val EmptyKmpUri: KmpUri = WebKmpUri("")
 
 actual fun KmpUri.getPlatformUriObject(): Any {
     val web = this as WebKmpUri
-    return web.file ?: web.value
+    return web.value
 }
 
 actual fun String.toKmpUri(): KmpUri = WebKmpUri(this)
 
-actual fun PlatformFile.toKmpUri(): KmpUri = WebKmpUri(value = path, file = this)
+/**
+ * A picked/created file on web lives only as an in-memory browser blob; its [path] is merely a file
+ * name and cannot be loaded by the browser. We therefore expose it through an object URL
+ * (`blob:…`) so Coil / `<img>` can render it, while keeping the backing [PlatformFile] so the bytes
+ * can still be recovered for uploads via [toPlatformFile].
+ */
+actual fun PlatformFile.toKmpUri(): KmpUri {
+    val displayUrl = when (val webFile = webFile) {
+        is WebFile.FileWrapper -> URL.createObjectURL(webFile.file)
+        is WebFile.DirectoryWrapper -> path
+    }
+    return WebKmpUri(value = displayUrl, file = this)
+}
 
 actual fun KmpUri.toPlatformFile(): PlatformFile =
     (this as WebKmpUri).file

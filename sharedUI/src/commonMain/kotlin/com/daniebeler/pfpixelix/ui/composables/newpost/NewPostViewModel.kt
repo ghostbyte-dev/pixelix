@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import co.touchlab.kermit.Logger
+import com.daniebeler.pfpixelix.domain.model.Category
 import com.daniebeler.pfpixelix.domain.model.Instance
 import com.daniebeler.pfpixelix.domain.model.Visibility
 import com.daniebeler.pfpixelix.domain.model.request.MediaAttachmentMetadataRequest
@@ -17,6 +18,7 @@ import com.daniebeler.pfpixelix.domain.model.request.NewPostRequest
 import com.daniebeler.pfpixelix.domain.service.file.FileService
 import com.daniebeler.pfpixelix.domain.service.file.PlatformFile
 import com.daniebeler.pfpixelix.domain.service.general.AccountService
+import com.daniebeler.pfpixelix.domain.service.general.ExploreService
 import com.daniebeler.pfpixelix.domain.service.general.InstanceService
 import com.daniebeler.pfpixelix.domain.service.general.PostEditorService
 import com.daniebeler.pfpixelix.domain.service.general.Session
@@ -44,6 +46,7 @@ import kotlin.time.Clock
 
 class NewPostViewModel @Inject constructor(
     private val postEditorService: PostEditorService,
+    private val exploreService: ExploreService,
     private val instanceService: InstanceService,
     private val fileService: FileService,
     private val platform: Platform,
@@ -68,6 +71,7 @@ class NewPostViewModel @Inject constructor(
     var sensitive: Boolean by mutableStateOf(false)
     var sensitiveText: String by mutableStateOf("")
     var audience: Visibility by mutableStateOf(Visibility.PUBLIC)
+    var disableComments: Boolean by mutableStateOf(false)
     var mediaUploadState by mutableStateOf(MediaUploadState())
     var createPostState by mutableStateOf(CreatePostState())
     var instance: Instance? = null
@@ -76,11 +80,12 @@ class NewPostViewModel @Inject constructor(
     var accountState by mutableStateOf(AccountState())
 
     var isOnGeneralPage by mutableStateOf(false)
-
+    var categoriesState by mutableStateOf(CategoriesState())
     init {
         viewModelScope.launch {
             getInstance()
             getAccount()
+            getCategories()
         }
 
         userPreferences.captionTemplateFlow
@@ -95,6 +100,27 @@ class NewPostViewModel @Inject constructor(
     fun updateCaption(newCaption: TextFieldValue) {
         caption = newCaption
         hashtagMentionsSuggestionsManager.changeText(newCaption, viewModelScope)
+    }
+
+
+    private fun getCategories() {
+        exploreService.getCategories().onEach { result ->
+            categoriesState = when (result) {
+                is Resource.Success -> {
+                    CategoriesState(categories = result.data)
+                }
+
+                is Resource.Error -> {
+                    CategoriesState(
+                        error = result.message
+                    )
+                }
+
+                is Resource.Loading -> {
+                    CategoriesState(isLoading = true)
+                }
+            }
+        }.launchIn(viewModelScope)
     }
 
     private fun getInstance() {
@@ -420,8 +446,8 @@ class NewPostViewModel @Inject constructor(
                 visibility = audience,
                 contentWarning = sensitiveText,
                 placeId = locationIdNullable,
-                commentsDisabled = false,
-                categoryId = null
+                commentsDisabled = disableComments,
+                categoryId = categoriesState.selectedCategory?.id
             )
         postEditorService.createPost(createPostDto).onEach { result ->
             createPostState = when (result) {
@@ -436,7 +462,7 @@ class NewPostViewModel @Inject constructor(
                 }
 
                 is Resource.Error -> {
-                    CreatePostState(error = result.message ?: "An unexpected error occurred")
+                    CreatePostState(error = result.message)
                 }
 
                 is Resource.Loading -> {

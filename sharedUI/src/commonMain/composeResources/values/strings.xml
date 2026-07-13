@@ -310,4 +310,18 @@
     <string name="send">Send</string>
     <string name="default_visibility">Default visibility</string>
     <string name="mentioned_only">Mentioned only</string>
+    <string name="brand">Brand</string>
+    <string name="model">Model</string>
+    <string name="flash">Flash</string>
+    <string name="lens">Lens</string>
+    <string name="focal_length">Focal length</string>
+    <string name="focal_length_35mm">Focal length 35 mm</string>
+    <string name="aperture">Aperture</string>
+    <string name="exposure_time">Exposure time</string>
+    <string name="iso">ISO</string>
+    <string name="software">Software</string>
+    <string name="creation_date">Creation date</string>
+    <string name="creation_time">Creation time</string>
+    <string name="disable_comments">Disable comments</string>
+    <string name="category">Category</string>
 </resources>

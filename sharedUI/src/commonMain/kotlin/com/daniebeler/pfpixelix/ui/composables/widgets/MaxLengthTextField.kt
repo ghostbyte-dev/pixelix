@@ -56,6 +56,7 @@ fun MaxLengthTextField(
                 onValueChange(it)
             },
             shape = shape,
+            label = { Text(stringResource(label)) },
             placeholder = { Text(stringResource(label)) },
             modifier = textFieldModifier.heightIn(max = 200.dp),
             colors = colors,

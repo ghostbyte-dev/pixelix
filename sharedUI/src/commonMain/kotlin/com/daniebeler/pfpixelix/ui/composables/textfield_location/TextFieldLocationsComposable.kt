@@ -6,6 +6,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -25,6 +26,9 @@ import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.model.Location
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposableDialog
 import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.vectorResource
+import pixelix.app.generated.resources.Res
+import pixelix.app.generated.resources.location
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -128,6 +132,14 @@ fun TextFieldLocationsComposable(
             label = { Text("City") },
             trailingIcon = {
                 ExposedDropdownMenuDefaults.TrailingIcon(expanded = viewModel.locationsDropdownOpen)
+            },
+            leadingIcon = {
+                if (!viewModel.capabilities.newPost.showCountryDropdown) {
+                    Icon(
+                        imageVector = vectorResource(Res.drawable.location),
+                        contentDescription = null
+                    )
+                }
             },
             colors = TextFieldDefaults.colors(
                 unfocusedIndicatorColor = Color.Transparent,

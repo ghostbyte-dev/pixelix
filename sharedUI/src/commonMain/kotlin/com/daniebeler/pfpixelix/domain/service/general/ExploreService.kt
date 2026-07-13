@@ -2,6 +2,7 @@ package com.daniebeler.pfpixelix.domain.service.general
 
 import com.daniebeler.pfpixelix.di.AppSingleton
 import com.daniebeler.pfpixelix.domain.model.Account
+import com.daniebeler.pfpixelix.domain.model.Category
 import com.daniebeler.pfpixelix.domain.model.Country
 import com.daniebeler.pfpixelix.domain.model.PaginatedResponse
 import com.daniebeler.pfpixelix.domain.model.Location
@@ -39,6 +40,7 @@ interface ExploreService {
 
     fun unfollowHashtag(tagId: String): Flow<Resource<Unit>>
 
+    fun getCategories(): Flow<Resource<List<Category>>>
 
     fun Flow<Resource<PaginatedResponse<List<Post>>>>.filterSensitive(hideSensitiveContent: Boolean) =
         this.map { event ->
@@ -92,4 +94,6 @@ class ExploreServiceDelegate(
     override fun followHashtag(tagId: String): Flow<Resource<Tag>> = current.followHashtag(tagId)
 
     override fun unfollowHashtag(tagId: String): Flow<Resource<Unit>> = current.unfollowHashtag(tagId)
+
+    override fun getCategories(): Flow<Resource<List<Category>>> = current.getCategories()
 }

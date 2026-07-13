@@ -1,5 +1,6 @@
 package com.daniebeler.pfpixelix.domain.service.vernissage
 
+import com.daniebeler.pfpixelix.domain.model.Category
 import com.daniebeler.pfpixelix.domain.model.Country
 import com.daniebeler.pfpixelix.domain.model.Location
 import com.daniebeler.pfpixelix.domain.model.RelatedHashtag
@@ -102,5 +103,9 @@ class VernissageExploreService(
 
     override fun unfollowHashtag(tagId: String) = loadResource {
         api.unfollowHashtag(tagId)
+    }
+
+    override fun getCategories(): Flow<Resource<List<Category>>> = loadListResources {
+        api.getAllCategories().map { it.toDomain() }
     }
 }

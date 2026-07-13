@@ -35,7 +35,7 @@ fun DefaultVisibilityPref(capabilities: Capabilities) {
     val onOptionClick = { mode: Visibility ->
         pref.defaultVisibility = mode
     }
-    val openCount = if (capabilities.newPost.includeDirectVisibility) {4} else {3}
+    val openCount = if (capabilities.newPost.includeDirectVisibility) {6} else {5}
     ExpandOptionsPref(
         leadingIcon = Res.drawable.eye,
         title = stringResource(Res.string.default_visibility),
@@ -43,7 +43,7 @@ fun DefaultVisibilityPref(capabilities: Capabilities) {
         count = 2
     ) {
         ValueOption(
-            shapes = ListItemDefaults.segmentedShapes(index = 0, count = openCount),
+            shapes = ListItemDefaults.segmentedShapes(index = 2, count = openCount),
             leadingIcon = imageVectorIconBlock(
                 imageVector = vectorResource(Res.drawable.globe),
                 contentDescription = stringResource(Res.string.audience_public)
@@ -54,7 +54,7 @@ fun DefaultVisibilityPref(capabilities: Capabilities) {
             onOptionClick = onOptionClick,
         )
         ValueOption(
-            shapes = ListItemDefaults.segmentedShapes(index = 1, count = openCount),
+            shapes = ListItemDefaults.segmentedShapes(index = 3, count = openCount),
             leadingIcon = imageVectorIconBlock(
                 imageVector = vectorResource(Res.drawable.eye_off),
                 contentDescription = stringResource(Res.string.unlisted)
@@ -65,7 +65,7 @@ fun DefaultVisibilityPref(capabilities: Capabilities) {
             onOptionClick = onOptionClick,
         )
         ValueOption(
-            shapes = ListItemDefaults.segmentedShapes(index = 2, count = openCount),
+            shapes = ListItemDefaults.segmentedShapes(index = 4, count = openCount),
             leadingIcon = imageVectorIconBlock(
                 imageVector = vectorResource(Res.drawable.lock),
                 contentDescription = stringResource(Res.string.followers_only)
@@ -77,7 +77,7 @@ fun DefaultVisibilityPref(capabilities: Capabilities) {
         )
         if (capabilities.newPost.includeDirectVisibility) {
             ValueOption(
-                shapes = ListItemDefaults.segmentedShapes(index = 3, count = openCount),
+                shapes = ListItemDefaults.segmentedShapes(index = 5, count = openCount),
                 leadingIcon = imageVectorIconBlock(
                     imageVector = vectorResource(Res.drawable.send),
                     contentDescription = stringResource(Res.string.mentioned_only)

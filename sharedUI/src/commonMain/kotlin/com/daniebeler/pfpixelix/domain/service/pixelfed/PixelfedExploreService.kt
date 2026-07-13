@@ -1,5 +1,6 @@
 package com.daniebeler.pfpixelix.domain.service.pixelfed
 
+import com.daniebeler.pfpixelix.domain.model.Category
 import com.daniebeler.pfpixelix.domain.model.Country
 import com.daniebeler.pfpixelix.domain.repository.pixelfed.PixelfedApi
 import com.daniebeler.pfpixelix.domain.service.general.ExploreService
@@ -76,5 +77,9 @@ class PixelfedExploreService(
     override fun unfollowHashtag(tagId: String) = loadResource {
         api.unfollowHashtag(tagId)
         Unit
+    }
+
+    override fun getCategories(): Flow<Resource<List<Category>>> = loadListResources {
+        emptyList()
     }
 }

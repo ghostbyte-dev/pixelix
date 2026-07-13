@@ -64,10 +64,24 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.alt_text
+import pixelix.app.generated.resources.aperture
 import pixelix.app.generated.resources.arrow_left
 import pixelix.app.generated.resources.arrow_right
+import pixelix.app.generated.resources.brand
+import pixelix.app.generated.resources.cancel
+import pixelix.app.generated.resources.creation_date
+import pixelix.app.generated.resources.creation_time
 import pixelix.app.generated.resources.datetime
+import pixelix.app.generated.resources.exposure_time
+import pixelix.app.generated.resources.flash
+import pixelix.app.generated.resources.focal_length
+import pixelix.app.generated.resources.focal_length_35mm
+import pixelix.app.generated.resources.iso
+import pixelix.app.generated.resources.lens
 import pixelix.app.generated.resources.location
+import pixelix.app.generated.resources.model
+import pixelix.app.generated.resources.ok
+import pixelix.app.generated.resources.software
 import pixelix.app.generated.resources.trash
 import kotlin.time.Clock
 import kotlin.time.Instant
@@ -174,7 +188,7 @@ fun ImageTab(
 
             if (capabilities.newPost.showMetadata) {
                 IsIncludedField(
-                    label = "Brand",
+                    label = stringResource(Res.string.brand),
                     image.metadata.make.isIncluded,
                     { updateMetadata(image.metadata.copy(make = image.metadata.make.copy(isIncluded = it))) }) {
                     CustomTextField(
@@ -184,11 +198,11 @@ fun ImageTab(
                                 image.metadata.copy(make = it)
                             )
                         },
-                        label = "Brand",
+                        label = stringResource(Res.string.brand),
                     )
                 }
                 IsIncludedField(
-                    label = "Model",
+                    label = stringResource(Res.string.model),
                     image.metadata.model.isIncluded,
                     {
                         updateMetadata(
@@ -206,11 +220,11 @@ fun ImageTab(
                                 image.metadata.copy(model = it)
                             )
                         },
-                        label = "Model",
+                        label = stringResource(Res.string.model),
                     )
                 }
                 IsIncludedField(
-                    label = "Flash",
+                    label = stringResource(Res.string.flash),
                     image.metadata.flash.isIncluded,
                     {
                         updateMetadata(
@@ -228,13 +242,13 @@ fun ImageTab(
                                 image.metadata.copy(flash = it)
                             )
                         },
-                        label = "Flash",
+                        label = stringResource(Res.string.flash)
                     )
                 }
 
 
                 IsIncludedField(
-                    label = "Lens",
+                    label = stringResource(Res.string.lens),
                     image.metadata.lens.isIncluded,
                     { updateMetadata(image.metadata.copy(lens = image.metadata.lens.copy(isIncluded = it))) }) {
                     CustomTextField(
@@ -244,11 +258,11 @@ fun ImageTab(
                                 image.metadata.copy(lens = it)
                             )
                         },
-                        label = "Lens",
+                        label = stringResource(Res.string.lens),
                     )
                 }
                 IsIncludedField(
-                    label = "Focal length",
+                    label = stringResource(Res.string.focal_length),
                     image.metadata.focalLength.isIncluded || image.metadata.focalLenIn35mmFilm.isIncluded,
                     {
                         updateMetadata(
@@ -265,18 +279,18 @@ fun ImageTab(
                             updateMetadata(
                                 image.metadata.copy(focalLength = it)
                             )
-                        }, label = "Focal length", modifier = Modifier.weight(1f)
+                        }, label = stringResource(Res.string.focal_length), modifier = Modifier.weight(1f)
                     )
                     CustomTextField(
                         value = image.metadata.focalLenIn35mmFilm, onValueChange = {
                             updateMetadata(
                                 image.metadata.copy(focalLenIn35mmFilm = it)
                             )
-                        }, label = "Focal length 35 mm", modifier = Modifier.weight(1f)
+                        }, label = stringResource(Res.string.focal_length_35mm), modifier = Modifier.weight(1f)
                     )
                 }
                 IsIncludedField(
-                    label = "Aperture", image.metadata.fNumber.isIncluded, {
+                    label = stringResource(Res.string.aperture), image.metadata.fNumber.isIncluded, {
                         updateMetadata(
                             image.metadata.copy(
                                 fNumber = image.metadata.fNumber.copy(
@@ -292,12 +306,12 @@ fun ImageTab(
                                 image.metadata.copy(fNumber = it)
                             )
                         },
-                        label = "Aperture",
+                        label = stringResource(Res.string.aperture),
                     )
                 }
 
                 IsIncludedField(
-                    label = "Exposure time", image.metadata.exposureTime.isIncluded, {
+                    label = stringResource(Res.string.exposure_time), image.metadata.exposureTime.isIncluded, {
                         updateMetadata(
                             image.metadata.copy(
                                 exposureTime = image.metadata.exposureTime.copy(
@@ -313,12 +327,12 @@ fun ImageTab(
                                 image.metadata.copy(exposureTime = it)
                             )
                         },
-                        label = "Exposure time",
+                        label = stringResource(Res.string.exposure_time),
                     )
                 }
 
                 IsIncludedField(
-                    label = "ISO", image.metadata.photographicSensitivity.isIncluded, {
+                    label = stringResource(Res.string.iso), image.metadata.photographicSensitivity.isIncluded, {
                         updateMetadata(
                             image.metadata.copy(
                                 photographicSensitivity = image.metadata.photographicSensitivity.copy(
@@ -334,12 +348,12 @@ fun ImageTab(
                                 image.metadata.copy(photographicSensitivity = it)
                             )
                         },
-                        label = "ISO",
+                        label = stringResource(Res.string.iso),
                     )
                 }
 
                 IsIncludedField(
-                    label = "Software", image.metadata.software.isIncluded, {
+                    label = stringResource(Res.string.software), image.metadata.software.isIncluded, {
                         updateMetadata(
                             image.metadata.copy(
                                 software = image.metadata.software.copy(
@@ -355,12 +369,12 @@ fun ImageTab(
                                 image.metadata.copy(software = it)
                             )
                         },
-                        placeholder = "Software",
+                        label = stringResource(Res.string.software),
                     )
                 }
 
                 IsIncludedField(
-                    "Creation date", image.metadata.createDate.isIncluded, {
+                    stringResource(Res.string.creation_date), image.metadata.createDate.isIncluded, {
                         updateMetadata(
                             image.metadata.copy(
                                 createDate = image.metadata.createDate.copy(
@@ -373,9 +387,10 @@ fun ImageTab(
                         updateMetadata(
                             image.metadata.copy(createDate = image.metadata.createDate.copy(value = it))
                         )
-                    }, modifier = Modifier.weight(1f))
+                    }, label = stringResource(Res.string.creation_date), modifier = Modifier.weight(1f))
                     TimePickerFieldToModal(
                         image.metadata.createDate,
+                        label = stringResource(Res.string.creation_time),
                         modifier = Modifier.weight(1f),
                         onDateSelected = { hour, min ->
                             val currentInstant =
@@ -474,15 +489,14 @@ fun CustomTextField(
 
 @Composable
 fun DatePickerFieldToModal(
-    date: FieldState<Instant>, onDateSelected: (Instant?) -> Unit, modifier: Modifier = Modifier
+    date: FieldState<Instant>, onDateSelected: (Instant?) -> Unit, label: String,modifier: Modifier = Modifier
 ) {
     var showModal by remember { mutableStateOf(false) }
 
     TextField(
         value = formatLocalizedOnlyDate(date.value.toString()),
         onValueChange = { },
-        label = { Text("Date") },
-        placeholder = { Text("MM/DD/YYYY") },
+        label = { Text(label) },
         trailingIcon = {
             Icon(vectorResource(Res.drawable.datetime), contentDescription = "Select date")
         },
@@ -528,11 +542,11 @@ fun DatePickerModal(
             })
             onDismiss()
         }) {
-            Text("OK")
+            Text(stringResource(Res.string.ok))
         }
     }, dismissButton = {
         TextButton(onClick = onDismiss) {
-            Text("Cancel")
+            Text(stringResource(Res.string.cancel))
         }
     }) {
         DatePicker(state = datePickerState)
@@ -542,7 +556,7 @@ fun DatePickerModal(
 
 @Composable
 fun TimePickerFieldToModal(
-    date: FieldState<Instant>, onDateSelected: (Int, Int) -> Unit, modifier: Modifier = Modifier
+    date: FieldState<Instant>, onDateSelected: (Int, Int) -> Unit, label: String, modifier: Modifier = Modifier
 ) {
     var showModal by remember { mutableStateOf(false) }
 
@@ -557,8 +571,7 @@ fun TimePickerFieldToModal(
             "$hour:$minute"
         } ?: "",
         onValueChange = { },
-        label = { Text("Time") },
-        placeholder = { Text("HH:MM") },
+        label = { Text(label) },
         trailingIcon = {
             Icon(vectorResource(Res.drawable.datetime), contentDescription = "Select time")
         },
@@ -609,14 +622,14 @@ fun TimePickerModal(
     )
     AlertDialog(onDismissRequest = onDismiss, dismissButton = {
         TextButton(onClick = onDismiss) {
-            Text("Cancel")
+            Text(stringResource(Res.string.cancel))
         }
     }, confirmButton = {
         TextButton(
             onClick = {
                 onConfirm(timePickerState.hour, timePickerState.minute)
             }) {
-            Text("OK")
+            Text(stringResource(Res.string.ok))
         }
     }, text = {
         Column(

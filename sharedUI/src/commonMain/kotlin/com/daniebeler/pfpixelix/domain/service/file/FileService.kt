@@ -22,7 +22,7 @@ import io.ktor.client.HttpClient
 import io.ktor.client.request.get
 import io.ktor.client.statement.bodyAsBytes
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
+import com.daniebeler.pfpixelix.utils.io
 import me.tatarka.inject.annotations.Inject
 import okio.Path
 import okio.Path.Companion.toPath
@@ -44,7 +44,7 @@ class FileService(
     }
 
     suspend fun download(url: String) {
-        with(Dispatchers.IO) {
+        with(Dispatchers.io) {
             val bytes = client.get(url).bodyAsBytes()
             val name = url.substringAfterLast('/')
             Logger.d { "Downloading: $name" }

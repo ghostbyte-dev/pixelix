@@ -88,7 +88,7 @@ class NotificationsTask(
 
         val request = ImageRequest.Builder(context).httpHeaders(headers).data(url)
             .interceptorCoroutineContext(
-                Dispatchers.IO
+                Dispatchers.io
             ).build()
 
         val result = context.imageLoader.execute(request)

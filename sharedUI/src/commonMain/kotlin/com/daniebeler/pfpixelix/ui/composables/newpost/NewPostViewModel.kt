@@ -39,7 +39,7 @@ import io.github.vinceglb.filekit.resolve
 import io.github.vinceglb.filekit.size
 import io.github.vinceglb.filekit.write
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
+import com.daniebeler.pfpixelix.utils.io
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -354,7 +354,7 @@ class NewPostViewModel @Inject constructor(
                     }
                 }
             }
-        }.flowOn(Dispatchers.IO).launchIn(viewModelScope)
+        }.flowOn(Dispatchers.io).launchIn(viewModelScope)
     }
 
     fun post(navController: NavController) {

@@ -1,82 +1,49 @@
 package com.daniebeler.pfpixelix.domain.service.file
 
-import co.touchlab.kermit.Logger
+import androidx.datastore.core.DataStore
+import androidx.datastore.core.okio.OkioSerializer
+import androidx.datastore.preferences.core.Preferences
+import coil3.disk.DiskCache
 import com.daniebeler.pfpixelix.di.AppComponent
-import com.daniebeler.pfpixelix.utils.KmpContext
 import com.daniebeler.pfpixelix.utils.KmpUri
 import com.daniebeler.pfpixelix.utils.toPlatformFile
-import io.github.vinceglb.filekit.FileKit
+import io.github.vinceglb.filekit.ImageFormat
 import io.github.vinceglb.filekit.PlatformFile
-import io.github.vinceglb.filekit.cacheDir
-import io.github.vinceglb.filekit.delete
-import io.github.vinceglb.filekit.exists
-import io.github.vinceglb.filekit.filesDir
-import io.github.vinceglb.filekit.isRegularFile
-import io.github.vinceglb.filekit.list
-import io.github.vinceglb.filekit.mimeType
-import io.github.vinceglb.filekit.path
-import io.github.vinceglb.filekit.resolve
-import io.github.vinceglb.filekit.saveImageToGallery
-import io.github.vinceglb.filekit.size
-import io.ktor.client.HttpClient
-import io.ktor.client.request.get
-import io.ktor.client.statement.bodyAsBytes
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
+import io.ktor.client.*
 import me.tatarka.inject.annotations.Inject
-import okio.Path
-import okio.Path.Companion.toPath
 
 
+/**
+ * Filesystem / media helper. The disk-backed operations differ per platform: JVM/Android/iOS use
+ * the okio filesystem via FileKit, whereas the browser (wasmJs) has no filesystem and no image
+ * codecs, so its [actual] either no-ops (cache) or throws (compression/writing) for the
+ * post-editing paths that are disabled on web anyway. See the `nonWebMain` / `wasmJsMain` actuals.
+ */
 @Inject
-class FileService(
-    @AppComponent.SimpleClient private val httpClient: HttpClient
-) {
+expect class FileService(@AppComponent.SimpleClient httpClient: HttpClient) {
     companion object {
-        val dataStoreDir = FileKit.filesDir.resolve("datastore")
-        val imageCacheDir = FileKit.cacheDir.resolve("image_cache")
-    }
-    private val client = httpClient.config { followRedirects = true }
-
-    suspend fun getCacheSizeInBytes(): Long = imageCacheDir.sizeRecursively()
-    suspend fun cleanCache() {
-        imageCacheDir.deleteRecursively()
+        fun createPreferences(name: String): DataStore<Preferences>
+        fun <T> createDataStore(name: String, serializer: OkioSerializer<T>): DataStore<T>
+        fun createDiskCache(): DiskCache?
     }
 
-    suspend fun download(url: String) {
-        with(Dispatchers.IO) {
-            val bytes = client.get(url).bodyAsBytes()
-            val name = url.substringAfterLast('/')
-            Logger.d { "Downloading: $name" }
-            FileKit.saveImageToGallery(bytes, name)
-        }
-    }
+    suspend fun getCacheSizeInBytes(): Long
+    suspend fun cleanCache()
 
-    fun getMimeType(file: PlatformFile): String = file.mimeType().toString()
+    suspend fun download(url: String)
+    fun getMimeType(file: PlatformFile): String
 
-    private suspend fun PlatformFile.sizeRecursively(): Long {
-        return when {
-            !exists() -> 0L
-            isRegularFile() -> size()
-            else -> list().sumOf { it.sizeRecursively() }
-        }
-    }
+    fun exists(file: PlatformFile): Boolean
 
-    private suspend fun PlatformFile.deleteRecursively() {
-        when {
-            !exists() -> {
-                return
-            }
-            isRegularFile() -> {
-                delete(false)
-            }
-            else -> {
-                list().forEach { it.deleteRecursively() }
-                delete(false)
-            }
-        }
-    }
+    suspend fun createTempFile(fileName: String, bytes: ByteArray): PlatformFile
+
+    suspend fun compressImage(
+        bytes: ByteArray,
+        quality: Int,
+        maxWidth: Int,
+        maxHeight: Int,
+        imageFormat: ImageFormat
+    ): ByteArray
 }
 
 internal fun PlatformFile(kmpUri: KmpUri): PlatformFile = kmpUri.toPlatformFile()
-internal fun PlatformFile.toOkIoPath(): Path = path.toPath()

@@ -66,7 +66,7 @@ class SavedSearchesService(
                 }
                 currentData.copy(accountData = newAccountData)
             }
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             Logger.e("Add item error", e)
         }
     }
@@ -84,7 +84,7 @@ class SavedSearchesService(
                 }
                 currentData.copy(accountData = newAccountData)
             }
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             Logger.e("deleteElement error", e)
         }
     }
@@ -98,7 +98,7 @@ class SavedSearchesService(
     suspend fun clearSavedSearches() {
         try {
             dataStore.updateData { SavedSearches() }
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             Logger.e("clearSavedSearches error", e)
         }
     }

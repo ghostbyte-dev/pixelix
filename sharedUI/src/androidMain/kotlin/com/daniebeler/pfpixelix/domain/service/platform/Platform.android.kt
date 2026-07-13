@@ -71,7 +71,7 @@ actual class Platform actual constructor(
         actual fun getAppVersion(): String {
         return try {
             context.packageManager.getPackageInfo(context.packageName, 0).versionName
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             Logger.e("appVersionName", e)
             null
         }.orEmpty()

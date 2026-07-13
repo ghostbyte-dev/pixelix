@@ -54,7 +54,7 @@ fun EmptyImageTab(addImage: (KmpUri, MediaAttachmentMetadataRequest) -> Unit) {
                         withContext(Dispatchers.Main) {
                             addImage(file.toKmpUri(), extractedMetadata)
                         }
-                    } catch (e: Exception) {
+                    } catch (e: Throwable) {
                         e.printStackTrace()
                     }
                 }

@@ -60,7 +60,7 @@ class NotificationsTask(
             } else {
                 throw Exception()
             }
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             if (runAttemptCount < 4) {
                 updateNotificationsWidget(
                     emptyList(),
@@ -88,7 +88,7 @@ class NotificationsTask(
 
         val request = ImageRequest.Builder(context).httpHeaders(headers).data(url)
             .interceptorCoroutineContext(
-                Dispatchers.IO
+                Dispatchers.io
             ).build()
 
         val result = context.imageLoader.execute(request)

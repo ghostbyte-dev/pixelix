@@ -512,6 +512,7 @@ fun DatePickerFieldToModal(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DatePickerModal(
     onDateSelected: (Instant?) -> Unit, onDismiss: () -> Unit

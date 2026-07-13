@@ -15,7 +15,7 @@ plugins {
 }
 
 ktorfit {
-    compilerPluginVersion.set("2.3.3")
+    compilerPluginVersion.set("2.3.5")
 }
 
 kotlin {
@@ -41,7 +41,25 @@ kotlin {
         }
     }
 
+    wasmJs { browser() }
+
     sourceSets {
+        applyDefaultHierarchyTemplate()
+
+        val skikoMain by creating {
+            dependsOn(commonMain.get())
+            iosMain.get().dependsOn(this)
+            jvmMain.get().dependsOn(this)
+            webMain.get().dependsOn(this)
+        }
+
+        val nonWebMain by creating {
+            dependsOn(commonMain.get())
+            androidMain.get().dependsOn(this)
+            iosMain.get().dependsOn(this)
+            jvmMain.get().dependsOn(this)
+        }
+
         commonMain.dependencies {
             //compose
             api(libs.runtime)
@@ -79,13 +97,7 @@ kotlin {
             implementation(libs.kotlin.inject.runtime)
 
             //datastore
-            implementation(libs.androidx.datastore)
             implementation(libs.androidx.datastore.preferences)
-
-            //shared preferences
-            implementation(libs.multiplatform.settings)
-            implementation(libs.multiplatform.settings.coroutines)
-            implementation(libs.multiplatform.settings.datastore)
 
             //file picker
             implementation(libs.filekit.compose)
@@ -164,7 +176,8 @@ dependencies {
         "kspAndroid",
         "kspJvm",
         "kspIosArm64",
-        "kspIosSimulatorArm64"
+        "kspIosSimulatorArm64",
+        "kspWasmJs"
     ).forEach {
         add(it, libs.kotlin.inject.compiler.ksp)
     }

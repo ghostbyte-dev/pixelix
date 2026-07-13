@@ -27,19 +27,13 @@ import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.ui.composables.profile.AccountState
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import com.daniebeler.pfpixelix.utils.KmpUri
-import io.github.vinceglb.filekit.FileKit
+import com.daniebeler.pfpixelix.utils.io
 import io.github.vinceglb.filekit.ImageFormat
-import io.github.vinceglb.filekit.cacheDir
-import io.github.vinceglb.filekit.compressImage
 import io.github.vinceglb.filekit.dialogs.compose.util.toImageBitmap
-import io.github.vinceglb.filekit.exists
 import io.github.vinceglb.filekit.nameWithoutExtension
 import io.github.vinceglb.filekit.readBytes
-import io.github.vinceglb.filekit.resolve
 import io.github.vinceglb.filekit.size
-import io.github.vinceglb.filekit.write
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -169,7 +163,7 @@ class NewPostViewModel @Inject constructor(
 
     fun addImage(uri: KmpUri, metadata: MediaAttachmentMetadataRequest) {
         val file = PlatformFile(uri)
-        if (!file.exists()) {
+        if (!fileService.exists(file)) {
             return
         }
         val fileType = fileService.getMimeType(file)
@@ -230,7 +224,7 @@ class NewPostViewModel @Inject constructor(
         try {
 
             val file = PlatformFile(uri)
-            if (!file.exists()) {
+            if (!fileService.exists(file)) {
                 addImageError = AddMediaError(
                     AddMediaErrorType.ERROR,
                     "Unexpected Error",
@@ -246,13 +240,12 @@ class NewPostViewModel @Inject constructor(
             )
             val timestamp = Clock.System.now().toEpochMilliseconds()
             val compressedFileName = "compressed_${timestamp}_${file.nameWithoutExtension}.jpg"
-            val compressedFile = FileKit.cacheDir.resolve(compressedFileName)
-            compressedFile.write(compressedBytes)
+            val compressedFile = fileService.createTempFile(compressedFileName, compressedBytes)
             val safeUri = platform.toSafeUri(compressedFile)
             compressionLoading = false
             //TODO: fix compress, (metadata has to be kept the same)
             addImage(safeUri, MediaAttachmentMetadataRequest())
-        } catch (exception: Exception) {
+        } catch (exception: Throwable) {
             Logger.e(exception.message ?: "unexpected error", null, "compression")
         }
     }
@@ -275,14 +268,14 @@ class NewPostViewModel @Inject constructor(
                 "compression"
             )
             try {
-                currentBytes = FileKit.compressImage(
+                currentBytes = fileService.compressImage(
                     bytes = bytes,
                     quality = currentQuality,
                     maxWidth = currentMaxWidth,
                     maxHeight = currentMaxHeight,
                     imageFormat = ImageFormat.JPEG
                 )
-            } catch (exception: Exception) {
+            } catch (exception: Throwable) {
                 Logger.e(exception.message ?: "unexpected error", null, "compression")
                 break
             }
@@ -354,7 +347,7 @@ class NewPostViewModel @Inject constructor(
                     }
                 }
             }
-        }.flowOn(Dispatchers.IO).launchIn(viewModelScope)
+        }.flowOn(Dispatchers.io).launchIn(viewModelScope)
     }
 
     fun post(navController: NavController) {

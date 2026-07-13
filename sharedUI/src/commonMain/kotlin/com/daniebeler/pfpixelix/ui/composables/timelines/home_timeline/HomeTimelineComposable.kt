@@ -53,7 +53,7 @@ fun HomeTimelineComposable(
         } catch (e: CancellationException) {
             Logger.d("BackToTop") {"collector cancelled on tab $tabIndex"}
             throw e  // this one we rethrow — it means the LaunchedEffect itself was cancelled
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             Logger.d("BackToTop") {"collector error on tab $tabIndex: ${e.message}"}
         }
     }

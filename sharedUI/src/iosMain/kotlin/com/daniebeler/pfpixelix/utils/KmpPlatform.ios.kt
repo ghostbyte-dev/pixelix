@@ -82,7 +82,7 @@ actual fun parseExifMetadata(bytes: ByteArray): MediaAttachmentMetadataRequest {
             software = FieldState(tiffDict?.get("Software") as? String),
             flash = FieldState(getFlashReadableString(exifDict?.get(kCGImagePropertyExifFlash)?.toString()))
         )
-    } catch (e: Exception) {
+    } catch (e: Throwable) {
         MediaAttachmentMetadataRequest()
     }
 }

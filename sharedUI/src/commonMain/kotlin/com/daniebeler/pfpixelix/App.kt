@@ -2,48 +2,11 @@ package com.daniebeler.pfpixelix
 
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBars
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.DrawerValue
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.FloatingToolbarColors
-import androidx.compose.material3.FloatingToolbarDefaults
-import androidx.compose.material3.FloatingToolbarExitDirection
-import androidx.compose.material3.FloatingToolbarScrollBehavior
-import androidx.compose.material3.HorizontalFloatingToolbar
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.*
 import androidx.compose.material3.MaterialTheme.shapes
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.ModalDrawerSheet
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.rememberDrawerState
-import androidx.compose.material3.rememberModalBottomSheetState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.compositionLocalOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.key
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -77,22 +40,8 @@ import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import org.jetbrains.compose.resources.DrawableResource
-import org.jetbrains.compose.resources.StringResource
-import org.jetbrains.compose.resources.painterResource
-import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.resources.vectorResource
-import pixelix.app.generated.resources.Res
-import pixelix.app.generated.resources.bookmark
-import pixelix.app.generated.resources.default_avatar
-import pixelix.app.generated.resources.home
-import pixelix.app.generated.resources.house
-import pixelix.app.generated.resources.house_strong
-import pixelix.app.generated.resources.notifications
-import pixelix.app.generated.resources.notifications_strong
-import pixelix.app.generated.resources.profile
-import pixelix.app.generated.resources.search
-import pixelix.app.generated.resources.search_strong
+import org.jetbrains.compose.resources.*
+import pixelix.app.generated.resources.*
 
 val LocalSnackbarPresenter = compositionLocalOf<(String) -> Unit> {
     error("No LocalSnackbarPresenter provided")
@@ -101,7 +50,9 @@ val LocalSnackbarPresenter = compositionLocalOf<(String) -> Unit> {
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun App(
-    appComponent: AppComponent, exitApp: () -> Unit
+    appComponent: AppComponent,
+    onNavHostReady: suspend (NavController) -> Unit = {},
+    exitApp: () -> Unit
 ) {
     val uriHandler = LocalUriHandler.current
     DisposableEffect(uriHandler) {
@@ -141,6 +92,7 @@ fun App(
         PixelixTheme {
             var activeUser by remember { mutableStateOf<String?>("unknown") }
             LaunchedEffect(Unit) {
+                appComponent.preferences.preload()
                 val authService = appComponent.authService
                 authService.openSessionIfExist()
                 authService.activeUser.collect {
@@ -188,6 +140,13 @@ fun App(
                             }
                         }
                     }
+                }
+
+                // Bridges the NavController to the host platform once the graph is set up.
+                // On web this binds browser Back/Forward and the address bar to navigation;
+                // other platforms pass the default no-op.
+                LaunchedEffect(navController) {
+                    onNavHostReady(navController)
                 }
 
                 CompositionLocalProvider(

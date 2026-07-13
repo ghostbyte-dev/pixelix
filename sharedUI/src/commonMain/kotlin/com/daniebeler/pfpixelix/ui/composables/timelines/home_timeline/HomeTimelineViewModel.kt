@@ -36,7 +36,7 @@ class HomeTimelineViewModel @Inject constructor(
         accountService.getAccountSettings().onEach { result ->
             when (result) {
                 is Resource.Success -> {
-                    enableReblogs = result.data.enableReblogs
+                    enableReblogs = result.data.enableReblogs ?: false
                     loadItems(false)
                 }
                 is Resource.Error -> loadItems(false)

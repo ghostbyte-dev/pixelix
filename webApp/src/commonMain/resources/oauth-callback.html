@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Signing in…</title>
+    </head>
+    <body>
+        <p>You can close this window.</p>
+        <script>
+            // OAuth redirect target. The Pixelix tab that started the login flow is waiting for the
+            // auth code; hand the full redirect URL (with ?code=...) back to it and close ourselves.
+            // The opener is same-origin, so we call the callback it installed on `window`.
+            (function () {
+                try {
+                    if (window.opener && !window.opener.closed &&
+                        typeof window.opener.pixelixOAuthCallback === 'function') {
+                        window.opener.pixelixOAuthCallback(window.location.href);
+                    }
+                } catch (e) { /* opener gone or cross-origin: nothing we can do */ }
+                window.close();
+            })();
+        </script>
+    </body>
+</html>

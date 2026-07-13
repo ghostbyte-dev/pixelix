@@ -11,7 +11,7 @@ actual fun formatLocalized(dataDate: String): String {
             java.text.DateFormat.SHORT,
             java.text.DateFormat.MEDIUM
         ).format(date)
-    } catch (e: Exception) {
+    } catch (e: Throwable) {
         e.printStackTrace()
         ""
     }
@@ -25,7 +25,7 @@ actual fun formatLocalizedOnlyDate(dataDate: String): String {
         java.text.DateFormat.getDateInstance(
             java.text.DateFormat.SHORT
         ).format(date)
-    } catch (e: Exception) {
+    } catch (e: Throwable) {
         e.printStackTrace()
         ""
     }

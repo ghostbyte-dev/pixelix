@@ -8,15 +8,13 @@ import com.daniebeler.pfpixelix.domain.repository.pixelfed.PixelfedAuthApi.Compa
 import com.daniebeler.pfpixelix.domain.service.general.AuthService
 import com.daniebeler.pfpixelix.domain.service.general.AuthService.Companion.clientName
 import com.daniebeler.pfpixelix.domain.service.general.AuthService.Companion.grantType
-import com.daniebeler.pfpixelix.domain.service.general.AuthService.Companion.redirectUrl
-import com.daniebeler.pfpixelix.domain.service.platform.Platform
-import com.daniebeler.pfpixelix.domain.service.search.SavedSearchesService
 import com.daniebeler.pfpixelix.domain.service.general.BackendType
 import com.daniebeler.pfpixelix.domain.service.general.Session
-import com.daniebeler.pfpixelix.domain.service.pixelfed.model.toDomain
+import com.daniebeler.pfpixelix.domain.service.platform.Platform
+import com.daniebeler.pfpixelix.domain.service.platform.redirectUrl
+import com.daniebeler.pfpixelix.domain.service.search.SavedSearchesService
 import com.daniebeler.pfpixelix.ui.events.SystemUrlHandler
-import io.ktor.http.URLBuilder
-import io.ktor.http.Url
+import io.ktor.http.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -38,12 +36,12 @@ class PixelfedAuthService(
     override suspend fun auth(host: String) {
         val serverUrl = getServerUrl(host)
         val api = createPixelfedAuthApi(serverUrl, json)
-        val authData = api.getAuthData(clientName, redirectUrl)
+        val authData = api.getAuthData(clientName, platform.redirectUrl)
 
         val authUrl = URLBuilder("${serverUrl}oauth/authorize").apply {
             parameters.apply {
                 append("response_type", "code")
-                append("redirect_uri", redirectUrl)
+                append("redirect_uri", platform.redirectUrl)
                 append("client_id", authData.clientId)
             }
         }.build()
@@ -63,7 +61,7 @@ class PixelfedAuthService(
             authData.clientId,
             authData.clientSecret,
             code,
-            redirectUrl,
+            platform.redirectUrl,
             grantType
         )
 

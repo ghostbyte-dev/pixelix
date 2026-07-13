@@ -68,7 +68,7 @@ class PixelfedPostService(
             val filteredPosts = response.data.filter { it.mediaAttachments.isNotEmpty() }
             val filteredResponse = response.copy(data = filteredPosts)
             emit(Resource.Success(filteredResponse))
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             emit(Resource.Error(e.message ?: "Unknown error"))
         }
 
@@ -120,7 +120,7 @@ class PixelfedPostService(
             val filteredPosts = response.data.filter { it.mediaAttachments.isNotEmpty() }
             val filteredResponse = response.copy(data = filteredPosts)
             emit(Resource.Success(filteredResponse))
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             emit(Resource.Error(e.message ?: "Unknown error"))
         }
     }

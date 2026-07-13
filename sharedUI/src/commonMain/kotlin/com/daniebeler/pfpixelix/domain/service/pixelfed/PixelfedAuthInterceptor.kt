@@ -46,7 +46,7 @@ class PixelfedAuthInterceptor(
             val isUnauthenticated = try {
                 val json = Json.Default.parseToJsonElement(errorBodyText).jsonObject
                 json["error"]?.jsonPrimitive?.content == "Unauthenticated."
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 false
             }
             if (isUnauthenticated) {
@@ -60,7 +60,7 @@ class PixelfedAuthInterceptor(
                         globalNavigator.emit(GlobalNavigationEvent.NavigateToLogin)
                         executedRequest
                     }
-                } catch (e: Exception) {
+                } catch (e: Throwable) {
                     Logger.Companion.e(tag = "Unauthorized") {
                         "error refreshing token" + e.message
                     }

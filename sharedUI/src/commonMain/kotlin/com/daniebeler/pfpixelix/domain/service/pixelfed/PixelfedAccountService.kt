@@ -82,7 +82,7 @@ class PixelfedAccountService(
                         append(HttpHeaders.ContentType, fileType)
                         append(HttpHeaders.ContentDisposition, fileName)
                     })
-                } catch (e: Exception) {
+                } catch (e: Throwable) {
                     Logger.Companion.e("AccountService.updateAccount error", e)
                 }
             }
@@ -149,7 +149,7 @@ class PixelfedAccountService(
                     transform = { dtoList -> dtoList.map { it.toDomain() } }
                 )
             emit(Resource.Success(response))
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             emit(Resource.Error(e.message ?: "Unknown error"))
         }
     }
@@ -166,7 +166,7 @@ class PixelfedAccountService(
                 )
 
             emit(Resource.Success(response))
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             emit(Resource.Error(e.message ?: "Unknown error"))
         }
     }

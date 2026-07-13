@@ -23,7 +23,7 @@ internal inline fun <reified T> loadResource(
         val errorBody = e.response.bodyAsText()
         val errorMessage = parseErrorMessage(errorBody) ?: "Client Error"
         emit(Resource.Error(errorMessage))
-    } catch (e: Exception) {
+    } catch (e: Throwable) {
         emit(Resource.Error(e.message ?: "Unknown Error"))
     }
 }
@@ -40,7 +40,7 @@ internal inline fun <reified T> loadListResources(
         val errorBody = e.response.bodyAsText()
         val errorMessage = parseErrorMessage(errorBody) ?: "Client Error"
         emit(Resource.Error(errorMessage))
-    } catch (e: Exception) {
+    } catch (e: Throwable) {
         emit(Resource.Error(e.message ?: "Unknown Error"))
     }
 }
@@ -56,7 +56,7 @@ internal inline fun <reified T: Identifiable> loadPaginatedListResources(
         val errorBody = e.response.bodyAsText()
         val errorMessage = parseErrorMessage(errorBody) ?: "Client Error"
         emit(Resource.Error(errorMessage))
-    } catch (e: Exception) {
+    } catch (e: Throwable) {
         emit(Resource.Error(e.message ?: "Unknown Error"))
     }
 }
@@ -72,7 +72,7 @@ internal inline fun <reified DTO : DtoMappable<DOM>, reified DOM> loadVernissage
         val errorBody = e.response.bodyAsText()
         val errorMessage = parseErrorMessage(errorBody) ?: "Client Error"
         emit(Resource.Error(errorMessage))
-    } catch (e: Exception) {
+    } catch (e: Throwable) {
         emit(Resource.Error(e.message ?: "Unknown Error"))
     }
 }
@@ -82,7 +82,7 @@ private fun parseErrorMessage(jsonString: String): String? {
     return try {
         val json = Json { ignoreUnknownKeys = true }
         json.decodeFromString<Map<String, String>>(jsonString)["error"]
-    } catch (e: Exception) {
+    } catch (e: Throwable) {
         null
     }
 }

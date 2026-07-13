@@ -20,7 +20,7 @@ actual class Platform actual constructor(
         if (os.contains("linux")) {
             try {
                 ProcessBuilder("xdg-open", url).start()
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 println("Flatpak: Failed to open URL via xdg-open: ${e.message}")
                 runCatching {
                     if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
@@ -33,7 +33,7 @@ actual class Platform actual constructor(
                 if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
                     Desktop.getDesktop().browse(URI(url))
                 }
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 e.printStackTrace()
             }
         }

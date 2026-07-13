@@ -6,18 +6,14 @@ import com.daniebeler.pfpixelix.domain.model.Credentials
 import com.daniebeler.pfpixelix.domain.model.SessionStorage
 import com.daniebeler.pfpixelix.domain.repository.vernissage.VernissageAuthApi.Companion.createVernissageAuthApi
 import com.daniebeler.pfpixelix.domain.service.general.AuthService
-import com.daniebeler.pfpixelix.domain.service.general.AuthService.Companion.redirectUrl
 import com.daniebeler.pfpixelix.domain.service.general.BackendType
 import com.daniebeler.pfpixelix.domain.service.general.Session
 import com.daniebeler.pfpixelix.domain.service.platform.Platform
+import com.daniebeler.pfpixelix.domain.service.platform.redirectUrl
 import com.daniebeler.pfpixelix.domain.service.search.SavedSearchesService
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.JwtClaims
-import com.daniebeler.pfpixelix.domain.service.vernissage.model.toDomain
 import com.daniebeler.pfpixelix.ui.events.SystemUrlHandler
-import io.ktor.http.URLBuilder
-import io.ktor.http.Url
-import io.ktor.http.encodedPath
-import io.ktor.http.takeFrom
+import io.ktor.http.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -56,7 +52,7 @@ class VernissageAuthService(
             parameters.apply {
                 append("response_type", "code")
                 append("client_id", authData.clientId)
-                append("redirect_uri", redirectUrl)
+                append("redirect_uri", platform.redirectUrl)
                 append("scope", scope)
                 append("state", state)
                 append("nonce", nonce)
@@ -80,7 +76,7 @@ class VernissageAuthService(
             clientId = clientId,
             clientSecret = "",
             code = code,
-            redirectUri = redirectUrl,
+            redirectUri = platform.redirectUrl,
             grantType = "authorization_code"
         )
 
@@ -203,7 +199,7 @@ class VernissageAuthService(
             val decoded = Base64.decode(payload).decodeToString()
 
             Json { ignoreUnknownKeys = true }.decodeFromString<JwtClaims>(decoded)
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             null
         }
     }

@@ -291,7 +291,7 @@ fun TimelineControls(
                 val mins = remaining / 60
                 val secs = remaining % 60
                 "${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}"
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 "--:--"
             }
         }

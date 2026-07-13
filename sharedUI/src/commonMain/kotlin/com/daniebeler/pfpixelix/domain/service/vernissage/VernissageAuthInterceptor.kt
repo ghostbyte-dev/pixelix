@@ -50,7 +50,7 @@ class VernissageAuthInterceptor(
                     globalNavigator.emit(GlobalNavigationEvent.NavigateToLogin)
                     executedRequest
                 }
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 Logger.e(tag = "Unauthorized") {
                     "error refreshing token" + e.message
                 }

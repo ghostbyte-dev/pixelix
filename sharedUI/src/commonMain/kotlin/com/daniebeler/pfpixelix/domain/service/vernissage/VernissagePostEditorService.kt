@@ -12,7 +12,6 @@ import com.daniebeler.pfpixelix.domain.service.pixelfed.model.toDomain
 import com.daniebeler.pfpixelix.domain.service.utils.loadResource
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.toDomain
 import com.daniebeler.pfpixelix.utils.KmpUri
-import io.github.vinceglb.filekit.exists
 import io.github.vinceglb.filekit.nameWithoutExtension
 import io.github.vinceglb.filekit.readBytes
 import io.ktor.client.request.forms.MultiPartFormDataContent
@@ -29,7 +28,7 @@ class VernissagePostEditorService(
 
     override fun uploadMedia(uri: KmpUri) = loadResource {
         val file = PlatformFile(uri)
-        if (!file.exists()) error("File doesn't exist")
+        if (!fileService.exists(file)) error("File doesn't exist")
         val bytes = file.readBytes()
         val mimeType = fileService.getMimeType(file)
         /*val thumbnail = if (mimeType.startsWith("image")) {

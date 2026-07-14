@@ -31,6 +31,7 @@ val NoCapabilities = Capabilities(
         showLocationInputInGeneral = false,
         showLocationInputInImageTab = false,
         showMetadata = false,
-        showCategoriesDropdown = false
+        showCategoriesDropdown = false,
+        supportLicenses = false,
     )
 )

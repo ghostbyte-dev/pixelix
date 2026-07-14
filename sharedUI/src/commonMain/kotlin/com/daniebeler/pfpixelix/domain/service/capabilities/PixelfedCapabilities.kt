@@ -33,6 +33,7 @@ val PixelfedCapabilities = Capabilities(
         showLocationInputInGeneral = true,
         showLocationInputInImageTab = false,
         showMetadata = false,
-        showCategoriesDropdown = false
+        showCategoriesDropdown = false,
+        supportLicenses = false,
     )
 )

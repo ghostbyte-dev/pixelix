@@ -46,6 +46,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.domain.model.Visibility
+import com.daniebeler.pfpixelix.ui.composables.licences_dropdown.LicensesDropdownComposable
 import com.daniebeler.pfpixelix.ui.composables.textfield_location.TextFieldLocationsComposable
 import com.daniebeler.pfpixelix.ui.composables.widgets.MaxLengthTextField
 import com.daniebeler.pfpixelix.ui.composables.widgets.SuggestionsBar
@@ -340,7 +341,6 @@ fun GeneralTab(
                     }
                 }
             }
-
 
             NewPostPref(
                 leadingIcon = Res.drawable.chatbubble,

@@ -52,5 +52,6 @@ data class NewPostCapabilities(
     val showLocationInputInGeneral: Boolean,
     val showLocationInputInImageTab: Boolean,
     val showMetadata: Boolean,
-    val showCategoriesDropdown: Boolean
+    val showCategoriesDropdown: Boolean,
+    val supportLicenses: Boolean,
 )

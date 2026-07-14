@@ -190,17 +190,19 @@ fun ImageTab(
                 )
             }
 
-            LicensesDropdownComposable(
-                licenses = availableLicenses,
-                selectedLicense = image.metadata.license,
-                onLicenseSelected = {
-                    updateMetadata(
-                        image.metadata.copy(
-                            license = it
+            if (capabilities.newPost.supportLicenses) {
+                LicensesDropdownComposable(
+                    licenses = availableLicenses,
+                    selectedLicense = image.metadata.license,
+                    onLicenseSelected = {
+                        updateMetadata(
+                            image.metadata.copy(
+                                license = it
+                            )
                         )
-                    )
-                }
-            )
+                    }
+                )
+            }
 
             if (capabilities.newPost.showMetadata) {
                 IsIncludedField(

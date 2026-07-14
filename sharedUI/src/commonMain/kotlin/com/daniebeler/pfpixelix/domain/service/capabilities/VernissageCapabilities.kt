@@ -31,6 +31,7 @@ val VernissageCapabilities = Capabilities(
         showLocationInputInGeneral = false,
         showLocationInputInImageTab = true,
         showMetadata = true,
-        showCategoriesDropdown = true
+        showCategoriesDropdown = true,
+        supportLicenses = true,
     )
 )

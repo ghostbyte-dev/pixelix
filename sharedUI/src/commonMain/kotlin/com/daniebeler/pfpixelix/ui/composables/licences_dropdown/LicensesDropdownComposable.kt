@@ -12,21 +12,20 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.model.License
-import com.daniebeler.pfpixelix.utils.KmpUri
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.confirm
 import pixelix.app.generated.resources.license
+import pixelix.app.generated.resources.license_label
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LicensesDropdownComposable(
@@ -43,12 +42,12 @@ fun LicensesDropdownComposable(
         modifier = modifier
     ) {
         TextField(
-            value = selectedLicense?.name ?: "",
+            value = getLicenseName(selectedLicense),
             onValueChange = { isExpanded = true },
             modifier = Modifier
                 .fillMaxWidth()
                 .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable, enabled = true),
-            label = { Text(stringResource(Res.string.license)) },
+            label = { Text(stringResource(Res.string.license_label)) },
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = isExpanded) },
             leadingIcon = {
                 Icon(imageVector = vectorResource(Res.drawable.license), contentDescription = null)
@@ -69,7 +68,7 @@ fun LicensesDropdownComposable(
         ) {
             licenses.forEach { license ->
                 DropdownMenuItem(
-                    text = { Text(license.name ?: "unknown license") },
+                    text = { Text(getLicenseName(license)) },
                     onClick = {
                         onLicenseSelected(license)
                         isExpanded = false
@@ -87,4 +86,15 @@ fun LicensesDropdownComposable(
             }
         }
     }
+}
+
+private fun getLicenseName(license: License?): String {
+    if (license == null){
+        return ""
+    }
+    if (license.code.isNullOrBlank()) {
+        return license.name ?: ""
+    }
+
+    return license.name + " (" + license.code + ")"
 }

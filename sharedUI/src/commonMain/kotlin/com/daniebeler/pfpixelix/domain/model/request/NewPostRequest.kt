@@ -24,7 +24,8 @@ fun NewPostRequest.toPixelfed(): PixelfedNewPostRequest {
         sensitive = this.sensitive,
         visibility = this.visibility.toPixelfed(),
         spoilerText = this.contentWarning,
-        placeId = this.placeId
+        placeId = this.placeId,
+        commentsDisabled = this.commentsDisabled
     )
 }
 

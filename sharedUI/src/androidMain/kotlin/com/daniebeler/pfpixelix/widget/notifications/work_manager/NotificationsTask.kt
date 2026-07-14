@@ -12,6 +12,7 @@ import coil3.request.SuccessResult
 import coil3.toBitmap
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.di.AppComponent
+import com.daniebeler.pfpixelix.utils.io
 import com.daniebeler.pfpixelix.utils.timeAgo
 import com.daniebeler.pfpixelix.widget.notifications.models.NotificationStoreItem
 import com.daniebeler.pfpixelix.widget.notifications.updateNotificationsWidget
@@ -88,7 +89,7 @@ class NotificationsTask(
 
         val request = ImageRequest.Builder(context).httpHeaders(headers).data(url)
             .interceptorCoroutineContext(
-                Dispatchers.IO
+                Dispatchers.io
             ).build()
 
         val result = context.imageLoader.execute(request)

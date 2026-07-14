@@ -27,6 +27,7 @@ import coil3.toBitmap
 import coil3.transform.RoundedCornersTransformation
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.di.AppComponent
+import com.daniebeler.pfpixelix.utils.io
 import com.daniebeler.pfpixelix.widget.latest_image.updateLatestImageWidget
 import com.daniebeler.pfpixelix.widget.latest_image.updateLatestImageWidgetRefreshing
 import com.daniebeler.pfpixelix.widget.notifications.updateNotificationsWidget
@@ -91,7 +92,7 @@ class LatestImageTask(
 
         val request = ImageRequest.Builder(context).httpHeaders(headers).data(url)
             .interceptorCoroutineContext(
-                Dispatchers.IO
+                Dispatchers.io
             ).transformations(RoundedCornersTransformation(82f)) // Built-in Coil rounding
             .bitmapConfig(Bitmap.Config.ARGB_8888).build() // Forces software bitmap.build()
 

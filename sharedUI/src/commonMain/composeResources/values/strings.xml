@@ -324,4 +324,6 @@
     <string name="creation_time">Creation time</string>
     <string name="disable_comments">Disable comments</string>
     <string name="category">Category</string>
+    <string name="next">Next</string>
+    <string name="publish">Publish</string>
 </resources>

@@ -26,6 +26,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
@@ -46,6 +47,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -58,6 +60,7 @@ import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.model.request.MediaAttachmentMetadataRequest
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposableDialog
+import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pfpixelix.ui.composables.widgets.CustomLoader
 import com.daniebeler.pfpixelix.utils.KmpUri
 import com.daniebeler.pfpixelix.utils.getPlatformUriObject
@@ -73,7 +76,9 @@ import pixelix.app.generated.resources.cancel
 import pixelix.app.generated.resources.cancel_post_warning
 import pixelix.app.generated.resources.discard
 import pixelix.app.generated.resources.new_post
+import pixelix.app.generated.resources.next
 import pixelix.app.generated.resources.ok
+import pixelix.app.generated.resources.publish
 import pixelix.app.generated.resources.release
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
@@ -151,9 +156,10 @@ fun NewPostComposable(
                             contentPadding = ButtonDefaults.contentPaddingFor(
                                 topBarButtonSize, hasEndIcon = true
                             ),
+                            enabled = viewModel.images.all { !it.isLoading },
                             onClick = { viewModel.isOnGeneralPage = true },
                         ) {
-                            Text("Next", style = ButtonDefaults.textStyleFor(topBarButtonSize))
+                            Text(stringResource(Res.string.next), style = ButtonDefaults.textStyleFor(topBarButtonSize))
                             Spacer(Modifier.size(ButtonDefaults.iconSpacingFor(topBarButtonSize)))
                             Icon(
                                 vectorResource(Res.drawable.arrow_right),
@@ -170,7 +176,7 @@ fun NewPostComposable(
                             ),
                             onClick = { showReleaseAlert = true },
                         ) {
-                            Text("Publish", style = ButtonDefaults.textStyleFor(topBarButtonSize))
+                            Text(stringResource(Res.string.publish),style = ButtonDefaults.textStyleFor(topBarButtonSize))
                         }
                     }
                 }, colors = TopAppBarDefaults.topAppBarColors(
@@ -199,12 +205,13 @@ fun NewPostComposable(
                             itemsIndexed(viewModel.images) { index, image ->
                                 val isSelected = pagerState.currentPage == index
 
-                                AsyncImage(
-                                    model = image.imageUri.getPlatformUriObject(), // Use your actual uri property here
-                                    contentDescription = "Thumbnail $index",
-                                    contentScale = ContentScale.Crop,
-                                    modifier = Modifier.size(80.dp).clip(RoundedCornerShape(12.dp))
-                                        .alpha(if (isSelected) 1f else 0.5f).then(
+                                Box(
+                                    contentAlignment = Alignment.Center,
+                                    modifier = Modifier
+                                        .size(80.dp)
+                                        .clip(RoundedCornerShape(12.dp))
+                                        .alpha(if (isSelected) 1f else 0.5f)
+                                        .then(
                                             if (isSelected) {
                                                 Modifier.border(
                                                     width = 3.dp,
@@ -214,11 +221,32 @@ fun NewPostComposable(
                                             } else {
                                                 Modifier
                                             }
-                                        ).clickable {
+                                        )
+                                        .clickable {
                                             scope.launch {
                                                 pagerState.animateScrollToPage(index)
                                             }
-                                        })
+                                        }
+                                ) {
+                                    AsyncImage(
+                                        model = image.imageUri.getPlatformUriObject(),
+                                        contentDescription = "Thumbnail $index",
+                                        contentScale = ContentScale.Crop,
+                                        modifier = Modifier.fillMaxSize()
+                                    )
+
+                                    if (image.isLoading) {
+                                        Box(
+                                            modifier = Modifier
+                                                .fillMaxSize()
+                                                .background(Color.Black.copy(alpha = 0.3f))
+                                        )
+
+                                        LoadingComposable(
+                                            size = 24.dp,
+                                        )
+                                    }
+                                }
                             }
 
                             item {

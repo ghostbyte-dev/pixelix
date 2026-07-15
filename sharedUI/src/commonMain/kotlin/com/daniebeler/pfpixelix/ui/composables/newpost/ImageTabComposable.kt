@@ -52,6 +52,7 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.domain.model.License
 import com.daniebeler.pfpixelix.domain.model.request.FieldState
+import com.daniebeler.pfpixelix.domain.model.request.GPSData
 import com.daniebeler.pfpixelix.domain.model.request.MediaAttachmentMetadataRequest
 import com.daniebeler.pfpixelix.domain.service.capabilities.Capabilities
 import com.daniebeler.pfpixelix.ui.composables.licences_dropdown.LicensesDropdownComposable
@@ -72,18 +73,24 @@ import pixelix.app.generated.resources.arrow_left
 import pixelix.app.generated.resources.arrow_right
 import pixelix.app.generated.resources.brand
 import pixelix.app.generated.resources.cancel
+import pixelix.app.generated.resources.chemistry
 import pixelix.app.generated.resources.creation_date
 import pixelix.app.generated.resources.creation_time
 import pixelix.app.generated.resources.datetime
 import pixelix.app.generated.resources.exposure_time
+import pixelix.app.generated.resources.film
 import pixelix.app.generated.resources.flash
 import pixelix.app.generated.resources.focal_length
 import pixelix.app.generated.resources.focal_length_35mm
+import pixelix.app.generated.resources.gps_coordinates
 import pixelix.app.generated.resources.iso
+import pixelix.app.generated.resources.latitude
 import pixelix.app.generated.resources.lens
 import pixelix.app.generated.resources.location
+import pixelix.app.generated.resources.longitude
 import pixelix.app.generated.resources.model
 import pixelix.app.generated.resources.ok
+import pixelix.app.generated.resources.scanner
 import pixelix.app.generated.resources.software
 import pixelix.app.generated.resources.trash
 import kotlin.time.Clock
@@ -205,6 +212,54 @@ fun ImageTab(
             }
 
             if (capabilities.newPost.showMetadata) {
+                IsIncludedField(
+                    label = stringResource(Res.string.gps_coordinates),
+                    image.metadata.gpsData.isIncluded,
+                    {
+                        updateMetadata(
+                            image.metadata.copy(
+                                gpsData = image.metadata.gpsData.copy(
+                                    isIncluded = it
+                                )
+                            )
+                        )
+                    }) {
+                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        CustomTextFieldString(
+                            value = image.metadata.gpsData.value?.lat ?: "",
+                            onValueChange = {
+                                updateMetadata(
+                                    image.metadata.copy(
+                                        gpsData = image.metadata.gpsData.copy(
+                                            value = image.metadata.gpsData.value?.copy(
+                                                lat = it
+                                            )
+                                        )
+                                    )
+                                )
+                            },
+                            label = stringResource(Res.string.latitude),
+                            isIncluded = image.metadata.gpsData.isIncluded
+                        )
+                        CustomTextFieldString(
+                            value = image.metadata.gpsData.value?.long ?: "",
+                            onValueChange = {
+                                updateMetadata(
+                                    image.metadata.copy(
+                                        gpsData = image.metadata.gpsData.copy(
+                                            value = image.metadata.gpsData.value?.copy(
+                                                long = it
+                                            )
+                                        )
+                                    )
+                                )
+                            },
+                            label = stringResource(Res.string.longitude),
+                            isIncluded = image.metadata.gpsData.isIncluded
+                        )
+                    }
+                }
+
                 IsIncludedField(
                     label = stringResource(Res.string.brand),
                     image.metadata.make.isIncluded,
@@ -466,6 +521,74 @@ fun ImageTab(
 
                 }
 
+                IsIncludedField(
+                    label = stringResource(Res.string.film),
+                    image.metadata.film.isIncluded,
+                    {
+                        updateMetadata(
+                            image.metadata.copy(
+                                film = image.metadata.film.copy(
+                                    isIncluded = it
+                                )
+                            )
+                        )
+                    }) {
+                    CustomTextField(
+                        value = image.metadata.film,
+                        onValueChange = {
+                            updateMetadata(
+                                image.metadata.copy(film = it)
+                            )
+                        },
+                        label = stringResource(Res.string.film),
+                    )
+                }
+
+                IsIncludedField(
+                    label = stringResource(Res.string.chemistry),
+                    image.metadata.chemistry.isIncluded,
+                    {
+                        updateMetadata(
+                            image.metadata.copy(
+                                chemistry = image.metadata.chemistry.copy(
+                                    isIncluded = it
+                                )
+                            )
+                        )
+                    }) {
+                    CustomTextField(
+                        value = image.metadata.chemistry,
+                        onValueChange = {
+                            updateMetadata(
+                                image.metadata.copy(chemistry = it)
+                            )
+                        },
+                        label = stringResource(Res.string.chemistry),
+                    )
+                }
+
+                IsIncludedField(
+                    label = stringResource(Res.string.scanner),
+                    image.metadata.scanner.isIncluded,
+                    {
+                        updateMetadata(
+                            image.metadata.copy(
+                                scanner = image.metadata.scanner.copy(
+                                    isIncluded = it
+                                )
+                            )
+                        )
+                    }) {
+                    CustomTextField(
+                        value = image.metadata.scanner,
+                        onValueChange = {
+                            updateMetadata(
+                                image.metadata.copy(scanner = it)
+                            )
+                        },
+                        label = stringResource(Res.string.scanner),
+                    )
+                }
             }
         }
     }
@@ -499,20 +622,22 @@ fun IsIncludedField(
     }
 }
 
+
 @Composable
-fun CustomTextField(
-    value: FieldState<String>,
-    onValueChange: (FieldState<String>) -> Unit,
+fun CustomTextFieldString(
+    value: String,
+    onValueChange: (String) -> Unit,
+    isIncluded: Boolean,
     label: String = "",
     placeholder: String = "",
     modifier: Modifier = Modifier,
     singleLine: Boolean = false,
 ) {
     TextField(
-        value = value.value ?: "",
+        value = value,
         onValueChange = {
             onValueChange(
-                value.copy(value = it)
+                it
             )
         },
         singleLine = singleLine,
@@ -526,7 +651,31 @@ fun CustomTextField(
         ),
         label = { if (label.isNotBlank()) Text(text = label) },
         placeholder = { if (placeholder.isNotBlank()) Text(text = placeholder) },
-        enabled = value.isIncluded
+        enabled = isIncluded
+    )
+}
+
+@Composable
+fun CustomTextField(
+    value: FieldState<String>,
+    onValueChange: (FieldState<String>) -> Unit,
+    label: String = "",
+    placeholder: String = "",
+    modifier: Modifier = Modifier,
+    singleLine: Boolean = false,
+) {
+    CustomTextFieldString(
+        value = value.value ?: "",
+        onValueChange = {
+            onValueChange(
+                value.copy(value = it)
+            )
+        },
+        singleLine = singleLine,
+        modifier = modifier.fillMaxWidth(),
+        label = label,
+        placeholder = placeholder,
+        isIncluded = value.isIncluded
     )
 }
 

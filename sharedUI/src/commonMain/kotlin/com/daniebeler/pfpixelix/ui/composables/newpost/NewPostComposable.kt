@@ -59,12 +59,19 @@ import androidx.navigationevent.compose.rememberNavigationEventState
 import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.model.request.MediaAttachmentMetadataRequest
+import com.daniebeler.pfpixelix.domain.service.file.PlatformFile
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposableDialog
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pfpixelix.ui.composables.widgets.CustomLoader
 import com.daniebeler.pfpixelix.utils.KmpUri
 import com.daniebeler.pfpixelix.utils.getPlatformUriObject
+import com.daniebeler.pfpixelix.utils.parseExifMetadata
+import com.daniebeler.pfpixelix.utils.toKmpUri
+import io.github.vinceglb.filekit.PlatformFile
+import io.github.vinceglb.filekit.readBytes
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
@@ -97,9 +104,20 @@ fun NewPostComposable(
     LaunchedEffect(uris) {
         uris?.let {
             uris.forEach {
-                viewModel.addImage(
-                    uri = it, metadata = MediaAttachmentMetadataRequest()
-                )
+                scope.launch(Dispatchers.Default) {
+                    try {
+                        val file = PlatformFile(it)
+                        val bytes = file.readBytes()
+
+                        val extractedMetadata = parseExifMetadata(bytes)
+
+                        withContext(Dispatchers.Main) {
+                            viewModel.addImage(file.toKmpUri(), extractedMetadata)
+                        }
+                    } catch (e: Throwable) {
+                        e.printStackTrace()
+                    }
+                }
             }
         }
     }

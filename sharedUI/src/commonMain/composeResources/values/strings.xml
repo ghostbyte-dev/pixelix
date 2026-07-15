@@ -326,4 +326,10 @@
     <string name="category">Category</string>
     <string name="next">Next</string>
     <string name="publish">Publish</string>
+    <string name="gps_coordinates">GPS Coordinates</string>
+    <string name="latitude">Latitude</string>
+    <string name="longitude">Longitude</string>
+    <string name="film">Film</string>
+    <string name="chemistry">Chemistry</string>
+    <string name="scanner">Scanner</string>
 </resources>

@@ -26,9 +26,13 @@ data class MediaAttachmentMetadataRequest(
     val scanner: FieldState<String> = FieldState(),
     val locationId: String? = null,
     val license: License? = null,
-//    @SerialName("latitude") val latitude: String? = null,
-//    @SerialName("longitude") val longitude: String? = null,
-    val flash: FieldState<String> = FieldState()
+    val gpsData: FieldState<GPSData> = FieldState(),
+    val flash: FieldState<String> = FieldState(),
+)
+
+data class GPSData(
+    val lat: String,
+    val long: String
 )
 
 data class FieldState<T>(
@@ -78,6 +82,8 @@ fun MediaAttachmentMetadataRequest.toVernissage(): VernissageMediaAttachmentMeta
         flash = this.flash.valueIfIncluded,
         locationId = this.locationId,
         licenseId = this.license?.id,
-        blurhash = this.blurhash
+        blurhash = this.blurhash,
+        latitude = this.gpsData.value?.lat,
+        longitude = this.gpsData.value?.long
     )
 }

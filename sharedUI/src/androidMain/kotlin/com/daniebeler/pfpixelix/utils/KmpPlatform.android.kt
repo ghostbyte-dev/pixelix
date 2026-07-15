@@ -6,6 +6,7 @@ import androidx.core.net.toUri
 import androidx.exifinterface.media.ExifInterface
 import coil3.PlatformContext
 import com.daniebeler.pfpixelix.domain.model.request.FieldState
+import com.daniebeler.pfpixelix.domain.model.request.GPSData
 import com.daniebeler.pfpixelix.domain.model.request.MediaAttachmentMetadataRequest
 import io.github.kdroidfilter.composemediaplayer.util.getUri
 import io.github.vinceglb.filekit.PlatformFile
@@ -36,6 +37,17 @@ actual fun parseExifMetadata(bytes: ByteArray): MediaAttachmentMetadataRequest {
 
         val lensMake = exif.getAttribute(ExifInterface.TAG_LENS_MAKE)?.trim()
         val lensModel = exif.getAttribute(ExifInterface.TAG_LENS_MODEL)?.trim()
+
+        val coords = exif.latLong
+        val gpsData = if (coords != null && coords.size >= 2) {
+            GPSData(
+                lat = coords[0].toString(),
+                long = coords[1].toString()
+            )
+        } else {
+            GPSData(lat = "", long = "")
+        }
+
         MediaAttachmentMetadataRequest(
             make = FieldState(exif.getAttribute(ExifInterface.TAG_MAKE)),
             model = FieldState(exif.getAttribute(ExifInterface.TAG_MODEL)),
@@ -43,7 +55,7 @@ actual fun parseExifMetadata(bytes: ByteArray): MediaAttachmentMetadataRequest {
             focalLength = FieldState(exif.getAttribute(ExifInterface.TAG_FOCAL_LENGTH)),
             fNumber = FieldState(convertApexToFNumber(
                 exif.getAttribute(ExifInterface.TAG_APERTURE_VALUE) ?: ""
-            ).toString()),
+            )),
             exposureTime = FieldState(formatDecimalToExposureFraction(exif.getAttribute(ExifInterface.TAG_EXPOSURE_TIME))),
             photographicSensitivity = FieldState(exif.getAttribute(ExifInterface.TAG_PHOTOGRAPHIC_SENSITIVITY)),
             software = FieldState(exif.getAttribute(ExifInterface.TAG_SOFTWARE)),
@@ -53,7 +65,8 @@ actual fun parseExifMetadata(bytes: ByteArray): MediaAttachmentMetadataRequest {
             } else {
                 null
             }),
-            focalLenIn35mmFilm = FieldState(exif.getAttribute(ExifInterface.TAG_FOCAL_LENGTH_IN_35MM_FILM))
+            focalLenIn35mmFilm = FieldState(exif.getAttribute(ExifInterface.TAG_FOCAL_LENGTH_IN_35MM_FILM)),
+            gpsData = FieldState(gpsData, isIncluded = false)
         )
     } catch (e: Throwable) {
         e.printStackTrace()
@@ -63,11 +76,17 @@ actual fun parseExifMetadata(bytes: ByteArray): MediaAttachmentMetadataRequest {
 
 fun convertApexToFNumber(apertureValueStr: String): String? {
     val parts = apertureValueStr.split("/")
+
     val apexValue = if (parts.size == 2) {
-        parts[0].toDoubleOrNull()?.div(parts[1].toDouble())
+        val numerator = parts[0].toDoubleOrNull()
+        val denominator = parts[1].toDoubleOrNull()
+        if (numerator != null && denominator != null && denominator != 0.0) {
+            numerator / denominator
+        } else null
     } else {
         apertureValueStr.toDoubleOrNull()
     } ?: return null
+
     val fNumber = sqrt(2.0.pow(apexValue))
 
     return "f/" + String.format(java.util.Locale.US, "%.1f", fNumber)

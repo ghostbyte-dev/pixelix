@@ -7,7 +7,6 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
-import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.model.Instance
 import com.daniebeler.pfpixelix.domain.model.LikedBy
 import com.daniebeler.pfpixelix.domain.model.MutedAccount
@@ -17,15 +16,15 @@ import com.daniebeler.pfpixelix.domain.model.ReportObjectType
 import com.daniebeler.pfpixelix.domain.model.request.UserBlockRequest
 import com.daniebeler.pfpixelix.domain.model.request.UserMuteRequest
 import com.daniebeler.pfpixelix.domain.service.capabilities.Capabilities
-import com.daniebeler.pfpixelix.domain.service.general.PostEditorService
 import com.daniebeler.pfpixelix.domain.service.file.FileService
 import com.daniebeler.pfpixelix.domain.service.general.AccountService
 import com.daniebeler.pfpixelix.domain.service.general.AuthService
 import com.daniebeler.pfpixelix.domain.service.general.InstanceService
-import com.daniebeler.pfpixelix.domain.service.platform.Platform
+import com.daniebeler.pfpixelix.domain.service.general.PostEditorService
 import com.daniebeler.pfpixelix.domain.service.general.PostService
-import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
 import com.daniebeler.pfpixelix.domain.service.general.Session
+import com.daniebeler.pfpixelix.domain.service.platform.Platform
+import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
 import com.daniebeler.pfpixelix.domain.service.suggestions.HashtagMentionsSuggestionsManager
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.ui.composables.post.reply.OwnReplyState
@@ -33,14 +32,10 @@ import com.daniebeler.pfpixelix.ui.composables.post.reply.RepliesState
 import com.daniebeler.pfpixelix.ui.composables.profile.RelationshipState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.transform
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 
@@ -49,12 +44,12 @@ class PostViewModel @Inject constructor(
     private val postService: PostService,
     private val prefs: UserPreferences,
     private val postEditorService: PostEditorService,
-    private val authService: AuthService,
+    authService: AuthService,
     private val accountService: AccountService,
     private val platform: Platform,
     private val fileService: FileService,
     private val instanceService: InstanceService,
-    private val session: Session,
+    session: Session,
     val hashtagMentionsSuggestionsManager: HashtagMentionsSuggestionsManager
 ) : ViewModel() {
     val capabilities: Capabilities = session.capabilities.value
@@ -66,6 +61,8 @@ class PostViewModel @Inject constructor(
 
     var likedByState by mutableStateOf(LikedByState())
 
+    private val _deleteEventChannel = Channel<DeleteEvent>()
+    val deleteEvents = _deleteEventChannel.receiveAsFlow()
     var deleteState by mutableStateOf(DeleteState())
     var deleteDialog: String? by mutableStateOf(null)
     var reportState by mutableStateOf<ReportState?>(null)
@@ -157,17 +154,18 @@ class PostViewModel @Inject constructor(
     fun deletePost(postId: String) {
         deleteDialog = null
         postEditorService.deletePost(postId).onEach { result ->
-            deleteState = when (result) {
+            when (result) {
                 is Resource.Success -> {
-                    DeleteState(deleted = true)
+                    deleteState = DeleteState()
+                    _deleteEventChannel.send(DeleteEvent.Success)
                 }
 
                 is Resource.Error -> {
-                    DeleteState(error = result.message)
+                    deleteState = DeleteState(error = result.message)
                 }
 
                 is Resource.Loading -> {
-                    DeleteState(isLoading = true)
+                    deleteState = DeleteState(isLoading = true)
                 }
             }
         }.launchIn(viewModelScope)
@@ -251,7 +249,7 @@ class PostViewModel @Inject constructor(
                     }
 
                     is Resource.Error -> {
-                        RelationshipState(error = result.message ?: "An unexpected error occurred")
+                        RelationshipState(error = result.message)
                     }
 
                     is Resource.Loading -> {
@@ -579,3 +577,4 @@ class PostViewModel @Inject constructor(
         hashtagMentionsSuggestionsManager.changeText(newReplyText, viewModelScope)
     }
 }
+

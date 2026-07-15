@@ -69,6 +69,6 @@ class PixelfedPostEditorService(
     }
 
     override fun deletePost(postId: String) = loadResource {
-        api.deletePost(postId).toDomain()
+        api.deletePost(postId)
     }
 }

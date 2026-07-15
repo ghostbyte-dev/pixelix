@@ -2,10 +2,9 @@ package com.daniebeler.pfpixelix.domain.service.general
 
 import com.daniebeler.pfpixelix.di.AppSingleton
 import com.daniebeler.pfpixelix.domain.model.MediaAttachment
-import com.daniebeler.pfpixelix.domain.model.request.NewPostRequest
 import com.daniebeler.pfpixelix.domain.model.Post
-import com.daniebeler.pfpixelix.domain.model.UpdatePost
 import com.daniebeler.pfpixelix.domain.model.request.MediaAttachmentMetadataRequest
+import com.daniebeler.pfpixelix.domain.model.request.NewPostRequest
 import com.daniebeler.pfpixelix.domain.service.pixelfed.PixelfedPostEditorService
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.domain.service.vernissage.VernissagePostEditorService
@@ -23,7 +22,7 @@ interface PostEditorService {
 
     fun updatePost(postId: String, updatePostDto: NewPostRequest): Flow<Resource<Unit>>
 
-    fun deletePost(postId: String): Flow<Resource<Post>>
+    fun deletePost(postId: String): Flow<Resource<Unit>>
 }
 
 @Inject
@@ -55,6 +54,6 @@ class PostEditorServiceDelegate(
         postId: String, updatePostDto: NewPostRequest
     ): Flow<Resource<Unit>> = current.updatePost(postId, updatePostDto)
 
-    override fun deletePost(postId: String): Flow<Resource<Post>> = current.deletePost(postId)
+    override fun deletePost(postId: String): Flow<Resource<Unit>> = current.deletePost(postId)
 
 }

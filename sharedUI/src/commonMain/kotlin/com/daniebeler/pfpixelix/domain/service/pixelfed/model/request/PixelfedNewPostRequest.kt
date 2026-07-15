@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class PixelfedNewPostRequest(
     @SerialName("status") val status: String,
-    @SerialName("media_ids[]") val mediaIds: List<String>,
+    @SerialName("media_ids") val mediaIds: List<String>,
     @SerialName("sensitive") val sensitive: Boolean?,
     @SerialName("visibility") val visibility: PixelfedVisibilityDto?,
     @SerialName("spoiler_text") val spoilerText: String?,

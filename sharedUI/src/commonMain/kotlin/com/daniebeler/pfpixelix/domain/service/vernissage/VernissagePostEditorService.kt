@@ -9,9 +9,7 @@ import com.daniebeler.pfpixelix.domain.service.file.PlatformFile
 import com.daniebeler.pfpixelix.domain.service.general.PostEditorService
 import com.daniebeler.pfpixelix.domain.service.utils.loadResource
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.toDomain
-import com.daniebeler.pfpixelix.utils.BlurHashEncoder
 import com.daniebeler.pfpixelix.utils.KmpUri
-import io.github.vinceglb.filekit.ImageFormat
 import io.github.vinceglb.filekit.nameWithoutExtension
 import io.github.vinceglb.filekit.readBytes
 import io.ktor.client.request.forms.MultiPartFormDataContent
@@ -55,6 +53,6 @@ class VernissagePostEditorService(
     }
 
     override fun deletePost(postId: String) = loadResource {
-        api.deletePost(postId).toDomain()
+        api.deletePost(postId)
     }
 }

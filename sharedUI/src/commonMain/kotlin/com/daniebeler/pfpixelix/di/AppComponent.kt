@@ -1,13 +1,9 @@
 package com.daniebeler.pfpixelix.di
 
 import androidx.datastore.core.DataStore
-import androidx.datastore.core.DataStoreFactory
-import androidx.datastore.core.okio.OkioStorage
-import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import co.touchlab.kermit.Logger
 import coil3.ImageLoader
-import coil3.disk.DiskCache
 import coil3.memory.MemoryCache
 import coil3.request.CachePolicy
 import com.daniebeler.pfpixelix.domain.model.SavedSearches
@@ -21,21 +17,17 @@ import com.daniebeler.pfpixelix.domain.repository.vernissage.createVernissageApi
 import com.daniebeler.pfpixelix.domain.service.file.FileService
 import com.daniebeler.pfpixelix.domain.service.general.AccountService
 import com.daniebeler.pfpixelix.domain.service.general.AccountServiceDelegate
-import com.daniebeler.pfpixelix.domain.service.general.AuthServiceDelegate
-import com.daniebeler.pfpixelix.domain.service.general.ExploreService
-import com.daniebeler.pfpixelix.domain.service.general.ExploreServiceDelegate
-import com.daniebeler.pfpixelix.domain.service.general.TimelineService
-import com.daniebeler.pfpixelix.domain.service.general.TimelineServiceDelegate
 import com.daniebeler.pfpixelix.domain.service.general.AppIconManager
 import com.daniebeler.pfpixelix.domain.service.general.AppIconService
 import com.daniebeler.pfpixelix.domain.service.general.AppIconServiceDelegate
-import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
-import com.daniebeler.pfpixelix.ui.events.SearchFieldFocus
 import com.daniebeler.pfpixelix.domain.service.general.AuthService
+import com.daniebeler.pfpixelix.domain.service.general.AuthServiceDelegate
 import com.daniebeler.pfpixelix.domain.service.general.CollectionService
 import com.daniebeler.pfpixelix.domain.service.general.CollectionServiceDelegate
 import com.daniebeler.pfpixelix.domain.service.general.DirectMessagesService
 import com.daniebeler.pfpixelix.domain.service.general.DirectMessagesServiceDelegate
+import com.daniebeler.pfpixelix.domain.service.general.ExploreService
+import com.daniebeler.pfpixelix.domain.service.general.ExploreServiceDelegate
 import com.daniebeler.pfpixelix.domain.service.general.InstanceService
 import com.daniebeler.pfpixelix.domain.service.general.InstanceServiceDelegate
 import com.daniebeler.pfpixelix.domain.service.general.NotificationService
@@ -45,19 +37,22 @@ import com.daniebeler.pfpixelix.domain.service.general.PostEditorServiceDelegate
 import com.daniebeler.pfpixelix.domain.service.general.PostService
 import com.daniebeler.pfpixelix.domain.service.general.PostServiceDelegate
 import com.daniebeler.pfpixelix.domain.service.general.Session
-import com.daniebeler.pfpixelix.ui.events.SystemUrlHandler
-import com.daniebeler.pfpixelix.ui.events.AccountIntentHandler
-import com.daniebeler.pfpixelix.ui.events.SystemFileShare
-import com.daniebeler.pfpixelix.ui.events.BackToTopTrigger
-import com.daniebeler.pfpixelix.ui.events.GlobalNavigator
-import com.daniebeler.pfpixelix.ui.events.GlobalNavigatorImpl
+import com.daniebeler.pfpixelix.domain.service.general.TimelineService
+import com.daniebeler.pfpixelix.domain.service.general.TimelineServiceDelegate
 import com.daniebeler.pfpixelix.domain.service.general.WidgetService
 import com.daniebeler.pfpixelix.domain.service.general.WidgetServiceDelegate
 import com.daniebeler.pfpixelix.domain.service.pixelfed.PixelfedAuthInterceptor
+import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
 import com.daniebeler.pfpixelix.domain.service.vernissage.VernissageAuthInterceptor
+import com.daniebeler.pfpixelix.ui.events.AccountIntentHandler
+import com.daniebeler.pfpixelix.ui.events.BackToTopTrigger
+import com.daniebeler.pfpixelix.ui.events.GlobalNavigator
+import com.daniebeler.pfpixelix.ui.events.GlobalNavigatorImpl
+import com.daniebeler.pfpixelix.ui.events.SearchFieldFocus
+import com.daniebeler.pfpixelix.ui.events.SystemFileShare
+import com.daniebeler.pfpixelix.ui.events.SystemUrlHandler
 import com.daniebeler.pfpixelix.utils.KmpContext
 import com.daniebeler.pfpixelix.utils.coilContext
-import com.daniebeler.pfpixelix.utils.toKmpUri
 import de.jensklingenberg.ktorfit.Ktorfit
 import de.jensklingenberg.ktorfit.converter.CallConverterFactory
 import io.ktor.client.HttpClient
@@ -76,7 +71,6 @@ import me.tatarka.inject.annotations.KmpComponentCreate
 import me.tatarka.inject.annotations.Provides
 import me.tatarka.inject.annotations.Qualifier
 import me.tatarka.inject.annotations.Scope
-import okio.FileSystem
 
 @Scope
 @Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER)
@@ -184,7 +178,7 @@ abstract class AppComponent(
                         }
                     }
                 }
-                level = LogLevel.INFO
+                level = LogLevel.ALL
             }
             install(HttpTimeout) {
                 requestTimeoutMillis = 60000

@@ -34,8 +34,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberBottomSheetState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -67,12 +69,14 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
+import co.touchlab.kermit.Logger
 import coil3.compose.AsyncImage
 import coil3.compose.AsyncImagePainter
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.model.MediaAttachment
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.ui.composables.hashtagMentionText.HashtagsMentionsTextView
+import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposableDialog
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import com.daniebeler.pfpixelix.utils.BlurHashDecoder
@@ -153,8 +157,15 @@ fun PostComposable(
         if (viewModel.post == null) viewModel.updatePost(post)
     }
 
-    LaunchedEffect(viewModel.deleteState.deleted) {
-        if (viewModel.deleteState.deleted) postGetsDeleted(post.id)
+    LaunchedEffect(viewModel.deleteEvents) {
+        viewModel.deleteEvents.collect { event ->
+            when (event) {
+                is DeleteEvent.Success -> {
+                    Logger.i("deletion") { "Post deleted successfully" }
+                    postGetsDeleted(post.id)
+                }
+            }
+        }
     }
 
     LaunchedEffect(post) {
@@ -249,6 +260,9 @@ fun PostComposable(
     PostDeleteDialog(viewModel = viewModel)
 
     LoadingComposable(isLoading = viewModel.deleteState.isLoading)
+    ErrorComposableDialog(viewModel.deleteState.error, {
+        viewModel.deleteState = DeleteState()
+    })
 }
 
 
@@ -587,27 +601,29 @@ private fun PostActionBar(
 
                 Spacer(Modifier.width(16.dp))
 
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.clip(RoundedCornerShape(percent = 50))
-                        .background(MaterialTheme.colorScheme.surfaceContainerHigh)
-                        .clickable(onClick = onCommentsClick).padding(horizontal = 10.dp)
-                        .height(32.dp)
-                ) {
-                    Icon(
-                        imageVector = vectorResource(Res.drawable.chatbubble),
-                        modifier = Modifier.size(22.dp),
-                        contentDescription = "open comments"
-                    )
-                    if (post.replyCount > 0) {
-                        Spacer(Modifier.width(4.dp))
-                        Text(
-                            text = post.replyCount.toString(),
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold
+                if (!post.commentsDisabled) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.clip(RoundedCornerShape(percent = 50))
+                            .background(MaterialTheme.colorScheme.surfaceContainerHigh)
+                            .clickable(onClick = onCommentsClick).padding(horizontal = 10.dp)
+                            .height(32.dp)
+                    ) {
+                        Icon(
+                            imageVector = vectorResource(Res.drawable.chatbubble),
+                            modifier = Modifier.size(22.dp),
+                            contentDescription = "open comments"
                         )
-                    }
+                        if (post.replyCount > 0) {
+                            Spacer(Modifier.width(4.dp))
+                            Text(
+                                text = post.replyCount.toString(),
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
 
+                    }
                 }
             }
 

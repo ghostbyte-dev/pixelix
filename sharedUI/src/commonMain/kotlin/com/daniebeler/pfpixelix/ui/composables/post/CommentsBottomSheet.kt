@@ -60,12 +60,12 @@ import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.model.Instance
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.model.Visibility
-import com.daniebeler.pfpixelix.ui.composables.widgets.MaxLengthTextField
-import com.daniebeler.pfpixelix.ui.composables.widgets.SuggestionsBar
 import com.daniebeler.pfpixelix.ui.composables.hashtagMentionText.HashtagsMentionsTextView
 import com.daniebeler.pfpixelix.ui.composables.post.reply.ReplyElementViewModel
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
+import com.daniebeler.pfpixelix.ui.composables.widgets.MaxLengthTextField
+import com.daniebeler.pfpixelix.ui.composables.widgets.SuggestionsBar
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import com.daniebeler.pfpixelix.utils.timeAgo
 import org.jetbrains.compose.resources.stringResource
@@ -74,13 +74,12 @@ import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.cancel
 import pixelix.app.generated.resources.delete
 import pixelix.app.generated.resources.delete_reply
-import pixelix.app.generated.resources.heart_filled
-import pixelix.app.generated.resources.heart
-import pixelix.app.generated.resources.no_comments_yet
 import pixelix.app.generated.resources.edit
+import pixelix.app.generated.resources.heart
+import pixelix.app.generated.resources.heart_filled
+import pixelix.app.generated.resources.no_comments_yet
 import pixelix.app.generated.resources.reply
 import pixelix.app.generated.resources.send
-import pixelix.app.generated.resources.send_message
 import pixelix.app.generated.resources.this_action_cannot_be_undone
 import pixelix.app.generated.resources.trash
 
@@ -118,7 +117,8 @@ fun CommentsBottomSheet(
                             location = null,
                             inReplyToId = null,
                             emojis = emptyList(),
-                            reblogCount = 0
+                            reblogCount = 0,
+                            commentsDisabled = false
                         )
                         ReplyElement(
                             reply = ownDescription,

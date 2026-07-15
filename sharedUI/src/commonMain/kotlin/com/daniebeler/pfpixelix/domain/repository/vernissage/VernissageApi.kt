@@ -2,7 +2,6 @@ package com.daniebeler.pfpixelix.domain.repository.vernissage
 
 import VernissageMediaAttachmentMetadataRequest
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedNodeInfoDto
-import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedPostDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageAccountDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageBlockedAccountDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageCategory
@@ -10,7 +9,6 @@ import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageCountr
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageInstanceDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageLicenseDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageLocationDto
-import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageMediaAttachmentDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageMutedAccountDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageNewPostRequest
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageNotificationDto
@@ -64,7 +62,7 @@ interface VernissageApi {
     suspend fun getHashtagTimeline(
         @Path("tag") tag: String,
         @Query("maxId") maxPostId: String? = null,
-        @Query("limit") limit: Int
+        @Query("limit") limit: Int = HASHTAG_TIMELINE_POSTS_LIMIT
     ): VernissagePaginatedResponse<List<VernissagePostDto>>
 
     @GET("api/v1/timelines/public?onlyLocal=true")
@@ -117,7 +115,7 @@ interface VernissageApi {
 
     @GET("api/v1/bookmarks")
     suspend fun getBookmarkedPosts(
-        @Query("maxId") maxId: String? = null, @Query("limit") limit: Int = LIKED_POSTS_LIMIT
+        @Query("maxId") maxId: String? = null, @Query("limit") limit: Int = BOOKMARKED_LIMIT
     ): VernissagePaginatedResponse<List<VernissagePostDto>>
 
     @POST("api/v1/statuses/{id}/favourite")
@@ -316,7 +314,7 @@ interface VernissageApi {
     @DELETE("api/v1/statuses/{id}")
     suspend fun deletePost(
         @Path("id") postid: String
-    ): VernissagePostDto
+    )
 
     @GET("api/v1/countries")
     suspend fun getCountries(): List<VernissageCountryDto>

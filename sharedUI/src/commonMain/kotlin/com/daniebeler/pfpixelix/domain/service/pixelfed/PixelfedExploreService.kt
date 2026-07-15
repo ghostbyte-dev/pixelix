@@ -84,7 +84,7 @@ class PixelfedExploreService(
         emptyList()
     }
 
-    override fun getLicenses(): Flow<Resource<List<License>>> {
-        TODO("Not yet implemented")
+    override fun getLicenses(): Flow<Resource<List<License>>> = loadListResources {
+        emptyList()
     }
 }

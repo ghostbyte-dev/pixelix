@@ -35,7 +35,8 @@ data class PixelfedPostDto @OptIn(ExperimentalSerializationApi::class) construct
     @SerialName("url") val url: String = "",
     @SerialName("visibility") val visibility: PixelfedVisibilityDto,
     @SerialName("bookmarked") val bookmarked: Boolean = false,
-    @SerialName("emojis") val emojis: List<PixelfedEmojiDto> = emptyList()
+    @SerialName("emojis") val emojis: List<PixelfedEmojiDto> = emptyList(),
+    @SerialName("comments_disabled") val commentsDisabled: Boolean = false
 )
 
 fun PixelfedPostDto.toDomain(): Post {
@@ -72,6 +73,7 @@ fun PixelfedPostDto.toDomain(): Post {
 
         location = activePost.place?.toDomain(),
         likedBy = activePost.likedBy?.toDomain(),
-        visibility = activePost.visibility.toDomain()
+        visibility = activePost.visibility.toDomain(),
+        commentsDisabled = activePost.commentsDisabled
     )
 }

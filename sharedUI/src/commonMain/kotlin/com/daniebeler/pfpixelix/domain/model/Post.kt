@@ -23,5 +23,6 @@ data class Post(
     val rebloggedBy: Account? = null,
     val reblogId: String? = null,
     val reblogCount: Int,
-    val emojis: List<Emoji>
+    val emojis: List<Emoji>,
+    val commentsDisabled: Boolean
 ): Identifiable

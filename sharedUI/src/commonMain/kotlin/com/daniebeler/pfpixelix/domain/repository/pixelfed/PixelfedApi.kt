@@ -378,7 +378,7 @@ interface PixelfedApi {
     @DELETE("api/v1/statuses/{id}")
     suspend fun deletePost(
         @Path("id") postid: String
-    ): PixelfedPostDto
+    )
 
     @Headers("Content-Type: application/json")
     @POST("api/v1.1/report")

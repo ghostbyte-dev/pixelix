@@ -39,23 +39,7 @@ class VernissagePostEditorService(
                     append(HttpHeaders.ContentDisposition, "filename=${file.nameWithoutExtension}")
                 })
             })
-        var mediaAttachment = api.uploadMedia(data).toDomain()
-
-        try {
-            val compressedImage =
-                fileService.compressImage(
-                    bytes = bytes,
-                    quality = 85,
-                    maxWidth = 50,
-                    maxHeight = 50,
-                    imageFormat = ImageFormat.PNG
-                )
-            val blurhash = compressedImage.let {BlurHashEncoder.encode(compressedImage)}
-            mediaAttachment = mediaAttachment.copy(blurHash = blurhash)
-        } catch(e: Throwable) {
-            e.printStackTrace()
-        }
-        mediaAttachment
+        api.uploadMedia(data).toDomain()
     }
 
     override fun updateMedia(id: String, metadata: MediaAttachmentMetadataRequest) = loadResource {

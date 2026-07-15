@@ -27,6 +27,7 @@ import com.daniebeler.pfpixelix.domain.service.suggestions.HashtagMentionsSugges
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.ui.composables.profile.AccountState
 import com.daniebeler.pfpixelix.ui.navigation.Destination
+import com.daniebeler.pfpixelix.utils.BlurHashEncoder
 import com.daniebeler.pfpixelix.utils.KmpUri
 import com.daniebeler.pfpixelix.utils.io
 import io.github.vinceglb.filekit.ImageFormat
@@ -125,6 +126,7 @@ class NewPostViewModel @Inject constructor(
             }
         }.launchIn(viewModelScope)
     }
+
     private fun getCategories() {
         exploreService.getCategories().onEach { result ->
             categoriesState = when (result) {
@@ -194,13 +196,13 @@ class NewPostViewModel @Inject constructor(
         val megabyte = kilobyte * 1024
         val gigabyte = megabyte * 1024
         val terabyte = gigabyte * 1024
-        return if (bytes >= 0 && bytes < kilobyte) {
+        return if (bytes in 0..<kilobyte) {
             "$bytes B"
-        } else if (bytes >= kilobyte && bytes < megabyte) {
+        } else if (bytes in kilobyte..<megabyte) {
             (bytes / kilobyte).toString() + " KB"
-        } else if (bytes >= megabyte && bytes < gigabyte) {
+        } else if (bytes in megabyte..<gigabyte) {
             (bytes / megabyte).toString() + " MB"
-        } else if (bytes >= gigabyte && bytes < terabyte) {
+        } else if (bytes in gigabyte..<terabyte) {
             (bytes / gigabyte).toString() + " GB"
         } else if (bytes >= terabyte) {
             (bytes / terabyte).toString() + " TB"
@@ -222,7 +224,7 @@ class NewPostViewModel @Inject constructor(
             addImageError = AddMediaError(
                 AddMediaErrorType.ERROR,
                 "Media type is not supported",
-                "The media type $fileType is not supportet by this server"
+                "The media type $fileType is not supported by this server"
             )
             return
         }
@@ -343,7 +345,6 @@ class NewPostViewModel @Inject constructor(
     }
 
 
-
     fun moveImage(fromIndex: Int, toIndex: Int) {
         if (fromIndex in images.indices && toIndex in images.indices) {
             val item = images.removeAt(fromIndex)
@@ -358,18 +359,33 @@ class NewPostViewModel @Inject constructor(
     }
 
     private fun uploadImage(uri: KmpUri) {
+        viewModelScope.launch {
+            val blurhash = createBlurHash(uri) ?: "default_or_fallback_id"
+
+            val index = images.indexOfFirst { it.imageUri == uri }
+            if (index != -1) {
+                images[index] = images[index].copy(
+                    metadata = images[index].metadata.copy(
+                        blurhash = blurhash
+                    )
+                )
+            }
+        }
+
         postEditorService.uploadMedia(uri).onEach { result ->
             mediaUploadState = when (result) {
                 is Resource.Success -> {
 //                    if (result.data.type?.take(5) == "video") {
-                        //Thread.sleep(1500) todo KMP
+                    //Thread.sleep(1500) todo KMP
 //                    }
                     val index = images.indexOfFirst { it.imageUri == uri }
                     if (index != -1) {
                         images[index] = images[index].copy(
                             isLoading = false,
                             id = result.data.id,
-                            metadata = images[index].metadata.copy(id = result.data.id, blurhash = result.data.blurHash)
+                            metadata = images[index].metadata.copy(
+                                id = result.data.id,
+                            )
                         )
                     }
 
@@ -401,6 +417,27 @@ class NewPostViewModel @Inject constructor(
         }.flowOn(Dispatchers.io).launchIn(viewModelScope)
     }
 
+    private suspend fun createBlurHash(uri: KmpUri): String? {
+        return try {
+            val file = PlatformFile(uri)
+            if (!fileService.exists(file)) return null
+
+            val bytes = file.readBytes()
+            val compressedImage = fileService.compressImage(
+                bytes = bytes,
+                quality = 85,
+                maxWidth = 50,
+                maxHeight = 50,
+                imageFormat = ImageFormat.PNG
+            )
+
+            BlurHashEncoder.encode(compressedImage)
+        } catch (e: Exception) {
+            Logger.e("Failed to create BlurHash for $uri", e)
+            null
+        }
+    }
+
     fun post(navController: NavController) {
         if (images.find { it.isLoading } != null && images.isEmpty()) {
             return
@@ -408,7 +445,6 @@ class NewPostViewModel @Inject constructor(
         createPostState = CreatePostState(isLoading = true)
         if (images.size == mediaUploadState.mediaAttachments.size) {
             images.forEachIndexed { index, _ ->
-                //TODO: check if metadata has changed from default empty metadata
                 updateMetadata(index)
             }
             mediaUploadState = sortMediaUploadState(mediaUploadState)
@@ -443,7 +479,7 @@ class NewPostViewModel @Inject constructor(
                     if (result.message.isNotEmpty()) {
                         MediaUploadState(error = result.message)
                     } else {
-                        MediaUploadState(error = "An unexpected error occured")
+                        MediaUploadState(error = "An unexpected error occurred")
                     }
                 }
 

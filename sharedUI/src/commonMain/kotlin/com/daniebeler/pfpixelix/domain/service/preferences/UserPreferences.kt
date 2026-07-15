@@ -88,6 +88,9 @@ class UserPreferences(private val dataStore: DataStore<Preferences>) {
     var captionTemplate by string("k_caption_template", "")
     val captionTemplateFlow = stringFlow("k_caption_template", "")
 
+    var hideMetadata by boolean("k_hide_metadata", false)
+    val hideMetadataFlow = booleanFlow("k_hide_metadata", false)
+
     private var _defaultVisibility: Int by Prop(intPreferencesKey("k_default_visibility"), Visibility.PUBLIC.ordinal)
     var defaultVisibility: Visibility
         get() = Visibility.entries.getOrElse(_defaultVisibility) { Visibility.PUBLIC }

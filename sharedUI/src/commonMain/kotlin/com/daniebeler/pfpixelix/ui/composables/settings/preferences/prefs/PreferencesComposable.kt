@@ -40,6 +40,7 @@ import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.DeleteAccountPref
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.FocusModePref
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.HideAltTextButtonPref
+import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.HideMetadataPref
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.HideSensitiveContentPref
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.LogoutPref
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.MoreSettingsPref
@@ -91,6 +92,10 @@ fun PreferencesComposable(
             HideSensitiveContentPref()
 
             HideAltTextButtonPref()
+
+            if (viewModel.capabilities.post.showCameraMetadata) {
+                HideMetadataPref()
+            }
 
             FocusModePref()
 

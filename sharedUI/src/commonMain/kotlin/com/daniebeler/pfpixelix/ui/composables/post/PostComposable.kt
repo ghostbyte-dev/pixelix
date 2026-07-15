@@ -34,10 +34,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.rememberBottomSheetState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -95,8 +93,8 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.and
-import pixelix.app.generated.resources.bookmark_filled
 import pixelix.app.generated.resources.bookmark
+import pixelix.app.generated.resources.bookmark_filled
 import pixelix.app.generated.resources.camera
 import pixelix.app.generated.resources.cancel
 import pixelix.app.generated.resources.chatbubble
@@ -108,14 +106,14 @@ import pixelix.app.generated.resources.delete_post
 import pixelix.app.generated.resources.document_text
 import pixelix.app.generated.resources.exposure
 import pixelix.app.generated.resources.flash
-import pixelix.app.generated.resources.more_menu
-import pixelix.app.generated.resources.heart_filled
 import pixelix.app.generated.resources.heart
+import pixelix.app.generated.resources.heart_filled
 import pixelix.app.generated.resources.lens
 import pixelix.app.generated.resources.license
 import pixelix.app.generated.resources.liked_by
 import pixelix.app.generated.resources.location
 import pixelix.app.generated.resources.media_description
+import pixelix.app.generated.resources.more_menu
 import pixelix.app.generated.resources.ok
 import pixelix.app.generated.resources.others
 import pixelix.app.generated.resources.reblogged_by
@@ -243,7 +241,8 @@ fun PostComposable(
                     activeSheet = BottomSheetType.Likes
                 },
                 navController = navController,
-                updatePost = updatePost
+                updatePost = updatePost,
+                hideMetadataPref = viewModel.hideMetadataPref
             )
         }
     }
@@ -552,7 +551,8 @@ private fun PostActionBar(
     onCommentsClick: () -> Unit,
     onLikesClick: () -> Unit,
     navController: NavController,
-    updatePost: (post: Post) -> Unit
+    updatePost: (post: Post) -> Unit,
+    hideMetadataPref: Boolean
 ) {
     Column(Modifier.padding(start = 16.dp, top = 8.dp, end = 16.dp)) {
         Row(
@@ -735,7 +735,7 @@ private fun PostActionBar(
             }
         }
 
-        if (viewModel.capabilities.post.showCameraMetadata) {
+        if (viewModel.capabilities.post.showCameraMetadata && !hideMetadataPref) {
             post.mediaAttachments.getOrNull(pagerState.currentPage)?.metadata?.let { metadata ->
                 listOfNotNull(metadata.make, metadata.model).takeIf { it.isNotEmpty() }
                     ?.let { MetadataItem(Res.drawable.camera, it.joinToString(" ")) }

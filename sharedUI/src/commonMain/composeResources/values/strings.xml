@@ -332,4 +332,5 @@
     <string name="film">Film</string>
     <string name="chemistry">Chemistry</string>
     <string name="scanner">Scanner</string>
+    <string name="hide_camera_metadata">Hide camera metadata</string>
 </resources>

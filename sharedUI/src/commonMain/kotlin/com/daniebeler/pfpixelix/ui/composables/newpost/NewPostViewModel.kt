@@ -10,9 +10,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import co.touchlab.kermit.Logger
-import com.daniebeler.pfpixelix.domain.model.Category
 import com.daniebeler.pfpixelix.domain.model.Instance
-import com.daniebeler.pfpixelix.domain.model.License
 import com.daniebeler.pfpixelix.domain.model.Visibility
 import com.daniebeler.pfpixelix.domain.model.request.MediaAttachmentMetadataRequest
 import com.daniebeler.pfpixelix.domain.model.request.NewPostRequest
@@ -53,14 +51,15 @@ class NewPostViewModel @Inject constructor(
     private val platform: Platform,
     val hashtagMentionsSuggestionsManager: HashtagMentionsSuggestionsManager,
     private val accountService: AccountService,
-    private val session: Session,
-    private val userPreferences: UserPreferences
+    session: Session,
+    userPreferences: UserPreferences
 ) : ViewModel() {
     data class ImageItem(
         val imageUri: KmpUri,
         val mimeType: String,
         var id: String?,
         var isLoading: Boolean,
+        var isError: Boolean,
         var metadata: MediaAttachmentMetadataRequest
     )
 
@@ -263,7 +262,7 @@ class NewPostViewModel @Inject constructor(
             )
             return
         }
-        images += ImageItem(uri, fileType, null, true, metadata)
+        images += ImageItem(uri, fileType, null, true, isError = false, metadata = metadata)
         uploadImage(uri)
     }
 
@@ -362,15 +361,15 @@ class NewPostViewModel @Inject constructor(
         postEditorService.uploadMedia(uri).onEach { result ->
             mediaUploadState = when (result) {
                 is Resource.Success -> {
-                    if (result.data.type?.take(5) == "video") {
+//                    if (result.data.type?.take(5) == "video") {
                         //Thread.sleep(1500) todo KMP
-                    }
+//                    }
                     val index = images.indexOfFirst { it.imageUri == uri }
                     if (index != -1) {
                         images[index] = images[index].copy(
                             isLoading = false,
                             id = result.data.id,
-                            metadata = images[index].metadata.copy(id = result.data.id)
+                            metadata = images[index].metadata.copy(id = result.data.id, blurhash = result.data.blurHash)
                         )
                     }
 
@@ -383,9 +382,12 @@ class NewPostViewModel @Inject constructor(
                 is Resource.Error -> {
                     val index = images.indexOfFirst { it.imageUri == uri }
                     if (index != -1) {
-                        images.removeAt(index)
+                        images[index] = images[index].copy(
+                            isLoading = false,
+                            isError = true
+                        )
                     }
-                    MediaUploadState(error = result.message)
+                    mediaUploadState.copy(error = result.message, isLoading = false)
                 }
 
                 is Resource.Loading -> {
@@ -405,9 +407,9 @@ class NewPostViewModel @Inject constructor(
         }
         createPostState = CreatePostState(isLoading = true)
         if (images.size == mediaUploadState.mediaAttachments.size) {
-            images.forEachIndexed { index, it ->
+            images.forEachIndexed { index, _ ->
                 //TODO: check if metadata has changed from default empty metadata
-                updateMetadata(index, it.metadata)
+                updateMetadata(index)
             }
             mediaUploadState = sortMediaUploadState(mediaUploadState)
             createNewPost(mediaUploadState, navController)
@@ -424,7 +426,7 @@ class NewPostViewModel @Inject constructor(
         return newMediaUploadState
     }
 
-    private fun updateMetadata(index: Int, metadata: MediaAttachmentMetadataRequest) {
+    private fun updateMetadata(index: Int) {
         val image = images[index]
         if (image.id == null) {
             return
@@ -493,9 +495,5 @@ class NewPostViewModel @Inject constructor(
                 }
             }
         }.launchIn(viewModelScope)
-    }
-
-    fun setLocation(id: String) {
-        locationId = id
     }
 }

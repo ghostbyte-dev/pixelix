@@ -43,6 +43,8 @@ workRuntimeKtx = "2.11.2"
 slf4jSimple = "2.0.18"
 exifinterface = "1.4.2"
 
+blurhash = "0.3.0"
+
 [libraries]
 
 components-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "composeMultiplatform" }
@@ -105,6 +107,7 @@ runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "com
 ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "composeMultiplatform" }
 ui-tooling = { module = "org.jetbrains.compose.ui:ui-tooling", version.ref = "composeMultiplatform" }
 androidx-exifinterface = { group = "androidx.exifinterface", name = "exifinterface", version.ref = "exifinterface" }
+vanniktech-blurhash = { module = "com.vanniktech:blurhash", version.ref = "blurhash" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

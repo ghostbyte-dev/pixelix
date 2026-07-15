@@ -10,7 +10,7 @@ data class MediaAttachmentMetadataRequest(
 //    @SerialName("url") val url: String = "",
 //    val previewUrl: String = "",
     val description: String? = null,
-//    @SerialName("blurhash") val blurhash: String? = null,
+    val blurhash: String? = null,
     val make: FieldState<String> = FieldState(),
     val model: FieldState<String> = FieldState(),
     val lens: FieldState<String> = FieldState(),
@@ -77,6 +77,7 @@ fun MediaAttachmentMetadataRequest.toVernissage(): VernissageMediaAttachmentMeta
         scanner = this.scanner.valueIfIncluded,
         flash = this.flash.valueIfIncluded,
         locationId = this.locationId,
-        licenseId = this.license?.id
+        licenseId = this.license?.id,
+        blurhash = this.blurhash
     )
 }

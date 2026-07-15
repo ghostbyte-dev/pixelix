@@ -7,7 +7,7 @@ data class VernissageMediaAttachmentMetadataRequest(
     @SerialName("url") val url: String = "",
     @SerialName("previewUrl") val previewUrl: String = "",
     @SerialName("description") val description: String? = null,
-//    @SerialName("blurhash") val blurhash: String? = null,
+    @SerialName("blurhash") val blurhash: String? = null,
     @SerialName("make") val make: String? = null,
     @SerialName("model") val model: String? = null,
     @SerialName("lens") val lens: String? = null,

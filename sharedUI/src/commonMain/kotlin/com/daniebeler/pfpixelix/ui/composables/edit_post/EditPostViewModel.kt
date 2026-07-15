@@ -10,14 +10,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.domain.model.Instance
-import com.daniebeler.pfpixelix.domain.model.MediaAttachment
 import com.daniebeler.pfpixelix.domain.model.Location
-import com.daniebeler.pfpixelix.domain.model.UpdatePost
+import com.daniebeler.pfpixelix.domain.model.MediaAttachment
 import com.daniebeler.pfpixelix.domain.model.Visibility
 import com.daniebeler.pfpixelix.domain.model.request.MediaAttachmentMetadataRequest
 import com.daniebeler.pfpixelix.domain.model.request.NewPostRequest
-import com.daniebeler.pfpixelix.domain.service.general.PostEditorService
 import com.daniebeler.pfpixelix.domain.service.general.InstanceService
+import com.daniebeler.pfpixelix.domain.service.general.PostEditorService
 import com.daniebeler.pfpixelix.domain.service.general.PostService
 import com.daniebeler.pfpixelix.domain.service.suggestions.HashtagMentionsSuggestionsManager
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
@@ -178,7 +177,6 @@ class EditPostViewModel @Inject constructor(
 
                 is Resource.Loading -> {
                     editPostState = EditPostState(isLoading = true, post = editPostState.post)
-
                 }
             }
         }.launchIn(viewModelScope)

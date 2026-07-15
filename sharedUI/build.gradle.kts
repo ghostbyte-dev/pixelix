@@ -148,10 +148,16 @@ kotlin {
             implementation(libs.androidx.glance.material3)
             // work Manager
             implementation(libs.androidx.work.runtime.ktx)
+
+            //blurhash
+            implementation(libs.vanniktech.blurhash)
         }
 
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
+
+            //blurhash
+            implementation(libs.vanniktech.blurhash)
         }
 
         jvmMain.dependencies {
@@ -159,6 +165,9 @@ kotlin {
             implementation(libs.kotlinx.coroutines.swing)
             implementation(libs.ktor.client.okhttp)
             implementation(libs.slf4j.simple)
+
+            //blurhash
+            implementation(libs.vanniktech.blurhash)
         }
     }
 

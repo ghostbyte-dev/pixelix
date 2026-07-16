@@ -98,7 +98,7 @@ fun VernissageUploadedAttachment.toDomain(): MediaAttachment {
 fun VernissageMediaAttachmentDto.toDomain(): MediaAttachment {
     return MediaAttachment(
         id = this.id,
-        url = this.smallFile.url,
+        url = this.originalFile.url,
         previewUrl = this.smallFile.url,
         metadata = this.metadata?.toDomain(),
         blurHash = this.blurHash,

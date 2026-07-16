@@ -84,10 +84,19 @@ fun PreferencesComposable(
             })
         }) { paddingValues ->
         Column(
-            Modifier.padding(paddingValues).padding(horizontal = 18.dp)
-                .fillMaxSize().verticalScroll(state = rememberScrollState()),
+            Modifier.padding(paddingValues).padding(horizontal = 18.dp).fillMaxSize()
+                .verticalScroll(state = rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(2.dp),
         ) {
+
+            Spacer(modifier = Modifier.height(12.dp))
+            Text(
+                "Content settings",
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.padding(start = 6.dp)
+            )
+            Spacer(modifier = Modifier.height(6.dp))
 
             HideSensitiveContentPref()
 
@@ -113,6 +122,13 @@ fun PreferencesComposable(
             }
 
             Spacer(modifier = Modifier.height(12.dp))
+            Text(
+                "App customization",
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.padding(start = 6.dp)
+            )
+            Spacer(modifier = Modifier.height(6.dp))
 
             ThemePref()
 
@@ -122,11 +138,25 @@ fun PreferencesComposable(
             }
 
             Spacer(modifier = Modifier.height(12.dp))
+            Text(
+                "New post settings",
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.padding(start = 6.dp)
+            )
+            Spacer(modifier = Modifier.height(6.dp))
 
             CaptionTemplate(viewModel.suggestionsManager)
             DefaultVisibilityPref(viewModel.capabilities)
 
             Spacer(modifier = Modifier.height(12.dp))
+            Text(
+                "Other",
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.padding(start = 6.dp)
+            )
+            Spacer(modifier = Modifier.height(6.dp))
 
             ClearCachePref(drawerState)
 

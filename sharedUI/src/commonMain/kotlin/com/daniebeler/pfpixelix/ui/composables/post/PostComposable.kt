@@ -122,6 +122,7 @@ import pixelix.app.generated.resources.repost_strong
 import pixelix.app.generated.resources.software
 import pixelix.app.generated.resources.this_action_cannot_be_undone
 import pixelix.app.generated.resources.trash
+import kotlin.time.Duration.Companion.milliseconds
 
 private val HeartRedColor = Color(0xFFDD2E44)
 
@@ -912,7 +913,7 @@ fun PostImage(
     var imageLoaded by remember { mutableStateOf(false) }
     LaunchedEffect(showHeart) {
         if (showHeart) {
-            delay(1000)
+            delay(1000.milliseconds)
             showHeart = false
         }
     }
@@ -1018,7 +1019,7 @@ private fun ImageWrapper(
     onSuccess: () -> Unit
 ) {
     AsyncImage(
-        model = mediaAttachment.url,
+        model = mediaAttachment.previewUrl,
         contentDescription = null,
         modifier = Modifier.fillMaxWidth(),
         contentScale = ContentScale.FillWidth,

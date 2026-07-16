@@ -7,16 +7,33 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.domain.model.PaginatedResponse
 import com.daniebeler.pfpixelix.domain.model.Post
+import com.daniebeler.pfpixelix.domain.service.general.PostService
+import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
+import com.daniebeler.pfpixelix.ui.composables.profile.ViewEnum
 import com.daniebeler.pfpixelix.ui.composables.timelines.TimelineState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
+import me.tatarka.inject.annotations.Inject
 
-abstract class PaginatedPostsViewModel : ViewModel() {
+abstract class PaginatedPostsViewModel (
+    private val prefs: UserPreferences,
+) : ViewModel() {
 
     var timelineState by mutableStateOf(TimelineState(isLoading = true))
         protected set
+
+    var view by mutableStateOf(ViewEnum.Grid)
+
+    init {
+        viewModelScope.launch {
+            prefs.showUserGridTimelineFlow.collect { res ->
+                view = ViewEnum.getView(res)
+            }
+        }
+    }
 
     protected abstract fun fetchPage(maxId: String?): Flow<Resource<PaginatedResponse<List<Post>>>>
 
@@ -66,5 +83,10 @@ abstract class PaginatedPostsViewModel : ViewModel() {
         timelineState = timelineState.copy(posts = timelineState.posts.map {
             if (it.id == post.id) post else it
         })
+    }
+
+    fun changeView(newView: ViewEnum) {
+        view = newView
+        prefs.showUserGridTimeline = newView.ordinal
     }
 }

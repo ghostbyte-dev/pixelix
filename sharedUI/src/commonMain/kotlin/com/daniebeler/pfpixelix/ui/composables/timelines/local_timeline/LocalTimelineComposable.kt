@@ -53,6 +53,8 @@ fun LocalTimelineComposable(
         isLoading = viewModel.timelineState.isLoading,
         isRefreshing = viewModel.timelineState.isRefreshing,
         error = viewModel.timelineState.error,
+        view = viewModel.view,
+        changeView = { viewModel.changeView(it) },
         endReached = false,
         navController = navController,
         emptyMessage = EmptyState(heading = "No posts"),

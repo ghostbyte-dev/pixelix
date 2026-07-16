@@ -56,6 +56,8 @@ fun GlobalTimelineComposable(
         isLoading = viewModel.timelineState.isLoading,
         isRefreshing = viewModel.timelineState.isRefreshing,
         error = viewModel.timelineState.error,
+        view = viewModel.view,
+        changeView = { viewModel.changeView(it) },
         endReached = false,
         navController = navController,
         getItemsPaginated = { viewModel.getItemsPaginated() },
@@ -73,9 +75,7 @@ fun GlobalTimelineComposable(
                     description = stringResource(Res.string.global_timeline_explained),
                     onDiscard = {
                         viewModel.discardHelp()
-                    }
-                )
+                    })
             }
-        }
-    )
+        })
 }

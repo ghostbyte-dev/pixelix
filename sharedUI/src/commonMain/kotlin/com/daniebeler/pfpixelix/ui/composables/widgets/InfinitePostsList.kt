@@ -84,20 +84,20 @@ fun InfinitePostsList(
                         top = contentPaddingTop, bottom = contentPaddingBottom
                     )
                 ) {
-                    postsCount?.let {
-                        item(span = StaggeredGridItemSpan.FullLine) {
-                            SwitchViewComposable(
-                                postsCount = postsCount,
-                                viewType = view,
-                                onViewChange = { changeView(it) }
-                            )
-                        }
-                    }
                     if (before != null) {
                         item(span = StaggeredGridItemSpan.FullLine) {
                             before()
                         }
                     }
+
+                    item(span = StaggeredGridItemSpan.FullLine) {
+                        SwitchViewComposable(
+                            postsCount = postsCount,
+                            viewType = view,
+                            onViewChange = { changeView(it) }
+                        )
+                    }
+                    
                     postsWrapperComposable(
                         posts = items,
                         isLoading = isLoading,

@@ -196,7 +196,6 @@ fun HomeComposable(
                 modifier = Modifier.padding(top = 24.dp)
                     .background(MaterialTheme.colorScheme.background).zIndex(0f)
             ) { tabIndex ->
-                val isCurrentTab = pagerState.currentPage == tabIndex
                 when (tabIndex) {
                     0 -> Box(modifier = Modifier.fillMaxSize()) {
                         HomeTimelineComposable(pagerState, tabIndex, navController)

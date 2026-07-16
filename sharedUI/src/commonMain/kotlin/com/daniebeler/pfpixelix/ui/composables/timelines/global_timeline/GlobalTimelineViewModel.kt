@@ -13,7 +13,7 @@ import me.tatarka.inject.annotations.Inject
 class GlobalTimelineViewModel @Inject constructor(
     private val timelineService: TimelineService,
     private val userPreferences: UserPreferences
-) : PaginatedPostsViewModel() {
+) : PaginatedPostsViewModel(userPreferences) {
     var showTimelineHelp by mutableStateOf(false)
 
     init {

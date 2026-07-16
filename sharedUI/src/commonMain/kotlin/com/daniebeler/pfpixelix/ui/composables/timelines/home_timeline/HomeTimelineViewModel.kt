@@ -18,7 +18,7 @@ class HomeTimelineViewModel @Inject constructor(
     private val timelineService: TimelineService,
     private val accountService: AccountService,
     private val userPreferences: UserPreferences
-) : PaginatedPostsViewModel() {
+) : PaginatedPostsViewModel(userPreferences) {
 
     private var enableReblogs: Boolean = false
     var showTimelineHelp by mutableStateOf(false)

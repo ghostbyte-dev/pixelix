@@ -61,6 +61,8 @@ fun HomeTimelineComposable(
     InfinitePostsList(
         items = viewModel.timelineState.posts,
         contentPaddingTop = 32.dp,
+        view = viewModel.view,
+        changeView = { viewModel.changeView(it) },
         isLoading = viewModel.timelineState.isLoading,
         isRefreshing = viewModel.timelineState.isRefreshing,
         error = viewModel.timelineState.error,

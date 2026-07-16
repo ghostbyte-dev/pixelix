@@ -64,6 +64,14 @@ See the [LICENSE](./LICENSE) file for details.
 
 <br>
 
+## Contributors
+
+<a href="https://github.com/ghostbyte-dev/pixelix/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=ghostbyte-dev/pixelix" alt="list of contributors icons" />
+</a>
+
+<br>
+
 ## A Ghostbyte Production
 
 ![Ghostbyte banner](https://github.com/ghostbyte-dev/pixelix/blob/c42cbda6ac92b80e3d4d6e8f726ac211c1b02de6/assets/ghostbyte-banner.png)

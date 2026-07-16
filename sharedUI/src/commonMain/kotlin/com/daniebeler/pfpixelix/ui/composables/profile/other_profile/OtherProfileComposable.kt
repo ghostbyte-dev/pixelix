@@ -67,6 +67,7 @@ import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.model.request.UserBlockRequest
 import com.daniebeler.pfpixelix.domain.model.request.UserMuteRequest
 import com.daniebeler.pfpixelix.domain.service.capabilities.Capabilities
+import com.daniebeler.pfpixelix.domain.service.platform.PlatformFeatures
 import com.daniebeler.pfpixelix.ui.composables.profile.CollectionsComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.MutualFollowersComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.postsWrapperComposable
@@ -81,6 +82,7 @@ import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposableDialog
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pfpixelix.ui.composables.widgets.ButtonRowElement
 import com.daniebeler.pfpixelix.ui.composables.widgets.CustomPullToRefreshBox
+import com.daniebeler.pfpixelix.ui.composables.widgets.InfinitePostsList
 import com.daniebeler.pfpixelix.ui.composables.widgets.InfiniteStaggeredGridHandler
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import com.daniebeler.pfpixelix.utils.DomainFormat
@@ -120,6 +122,7 @@ import pixelix.app.generated.resources.mute_this_profile
 import pixelix.app.generated.resources.open_in_browser
 import pixelix.app.generated.resources.photo
 import pixelix.app.generated.resources.blocked
+import pixelix.app.generated.resources.edit_profile
 import pixelix.app.generated.resources.muted
 import pixelix.app.generated.resources.reason
 import pixelix.app.generated.resources.reject_follow_request
@@ -212,276 +215,205 @@ fun OtherProfileComposable(
             )
         }) { paddingValues ->
         Box(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
-            CustomPullToRefreshBox(
+            InfinitePostsList(
+                items = viewModel.postsState.posts,
+                isLoading = viewModel.postsState.isLoading,
                 isRefreshing = viewModel.accountState.refreshing || viewModel.postsState.refreshing,
-                onRefresh = { viewModel.loadData(userId, username, true, navController) },
-                modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)
-            ) {
+                error = viewModel.postsState.error,
+                view = viewModel.view,
+                changeView = { viewModel.changeView(it) },
+                endReached = false,
+                navController = navController,
+                getItemsPaginated = { viewModel.getPostsPaginated(viewModel.userId) },
+                onRefresh = {
+                    viewModel.loadData(userId, username, true, navController)
+                },
+                postsCount = viewModel.accountState.account?.postsCount,
+                itemGetsDeleted = { postId -> viewModel.postGetsDeleted(postId) },
+                postGetsUpdated = { },
+                isFirstItemLarge = true,
+                before = {
+                    Column(
+                        modifier = Modifier.layout { measurable, constraints ->
+                            val horizontalPadding = 4.dp.roundToPx()
 
-                BoxWithConstraints {
-                    val gridContentWidth = maxWidth - 8.dp
-                    val gridColumnCount = maxOf(3, (gridContentWidth / 120.dp).toInt())
-                    LazyVerticalStaggeredGrid(
-                        columns = when (viewModel.view) {
-                            com.daniebeler.pfpixelix.ui.composables.profile.ViewEnum.Grid -> StaggeredGridCells.Fixed(
-                                gridColumnCount
-                            )
-
-                            com.daniebeler.pfpixelix.ui.composables.profile.ViewEnum.Masonry -> StaggeredGridCells.Adaptive(
-                                150.dp
-                            )
-
-                            com.daniebeler.pfpixelix.ui.composables.profile.ViewEnum.LargeMasonry -> StaggeredGridCells.Adaptive(
-                                350.dp
-                            )
-
-                            com.daniebeler.pfpixelix.ui.composables.profile.ViewEnum.Timeline -> StaggeredGridCells.Adaptive(
-                                350.dp
-                            )
-                        },
-                        verticalItemSpacing = 4.dp,
-                        horizontalArrangement = Arrangement.spacedBy(4.dp),
-                        state = lazyGridState,
-                        contentPadding = PaddingValues(bottom = 60.dp, start = 4.dp, end = 4.dp)
-                    ) {
-                        item(span = StaggeredGridItemSpan.FullLine) {
-                            Column(
-                                modifier = Modifier.layout { measurable, constraints ->
-                                    val horizontalPadding = 4.dp.roundToPx()
-
-                                    val expandedWidth =
-                                        constraints.maxWidth + (horizontalPadding * 2)
-                                    val placeable = measurable.measure(
-                                        constraints.copy(
-                                            maxWidth = expandedWidth, minWidth = expandedWidth
-                                        )
-                                    )
-                                    layout(constraints.maxWidth, placeable.height) {
-                                        placeable.placeRelative(-horizontalPadding, 0)
-                                    }
-                                }.fillMaxWidth().clip(
-                                    RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)
-                                ).background(MaterialTheme.colorScheme.surfaceContainer)
-                                    .padding(bottom = 12.dp)
-                            ) {
-                                if (viewModel.accountState.account != null) {
-                                    ProfileTopSection(
-                                        account = viewModel.accountState.account,
-                                        relationship = viewModel.relationshipState.accountRelationship,
-                                        navController,
-                                        openUrl = { url ->
-                                            viewModel.openUrl(url)
-                                        })
-                                }
-
-                                MutualFollowersComposable(
-                                    mutualFollowersState = viewModel.mutualFollowersState,
-                                    navController = navController
+                            val expandedWidth = constraints.maxWidth + (horizontalPadding * 2)
+                            val placeable = measurable.measure(
+                                constraints.copy(
+                                    maxWidth = expandedWidth, minWidth = expandedWidth
                                 )
+                            )
+                            layout(constraints.maxWidth, placeable.height) {
+                                placeable.placeRelative(-horizontalPadding, 0)
+                            }
+                        }.fillMaxWidth().clip(
+                            RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)
+                        ).background(MaterialTheme.colorScheme.surfaceContainer)
+                            .padding(bottom = 12.dp)
+                    ) {
+                        if (viewModel.accountState.account != null) {
+                            ProfileTopSection(
+                                account = viewModel.accountState.account,
+                                relationship = viewModel.relationshipState.accountRelationship,
+                                navController,
+                                openUrl = { url ->
+                                    viewModel.openUrl(url)
+                                })
+                        }
 
+                        MutualFollowersComposable(
+                            mutualFollowersState = viewModel.mutualFollowersState,
+                            navController = navController
+                        )
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp)
+                        ) {
+                            var containerColor by remember {
+                                mutableStateOf(Color(0xFFFFFFFF))
+                            }
+
+                            var contentColor by remember {
+                                mutableStateOf(Color(0xFFFFFFFF))
+                            }
+
+                            if (viewModel.relationshipState.accountRelationship?.following == true) {
+                                containerColor = MaterialTheme.colorScheme.secondaryContainer
+                                contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                            } else {
+                                containerColor = MaterialTheme.colorScheme.primary
+                                contentColor = MaterialTheme.colorScheme.onPrimary
+                            }
+
+                            Button(
+                                onClick = {
+                                    if (!viewModel.relationshipState.isLoading && viewModel.relationshipState.accountRelationship != null) {
+                                        if (viewModel.relationshipState.accountRelationship?.following == true) {
+                                            viewModel.unfollowAccount()
+                                        } else {
+                                            viewModel.followAccount()
+                                        }
+                                    }
+                                },
+                                modifier = Modifier.weight(1f),
+                                shape = RoundedCornerShape(12.dp),
+                                contentPadding = PaddingValues(12.dp),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = containerColor,
+                                    contentColor = contentColor,
+                                    disabledContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+                                    disabledContentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                                ),
+                                enabled = viewModel.relationshipState.accountRelationship?.requested == false
+                            ) {
+                                if (viewModel.relationshipState.isLoading) {
+                                    LoadingComposable(
+                                        modifier = Modifier.size(20.dp), color = contentColor
+                                    )
+                                } else {
+                                    if (viewModel.relationshipState.accountRelationship?.following == true) {
+                                        Text(text = stringResource(Res.string.unfollow))
+                                    } else if (viewModel.relationshipState.accountRelationship?.requested == true) {
+                                        Text(text = stringResource(Res.string.requested))
+                                    } else {
+                                        Text(text = stringResource(Res.string.follow))
+                                    }
+                                }
+                            }
+
+                            if (viewModel.capabilities.general.supportsDMs) {
+                                Spacer(modifier = Modifier.width(12.dp))
+
+                                Button(
+                                    onClick = {
+                                        viewModel.accountState.account?.let { account ->
+                                            navController.navigate(Destination.Chat(account.id))
+                                        }
+                                    },
+                                    modifier = Modifier.weight(1f),
+                                    shape = RoundedCornerShape(12.dp),
+                                    contentPadding = PaddingValues(12.dp),
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                                        contentColor = MaterialTheme.colorScheme.onSurface
+                                    )
+                                ) {
+                                    Text(text = stringResource(Res.string.message))
+                                }
+                            }
+
+
+                        }
+
+                        viewModel.relationshipState.accountRelationship?.let { relationship ->
+                            if (relationship.requestedBy) {
                                 Row(
                                     modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp)
+                                        .padding(top = 12.dp)
                                 ) {
-                                    var containerColor by remember {
-                                        mutableStateOf(Color(0xFFFFFFFF))
-                                    }
-
-                                    var contentColor by remember {
-                                        mutableStateOf(Color(0xFFFFFFFF))
-                                    }
-
-                                    if (viewModel.relationshipState.accountRelationship?.following == true) {
-                                        containerColor =
-                                            MaterialTheme.colorScheme.secondaryContainer
-                                        contentColor =
-                                            MaterialTheme.colorScheme.onSecondaryContainer
-                                    } else {
-                                        containerColor = MaterialTheme.colorScheme.primary
-                                        contentColor = MaterialTheme.colorScheme.onPrimary
-                                    }
-
                                     Button(
                                         onClick = {
-                                            if (!viewModel.relationshipState.isLoading && viewModel.relationshipState.accountRelationship != null) {
-                                                if (viewModel.relationshipState.accountRelationship?.following == true) {
-                                                    viewModel.unfollowAccount()
-                                                } else {
-                                                    viewModel.followAccount()
-                                                }
-                                            }
+                                            viewModel.acceptFollowRequest()
                                         },
                                         modifier = Modifier.weight(1f),
                                         shape = RoundedCornerShape(12.dp),
                                         contentPadding = PaddingValues(12.dp),
                                         colors = ButtonDefaults.buttonColors(
-                                            containerColor = containerColor,
-                                            contentColor = contentColor,
-                                            disabledContainerColor = MaterialTheme.colorScheme.secondaryContainer,
-                                            disabledContentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                                            containerColor = MaterialTheme.colorScheme.primary,
+                                            contentColor = MaterialTheme.colorScheme.onPrimary,
                                         ),
-                                        enabled = viewModel.relationshipState.accountRelationship?.requested == false
                                     ) {
-                                        if (viewModel.relationshipState.isLoading) {
+                                        if (viewModel.followRequestState.isLoading && viewModel.followRequestState.isAccepting) {
                                             LoadingComposable(
                                                 modifier = Modifier.size(20.dp),
-                                                color = contentColor
+                                                color = MaterialTheme.colorScheme.onPrimary
                                             )
                                         } else {
-                                            if (viewModel.relationshipState.accountRelationship?.following == true) {
-                                                Text(text = stringResource(Res.string.unfollow))
-                                            } else if (viewModel.relationshipState.accountRelationship?.requested == true) {
-                                                Text(text = stringResource(Res.string.requested))
-                                            } else {
-                                                Text(text = stringResource(Res.string.follow))
-                                            }
+                                            Text(stringResource(Res.string.accept_follow_request))
                                         }
                                     }
 
-                                    if (viewModel.capabilities.general.supportsDMs) {
-                                        Spacer(modifier = Modifier.width(12.dp))
+                                    Spacer(modifier = Modifier.width(12.dp))
 
-                                        Button(
-                                            onClick = {
-                                                viewModel.accountState.account?.let { account ->
-                                                    navController.navigate(Destination.Chat(account.id))
-                                                }
-                                            },
-                                            modifier = Modifier.weight(1f),
-                                            shape = RoundedCornerShape(12.dp),
-                                            contentPadding = PaddingValues(12.dp),
-                                            colors = ButtonDefaults.buttonColors(
-                                                containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-                                                contentColor = MaterialTheme.colorScheme.onSurface
-                                            )
-                                        ) {
-                                            Text(text = stringResource(Res.string.message))
-                                        }
-                                    }
-
-
-                                }
-
-                                viewModel.relationshipState.accountRelationship?.let { relationship ->
-                                    if (relationship.requestedBy) {
-                                        Row(
-                                            modifier = Modifier.fillMaxWidth()
-                                                .padding(horizontal = 12.dp).padding(top = 12.dp)
-                                        ) {
-                                            Button(
-                                                onClick = {
-                                                    viewModel.acceptFollowRequest()
-                                                },
-                                                modifier = Modifier.weight(1f),
-                                                shape = RoundedCornerShape(12.dp),
-                                                contentPadding = PaddingValues(12.dp),
-                                                colors = ButtonDefaults.buttonColors(
-                                                    containerColor = MaterialTheme.colorScheme.primary,
-                                                    contentColor = MaterialTheme.colorScheme.onPrimary,
-                                                ),
-                                            ) {
-                                                if (viewModel.followRequestState.isLoading && viewModel.followRequestState.isAccepting) {
-                                                    LoadingComposable(
-                                                        modifier = Modifier.size(20.dp),
-                                                        color = MaterialTheme.colorScheme.onPrimary
-                                                    )
-                                                } else {
-                                                    Text(stringResource(Res.string.accept_follow_request))
-                                                }
-                                            }
-
-                                            Spacer(modifier = Modifier.width(12.dp))
-
-                                            Button(
-                                                onClick = {
-                                                    viewModel.rejectFollowRequest()
-                                                },
-                                                modifier = Modifier.weight(1f),
-                                                shape = RoundedCornerShape(12.dp),
-                                                contentPadding = PaddingValues(12.dp),
-                                                colors = ButtonDefaults.buttonColors(
-                                                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                                                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer
-                                                )
-                                            ) {
-                                                if (viewModel.followRequestState.isLoading && !viewModel.followRequestState.isAccepting) {
-                                                    LoadingComposable(
-                                                        modifier = Modifier.size(20.dp),
-                                                        color = MaterialTheme.colorScheme.onPrimary
-                                                    )
-                                                } else {
-                                                    Text(text = stringResource(Res.string.reject_follow_request))
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-
-                                viewModel.accountState.account?.let { account ->
-                                    CollectionsComposable(
-                                        collectionsState = viewModel.collectionsState,
-                                        getMoreCollections = {
-                                            viewModel.getCollections(
-                                                account.id, true
-                                            )
+                                    Button(
+                                        onClick = {
+                                            viewModel.rejectFollowRequest()
                                         },
-                                        navController = navController,
-                                        instanceDomain = viewModel.domain,
-                                        openUrl = { url -> viewModel.openUrl(url) })
+                                        modifier = Modifier.weight(1f),
+                                        shape = RoundedCornerShape(12.dp),
+                                        contentPadding = PaddingValues(12.dp),
+                                        colors = ButtonDefaults.buttonColors(
+                                            containerColor = MaterialTheme.colorScheme.primaryContainer,
+                                            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+                                        )
+                                    ) {
+                                        if (viewModel.followRequestState.isLoading && !viewModel.followRequestState.isAccepting) {
+                                            LoadingComposable(
+                                                modifier = Modifier.size(20.dp),
+                                                color = MaterialTheme.colorScheme.onPrimary
+                                            )
+                                        } else {
+                                            Text(text = stringResource(Res.string.reject_follow_request))
+                                        }
+                                    }
                                 }
                             }
                         }
 
-                        item(span = StaggeredGridItemSpan.FullLine) {
-                            SwitchViewComposable(
-                                postsCount = viewModel.accountState.account?.postsCount ?: 0,
-                                viewType = viewModel.view,
-                                onViewChange = {
-                                    viewModel.changeView(it)
-                                })
-                        }
-
-                        postsWrapperComposable(
-                            posts = viewModel.postsState.posts,
-                            isLoading = viewModel.postsState.isLoading,
-                            isRefreshing = viewModel.accountState.refreshing || viewModel.postsState.refreshing,
-                            endReached = viewModel.postsState.endReached,
-                            view = viewModel.view,
-                            postGetsDeleted = { viewModel.postGetsDeleted(it) },
-                            updatePost = { viewModel.updatePost(it) },
-                            isFirstImageLarge = true,
-                            gridColumnCount = gridColumnCount,
-                            gridContentWidth = gridContentWidth,
-                            navController = navController
-                        )
-                        if (viewModel.postsState.posts.isEmpty() && viewModel.postsState.error.isNotBlank()) {
-                            item(span = StaggeredGridItemSpan.FullLine) {
-                                ErrorComposable(
-                                    message = viewModel.postsState.error,
-                                    modifier = Modifier.fillMaxSize().padding(36.dp, 20.dp)
-                                )
-                            }
-                        }
-                        if (viewModel.postsState.isLoading && viewModel.postsState.posts.isEmpty()) {
-                            item(span = StaggeredGridItemSpan.FullLine) {
-                                LoadingComposable(viewModel.postsState.isLoading)
-                            }
-                        }
-                        if (viewModel.postsState.posts.isEmpty() && !viewModel.postsState.isLoading && viewModel.postsState.error.isEmpty()) {
-                            item(span = StaggeredGridItemSpan.FullLine) {
-                                EmptyStateComposable(
-                                    emptyState = EmptyState(icon = photoIcon, heading = "No Posts")
-                                )
-                            }
+                        viewModel.accountState.account?.let { account ->
+                            CollectionsComposable(
+                                collectionsState = viewModel.collectionsState,
+                                getMoreCollections = {
+                                    viewModel.getCollections(
+                                        account.id, true
+                                    )
+                                },
+                                navController = navController,
+                                instanceDomain = viewModel.domain,
+                                openUrl = { url -> viewModel.openUrl(url) })
                         }
                     }
-                }
-            }
-
-            InfiniteStaggeredGridHandler(
-                lazyStaggeredGridState = lazyGridState, itemCount = viewModel.postsState.posts.size
-            ) {
-                viewModel.getPostsPaginated(viewModel.userId)
-            }
+                })
 
             if (showBottomSheet) {
                 ModalBottomSheet(

@@ -98,133 +98,127 @@ fun OwnProfileComposable(
         topBar = {
             TopAppBar(
                 scrollBehavior = scrollBehavior, title = {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(12.dp),
-                        modifier = Modifier.clickable { showBottomSheet = 2 }) {
-                        Column {
-                            Text(
-                                text = viewModel.accountState.account?.username ?: "",
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 18.sp
-                            )
-                            Text(
-                                text = DomainFormat.formatDomain(viewModel.ownDomain),
-                                fontSize = 12.sp,
-                                lineHeight = 6.sp
-                            )
-                        }
-                        Icon(
-                            imageVector = vectorResource(Res.drawable.arrow_down),
-                            contentDescription = "Switch account"
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    modifier = Modifier.clickable { showBottomSheet = 2 }) {
+                    Column {
+                        Text(
+                            text = viewModel.accountState.account?.username ?: "",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 18.sp
+                        )
+                        Text(
+                            text = DomainFormat.formatDomain(viewModel.ownDomain),
+                            fontSize = 12.sp,
+                            lineHeight = 6.sp
                         )
                     }
-                }, actions = {
-                    if (viewModel.ownDomain.isNotEmpty()) {
-                        DomainSoftwareComposable(
-                            domain = viewModel.ownDomain
-                        )
-                    }
+                    Icon(
+                        imageVector = vectorResource(Res.drawable.arrow_down),
+                        contentDescription = "Switch account"
+                    )
+                }
+            }, actions = {
+                if (viewModel.ownDomain.isNotEmpty()) {
+                    DomainSoftwareComposable(
+                        domain = viewModel.ownDomain
+                    )
+                }
 
-                    IconButton(onClick = {
-                        showBottomSheet = 1
-                    }) {
-                        Icon(
-                            imageVector = vectorResource(Res.drawable.more_menu),
-                            contentDescription = "preferences"
-                        )
-                    }
-                }, colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceContainer
-                )
+                IconButton(onClick = {
+                    showBottomSheet = 1
+                }) {
+                    Icon(
+                        imageVector = vectorResource(Res.drawable.more_menu),
+                        contentDescription = "preferences"
+                    )
+                }
+            }, colors = TopAppBarDefaults.topAppBarColors(
+                containerColor = MaterialTheme.colorScheme.surfaceContainer
+            )
             )
         }) { paddingValues ->
         Box(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
-            CustomPullToRefreshBox(
+            InfinitePostsList(
+                items = viewModel.postsState.posts,
+                isLoading = viewModel.postsState.isLoading,
                 isRefreshing = viewModel.accountState.refreshing || viewModel.postsState.refreshing,
-                onRefresh = { viewModel.loadData(true) },
-                modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)
-            ) {
-                InfinitePostsList(
-                    items = viewModel.postsState.posts,
-                    isLoading = viewModel.postsState.isLoading,
-                    isRefreshing = viewModel.accountState.refreshing || viewModel.postsState.refreshing,
-                    error = viewModel.postsState.error,
-                    view = viewModel.view,
-                    changeView = { viewModel.changeView(it) },
-                    endReached = false,
-                    navController = navController,
-                    getItemsPaginated = { viewModel.getPostsPaginated() },
-                    onRefresh = {
-                        viewModel.loadData(true)
-                    },
-                    postsCount = viewModel.accountState.account?.postsCount,
-                    itemGetsDeleted = { postId -> viewModel.postGetsDeleted(postId) },
-                    postGetsUpdated = { },
-                    isFirstItemLarge = true,
-                    before = {
-                        Column(
-                            modifier = Modifier.layout { measurable, constraints ->
-                                val horizontalPadding = 4.dp.roundToPx()
+                error = viewModel.postsState.error,
+                view = viewModel.view,
+                changeView = { viewModel.changeView(it) },
+                endReached = false,
+                navController = navController,
+                getItemsPaginated = { viewModel.getPostsPaginated() },
+                onRefresh = {
+                    viewModel.loadData(true)
+                },
+                postsCount = viewModel.accountState.account?.postsCount,
+                itemGetsDeleted = { postId -> viewModel.postGetsDeleted(postId) },
+                postGetsUpdated = { },
+                isFirstItemLarge = true,
+                before = {
+                    Column(
+                        modifier = Modifier.layout { measurable, constraints ->
+                            val horizontalPadding = 4.dp.roundToPx()
 
-                                val expandedWidth = constraints.maxWidth + (horizontalPadding * 2)
-                                val placeable = measurable.measure(
-                                    constraints.copy(
-                                        maxWidth = expandedWidth, minWidth = expandedWidth
-                                    )
+                            val expandedWidth = constraints.maxWidth + (horizontalPadding * 2)
+                            val placeable = measurable.measure(
+                                constraints.copy(
+                                    maxWidth = expandedWidth, minWidth = expandedWidth
                                 )
-                                layout(constraints.maxWidth, placeable.height) {
-                                    placeable.placeRelative(-horizontalPadding, 0)
-                                }
-                            }.fillMaxWidth().clip(
-                                RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)
-                            ).background(MaterialTheme.colorScheme.surfaceContainer)
-                                .padding(bottom = 12.dp)
-                        ) {
-                            if (viewModel.accountState.account != null) {
-                                ProfileTopSection(
-                                    account = viewModel.accountState.account,
-                                    relationship = null,
-                                    navController,
-                                    openUrl = { url -> viewModel.openUrl(url) })
-
-                                Row(
-                                    Modifier.fillMaxWidth().padding(horizontal = 12.dp)
-                                ) {
-                                    Button(
-                                        onClick = {
-                                            navController.navigate(Destination.EditProfile)
-                                        },
-                                        modifier = Modifier.fillMaxWidth(),
-                                        shape = RoundedCornerShape(12.dp),
-                                        contentPadding = PaddingValues(12.dp),
-                                        colors = ButtonDefaults.buttonColors(
-                                            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-                                            contentColor = MaterialTheme.colorScheme.onSurface
-                                        )
-                                    ) {
-                                        Text(text = stringResource(Res.string.edit_profile))
-                                    }
-                                }
+                            )
+                            layout(constraints.maxWidth, placeable.height) {
+                                placeable.placeRelative(-horizontalPadding, 0)
                             }
-                            if (viewModel.capabilities.profile.showCollectionsOwnProfile) {
-                                CollectionsComposable(
-                                    collectionsState = viewModel.collectionsState,
-                                    getMoreCollections = {
-                                        viewModel.accountState.account?.let {
-                                            viewModel.getCollections(
-                                                it.id, true
-                                            )
-                                        }
+                        }.fillMaxWidth().clip(
+                            RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)
+                        ).background(MaterialTheme.colorScheme.surfaceContainer)
+                            .padding(bottom = 12.dp)
+                    ) {
+                        if (viewModel.accountState.account != null) {
+                            ProfileTopSection(
+                                account = viewModel.accountState.account,
+                                relationship = null,
+                                navController,
+                                openUrl = { url -> viewModel.openUrl(url) })
+
+                            Row(
+                                Modifier.fillMaxWidth().padding(horizontal = 12.dp)
+                            ) {
+                                Button(
+                                    onClick = {
+                                        navController.navigate(Destination.EditProfile)
                                     },
-                                    navController = navController,
-                                    addNewButton = PlatformFeatures.addCollection,
-                                    instanceDomain = viewModel.ownDomain,
-                                ) { url -> viewModel.openUrl(url) }
+                                    modifier = Modifier.fillMaxWidth(),
+                                    shape = RoundedCornerShape(12.dp),
+                                    contentPadding = PaddingValues(12.dp),
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                                        contentColor = MaterialTheme.colorScheme.onSurface
+                                    )
+                                ) {
+                                    Text(text = stringResource(Res.string.edit_profile))
+                                }
                             }
                         }
-                    })
-            }
+                        if (viewModel.capabilities.profile.showCollectionsOwnProfile) {
+                            CollectionsComposable(
+                                collectionsState = viewModel.collectionsState,
+                                getMoreCollections = {
+                                    viewModel.accountState.account?.let {
+                                        viewModel.getCollections(
+                                            it.id, true
+                                        )
+                                    }
+                                },
+                                navController = navController,
+                                addNewButton = PlatformFeatures.addCollection,
+                                instanceDomain = viewModel.ownDomain,
+                            ) { url -> viewModel.openUrl(url) }
+                        }
+                    }
+                })
         }
     }
 

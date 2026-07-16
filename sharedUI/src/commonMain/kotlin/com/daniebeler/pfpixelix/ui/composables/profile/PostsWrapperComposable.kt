@@ -80,6 +80,16 @@ fun LazyStaggeredGridScope.postsWrapperComposable(
             navController = navController
         )
     }
+
+    if (view == ViewEnum.LargeMasonry) {
+        postsLargeMasonryInScope(
+            posts = posts,
+            isLoading = isLoading,
+            isRefreshing = isRefreshing,
+            endReached = endReached,
+            navController = navController
+        )
+    }
 }
 
 private fun LazyStaggeredGridScope.postsGridInScope(
@@ -234,6 +244,42 @@ private fun LazyStaggeredGridScope.postsListInScope(
 }
 
 private fun LazyStaggeredGridScope.postsMasonryInScope(
+    posts: List<Post>,
+    isLoading: Boolean,
+    isRefreshing: Boolean,
+    endReached: Boolean,
+    navController: NavController,
+) {
+
+    if (posts.isNotEmpty()) {
+
+        items(posts.size, key = { posts[it].id }) { index ->
+            val zIndex = remember {
+                mutableFloatStateOf(1f)
+            }
+            Box(modifier = Modifier.zIndex(zIndex.floatValue)) {
+                MasonryPost(
+                    post = posts[index],
+                    navController = navController,
+                )
+            }
+        }
+
+        if (isLoading && !isRefreshing) {
+            item(span = StaggeredGridItemSpan.FullLine) {
+                LoadingComposable(Modifier.fillMaxWidth().padding(vertical = 50.dp))
+            }
+        }
+
+        if (endReached && posts.size > 3) {
+            item(span = StaggeredGridItemSpan.FullLine) {
+                EndOfListComposable()
+            }
+        }
+    }
+}
+
+private fun LazyStaggeredGridScope.postsLargeMasonryInScope(
     posts: List<Post>,
     isLoading: Boolean,
     isRefreshing: Boolean,

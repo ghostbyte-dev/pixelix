@@ -71,6 +71,7 @@ fun InfinitePostsList(
                 val columns = when (view) {
                     ViewEnum.Grid -> StaggeredGridCells.Fixed(gridColumnCount)
                     ViewEnum.Masonry -> StaggeredGridCells.Adaptive(150.dp)
+                    ViewEnum.LargeMasonry -> StaggeredGridCells.Adaptive(350.dp)
                     ViewEnum.Timeline -> StaggeredGridCells.Adaptive(350.dp)
                 }
 
@@ -97,7 +98,7 @@ fun InfinitePostsList(
                             onViewChange = { changeView(it) }
                         )
                     }
-                    
+
                     postsWrapperComposable(
                         posts = items,
                         isLoading = isLoading,

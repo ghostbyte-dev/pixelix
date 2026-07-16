@@ -53,10 +53,6 @@ class UserPreferences(private val dataStore: DataStore<Preferences>) {
 
     var hideAltTextButton by boolean("k_hide_alt_text_button", false)
     val hideAltTextButtonFlow = booleanFlow("k_hide_alt_text_button", false)
-
-    var focusMode by boolean("k_focus_mode", false)
-    val focusModeFlow = booleanFlow("k_focus_mode", false)
-
     var autoplayVideo by boolean("k_autoplay_mode", true)
     val autoplayVideoFlow = booleanFlow("k_autoplay_mode", true)
 

@@ -221,31 +221,28 @@ fun PostComposable(
             )
         }
 
-
-        if (!viewModel.isInFocusMode) {
-            PostActionBar(
-                post = currentPost,
-                viewModel = viewModel,
-                postId = postId,
-                heartScale = heartScale,
-                boostRotation = boostRotation,
-                pagerState = pagerState,
-                animateHeart = { animateHeart = true },
-                animateBoost = { animateBoost = !animateBoost },
-                onCommentsClick = {
-                    viewModel.loadReplies(postId)
-                    viewModel.getInstance()
-                    activeSheet = BottomSheetType.Comments
-                },
-                onLikesClick = {
-                    viewModel.loadLikedBy(postId)
-                    activeSheet = BottomSheetType.Likes
-                },
-                navController = navController,
-                updatePost = updatePost,
-                hideMetadataPref = viewModel.hideMetadataPref
-            )
-        }
+        PostActionBar(
+            post = currentPost,
+            viewModel = viewModel,
+            postId = postId,
+            heartScale = heartScale,
+            boostRotation = boostRotation,
+            pagerState = pagerState,
+            animateHeart = { animateHeart = true },
+            animateBoost = { animateBoost = !animateBoost },
+            onCommentsClick = {
+                viewModel.loadReplies(postId)
+                viewModel.getInstance()
+                activeSheet = BottomSheetType.Comments
+            },
+            onLikesClick = {
+                viewModel.loadLikedBy(postId)
+                activeSheet = BottomSheetType.Likes
+            },
+            navController = navController,
+            updatePost = updatePost,
+            hideMetadataPref = viewModel.hideMetadataPref
+        )
     }
 
     PostBottomSheet(
@@ -413,7 +410,8 @@ private fun PostMediaSection(
 @Composable
 private fun PostSensitiveOverlay(post: Post, viewModel: PostViewModel, isMasonry: Boolean) {
     Box(
-        modifier = Modifier.fillMaxWidth().zIndex(80f).clip(RoundedCornerShape(if (isMasonry) 8.dp else 16.dp))
+        modifier = Modifier.fillMaxWidth().zIndex(80f)
+            .clip(RoundedCornerShape(if (isMasonry) 8.dp else 16.dp))
     ) {
         val blurHashBitmap = BlurHashDecoder.decode(post.mediaAttachments[0].blurHash)
         val aspectRatio = post.mediaAttachments[0].aspectRatio?.toFloat() ?: 1.5f
@@ -876,10 +874,10 @@ private fun PostDeleteDialog(viewModel: PostViewModel) {
 
     AlertDialog(
         icon = {
-            Icon(
-                imageVector = vectorResource(Res.drawable.trash), contentDescription = null
-            )
-        },
+        Icon(
+            imageVector = vectorResource(Res.drawable.trash), contentDescription = null
+        )
+    },
         title = { Text(text = stringResource(Res.string.delete_post)) },
         text = { Text(text = stringResource(Res.string.this_action_cannot_be_undone)) },
         onDismissRequest = { viewModel.deleteDialog = null },
@@ -920,7 +918,10 @@ fun PostImage(
     var showMediaDialog by remember { mutableStateOf<MediaAttachment?>(null) }
     var altText by remember { mutableStateOf("") }
 
-    Box(modifier = Modifier.fillMaxWidth().zIndex(80f).clip(RoundedCornerShape(if (isMasonry) 8.dp else 16.dp))) {
+    Box(
+        modifier = Modifier.fillMaxWidth().zIndex(80f)
+            .clip(RoundedCornerShape(if (isMasonry) 8.dp else 16.dp))
+    ) {
         val blurHashBitmap = BlurHashDecoder.decode(mediaAttachment.blurHash)
 
         if (!imageLoaded && blurHashBitmap != null) {

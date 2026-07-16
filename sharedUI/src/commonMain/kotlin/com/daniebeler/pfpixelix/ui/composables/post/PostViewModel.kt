@@ -72,7 +72,6 @@ class PostViewModel @Inject constructor(
     var myUsername: String? = null
 
     var isAltTextButtonHidden by mutableStateOf(false)
-    var isInFocusMode by mutableStateOf(false)
     var hideMetadataPref by mutableStateOf(true)
     var isAutoplayVideos by mutableStateOf(true)
     var blurSensitiveContent by mutableStateOf(false)
@@ -103,9 +102,6 @@ class PostViewModel @Inject constructor(
             prefs.hideAltTextButtonFlow.collect {
                 isAltTextButtonHidden = it
             }
-        }
-        viewModelScope.launch {
-            prefs.focusModeFlow.collect { isInFocusMode = it }
         }
         viewModelScope.launch {
             prefs.hideMetadataFlow.collect { hideMetadataPref = it }

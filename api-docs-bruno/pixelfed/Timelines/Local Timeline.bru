@@ -5,7 +5,7 @@ meta {
 }
 
 get {
-  url: {{baseUrl}}/api/v1/timelines/public?local=true&_pe=1
+  url: {{baseUrl}}/api/v1/timelines/public?local=true&_pe=1&limit=20
   body: none
   auth: inherit
 }
@@ -13,5 +13,6 @@ get {
 params:query {
   local: true
   _pe: 1
+  limit: 20
   ~max_id: 686175555846999155
 }

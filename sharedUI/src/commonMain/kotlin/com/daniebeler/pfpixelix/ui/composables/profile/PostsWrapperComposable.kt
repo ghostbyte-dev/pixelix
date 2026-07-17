@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridScope
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
+import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
@@ -22,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.domain.model.Post
+import com.daniebeler.pfpixelix.domain.model.uiKey
 import com.daniebeler.pfpixelix.ui.composables.post.MasonryPost
 import com.daniebeler.pfpixelix.ui.composables.widgets.CustomPost
 import com.daniebeler.pfpixelix.ui.composables.post.PostComposable
@@ -124,7 +126,7 @@ private fun LazyStaggeredGridScope.postsGridInScope(
     } else 0
 
     if (featuredCount >= 3 && contentWidth > 0.dp) {
-        item(span = StaggeredGridItemSpan.FullLine) {
+        item(key = "first_line_key", span = StaggeredGridItemSpan.FullLine) {
             val bigSize = columnWidth * 2 + spacing
             val smallColumnsCount = columnCount - 2
             val remainingCount = posts.size - featuredCount
@@ -207,7 +209,8 @@ private fun LazyStaggeredGridScope.postsGridInScope(
         // 3. REMAINING ITEMS (Below the featured block)
         if (featuredCount < posts.size) {
             val remaining = posts.subList(featuredCount, posts.size)
-            items(remaining.size, key = { remaining[it].id }) { remIndex ->
+            items(remaining, key = { it.uiKey }) { post ->
+                val remIndex = remaining.indexOf(post)
                 val remCol = remIndex % columnCount
                 val isBottomRow = remIndex + columnCount >= remaining.size
                 val isAbsoluteLast = remIndex == remaining.size - 1
@@ -221,7 +224,7 @@ private fun LazyStaggeredGridScope.postsGridInScope(
                 )
 
                 CustomPost(
-                    post = remaining[remIndex],
+                    post = post,
                     navController = navController,
                     edit = edit,
                     editRemove = editRemove,
@@ -232,11 +235,10 @@ private fun LazyStaggeredGridScope.postsGridInScope(
             }
         }
     } else {
-        // 4. STANDARD GRID (No featured layout)
-        items(posts.size, key = { posts[it].id }) { index ->
-            val shape = calculateOuterGridShape(index, posts.size, columnCount)
+        items(posts, key = { it.uiKey }) { post ->
+            val shape = calculateOuterGridShape(posts.indexOf(post), posts.size, columnCount)
             CustomPost(
-                post = posts[index],
+                post = post,
                 navController = navController,
                 edit = edit,
                 editRemove = editRemove,
@@ -248,11 +250,11 @@ private fun LazyStaggeredGridScope.postsGridInScope(
     }
 
     if (endReached && posts.size > 10) {
-        item(span = StaggeredGridItemSpan.FullLine) { EndOfListComposable() }
+        item(key = "end_of_list_key", span = StaggeredGridItemSpan.FullLine) { EndOfListComposable() }
     }
 
     if (!isRefreshing && isLoading && posts.isNotEmpty()) {
-        item(span = StaggeredGridItemSpan.FullLine) {
+        item(key = "loading_key", span = StaggeredGridItemSpan.FullLine) {
             LoadingComposable(Modifier.fillMaxWidth().padding(vertical = 50.dp))
         }
     }
@@ -271,13 +273,13 @@ private fun LazyStaggeredGridScope.postsListInScope(
 
     if (posts.isNotEmpty()) {
 
-        items(posts.size, key = { posts[it].id }) { index ->
+        items(posts, key = { it.uiKey }) { post ->
             val zIndex = remember {
                 mutableFloatStateOf(1f)
             }
             Box(modifier = Modifier.zIndex(zIndex.floatValue).padding(horizontal = 8.dp)) {
                 PostComposable(
-                    post = posts[index],
+                    post = post,
                     postGetsDeleted = postGetsDeleted,
                     navController = navController,
                     updatePost = updatePost,
@@ -289,13 +291,13 @@ private fun LazyStaggeredGridScope.postsListInScope(
         }
 
         if (isLoading && !isRefreshing) {
-            item(span = StaggeredGridItemSpan.FullLine) {
+            item(key = "loading_key", span = StaggeredGridItemSpan.FullLine) {
                 LoadingComposable(Modifier.fillMaxWidth().padding(vertical = 50.dp))
             }
         }
 
         if (endReached && posts.size > 3) {
-            item(span = StaggeredGridItemSpan.FullLine) {
+            item(key = "end_of_list_key", span = StaggeredGridItemSpan.FullLine) {
                 EndOfListComposable()
             }
         }
@@ -313,18 +315,18 @@ private fun LazyStaggeredGridScope.postsMasonryInScope(
 
     if (posts.isNotEmpty()) {
 
-        items(posts.size, key = { posts[it].id }) { index ->
+        items(items = posts, key = { it.uiKey }) { post ->
             val zIndex = remember {
                 mutableFloatStateOf(1f)
             }
 
             val shape = remember(posts.size) {
-                calculateOuterGridShape(index = index, totalCount = posts.size, columnCount = columnCount)
+                calculateOuterGridShape(index = posts.indexOf(post), totalCount = posts.size, columnCount = columnCount)
             }
 
             Box(modifier = Modifier.zIndex(zIndex.floatValue)) {
                 MasonryPost(
-                    post = posts[index],
+                    post = post,
                     roundedCornerShape = shape,
                     navController = navController,
                 )
@@ -332,13 +334,13 @@ private fun LazyStaggeredGridScope.postsMasonryInScope(
         }
 
         if (isLoading && !isRefreshing) {
-            item(span = StaggeredGridItemSpan.FullLine) {
+            item(key = "loading_list_key", span = StaggeredGridItemSpan.FullLine) {
                 LoadingComposable(Modifier.fillMaxWidth().padding(vertical = 50.dp))
             }
         }
 
         if (endReached && posts.size > 3) {
-            item(span = StaggeredGridItemSpan.FullLine) {
+            item(key = "end_of_list_key", span = StaggeredGridItemSpan.FullLine) {
                 EndOfListComposable()
             }
         }
@@ -356,18 +358,18 @@ private fun LazyStaggeredGridScope.postsLargeMasonryInScope(
 
     if (posts.isNotEmpty()) {
 
-        items(posts.size, key = { posts[it].id }) { index ->
+        items(posts, key = { it.uiKey }) { post ->
             val zIndex = remember {
                 mutableFloatStateOf(1f)
             }
 
             val shape = remember(posts.size) {
-                calculateOuterGridShape(index = index, totalCount = posts.size, columnCount = columnCount)
+                calculateOuterGridShape(index = posts.indexOf(post), totalCount = posts.size, columnCount = columnCount)
             }
 
             Box(modifier = Modifier.zIndex(zIndex.floatValue)) {
                 MasonryPost(
-                    post = posts[index],
+                    post = post,
                     roundedCornerShape = shape,
                     navController = navController,
                 )
@@ -375,13 +377,13 @@ private fun LazyStaggeredGridScope.postsLargeMasonryInScope(
         }
 
         if (isLoading && !isRefreshing) {
-            item(span = StaggeredGridItemSpan.FullLine) {
+            item(key = "loading_key", span = StaggeredGridItemSpan.FullLine) {
                 LoadingComposable(Modifier.fillMaxWidth().padding(vertical = 50.dp))
             }
         }
 
         if (endReached && posts.size > 3) {
-            item(span = StaggeredGridItemSpan.FullLine) {
+            item(key = "end_of_list_key", span = StaggeredGridItemSpan.FullLine) {
                 EndOfListComposable()
             }
         }

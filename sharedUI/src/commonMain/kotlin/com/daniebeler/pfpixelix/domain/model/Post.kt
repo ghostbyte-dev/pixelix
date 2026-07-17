@@ -26,3 +26,6 @@ data class Post(
     val emojis: List<Emoji>,
     val commentsDisabled: Boolean
 ): Identifiable
+
+val Post.uiKey: String
+    get() = if (reblogId != null) "${id}_reblog_${reblogId}" else id

@@ -85,12 +85,12 @@ fun InfinitePostsList(
                     )
                 ) {
                     if (before != null) {
-                        item(span = StaggeredGridItemSpan.FullLine) {
+                        item(key = "before_list_key", span = StaggeredGridItemSpan.FullLine) {
                             before()
                         }
                     }
 
-                    item(span = StaggeredGridItemSpan.FullLine) {
+                    item(key = "switch_view_key", span = StaggeredGridItemSpan.FullLine) {
                         SwitchViewComposable(
                             postsCount = postsCount,
                             viewType = view,
@@ -114,7 +114,7 @@ fun InfinitePostsList(
                         onClick = onClick
                     )
                     if (after != null) {
-                        item(span = StaggeredGridItemSpan.FullLine) {
+                        item(key = "after_list_key",span = StaggeredGridItemSpan.FullLine) {
                             after()
                         }
                     }

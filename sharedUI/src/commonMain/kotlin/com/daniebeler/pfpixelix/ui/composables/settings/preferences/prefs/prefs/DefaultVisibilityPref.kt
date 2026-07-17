@@ -35,7 +35,7 @@ fun DefaultVisibilityPref(capabilities: Capabilities) {
     val onOptionClick = { mode: Visibility ->
         pref.defaultVisibility = mode
     }
-    val openCount = if (capabilities.newPost.includeDirectVisibility) {6} else {5}
+    val openCount = if (capabilities.newPost.includeDirectVisibility) {7} else {6}
     ExpandOptionsPref(
         leadingIcon = Res.drawable.eye,
         title = stringResource(Res.string.default_visibility),

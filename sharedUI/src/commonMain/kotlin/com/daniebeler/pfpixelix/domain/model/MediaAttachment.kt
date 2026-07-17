@@ -24,5 +24,8 @@ data class MediaMetadata(
     val make: String?,
     val model: String?,
     val photographicSensitivity: String?,
-    val software: String?
+    val software: String?,
+    val film: String?,
+    val chemistry: String?,
+    val scanner: String?
 )

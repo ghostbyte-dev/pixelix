@@ -77,7 +77,10 @@ data class VernissageExifDto(
     @SerialName("make") val make: String? = null,
     @SerialName("model") val model: String? = null,
     @SerialName("photographicSensitivity") val photographicSensitivity: String? = null,
-    @SerialName("software") val software: String? = null
+    @SerialName("software") val software: String? = null,
+    @SerialName("film") val film: String? = null,
+    @SerialName("chemistry") val chemistry: String? = null,
+    @SerialName("scanner") val scanner: String? = null
 )
 
 fun VernissageUploadedAttachment.toDomain(): MediaAttachment {
@@ -149,6 +152,9 @@ fun VernissageMetaDto.toDomain(): MediaMetadata {
         model = this.exif?.model,
         photographicSensitivity = this.exif?.photographicSensitivity,
         software = this.exif?.software,
-        focalLength = this.exif?.focalLength
+        focalLength = this.exif?.focalLength,
+        film = this.exif?.film,
+        chemistry = this.exif?.chemistry,
+        scanner = this.exif?.scanner
     )
 }

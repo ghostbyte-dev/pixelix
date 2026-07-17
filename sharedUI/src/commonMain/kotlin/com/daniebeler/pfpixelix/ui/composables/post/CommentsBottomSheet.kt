@@ -118,7 +118,8 @@ fun CommentsBottomSheet(
                             inReplyToId = null,
                             emojis = emptyList(),
                             reblogCount = 0,
-                            commentsDisabled = false
+                            commentsDisabled = false,
+                            category = null
                         )
                         ReplyElement(
                             reply = ownDescription,

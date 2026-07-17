@@ -18,6 +18,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -69,11 +70,11 @@ fun TextFieldLocationsComposable(
                 value = viewModel.countriesState.country?.name ?: viewModel.countryText,
                 onValueChange = { text ->
                     viewModel.changeCountryText(text)
-                    expanded = true
                 },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryEditable, enabled = true),
+                    .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryEditable, enabled = true)
+                    .onFocusChanged { if (it.isFocused) expanded = true },
                 label = { Text("Country") },
                 trailingIcon = {
                     ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)

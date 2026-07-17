@@ -1,5 +1,6 @@
 package com.daniebeler.pfpixelix.domain.service.vernissage.model
 
+import com.daniebeler.pfpixelix.domain.model.Category
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.repository.serializers.HtmlAsTextSerializer
 import com.daniebeler.pfpixelix.domain.service.general.DtoMappable
@@ -36,7 +37,8 @@ data class VernissagePostDto @OptIn(ExperimentalSerializationApi::class) constru
     @SerialName("visibility") val visibility: VernissageVisibilityDto,
     @SerialName("bookmarked") val bookmarked: Boolean = false,
  //   @SerialName("emojis") val emojis: List<PixelfedEmojiDto> = emptyList()
-    @SerialName("commentsDisabled") val commentsDisabled: Boolean = false
+    @SerialName("commentsDisabled") val commentsDisabled: Boolean = false,
+    @SerialName("category") val category: VernissageCategoryDto?
 ): DtoMappable<Post> {
     override fun toDomain(): Post {
         val activePost = this.reblog ?: this
@@ -79,7 +81,8 @@ data class VernissagePostDto @OptIn(ExperimentalSerializationApi::class) constru
             //likedBy = activePost.likedBy?.toDomain(),
             likedBy = null,
             visibility = activePost.visibility.toDomain(),
-            commentsDisabled = activePost.commentsDisabled
+            commentsDisabled = activePost.commentsDisabled,
+            category = activePost.category?.toDomain()
         )
     }
 }

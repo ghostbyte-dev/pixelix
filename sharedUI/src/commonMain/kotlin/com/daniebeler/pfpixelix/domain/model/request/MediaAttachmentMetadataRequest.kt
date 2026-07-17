@@ -1,6 +1,6 @@
 package com.daniebeler.pfpixelix.domain.model.request
 
-import VernissageMediaAttachmentMetadataRequest
+import com.daniebeler.pfpixelix.domain.service.vernissage.model.request.VernissageMediaAttachmentMetadataRequest
 import com.daniebeler.pfpixelix.domain.model.License
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedMediaAttachmentMetadataRequest
 import kotlin.time.Instant

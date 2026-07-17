@@ -27,3 +27,6 @@ data class Post(
     val commentsDisabled: Boolean,
     val category: Category?
 ): Identifiable
+
+val Post.uiKey: String
+    get() = if (reblogId != null) "${id}_reblog_${reblogId}" else id

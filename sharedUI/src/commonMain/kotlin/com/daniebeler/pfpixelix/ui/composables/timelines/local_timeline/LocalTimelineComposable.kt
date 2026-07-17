@@ -55,7 +55,7 @@ fun LocalTimelineComposable(
         error = viewModel.timelineState.error,
         view = viewModel.view,
         changeView = { viewModel.changeView(it) },
-        endReached = false,
+        endReached = viewModel.timelineState.nextId.isNullOrEmpty(),
         navController = navController,
         emptyMessage = EmptyState(heading = "No posts"),
         getItemsPaginated = {

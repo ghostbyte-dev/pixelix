@@ -3,7 +3,6 @@ package com.daniebeler.pfpixelix.ui.composables.widgets
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
@@ -11,7 +10,6 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -67,13 +65,15 @@ fun InfinitePostsList(
         ) {
             BoxWithConstraints {
                 val gridContentWidth = maxWidth
-                val gridColumnCount = maxOf(3, (gridContentWidth / 120.dp).toInt())
-                val columns = when (view) {
-                    ViewEnum.Grid -> StaggeredGridCells.Fixed(gridColumnCount)
-                    ViewEnum.Masonry -> StaggeredGridCells.Adaptive(150.dp)
-                    ViewEnum.LargeMasonry -> StaggeredGridCells.Adaptive(350.dp)
-                    ViewEnum.Timeline -> StaggeredGridCells.Adaptive(350.dp)
+
+                val columnCount = when (view) {
+                    ViewEnum.Grid -> maxOf(3, (maxWidth / 120.dp).toInt())
+                    ViewEnum.Masonry -> maxOf(2, (maxWidth / 150.dp).toInt())
+                    ViewEnum.LargeMasonry -> maxOf(1, (maxWidth / 350.dp).toInt())
+                    ViewEnum.Timeline -> maxOf(1, (maxWidth / 350.dp).toInt())
                 }
+
+                val columns = StaggeredGridCells.Fixed(columnCount)
 
                 LazyVerticalStaggeredGrid(
                     columns = columns,
@@ -107,7 +107,7 @@ fun InfinitePostsList(
                         postGetsDeleted = { itemGetsDeleted(it) },
                         updatePost = { postGetsUpdated(it) },
                         isFirstImageLarge = isFirstItemLarge,
-                        gridColumnCount = gridColumnCount,
+                        gridColumnCount = columnCount,
                         gridContentWidth = gridContentWidth,
                         navController = navController,
                         edit = edit, editRemove = editRemove,

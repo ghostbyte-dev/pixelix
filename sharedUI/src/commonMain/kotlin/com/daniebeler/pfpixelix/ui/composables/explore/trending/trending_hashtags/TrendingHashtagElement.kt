@@ -46,20 +46,15 @@ fun TrendingHashtagElement(
     }
 
     Column(
-        Modifier
-            .clip(RoundedCornerShape(16.dp))
-            .background(MaterialTheme.colorScheme.surfaceContainerLow)
-            .padding(vertical = 8.dp)
-            .fillMaxWidth()
-            .clickable {
+        Modifier.clip(RoundedCornerShape(16.dp))
+            .background(MaterialTheme.colorScheme.surfaceContainerLow).padding(vertical = 8.dp)
+            .fillMaxWidth().clickable {
                 navController.navigate(Destination.HashtagTimeline(hashtag.name))
             }) {
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .padding(vertical = 12.dp, horizontal = 12.dp)
-                .fillMaxWidth()
+            modifier = Modifier.padding(vertical = 12.dp, horizontal = 12.dp).fillMaxWidth()
         ) {
             Text(text = "#" + hashtag.name, fontWeight = FontWeight.Bold, fontSize = 18.sp)
             if (hashtag.postsCount != null) {
@@ -73,52 +68,65 @@ fun TrendingHashtagElement(
             }
         }
 
-        Box(modifier = Modifier.padding(horizontal = 8.dp).clip(
-            RoundedCornerShape(12.dp)
-        )) {
-        LazyHorizontalGrid(
-            rows = GridCells.Fixed(3),
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
-            verticalArrangement = Arrangement.spacedBy(4.dp),
-            modifier = Modifier.height(428.dp)
+        Box(
+            modifier = Modifier.padding(horizontal = 8.dp).clip(
+                RoundedCornerShape(12.dp)
+            )
         ) {
+            LazyHorizontalGrid(
+                rows = GridCells.Fixed(3),
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+                modifier = Modifier.height(428.dp)
+            ) {
 
-            itemsIndexed(viewModel.postsState.posts) { index, post ->
+                itemsIndexed(viewModel.postsState.posts) { index, post ->
 
-                val postsCount = viewModel.postsState.posts.size;
+                    val postsCount = viewModel.postsState.posts.size;
 
-                val baseModifier = Modifier
+                    val baseModifier = Modifier
 
-                val customModifier = when {
-                    // Case for a single row
-                    postsCount <= 3 -> {
-                        when (index) {
-                            0 -> baseModifier.clip(RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp)) // Top-left corner
-                            2 -> baseModifier.clip(RoundedCornerShape(bottomStart = 12.dp, bottomEnd = 12.dp)) // Bottom-left corner
-                            else -> baseModifier // Fallback for safety
+                    val customModifier = when {
+                        // Case for a single row
+                        postsCount <= 3 -> {
+                            when (index) {
+                                0 -> baseModifier.clip(
+                                    RoundedCornerShape(
+                                        topStart = 12.dp, topEnd = 12.dp
+                                    )
+                                ) // Top-left corner
+                                2 -> baseModifier.clip(
+                                    RoundedCornerShape(
+                                        bottomStart = 12.dp, bottomEnd = 12.dp
+                                    )
+                                ) // Bottom-left corner
+                                else -> baseModifier // Fallback for safety
+                            }
                         }
+                        // Cases for multiple rows
+                        index == 0 -> baseModifier.clip(RoundedCornerShape(topStart = 12.dp)) // Top-left corner
+                        index == 2 -> baseModifier.clip(RoundedCornerShape(bottomStart = 12.dp)) // Bottom-start corner
+                        index == postsCount - 1 && postsCount % 3 == 0 -> baseModifier.clip(
+                            RoundedCornerShape(bottomEnd = 12.dp)
+                        ) // Bottom-right corner
+                        index >= postsCount - 3 && index % 3 == 0 -> baseModifier.clip(
+                            RoundedCornerShape(topEnd = 12.dp)
+                        ) // Top-right corner
+                        else -> baseModifier
                     }
-                    // Cases for multiple rows
-                    index == 0 -> baseModifier.clip(RoundedCornerShape(topStart = 12.dp)) // Top-left corner
-                    index == 2 -> baseModifier.clip(RoundedCornerShape(bottomStart = 12.dp)) // Bottom-start corner
-                    index == postsCount - 1 && postsCount % 3 == 0 -> baseModifier.clip(
-                        RoundedCornerShape(bottomEnd = 12.dp)
-                    ) // Bottom-right corner
-                    index >= postsCount - 3 && index % 3 == 0 -> baseModifier.clip(
-                        RoundedCornerShape(topEnd = 12.dp)
-                    ) // Top-right corner
-                    else -> baseModifier
-                }
 
-                Box(
-                    modifier = Modifier
-                        .width(140.dp)
-                        .height(140.dp)
-                ) {
-                    CustomPost(post = post, navController = navController, modifier = customModifier)
+                    Box(
+                        modifier = Modifier.width(140.dp).height(140.dp)
+                    ) {
+                        CustomPost(
+                            post = post,
+                            navController = navController,
+                            roundedCornerShape = RoundedCornerShape(8.dp),
+                            modifier = customModifier
+                        )
+                    }
                 }
             }
-        }
         }
     }
 }

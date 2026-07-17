@@ -43,6 +43,7 @@ fun CustomPost(
     isFullQuality: Boolean = false,
     onClick: ((id: String) -> Unit)? = null,
     edit: Boolean = false,
+    roundedCornerShape: RoundedCornerShape,
     editRemove: (postId: String) -> Unit = {}
 ) {
     val prefs = LocalAppComponent.current.preferences
@@ -60,9 +61,7 @@ fun CustomPost(
         }
     }
 
-    val cornerRadius = if (edit) 12.dp else 6.dp
-
-    Box(modifier = modifier.clip(RoundedCornerShape(6.dp)).aspectRatio(1f)) {
+    Box(modifier = modifier.clip(roundedCornerShape).aspectRatio(1f)) {
         if (blurHashBitmap != null) {
             Image(
                 blurHashBitmap,

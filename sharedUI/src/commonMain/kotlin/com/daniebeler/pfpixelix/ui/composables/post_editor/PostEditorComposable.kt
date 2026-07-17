@@ -76,14 +76,20 @@ import pixelix.app.generated.resources.add
 import pixelix.app.generated.resources.are_you_sure
 import pixelix.app.generated.resources.arrow_left
 import pixelix.app.generated.resources.arrow_right
+import pixelix.app.generated.resources.back
 import pixelix.app.generated.resources.cancel
 import pixelix.app.generated.resources.cancel_post_warning
+import pixelix.app.generated.resources.compress
+import pixelix.app.generated.resources.compressing
 import pixelix.app.generated.resources.discard
+import pixelix.app.generated.resources.edit_images
+import pixelix.app.generated.resources.edit_post
 import pixelix.app.generated.resources.new_post
 import pixelix.app.generated.resources.next
 import pixelix.app.generated.resources.ok
 import pixelix.app.generated.resources.publish
 import pixelix.app.generated.resources.release
+import pixelix.app.generated.resources.save
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -141,7 +147,9 @@ fun PostEditorComposable(
                             )
                             Spacer(Modifier.size(ButtonDefaults.iconSpacingFor(topBarButtonSize)))
                             Text(
-                                text = "Back", style = ButtonDefaults.textStyleFor(topBarButtonSize)
+                                text = (if (viewModel.mode == EditorMode.EDIT) stringResource(Res.string.edit_images) else stringResource(
+                                    Res.string.back
+                                )), style = ButtonDefaults.textStyleFor(topBarButtonSize)
                             )
                         }
                     } else {
@@ -155,14 +163,14 @@ fun PostEditorComposable(
                             },
                         ) {
                             Text(
-                                text = "Cancel",
+                                text = stringResource(Res.string.cancel),
                                 style = ButtonDefaults.textStyleFor(topBarButtonSize)
                             )
                         }
                     }
                 }, title = {
                     Text(
-                        text = if (viewModel.mode == EditorMode.EDIT) "Edit Post" else stringResource(
+                        text = if (viewModel.mode == EditorMode.EDIT) stringResource(Res.string.edit_post) else stringResource(
                             Res.string.new_post
                         ), fontWeight = FontWeight.Bold, fontSize = 18.sp
                     )
@@ -197,7 +205,7 @@ fun PostEditorComposable(
                             onClick = { showReleaseAlert = true },
                         ) {
                             Text(
-                                text = if (viewModel.mode == EditorMode.EDIT) "Save" else stringResource(
+                                text = if (viewModel.mode == EditorMode.EDIT) stringResource(Res.string.save) else stringResource(
                                     Res.string.publish
                                 ), style = ButtonDefaults.textStyleFor(topBarButtonSize)
                             )
@@ -382,7 +390,7 @@ fun PostEditorComposable(
                         viewModel.compressImage(viewModel.mediaAdditionError.uri)
                     }
                 }) {
-                    Text("Compress")
+                    Text(stringResource(Res.string.compress))
                 }
             })
         }
@@ -410,7 +418,7 @@ fun PostEditorComposable(
 
         if (viewModel.compressionLoading) {
             AlertDialog(title = {
-                Text(text = "Compressing...")
+                Text(text = stringResource(Res.string.compressing))
             }, text = {
                 CustomLoader()
             }, onDismissRequest = {}, dismissButton = {}, confirmButton = {})

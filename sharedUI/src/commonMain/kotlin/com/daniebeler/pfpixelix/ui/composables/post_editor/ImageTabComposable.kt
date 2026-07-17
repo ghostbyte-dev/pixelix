@@ -96,7 +96,7 @@ import kotlin.time.Instant
 
 @Composable
 fun ImageTab(
-    image: PostEditorViewModel.ImageItem,
+    image: PostEditorViewModel.EditorMediaItem,
     canMoveLeft: Boolean,
     canMoveRight: Boolean,
     onMoveLeft: () -> Unit,

@@ -87,7 +87,7 @@ import pixelix.app.generated.resources.release
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun NewPostComposable(
+fun PostEditorComposable(
     navController: NavController,
     uris: List<KmpUri>? = null,
     viewModel: PostEditorViewModel = injectViewModel(key = "post-editor-viewmodel-key") { newPostViewModel }
@@ -118,98 +118,99 @@ fun NewPostComposable(
             }
         }
     }
-    val pagerState = rememberPagerState(initialPage = 0, pageCount = { viewModel.images.size + 1 })
+    val pagerState =
+        rememberPagerState(initialPage = 0, pageCount = { viewModel.mediaItems.size + 1 })
     Scaffold(
         contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top), topBar = {
             val topBarButtonSize = ButtonDefaults.ExtraSmallContainerHeight
             CenterAlignedTopAppBar(
                 navigationIcon = {
-                    if (viewModel.isOnGeneralPage) {
-                        OutlinedButton(
-                            contentPadding = ButtonDefaults.contentPaddingFor(
-                                topBarButtonSize, hasStartIcon = true
-                            ),
-                            onClick = {
-                                viewModel.isOnGeneralPage = false
-                            },
-                        ) {
-                            Icon(
-                                vectorResource(Res.drawable.arrow_left),
-                                contentDescription = "",
-                                modifier = Modifier.size(ButtonDefaults.iconSizeFor(topBarButtonSize)),
-                            )
-                            Spacer(Modifier.size(ButtonDefaults.iconSpacingFor(topBarButtonSize)))
-                            Text(
-                                text = "Back", style = ButtonDefaults.textStyleFor(topBarButtonSize)
-                            )
-                        }
-                    } else {
-                        OutlinedButton(
-                            onClick = {
-                                if (viewModel.images.isEmpty()) {
-                                    navController.navigateUp()
-                                } else {
-                                    isCancelAlertOpen = true
-                                }
-                            },
-                        ) {
-                            Text(
-                                text = "Cancel",
-                                style = ButtonDefaults.textStyleFor(topBarButtonSize)
-                            )
-                        }
+                if (viewModel.isOnGeneralPage) {
+                    OutlinedButton(
+                        contentPadding = ButtonDefaults.contentPaddingFor(
+                            topBarButtonSize, hasStartIcon = true
+                        ),
+                        onClick = {
+                            viewModel.isOnGeneralPage = false
+                        },
+                    ) {
+                        Icon(
+                            vectorResource(Res.drawable.arrow_left),
+                            contentDescription = "",
+                            modifier = Modifier.size(ButtonDefaults.iconSizeFor(topBarButtonSize)),
+                        )
+                        Spacer(Modifier.size(ButtonDefaults.iconSpacingFor(topBarButtonSize)))
+                        Text(
+                            text = "Back", style = ButtonDefaults.textStyleFor(topBarButtonSize)
+                        )
                     }
-                }, title = {
-                    Text(
-                        text = if (viewModel.mode == EditorMode.EDIT) "Edit Post" else stringResource(
-                            Res.string.new_post
-                        ), fontWeight = FontWeight.Bold, fontSize = 18.sp
-                    )
-                }, actions = {
-                    if (viewModel.images.isNotEmpty() && !viewModel.isOnGeneralPage) {
-                        Button(
-                            contentPadding = ButtonDefaults.contentPaddingFor(
-                                topBarButtonSize, hasEndIcon = true
-                            ),
-                            enabled = viewModel.images.all { !it.isLoading },
-                            onClick = { viewModel.isOnGeneralPage = true },
-                        ) {
-                            Text(
-                                stringResource(Res.string.next),
-                                style = ButtonDefaults.textStyleFor(topBarButtonSize)
-                            )
-                            Spacer(Modifier.size(ButtonDefaults.iconSpacingFor(topBarButtonSize)))
-                            Icon(
-                                vectorResource(Res.drawable.arrow_right),
-                                contentDescription = "",
-                                modifier = Modifier.size(ButtonDefaults.iconSizeFor(topBarButtonSize)),
-                            )
-                        }
+                } else {
+                    OutlinedButton(
+                        onClick = {
+                            if (viewModel.mediaItems.isEmpty()) {
+                                navController.navigateUp()
+                            } else {
+                                isCancelAlertOpen = true
+                            }
+                        },
+                    ) {
+                        Text(
+                            text = "Cancel",
+                            style = ButtonDefaults.textStyleFor(topBarButtonSize)
+                        )
                     }
-
-                    if (viewModel.isOnGeneralPage) {
-                        Button(
-                            contentPadding = ButtonDefaults.contentPaddingFor(
-                                topBarButtonSize
-                            ),
-                            onClick = { showReleaseAlert = true },
-                        ) {
-                            Text(
-                                text = if (viewModel.mode == EditorMode.EDIT) "Save" else stringResource(
-                                    Res.string.publish
-                                ), style = ButtonDefaults.textStyleFor(topBarButtonSize)
-                            )
-                        }
-                    }
-                }, colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceContainer
+                }
+            }, title = {
+                Text(
+                    text = if (viewModel.mode == EditorMode.EDIT) "Edit Post" else stringResource(
+                        Res.string.new_post
+                    ), fontWeight = FontWeight.Bold, fontSize = 18.sp
                 )
+            }, actions = {
+                if (viewModel.mediaItems.isNotEmpty() && !viewModel.isOnGeneralPage) {
+                    Button(
+                        contentPadding = ButtonDefaults.contentPaddingFor(
+                            topBarButtonSize, hasEndIcon = true
+                        ),
+                        enabled = viewModel.mediaItems.all { !it.isLoading },
+                        onClick = { viewModel.isOnGeneralPage = true },
+                    ) {
+                        Text(
+                            stringResource(Res.string.next),
+                            style = ButtonDefaults.textStyleFor(topBarButtonSize)
+                        )
+                        Spacer(Modifier.size(ButtonDefaults.iconSpacingFor(topBarButtonSize)))
+                        Icon(
+                            vectorResource(Res.drawable.arrow_right),
+                            contentDescription = "",
+                            modifier = Modifier.size(ButtonDefaults.iconSizeFor(topBarButtonSize)),
+                        )
+                    }
+                }
+
+                if (viewModel.isOnGeneralPage) {
+                    Button(
+                        contentPadding = ButtonDefaults.contentPaddingFor(
+                            topBarButtonSize
+                        ),
+                        onClick = { showReleaseAlert = true },
+                    ) {
+                        Text(
+                            text = if (viewModel.mode == EditorMode.EDIT) "Save" else stringResource(
+                                Res.string.publish
+                            ), style = ButtonDefaults.textStyleFor(topBarButtonSize)
+                        )
+                    }
+                }
+            }, colors = TopAppBarDefaults.topAppBarColors(
+                containerColor = MaterialTheme.colorScheme.surfaceContainer
+            )
             )
         }) { paddingValues ->
         Box(modifier = Modifier.fillMaxSize().imePadding()) {
             NavigationBackHandler(
                 state = rememberNavigationEventState(NavigationEventInfo.None),
-                isBackEnabled = viewModel.images.isNotEmpty() || viewModel.caption.text.isNotBlank() || viewModel.caption.text.isNotBlank() || viewModel.locationId.isNotBlank(),
+                isBackEnabled = viewModel.mediaItems.isNotEmpty() || viewModel.caption.text.isNotBlank() || viewModel.caption.text.isNotBlank() || viewModel.locationId.isNotBlank(),
                 onBackCompleted = {
                     isCancelAlertOpen = true
                 })
@@ -218,13 +219,13 @@ fun NewPostComposable(
                 GeneralTab(viewModel, paddingValues)
             } else {
                 Column(Modifier.padding(paddingValues)) {
-                    if (viewModel.images.isNotEmpty()) {
+                    if (viewModel.mediaItems.isNotEmpty()) {
                         LazyRow(
                             modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp),
                             horizontalArrangement = Arrangement.spacedBy(8.dp),
                             contentPadding = PaddingValues(horizontal = 16.dp)
                         ) {
-                            itemsIndexed(viewModel.images) { index, image ->
+                            itemsIndexed(viewModel.mediaItems) { index, image ->
                                 val isSelected = pagerState.currentPage == index
 
                                 Box(
@@ -266,7 +267,7 @@ fun NewPostComposable(
                             }
 
                             item {
-                                val addImageTabIndex = viewModel.images.size
+                                val addImageTabIndex = viewModel.mediaItems.size
                                 val isSelected = pagerState.currentPage == addImageTabIndex
 
                                 Box(
@@ -304,14 +305,14 @@ fun NewPostComposable(
                         modifier = Modifier.weight(1f)
                             .background(MaterialTheme.colorScheme.background)
                     ) { tabIndex ->
-                        if (viewModel.images.isEmpty()) {
+                        if (viewModel.mediaItems.isEmpty()) {
                             EmptyImageTab { file, metadata -> viewModel.addImage(file, metadata) }
                         } else {
-                            if (tabIndex < viewModel.images.size) {
+                            if (tabIndex < viewModel.mediaItems.size) {
                                 ImageTab(
-                                    image = viewModel.images[tabIndex],
+                                    image = viewModel.mediaItems[tabIndex],
                                     canMoveLeft = tabIndex > 0,
-                                    canMoveRight = tabIndex < viewModel.images.size - 1,
+                                    canMoveRight = tabIndex < viewModel.mediaItems.size - 1,
                                     onMoveLeft = {
                                         viewModel.moveImage(tabIndex, tabIndex - 1)
                                         scope.launch { pagerState.animateScrollToPage(tabIndex - 1) }
@@ -345,39 +346,39 @@ fun NewPostComposable(
         }
 
 
-        if (viewModel.addImageError.type == AddMediaErrorType.ERROR) {
+        if (viewModel.mediaAdditionError.type == AddMediaErrorType.ERROR) {
             AlertDialog(title = {
-                Text(text = viewModel.addImageError.title)
+                Text(text = viewModel.mediaAdditionError.title)
             }, text = {
-                Text(text = viewModel.addImageError.description)
+                Text(text = viewModel.mediaAdditionError.description)
             }, onDismissRequest = {
-                viewModel.addImageError = AddMediaError()
+                viewModel.mediaAdditionError = AddMediaError()
             }, confirmButton = {
                 TextButton(onClick = {
-                    viewModel.addImageError = AddMediaError()
+                    viewModel.mediaAdditionError = AddMediaError()
                 }) {
                     Text(stringResource(Res.string.ok))
                 }
             })
         }
 
-        if (viewModel.addImageError.type == AddMediaErrorType.TOO_BIG_MEDIA) {
+        if (viewModel.mediaAdditionError.type == AddMediaErrorType.TOO_BIG_MEDIA) {
             AlertDialog(title = {
-                Text(text = viewModel.addImageError.title)
+                Text(text = viewModel.mediaAdditionError.title)
             }, text = {
-                Text(text = viewModel.addImageError.description)
+                Text(text = viewModel.mediaAdditionError.description)
             }, onDismissRequest = {
-                viewModel.addImageError = AddMediaError()
+                viewModel.mediaAdditionError = AddMediaError()
             }, dismissButton = {
                 TextButton(onClick = {
-                    viewModel.addImageError = AddMediaError()
+                    viewModel.mediaAdditionError = AddMediaError()
                 }) {
                     Text(stringResource(Res.string.cancel))
                 }
             }, confirmButton = {
                 TextButton(onClick = {
                     scope.launch {
-                        viewModel.compressImage(viewModel.addImageError.uri)
+                        viewModel.compressImage(viewModel.mediaAdditionError.uri)
                     }
                 }) {
                     Text("Compress")
@@ -399,7 +400,7 @@ fun NewPostComposable(
             }, confirmButton = {
                 TextButton(onClick = {
                     showReleaseAlert = false
-                    viewModel.post(navController)
+                    viewModel.submitPost(navController)
                 }) {
                     Text(stringResource(Res.string.release))
                 }
@@ -443,8 +444,8 @@ fun NewPostComposable(
             })
 
         ErrorComposableDialog(
-            errorMessage = viewModel.createPostState.error, onDismiss = {
-                viewModel.createPostState = viewModel.createPostState.copy(error = "")
+            errorMessage = viewModel.postSubmissionState.error, onDismiss = {
+                viewModel.postSubmissionState = viewModel.postSubmissionState.copy(error = "")
             })
     }
 }

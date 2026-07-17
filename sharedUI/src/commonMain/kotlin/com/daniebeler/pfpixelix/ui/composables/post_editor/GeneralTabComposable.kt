@@ -93,7 +93,7 @@ fun GeneralTab(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 contentPadding = PaddingValues(horizontal = 16.dp)
             ) {
-                itemsIndexed(viewModel.images) { index, image ->
+                itemsIndexed(viewModel.mediaItems) { index, image ->
                     AsyncImage(
                         model = image.imageUri.getPlatformUriObject(),
                         contentDescription = "Thumbnail $index",
@@ -121,32 +121,32 @@ fun GeneralTab(
                 title = stringResource(Res.string.sensitive_nsfw_media),
                 trailingContent = {
                     Switch(
-                        checked = viewModel.sensitive,
-                        onCheckedChange = { viewModel.sensitive = it })
+                        checked = viewModel.isSensitive,
+                        onCheckedChange = { viewModel.isSensitive = it })
                 })
 
             AnimatedVisibility(
-                visible = viewModel.sensitive,
+                visible = viewModel.isSensitive,
                 enter = slideInVertically() + fadeIn(),
                 exit = shrinkVertically(animationSpec = spring(stiffness = Spring.StiffnessMedium)) + fadeOut(),
             ) {
                 NewPostTextField(
-                    value = viewModel.sensitiveText,
-                    onChange = { viewModel.sensitiveText = it },
+                    value = viewModel.contentWarning,
+                    onChange = { viewModel.contentWarning = it },
                     label = stringResource(Res.string.content_warning_or_spoiler_text)
                 )
             }
 
             var isExpandedVisibility by remember { mutableStateOf(false) }
 
-            val buttonText: String = when (viewModel.audience) {
+            val buttonText: String = when (viewModel.visibility) {
                 Visibility.PUBLIC -> stringResource(Res.string.audience_public)
                 Visibility.UNLISTED -> stringResource(Res.string.unlisted)
                 Visibility.PRIVATE -> stringResource(Res.string.followers_only)
                 Visibility.DIRECT -> stringResource(Res.string.mentioned_only)
             }
 
-            val buttonIcon: DrawableResource = when (viewModel.audience) {
+            val buttonIcon: DrawableResource = when (viewModel.visibility) {
                 Visibility.PUBLIC -> Res.drawable.globe
                 Visibility.UNLISTED -> Res.drawable.eye_off
                 Visibility.PRIVATE -> Res.drawable.lock
@@ -193,7 +193,7 @@ fun GeneralTab(
                         DropdownMenuItem(
                             text = { Text(stringResource(Res.string.audience_public)) },
                             onClick = {
-                                viewModel.audience = Visibility.PUBLIC
+                                viewModel.visibility = Visibility.PUBLIC
                                 isExpandedVisibility = false
                             },
                             leadingIcon = {
@@ -203,7 +203,7 @@ fun GeneralTab(
                                 )
                             },
                             trailingIcon = {
-                                if (viewModel.audience == Visibility.PUBLIC) {
+                                if (viewModel.visibility == Visibility.PUBLIC) {
                                     Icon(
                                         imageVector = vectorResource(Res.drawable.confirm),
                                         contentDescription = null,
@@ -214,7 +214,7 @@ fun GeneralTab(
                         DropdownMenuItem(
                             text = { Text(stringResource(Res.string.unlisted)) },
                             onClick = {
-                                viewModel.audience = Visibility.UNLISTED
+                                viewModel.visibility = Visibility.UNLISTED
                                 isExpandedVisibility = false
                             },
                             leadingIcon = {
@@ -224,7 +224,7 @@ fun GeneralTab(
                                 )
                             },
                             trailingIcon = {
-                                if (viewModel.audience == Visibility.UNLISTED) {
+                                if (viewModel.visibility == Visibility.UNLISTED) {
                                     Icon(
                                         imageVector = vectorResource(Res.drawable.confirm),
                                         contentDescription = null,
@@ -236,7 +236,7 @@ fun GeneralTab(
                     DropdownMenuItem(
                         text = { Text(stringResource(Res.string.followers_only)) },
                         onClick = {
-                            viewModel.audience = Visibility.PRIVATE
+                            viewModel.visibility = Visibility.PRIVATE
                             isExpandedVisibility = false
                         },
                         leadingIcon = {
@@ -246,7 +246,7 @@ fun GeneralTab(
                             )
                         },
                         trailingIcon = {
-                            if (viewModel.audience == Visibility.PRIVATE) {
+                            if (viewModel.visibility == Visibility.PRIVATE) {
                                 Icon(
                                     imageVector = vectorResource(Res.drawable.confirm),
                                     contentDescription = null,
@@ -258,7 +258,7 @@ fun GeneralTab(
                         DropdownMenuItem(
                             text = { Text(stringResource(Res.string.mentioned_only)) },
                             onClick = {
-                                viewModel.audience = Visibility.DIRECT
+                                viewModel.visibility = Visibility.DIRECT
                                 isExpandedVisibility = false
                             },
                             leadingIcon = {
@@ -268,7 +268,7 @@ fun GeneralTab(
                                 )
                             },
                             trailingIcon = {
-                                if (viewModel.audience == Visibility.DIRECT) {
+                                if (viewModel.visibility == Visibility.DIRECT) {
                                     Icon(
                                         imageVector = vectorResource(Res.drawable.confirm),
                                         contentDescription = null,
@@ -344,8 +344,8 @@ fun GeneralTab(
                 title = stringResource(Res.string.disable_comments),
                 trailingContent = {
                     Switch(
-                        checked = viewModel.disableComments,
-                        onCheckedChange = { viewModel.disableComments = it })
+                        checked = viewModel.areCommentsDisabled,
+                        onCheckedChange = { viewModel.areCommentsDisabled = it })
                 })
 
             if (viewModel.capabilities.newPost.showLocationInputInGeneral) {

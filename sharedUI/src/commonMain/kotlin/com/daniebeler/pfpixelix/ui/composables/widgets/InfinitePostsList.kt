@@ -66,7 +66,7 @@ fun InfinitePostsList(
             enabled = refreshable
         ) {
             BoxWithConstraints {
-                val gridContentWidth = maxWidth - 8.dp // account for horizontal padding
+                val gridContentWidth = maxWidth
                 val gridColumnCount = maxOf(3, (gridContentWidth / 120.dp).toInt())
                 val columns = when (view) {
                     ViewEnum.Grid -> StaggeredGridCells.Fixed(gridColumnCount)
@@ -79,7 +79,6 @@ fun InfinitePostsList(
                     columns = columns,
                     verticalItemSpacing = 4.dp,
                     horizontalArrangement = Arrangement.spacedBy(4.dp),
-                    modifier = Modifier.padding(horizontal = 4.dp),
                     state = staggeredGridState,
                     contentPadding = PaddingValues(
                         top = contentPaddingTop, bottom = contentPaddingBottom

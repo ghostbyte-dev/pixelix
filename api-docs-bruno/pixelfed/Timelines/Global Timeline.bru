@@ -1,0 +1,18 @@
+meta {
+  name: Global Timeline
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/api/v1/timelines/public?remote=true&_pe=1
+  body: none
+  auth: inherit
+}
+
+query {
+  remote: true
+  _pe: 1
+  ~limit: 
+  ~max_id: 
+}

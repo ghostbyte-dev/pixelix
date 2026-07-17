@@ -215,6 +215,7 @@ fun PostComposable(
                 postId = postId,
                 setZindex = setZindex,
                 isMasonry = false,
+                roundedCornerShape = RoundedCornerShape(16.dp),
                 onLikeAnimation = { animateHeart = true },
                 updatePost = updatePost,
                 navController = navController
@@ -267,7 +268,7 @@ fun PostComposable(
 fun MasonryPost(
     post: Post,
     navController: NavController,
-    modifier: Modifier = Modifier,
+    roundedCornerShape: RoundedCornerShape,
     viewModel: PostViewModel = injectViewModel(key = "post" + post.id) { postViewModel }
 ) {
     var postId by remember { mutableStateOf(post.id) }
@@ -290,6 +291,7 @@ fun MasonryPost(
         pagerState = pagerState,
         postId = postId,
         isMasonry = true,
+        roundedCornerShape = roundedCornerShape,
         onLikeAnimation = {},
         navController = navController,
         setZindex = {},
@@ -369,6 +371,7 @@ private fun PostMediaSection(
     pagerState: PagerState,
     postId: String,
     isMasonry: Boolean,
+    roundedCornerShape: RoundedCornerShape,
     setZindex: (zIndex: Float) -> Unit,
     onLikeAnimation: () -> Unit,
     updatePost: (post: Post) -> Unit,
@@ -384,6 +387,7 @@ private fun PostMediaSection(
                 pagerState = pagerState,
                 postId = postId,
                 isMasonry = isMasonry,
+                roundedCornerShape = roundedCornerShape,
                 setZindex = setZindex,
                 onLikeAnimation = onLikeAnimation,
                 updatePost = updatePost,
@@ -453,6 +457,7 @@ private fun PostMediaContent(
     pagerState: PagerState,
     postId: String,
     isMasonry: Boolean,
+    roundedCornerShape: RoundedCornerShape,
     setZindex: (zIndex: Float) -> Unit,
     onLikeAnimation: () -> Unit,
     updatePost: (post: Post) -> Unit,
@@ -481,6 +486,7 @@ private fun PostMediaContent(
                         like = onLikeAnimation,
                         updatePost = updatePost,
                         isMasonry = isMasonry,
+                        roundedCornerShape = roundedCornerShape,
                         navController = navController
                     )
                 }
@@ -531,6 +537,7 @@ private fun PostMediaContent(
                 like = onLikeAnimation,
                 updatePost = updatePost,
                 isMasonry = isMasonry,
+                roundedCornerShape = roundedCornerShape,
                 navController = navController
             )
         }
@@ -904,6 +911,7 @@ fun PostImage(
     like: () -> Unit,
     updatePost: (post: Post) -> Unit,
     isMasonry: Boolean,
+    roundedCornerShape: RoundedCornerShape,
     navController: NavController
 ) {
     var showHeart by remember { mutableStateOf(false) }
@@ -920,7 +928,7 @@ fun PostImage(
 
     Box(
         modifier = Modifier.fillMaxWidth().zIndex(80f)
-            .clip(RoundedCornerShape(if (isMasonry) 8.dp else 16.dp))
+            .clip(roundedCornerShape)
     ) {
         val blurHashBitmap = BlurHashDecoder.decode(mediaAttachment.blurHash)
 

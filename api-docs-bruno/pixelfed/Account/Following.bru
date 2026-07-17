@@ -1,0 +1,16 @@
+meta {
+  name: Following
+  type: http
+  seq: 7
+}
+
+get {
+  url: {{baseUrl}}/api/v1/accounts/{{accountId}}/following
+  body: none
+  auth: inherit
+}
+
+query {
+  ~limit: 40
+  ~max_id: 
+}

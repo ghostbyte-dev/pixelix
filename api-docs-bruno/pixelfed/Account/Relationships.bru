@@ -1,0 +1,16 @@
+meta {
+  name: Relationships
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{baseUrl}}/api/v1/accounts/relationships?id[]={{accountId}}&id[]={{myAccountId}}
+  body: none
+  auth: inherit
+}
+
+query {
+  id[]: {{accountId}}
+  id[]: {{myAccountId}}
+}

@@ -1,0 +1,24 @@
+meta {
+  name: Create Post
+  type: http
+  seq: 12
+}
+
+post {
+  url: {{baseUrl}}/api/v1/statuses
+  body: formUrlEncoded
+  auth: inherit
+}
+
+body:form-urlencoded {
+  status: status created with bruno
+  media_ids[]: {{mediaId}}
+  sensitive: false
+  spoiler_text: 
+  visibility: unlisted
+  place_id: 110063
+}
+
+script:post-response {
+  bru.setEnvVar("postId", res.body.id)
+}

@@ -1,0 +1,15 @@
+meta {
+  name: Reblog
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{baseUrl}}/api/v1/statuses/{{postId}}/reblog
+  body: none
+  auth: inherit
+}
+
+assert {
+  res.body.reblogged: eq true
+}

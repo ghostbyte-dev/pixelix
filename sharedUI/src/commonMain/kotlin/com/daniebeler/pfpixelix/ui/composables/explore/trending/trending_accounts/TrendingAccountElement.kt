@@ -56,7 +56,11 @@ fun TrendingAccountElement(
             Box(
                 modifier = Modifier
             ) {
-                CustomPost(post = viewModel.postsState.posts[it], navController = navController)
+                CustomPost(
+                    post = viewModel.postsState.posts[it],
+                    roundedCornerShape = RoundedCornerShape(8.dp),
+                    navController = navController
+                )
             }
         }
     }

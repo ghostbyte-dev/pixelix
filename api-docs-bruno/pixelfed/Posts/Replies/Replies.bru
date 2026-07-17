@@ -1,0 +1,15 @@
+meta {
+  name: Replies
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/v2/comments/{{accountId}}/status/{{postId}}
+  body: none
+  auth: none
+}
+
+docs {
+  The accountId is the id of the creator of the post
+}

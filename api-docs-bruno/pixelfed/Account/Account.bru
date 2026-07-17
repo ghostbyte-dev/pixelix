@@ -1,0 +1,11 @@
+meta {
+  name: Account
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/pixelfed/v1/accounts/{{accountId}}
+  body: none
+  auth: inherit
+}

@@ -1,0 +1,11 @@
+meta {
+  name: Posts of Collection
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/api/v1.1/collections/items/{{collectionId}}
+  body: none
+  auth: inherit
+}

@@ -1,0 +1,21 @@
+meta {
+  name: Delete Post
+  type: http
+  seq: 14
+}
+
+delete {
+  url: {{baseUrl}}/api/v1/statuses/{{postId}}
+  body: none
+  auth: inherit
+}
+
+assert {
+  res.status: eq 200
+}
+
+script:post-response {
+  if (res.status == 200) {
+    bru.setEnvVar("postId","")
+  }
+}

@@ -1,0 +1,15 @@
+meta {
+  name: Like
+  type: http
+  seq: 4
+}
+
+post {
+  url: {{baseUrl}}/api/v1/statuses/{{postId}}/favourite
+  body: none
+  auth: inherit
+}
+
+assert {
+  res.body.favourited: eq true
+}

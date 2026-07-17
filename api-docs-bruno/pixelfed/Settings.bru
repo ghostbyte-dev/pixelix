@@ -1,0 +1,16 @@
+meta {
+  name: Settings
+  type: http
+  seq: 10
+}
+
+get {
+  url: {{baseUrl}}/api/pixelfed/v1/web/settings
+  body: none
+  auth: inherit
+}
+
+params:query {
+  ~type: accounts
+  ~limit: 5
+}

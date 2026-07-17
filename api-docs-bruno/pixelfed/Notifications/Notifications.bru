@@ -1,0 +1,16 @@
+meta {
+  name: Notifications
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/v1/notifications
+  body: none
+  auth: inherit
+}
+
+query {
+  ~limit: 
+  ~max_id: 
+}

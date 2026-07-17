@@ -1,0 +1,20 @@
+meta {
+  name: Create Reply
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/api/v1/statuses
+  body: formUrlEncoded
+  auth: none
+}
+
+body:form-urlencoded {
+  status: test
+  in_reply_to_id: {{postId}}
+}
+
+script:post-response {
+  bru.setEnvVar("replyId", res.body.id)
+}

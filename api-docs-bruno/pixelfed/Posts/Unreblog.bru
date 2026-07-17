@@ -1,0 +1,15 @@
+meta {
+  name: Unreblog
+  type: http
+  seq: 7
+}
+
+post {
+  url: {{baseUrl}}/api/v1/statuses/{{postId}}/unreblog
+  body: none
+  auth: inherit
+}
+
+assert {
+  res.body.reblogged: eq false
+}

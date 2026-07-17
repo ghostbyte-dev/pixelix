@@ -11,6 +11,8 @@ import me.tatarka.inject.annotations.Inject
 
 interface NotificationService {
     fun getNotifications(maxNotificationId: String? = null): Flow<Resource<PaginatedResponse<List<Notification>>>>
+    fun getUnreadCount(): Flow<Resource<Int>>
+    fun markNotifications(notificationId: String): Flow<Resource<Unit>>
 }
 
 @Inject
@@ -29,4 +31,8 @@ class NotificationServiceDelegate(
 
     override fun getNotifications(maxNotificationId: String?): Flow<Resource<PaginatedResponse<List<Notification>>>> =
         current.getNotifications(maxNotificationId)
+
+    override fun getUnreadCount(): Flow<Resource<Int>> = current.getUnreadCount()
+    override fun markNotifications(notificationId: String): Flow<Resource<Unit>> = current.markNotifications(notificationId)
+
 }

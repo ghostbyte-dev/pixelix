@@ -19,6 +19,7 @@ import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissagePostDt
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageRelationshipDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageSearchDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageTagDto
+import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageUnreadNotificationsCountDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageUploadedAttachment
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageVisibilityDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.request.VernissageReblogRequest
@@ -263,6 +264,14 @@ interface VernissageApi {
     suspend fun getNotifications(
         @Query("maxId") maxId: String? = null, @Query("limit") limit: Int = NOTIFICATIONS_LIMIT
     ): VernissagePaginatedResponse<List<VernissageNotificationDto>>
+
+    @GET("api/v1/notifications/count")
+    suspend fun unreadNotificationsCount(): VernissageUnreadNotificationsCountDto
+
+    @POST("api/v1/notifications/marker/{id}")
+    suspend fun markNotifications(
+        @Path("id") notificationId: String
+    )
 
     @POST("api/v1/follow-requests/{userId}/approve")
     suspend fun approveFollowRequest(

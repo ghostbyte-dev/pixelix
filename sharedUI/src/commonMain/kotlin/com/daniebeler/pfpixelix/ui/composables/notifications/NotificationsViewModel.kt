@@ -7,16 +7,17 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.domain.model.Notification
 import com.daniebeler.pfpixelix.domain.service.general.NotificationService
-import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.domain.service.platform.Platform
-import com.daniebeler.pfpixelix.domain.service.general.WidgetService
+import com.daniebeler.pfpixelix.domain.service.utils.Resource
+import com.daniebeler.pfpixelix.ui.events.NotificationBadgeState
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import me.tatarka.inject.annotations.Inject
 
 class NotificationsViewModel @Inject constructor(
     private val notificationService: NotificationService,
-    private val platform: Platform
+    private val platform: Platform,
+    private val badgeState: NotificationBadgeState
 ) : ViewModel() {
 
     var notificationsState by mutableStateOf(NotificationsState())
@@ -31,11 +32,12 @@ class NotificationsViewModel @Inject constructor(
             notificationsState = when (result) {
                 is Resource.Success -> {
                     val endReached = (result.data.data.size ?: 0) == 0
+                    onNotificationsLoaded(result.data.data)
                     NotificationsState(notifications = result.data.data, endReached = endReached, nextId = result.data.next)
                 }
 
                 is Resource.Error -> {
-                    NotificationsState(error = result.message ?: "An unexpected error occurred")
+                    NotificationsState(error = result.message)
                 }
 
                 is Resource.Loading -> {
@@ -43,6 +45,23 @@ class NotificationsViewModel @Inject constructor(
                 }
             }
         }.launchIn(viewModelScope)
+    }
+
+    fun onNotificationsLoaded(notifications: List<Notification>) {
+        val newest = notifications.firstOrNull() ?: return
+
+        notificationService.markNotifications(newest.id)
+            .onEach { result ->
+                when (result) {
+                    is Resource.Success -> {
+                        badgeState.clear()
+                    }
+                    is Resource.Error -> {}
+                    is Resource.Loading -> {
+                    }
+                }
+            }
+            .launchIn(viewModelScope)
     }
 
     fun getNotificationsPaginated() {
@@ -59,7 +78,7 @@ class NotificationsViewModel @Inject constructor(
                     }
 
                     is Resource.Error -> {
-                        NotificationsState(error = result.message ?: "An unexpected error occurred")
+                        NotificationsState(error = result.message)
                     }
 
                     is Resource.Loading -> {

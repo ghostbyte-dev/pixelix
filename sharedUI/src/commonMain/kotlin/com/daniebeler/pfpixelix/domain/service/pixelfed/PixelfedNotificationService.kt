@@ -2,16 +2,14 @@ package com.daniebeler.pfpixelix.domain.service.pixelfed
 
 import com.daniebeler.pfpixelix.domain.model.Notification
 import com.daniebeler.pfpixelix.domain.model.NotificationType
-import com.daniebeler.pfpixelix.domain.model.Tag
 import com.daniebeler.pfpixelix.domain.repository.pixelfed.PixelfedApi
 import com.daniebeler.pfpixelix.domain.service.general.NotificationService
-import com.daniebeler.pfpixelix.domain.service.general.WidgetService
-import com.daniebeler.pfpixelix.domain.service.pixelfed.model.toDomain
-import com.daniebeler.pfpixelix.domain.service.utils.loadListResources
+import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.domain.service.utils.loadPaginatedListResources
 import com.daniebeler.pfpixelix.domain.service.utils.loadResource
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.flow.Flow
 import me.tatarka.inject.annotations.Inject
 
 @Inject
@@ -43,5 +41,12 @@ class PixelfedNotificationService(
         } else {
             api.getNotifications(maxNotificationId).map { it.toDomain() }
         }
+    }
+
+    override fun getUnreadCount(): Flow<Resource<Int>> = loadResource {
+        0
+    }
+
+    override fun markNotifications(notificationId: String): Flow<Resource<Unit>> = loadResource {
     }
 }

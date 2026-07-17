@@ -5,12 +5,14 @@ import androidx.datastore.preferences.core.*
 import com.daniebeler.pfpixelix.di.AppSingleton
 import com.daniebeler.pfpixelix.domain.model.AppAccentColor
 import com.daniebeler.pfpixelix.domain.model.AppThemeMode
+import com.daniebeler.pfpixelix.domain.model.License
 import com.daniebeler.pfpixelix.domain.model.Visibility
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.Json
 import me.tatarka.inject.annotations.Inject
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
@@ -98,6 +100,24 @@ class UserPreferences(private val dataStore: DataStore<Preferences>) {
         intFlow("k_default_visibility", Visibility.PUBLIC.ordinal)
             .map { ordinal ->
                 Visibility.entries.getOrElse(ordinal) { Visibility.PUBLIC }
+            }
+
+    private var _defaultLicenseJson by string("k_default_license", "")
+
+    var defaultLicense: License?
+        get() = _defaultLicenseJson.takeIf { it.isNotEmpty() }?.let { json ->
+            runCatching { Json.decodeFromString<License>(json) }.getOrNull()
+        }
+        set(value) {
+            _defaultLicenseJson = if (value != null) Json.encodeToString(value) else ""
+        }
+
+    val defaultLicenseFlow: Flow<License?> =
+        stringFlow("k_default_license", "")
+            .map { json ->
+                json.takeIf { it.isNotEmpty() }?.let {
+                    runCatching { Json.decodeFromString<License>(it) }.getOrNull()
+                }
             }
 
     private fun boolean(key: String, default: Boolean) = Prop(booleanPreferencesKey(key), default)

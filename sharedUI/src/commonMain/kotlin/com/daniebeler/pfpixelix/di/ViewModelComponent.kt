@@ -39,6 +39,7 @@ import com.daniebeler.pfpixelix.ui.composables.settings.liked_posts.LikedPostsVi
 import com.daniebeler.pfpixelix.ui.composables.settings.muted_accounts.MutedAccountsViewModel
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.PreferencesViewModel
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.ClearCacheViewModel
+import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.DefaultLicenseViewModel
 import com.daniebeler.pfpixelix.ui.composables.single_post.SinglePostViewModel
 import com.daniebeler.pfpixelix.ui.composables.textfield_location.TextFieldLocationsViewModel
 import com.daniebeler.pfpixelix.ui.composables.timelines.global_timeline.GlobalTimelineViewModel
@@ -92,6 +93,7 @@ abstract class ViewModelComponent(
     abstract val conversationsViewModel: ConversationsViewModel
     abstract val textFieldLocationsViewModel: TextFieldLocationsViewModel
     abstract val clearCacheViewModel: ClearCacheViewModel
+    abstract val defaultLicenseViewModel: DefaultLicenseViewModel
     abstract val homeViewModel: HomeViewModel
 
     companion object

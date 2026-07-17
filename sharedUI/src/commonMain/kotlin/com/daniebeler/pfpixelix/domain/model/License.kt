@@ -1,5 +1,8 @@
 package com.daniebeler.pfpixelix.domain.model
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class License(
     val code: String?,
     val id: String?,

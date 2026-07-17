@@ -12,6 +12,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import co.touchlab.kermit.Logger
 import com.daniebeler.pfpixelix.domain.model.Instance
+import com.daniebeler.pfpixelix.domain.model.License
 import com.daniebeler.pfpixelix.domain.model.Location
 import com.daniebeler.pfpixelix.domain.model.Visibility
 import com.daniebeler.pfpixelix.domain.model.request.FieldState
@@ -95,6 +96,7 @@ class PostEditorViewModel @Inject constructor(
     var isOnGeneralPage by mutableStateOf(false)
     var categoriesState by mutableStateOf(CategoriesState())
     var licensesState by mutableStateOf(LicensesState())
+    var defaultLicense by mutableStateOf<License?>(null)
 
     private var originalContent: String = ""
     private var originalSensitive: Boolean = false
@@ -131,6 +133,9 @@ class PostEditorViewModel @Inject constructor(
             .launchIn(viewModelScope)
 
         userPreferences.defaultVisibilityFlow.onEach { visibility = it }.launchIn(viewModelScope)
+
+        userPreferences.defaultLicenseFlow.onEach { defaultLicense = it }
+            .launchIn(viewModelScope)
     }
 
 
@@ -451,7 +456,7 @@ class PostEditorViewModel @Inject constructor(
             true,
             isError = false,
             locationInitialValue = null,
-            metadata = metadata
+            metadata = metadata.copy(license = defaultLicense)
         )
         uploadImage(uri)
     }

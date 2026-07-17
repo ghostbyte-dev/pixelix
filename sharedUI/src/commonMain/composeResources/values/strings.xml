@@ -337,4 +337,5 @@
     <string name="edit_images">Edit images</string>
     <string name="compress">Compress</string>
     <string name="compressing">Compressing...</string>
+    <string name="default_license">Default license</string>
 </resources>

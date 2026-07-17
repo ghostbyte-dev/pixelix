@@ -32,7 +32,8 @@ fun LicensesDropdownComposable(
     licenses: List<License>,
     selectedLicense: License?,
     onLicenseSelected: (License) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    textFieldColor: Color = MaterialTheme.colorScheme.surfaceContainerHigh
 ) {
     var isExpanded by remember { mutableStateOf(false) }
 
@@ -55,8 +56,8 @@ fun LicensesDropdownComposable(
             colors = TextFieldDefaults.colors(
                 unfocusedIndicatorColor = Color.Transparent,
                 focusedIndicatorColor = Color.Transparent,
-                focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-                unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh
+                focusedContainerColor = textFieldColor,
+                unfocusedContainerColor = textFieldColor
             ),
             shape = MaterialTheme.shapes.medium,
             readOnly = true

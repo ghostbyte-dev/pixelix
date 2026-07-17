@@ -83,7 +83,7 @@ fun CaptionTemplate(suggestionsManager: HashtagMentionsSuggestionsManager) {
         title = stringResource(Res.string.caption_template),
         trailingContent = null,
         onClick = { showAlert.value = true },
-        shapes = ListItemDefaults.segmentedShapes(index = 0, count = 2),
+        shapes = ListItemDefaults.segmentedShapes(index = 0, count = 3),
     )
 }
 

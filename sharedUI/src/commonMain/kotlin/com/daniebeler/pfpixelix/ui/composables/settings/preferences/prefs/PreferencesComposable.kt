@@ -36,6 +36,7 @@ import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.CaptionTemplate
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.ClearCachePref
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.CustomizeAppIconPref
+import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.DefaultLicensePref
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.DefaultVisibilityPref
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.DeleteAccountPref
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.HideAltTextButtonPref
@@ -145,6 +146,7 @@ fun PreferencesComposable(
 
             CaptionTemplate(viewModel.suggestionsManager)
             DefaultVisibilityPref(viewModel.capabilities)
+            DefaultLicensePref()
 
             Spacer(modifier = Modifier.height(12.dp))
             Text(

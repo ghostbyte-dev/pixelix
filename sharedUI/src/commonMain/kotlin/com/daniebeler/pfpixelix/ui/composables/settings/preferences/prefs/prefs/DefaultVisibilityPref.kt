@@ -40,7 +40,7 @@ fun DefaultVisibilityPref(capabilities: Capabilities) {
         leadingIcon = Res.drawable.eye,
         title = stringResource(Res.string.default_visibility),
         index = 1,
-        count = 2
+        count = 3
     ) {
         ValueOption(
             shapes = ListItemDefaults.segmentedShapes(index = 2, count = openCount),

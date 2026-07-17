@@ -193,6 +193,7 @@ fun PostEditorComposable(
                             contentPadding = ButtonDefaults.contentPaddingFor(
                                 topBarButtonSize
                             ),
+                            enabled = viewModel.isEdited,
                             onClick = { showReleaseAlert = true },
                         ) {
                             Text(

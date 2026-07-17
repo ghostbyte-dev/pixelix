@@ -40,15 +40,11 @@ import io.github.vinceglb.filekit.dialogs.compose.util.toImageBitmap
 import io.github.vinceglb.filekit.nameWithoutExtension
 import io.github.vinceglb.filekit.readBytes
 import io.github.vinceglb.filekit.size
-import io.ktor.client.request.invoke
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toInstant
 import me.tatarka.inject.annotations.Inject
 import kotlin.time.Clock
 import kotlin.time.Instant
@@ -102,22 +98,24 @@ class PostEditorViewModel @Inject constructor(
 
     private var originalContent: String = ""
     private var originalSensitive: Boolean = false
+    private var originalCommentsDisabled: Boolean = false
     private var originalContentWarning: String = ""
     private var originalLocationId: String = ""
     private var originalMediaIds = listOf<String>()
-    private var originalMediaDescriptions = mapOf<String, String>()
+    private var originalMediaMetadata = mapOf<String, MediaAttachmentMetadataRequest>()
 
     val isEdited: Boolean by derivedStateOf {
         if (mode == EditorMode.CREATE) {
-            caption.text.isNotEmpty() || mediaItems.isNotEmpty() || isSensitive || contentWarning.isNotEmpty() || locationId.isNotEmpty()
+            true
         } else {
             val currentMediaIds = mediaItems.mapNotNull { it.id }
-            val currentDescriptionsChanged = mediaItems.any { image ->
-                val originalDesc = originalMediaDescriptions[image.id] ?: ""
-                image.metadata.description != originalDesc
+
+            val currentMediaChanged = mediaItems.any { image ->
+                val originalMetadata = originalMediaMetadata[image.id] ?: ""
+                image.metadata!= originalMetadata
             }
 
-            caption.text != originalContent || isSensitive != originalSensitive || contentWarning != originalContentWarning || locationId != originalLocationId || currentMediaIds != originalMediaIds || currentDescriptionsChanged
+            caption.text != originalContent || isSensitive != originalSensitive || contentWarning != originalContentWarning || locationId != originalLocationId || currentMediaIds != originalMediaIds || areCommentsDisabled != originalCommentsDisabled || currentMediaChanged
         }
     }
 
@@ -161,15 +159,15 @@ class PostEditorViewModel @Inject constructor(
                     originalSensitive = post.sensitive
                     originalContentWarning = post.spoilerText
                     originalLocationId = post.location?.id ?: ""
+                    originalCommentsDisabled = post.commentsDisabled
                     originalMediaIds = post.mediaAttachments.map { it.id }
-                    originalMediaDescriptions = post.mediaAttachments.associate { it.id to (it.description ?: "") }
 
                     post.location?.let {
                         locationId = it.id
                     }
                     val mappedImages = post.mediaAttachments.map { media ->
                         EditorMediaItem(
-                            imageUri = media.url.toKmpUri(),
+                            imageUri = media.previewUrl?.toKmpUri() ?: media.url.toKmpUri(),
                             mimeType = media.type ?: "image/jpeg",
                             id = media.id,
                             isLoading = false,
@@ -191,15 +189,23 @@ class PostEditorViewModel @Inject constructor(
                                 exposureTime = FieldState(media.metadata?.exposureTime),
                                 photographicSensitivity = FieldState(media.metadata?.photographicSensitivity),
                                 software = FieldState(media.metadata?.software),
-                                createDate = FieldState(media.metadata?.createDate?.let { Instant.parse(it) }),
+                                createDate = FieldState(media.metadata?.createDate?.let {
+                                    Instant.parse(
+                                        it
+                                    )
+                                }),
                                 film = FieldState(media.metadata?.film),
                                 chemistry = FieldState(media.metadata?.chemistry),
                                 scanner = FieldState(media.metadata?.scanner),
                             )
                         )
                     }
+
                     mediaItems.clear()
                     mediaItems.addAll(mappedImages)
+
+                    originalMediaMetadata =
+                        mappedImages.associate { (it.id ?: "") to (it.metadata) }
 
                     mediaUploadState = MediaUploadState(
                         mediaAttachments = post.mediaAttachments, isLoading = false
@@ -438,7 +444,15 @@ class PostEditorViewModel @Inject constructor(
             )
             return
         }
-        mediaItems += EditorMediaItem(uri, fileType, null, true, isError = false, locationInitialValue = null, metadata = metadata)
+        mediaItems += EditorMediaItem(
+            uri,
+            fileType,
+            null,
+            true,
+            isError = false,
+            locationInitialValue = null,
+            metadata = metadata
+        )
         uploadImage(uri)
     }
 

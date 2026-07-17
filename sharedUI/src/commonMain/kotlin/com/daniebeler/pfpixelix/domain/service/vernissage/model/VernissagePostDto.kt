@@ -1,6 +1,5 @@
 package com.daniebeler.pfpixelix.domain.service.vernissage.model
 
-import com.daniebeler.pfpixelix.domain.model.Category
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.repository.serializers.HtmlAsTextSerializer
 import com.daniebeler.pfpixelix.domain.service.general.DtoMappable
@@ -31,7 +30,7 @@ data class VernissagePostDto @OptIn(ExperimentalSerializationApi::class) constru
     @SerialName("repliesCount") val replyCount: Int = 0,
 
     @SerialName("sensitive") val sensitive: Boolean = false,
-    //@SerialName("spoiler_text") val spoilerText: String = "",
+    @SerialName("contentWarning") val spoilerText: String = "",
     @SerialName("tags") val tags: List<VernissageTagDto> = emptyList(),
     @SerialName("activityPubUrl") val url: String = "",
     @SerialName("visibility") val visibility: VernissageVisibilityDto,
@@ -67,8 +66,7 @@ data class VernissagePostDto @OptIn(ExperimentalSerializationApi::class) constru
             createdAt = activePost.createdAt,
             url = activePost.url,
             sensitive = activePost.sensitive,
-            //spoilerText = activePost.spoilerText,
-            spoilerText = "",
+            spoilerText = activePost.spoilerText,
             favourited = activePost.favourited,
             reblogged = activePost.reblogged,
             bookmarked = activePost.bookmarked,

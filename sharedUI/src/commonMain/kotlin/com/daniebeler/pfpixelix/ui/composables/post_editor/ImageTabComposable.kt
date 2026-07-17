@@ -186,7 +186,7 @@ fun ImageTab(
                             )
                         )
                     },
-                    initialValue = null,
+                    initialValue = image.locationInitialValue,
                     labelStringId = Res.string.location,
                     modifier = Modifier.fillMaxWidth(),
                     imeAction = ImeAction.Default,

@@ -30,13 +30,14 @@ data class VernissagePostDto @OptIn(ExperimentalSerializationApi::class) constru
     @SerialName("repliesCount") val replyCount: Int = 0,
 
     @SerialName("sensitive") val sensitive: Boolean = false,
-    //@SerialName("spoiler_text") val spoilerText: String = "",
+    @SerialName("contentWarning") val spoilerText: String = "",
     @SerialName("tags") val tags: List<VernissageTagDto> = emptyList(),
     @SerialName("activityPubUrl") val url: String = "",
     @SerialName("visibility") val visibility: VernissageVisibilityDto,
     @SerialName("bookmarked") val bookmarked: Boolean = false,
  //   @SerialName("emojis") val emojis: List<PixelfedEmojiDto> = emptyList()
-    @SerialName("commentsDisabled") val commentsDisabled: Boolean = false
+    @SerialName("commentsDisabled") val commentsDisabled: Boolean = false,
+    @SerialName("category") val category: VernissageCategoryDto?
 ): DtoMappable<Post> {
     override fun toDomain(): Post {
         val activePost = this.reblog ?: this
@@ -65,8 +66,7 @@ data class VernissagePostDto @OptIn(ExperimentalSerializationApi::class) constru
             createdAt = activePost.createdAt,
             url = activePost.url,
             sensitive = activePost.sensitive,
-            //spoilerText = activePost.spoilerText,
-            spoilerText = "",
+            spoilerText = activePost.spoilerText,
             favourited = activePost.favourited,
             reblogged = activePost.reblogged,
             bookmarked = activePost.bookmarked,
@@ -79,7 +79,8 @@ data class VernissagePostDto @OptIn(ExperimentalSerializationApi::class) constru
             //likedBy = activePost.likedBy?.toDomain(),
             likedBy = null,
             visibility = activePost.visibility.toDomain(),
-            commentsDisabled = activePost.commentsDisabled
+            commentsDisabled = activePost.commentsDisabled,
+            category = activePost.category?.toDomain()
         )
     }
 }

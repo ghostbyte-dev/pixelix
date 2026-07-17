@@ -74,6 +74,7 @@ fun PixelfedPostDto.toDomain(): Post {
         location = activePost.place?.toDomain(),
         likedBy = activePost.likedBy?.toDomain(),
         visibility = activePost.visibility.toDomain(),
-        commentsDisabled = activePost.commentsDisabled
+        commentsDisabled = activePost.commentsDisabled,
+        category = null
     )
 }

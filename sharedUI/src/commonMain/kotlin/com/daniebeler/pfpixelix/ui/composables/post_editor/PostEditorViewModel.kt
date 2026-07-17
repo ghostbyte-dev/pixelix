@@ -12,7 +12,9 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import co.touchlab.kermit.Logger
 import com.daniebeler.pfpixelix.domain.model.Instance
+import com.daniebeler.pfpixelix.domain.model.Location
 import com.daniebeler.pfpixelix.domain.model.Visibility
+import com.daniebeler.pfpixelix.domain.model.request.FieldState
 import com.daniebeler.pfpixelix.domain.model.request.MediaAttachmentMetadataRequest
 import com.daniebeler.pfpixelix.domain.model.request.NewPostRequest
 import com.daniebeler.pfpixelix.domain.service.file.FileService
@@ -45,6 +47,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 import kotlin.time.Clock
+import kotlin.time.Instant
 
 enum class EditorMode { CREATE, EDIT }
 
@@ -66,6 +69,7 @@ class PostEditorViewModel @Inject constructor(
         var id: String?,
         var isLoading: Boolean,
         var isError: Boolean,
+        var locationInitialValue: Location?,
         var metadata: MediaAttachmentMetadataRequest
     )
 
@@ -94,22 +98,24 @@ class PostEditorViewModel @Inject constructor(
 
     private var originalContent: String = ""
     private var originalSensitive: Boolean = false
+    private var originalCommentsDisabled: Boolean = false
     private var originalContentWarning: String = ""
     private var originalLocationId: String = ""
     private var originalMediaIds = listOf<String>()
-    private var originalMediaDescriptions = mapOf<String, String>()
+    private var originalMediaMetadata = mapOf<String, MediaAttachmentMetadataRequest>()
 
     val isEdited: Boolean by derivedStateOf {
         if (mode == EditorMode.CREATE) {
-            caption.text.isNotEmpty() || mediaItems.isNotEmpty() || isSensitive || contentWarning.isNotEmpty() || locationId.isNotEmpty()
+            true
         } else {
             val currentMediaIds = mediaItems.mapNotNull { it.id }
-            val currentDescriptionsChanged = mediaItems.any { image ->
-                val originalDesc = originalMediaDescriptions[image.id] ?: ""
-                image.metadata.description != originalDesc
+
+            val currentMediaChanged = mediaItems.any { image ->
+                val originalMetadata = originalMediaMetadata[image.id] ?: ""
+                image.metadata!= originalMetadata
             }
 
-            caption.text != originalContent || isSensitive != originalSensitive || contentWarning != originalContentWarning || locationId != originalLocationId || currentMediaIds != originalMediaIds || currentDescriptionsChanged
+            caption.text != originalContent || isSensitive != originalSensitive || contentWarning != originalContentWarning || locationId != originalLocationId || currentMediaIds != originalMediaIds || areCommentsDisabled != originalCommentsDisabled || currentMediaChanged
         }
     }
 
@@ -129,18 +135,15 @@ class PostEditorViewModel @Inject constructor(
 
 
     fun initForEdit(postId: String) {
-        // Prevent double-initialization if already loading/loaded
         if (mode == EditorMode.EDIT && editingPostId == postId) return
 
         mode = EditorMode.EDIT
         editingPostId = postId
         isOnGeneralPage =
-            true // Go straight to the text editor page since the post already has content
+            true
 
-        // Reuse the existing createPostState for loading to trigger the UI loaders automatically
         postSubmissionState = PostSubmissionState(isLoading = true)
 
-        // Using postEditorService as defined in your constructor
         postService.getPostById(postId).onEach { result ->
             postSubmissionState = when (result) {
                 is Resource.Success -> {
@@ -149,34 +152,60 @@ class PostEditorViewModel @Inject constructor(
                     caption = TextFieldValue(post.content)
                     isSensitive = post.sensitive
                     contentWarning = post.spoilerText
+                    visibility = post.visibility
+                    categoriesState = categoriesState.copy(selectedCategory = post.category)
 
                     originalContent = post.content
                     originalSensitive = post.sensitive
                     originalContentWarning = post.spoilerText
                     originalLocationId = post.location?.id ?: ""
+                    originalCommentsDisabled = post.commentsDisabled
                     originalMediaIds = post.mediaAttachments.map { it.id }
-                    originalMediaDescriptions = post.mediaAttachments.associate { it.id to (it.description ?: "") }
 
                     post.location?.let {
                         locationId = it.id
                     }
-
                     val mappedImages = post.mediaAttachments.map { media ->
                         EditorMediaItem(
-                            imageUri = media.url.toKmpUri(),
+                            imageUri = media.previewUrl?.toKmpUri() ?: media.url.toKmpUri(),
                             mimeType = media.type ?: "image/jpeg",
                             id = media.id,
                             isLoading = false,
                             isError = false,
+                            locationInitialValue = media.location,
                             metadata = MediaAttachmentMetadataRequest(
                                 id = media.id,
                                 description = media.description ?: "",
-                                blurhash = media.blurHash
+                                blurhash = media.blurHash,
+                                locationId = media.location?.id,
+                                license = media.license,
+                                lens = FieldState(media.metadata?.lens),
+                                make = FieldState(media.metadata?.make),
+                                model = FieldState(media.metadata?.model),
+                                flash = FieldState(media.metadata?.flash),
+                                focalLength = FieldState(media.metadata?.focalLength),
+                                focalLenIn35mmFilm = FieldState(media.metadata?.focalLenIn35mmFilm),
+                                fNumber = FieldState(media.metadata?.fNumber),
+                                exposureTime = FieldState(media.metadata?.exposureTime),
+                                photographicSensitivity = FieldState(media.metadata?.photographicSensitivity),
+                                software = FieldState(media.metadata?.software),
+                                createDate = FieldState(media.metadata?.createDate?.let {
+                                    Instant.parse(
+                                        it
+                                    )
+                                }),
+                                film = FieldState(media.metadata?.film),
+                                chemistry = FieldState(media.metadata?.chemistry),
+                                scanner = FieldState(media.metadata?.scanner),
                             )
                         )
                     }
+
                     mediaItems.clear()
                     mediaItems.addAll(mappedImages)
+
+                    originalMediaMetadata =
+                        mappedImages.associate { (it.id ?: "") to (it.metadata) }
 
                     mediaUploadState = MediaUploadState(
                         mediaAttachments = post.mediaAttachments, isLoading = false
@@ -415,7 +444,15 @@ class PostEditorViewModel @Inject constructor(
             )
             return
         }
-        mediaItems += EditorMediaItem(uri, fileType, null, true, isError = false, metadata = metadata)
+        mediaItems += EditorMediaItem(
+            uri,
+            fileType,
+            null,
+            true,
+            isError = false,
+            locationInitialValue = null,
+            metadata = metadata
+        )
         uploadImage(uri)
     }
 

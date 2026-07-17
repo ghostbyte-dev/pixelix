@@ -1,6 +1,6 @@
 package com.daniebeler.pfpixelix.domain.repository.vernissage
 
-import VernissageMediaAttachmentMetadataRequest
+import com.daniebeler.pfpixelix.domain.service.vernissage.model.request.VernissageMediaAttachmentMetadataRequest
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedNodeInfoDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageAccountDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageBlockedAccountDto

@@ -333,4 +333,8 @@
     <string name="chemistry">Chemistry</string>
     <string name="scanner">Scanner</string>
     <string name="hide_camera_metadata">Hide camera metadata</string>
+    <string name="back">Back</string>
+    <string name="edit_images">Edit images</string>
+    <string name="compress">Compress</string>
+    <string name="compressing">Compressing...</string>
 </resources>

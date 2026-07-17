@@ -34,6 +34,7 @@ class TextFieldLocationsViewModel @Inject constructor(
     }
 
     fun initializePlace(initialPlace: Location) {
+        countriesState = countriesState.copy(country = initialPlace.country)
         locationsSuggestions = LocationsState(location = initialPlace)
         locationText = initialPlace.name!!
     }
@@ -103,17 +104,15 @@ class TextFieldLocationsViewModel @Inject constructor(
         exploreService.getAllCountries().onEach { result ->
             countriesState = when (result) {
                 is Resource.Success -> {
-                    CountriesState(countries = result.data)
+                    countriesState.copy(countries = result.data)
                 }
 
                 is Resource.Error -> {
-                    CountriesState(
-                        error = result.message
-                    )
+                    countriesState.copy(error = result.message)
                 }
 
                 is Resource.Loading -> {
-                    CountriesState(isLoading = true)
+                    countriesState.copy(isLoading = true)
                 }
             }
         }.launchIn(viewModelScope)

@@ -48,6 +48,8 @@ import com.daniebeler.pfpixelix.ui.events.AccountIntentHandler
 import com.daniebeler.pfpixelix.ui.events.BackToTopTrigger
 import com.daniebeler.pfpixelix.ui.events.GlobalNavigator
 import com.daniebeler.pfpixelix.ui.events.GlobalNavigatorImpl
+import com.daniebeler.pfpixelix.ui.events.NotificationBadgeRefresher
+import com.daniebeler.pfpixelix.ui.events.NotificationBadgeState
 import com.daniebeler.pfpixelix.ui.events.SearchFieldFocus
 import com.daniebeler.pfpixelix.ui.events.SystemFileShare
 import com.daniebeler.pfpixelix.ui.events.SystemUrlHandler
@@ -90,11 +92,13 @@ abstract class AppComponent(
     abstract val authService: AuthService
     abstract val accountService: AccountService
     abstract val widgetService: WidgetService
+    abstract val notificationBadgeRefresher: NotificationBadgeRefresher
 
     abstract val preferences: UserPreferences
     abstract val searchFieldFocus: SearchFieldFocus
     abstract val backToTopTrigger: BackToTopTrigger
     abstract val globalNavigator: GlobalNavigator
+    abstract val notificationBadgeState: NotificationBadgeState
 
     @Provides
     fun bindGlobalNavigator(impl: GlobalNavigatorImpl): GlobalNavigator = impl
@@ -230,7 +234,7 @@ abstract class AppComponent(
             install(Logging) {
                 logger = object : io.ktor.client.plugins.logging.Logger {
                     override fun log(message: String) {
-                        Logger.v("Pixelix HttpClient") {
+                        Logger.v(tag = "Pixelix HttpClient") {
                             message.lines().joinToString { "\n\t\t$it" }
                         }
                     }

@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
 import androidx.compose.material3.MaterialTheme.shapes
+import androidx.compose.material3.SheetValue
+import androidx.compose.material3.rememberBottomSheetState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,6 +44,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.*
 import pixelix.app.generated.resources.*
+import kotlin.time.Duration.Companion.milliseconds
 
 val LocalSnackbarPresenter = compositionLocalOf<(String) -> Unit> {
     error("No LocalSnackbarPresenter provided")
@@ -71,7 +74,7 @@ fun App(
             if (event == Lifecycle.Event.ON_RESUME) {
                 if (appComponent.systemUrlHandler.isAuthInProgress) {
                     coroutineScope.launch {
-                        delay(200)
+                        delay(200.milliseconds)
                         appComponent.systemUrlHandler.cancelWaiting()
                     }
                 }
@@ -95,6 +98,9 @@ fun App(
                 appComponent.preferences.preload()
                 val authService = appComponent.authService
                 authService.openSessionIfExist()
+
+                appComponent.notificationBadgeRefresher.start()
+
                 authService.activeUser.collect {
                     activeUser = it
                 }
@@ -168,7 +174,7 @@ fun App(
                             }
                         }) {
                         val scrollBehaviorBottom =
-                            FloatingToolbarDefaults.exitAlwaysScrollBehavior(exitDirection = FloatingToolbarExitDirection.Bottom);
+                            FloatingToolbarDefaults.exitAlwaysScrollBehavior(exitDirection = FloatingToolbarExitDirection.Bottom)
                         Scaffold(
                             contentWindowInsets = WindowInsets(0),
                             snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -289,6 +295,7 @@ private fun BottomBarFloating(
 ) {
     var avatar by remember { mutableStateOf<String?>(null) }
     val appComponent = LocalAppComponent.current
+    val unreadCount by appComponent.notificationBadgeState.count.collectAsState()
     LaunchedEffect(Unit) {
         val authService = appComponent.authService
         authService.activeUser.map { authService.getCurrentSession() }.collect {
@@ -313,7 +320,7 @@ private fun BottomBarFloating(
             fabContainerColor = MaterialTheme.colorScheme.error
         )
     ) {
-        HomeTab.entries.forEachIndexed { index, tab ->
+        HomeTab.entries.forEachIndexed { _, tab ->
             val isSelected = currentDestination.hierarchy.any {
                 it.hasRoute(tab.destination::class)
             }
@@ -328,7 +335,7 @@ private fun BottomBarFloating(
                         is PressInteraction.Press -> {
                             isLongPress = false
                             coroutineScope.launch {
-                                delay(500L)
+                                delay(500L.milliseconds)
                                 if (tab == HomeTab.OwnProfile) {
                                     openAccountSwitchBottomSheet()
                                 }
@@ -346,56 +353,63 @@ private fun BottomBarFloating(
                 if (isSelected) MaterialTheme.colorScheme.primary else Color.Transparent
             val contentColor =
                 if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface
+            Box {
+                IconButton(
+                    colors = IconButtonDefaults.iconButtonColors(
+                        containerColor = containerColor, contentColor = contentColor
+                    ), onClick = {
 
-            IconButton(
-                colors = IconButtonDefaults.iconButtonColors(
-                    containerColor = containerColor, contentColor = contentColor
-                ), onClick = {
-
-                    if (!isLongPress) {
-                        if (!isSelected) {
-                            navController.navigate(tab.destination) {
-                                launchSingleTop = true
-                                restoreState = true
-                                popUpTo(navController.graph.findStartDestination().id) {
-                                    inclusive = false
-                                    saveState = true
+                        if (!isLongPress) {
+                            if (!isSelected) {
+                                navController.navigate(tab.destination) {
+                                    launchSingleTop = true
+                                    restoreState = true
+                                    popUpTo(navController.graph.findStartDestination().id) {
+                                        inclusive = false
+                                        saveState = true
+                                    }
+                                }
+                            } else {
+                                val tabRoot = tabContainer.findStartDestination()
+                                val isOnRoot = currentDestination == tabRoot
+                                if (!isOnRoot) {
+                                    navController.popBackStack(
+                                        route = tabRoot.route!!, inclusive = false
+                                    )
+                                } else if (currentDestination.hasRoute<Destination.Search>()) {
+                                    appComponent.searchFieldFocus.focus()
+                                } else if (currentDestination.hasRoute<Destination.Feeds>()) {
+                                    appComponent.backToTopTrigger.scrollToTop()
                                 }
                             }
-                        } else {
-                            val tabRoot = tabContainer.findStartDestination()
-                            val isOnRoot = currentDestination == tabRoot
-                            if (!isOnRoot) {
-                                navController.popBackStack(
-                                    route = tabRoot.route!!, inclusive = false
-                                )
-                            } else if (currentDestination.hasRoute<Destination.Search>()) {
-                                appComponent.searchFieldFocus.focus()
-                            } else if (currentDestination.hasRoute<Destination.Feeds>()) {
-                                appComponent.backToTopTrigger.scrollToTop()
-                            }
                         }
+                    }) {
+                    if (tab == HomeTab.OwnProfile && avatar != null) {
+                        AsyncImage(
+                            model = avatar,
+                            error = painterResource(Res.drawable.default_avatar),
+                            contentDescription = "",
+                            modifier = Modifier.height(30.dp).width(30.dp).clip(CircleShape)
+                        )
+                    } else {
+                        Icon(
+                            imageVector = vectorResource(
+                                if (isSelected) tab.activeIcon else tab.icon
+                            ),
+                            modifier = Modifier.size(28.dp),
+                            contentDescription = stringResource(tab.label)
+                        )
                     }
-                }) {
-                if (tab == HomeTab.OwnProfile && avatar != null) {
-                    AsyncImage(
-                        model = avatar,
-                        error = painterResource(Res.drawable.default_avatar),
-                        contentDescription = "",
-                        modifier = Modifier.height(30.dp).width(30.dp).clip(CircleShape)
-                    )
-                } else {
-                    Icon(
-                        imageVector = vectorResource(
-                            if (isSelected) tab.activeIcon else tab.icon
-                        ),
-                        modifier = Modifier.size(28.dp),
-                        contentDescription = stringResource(tab.label)
-                    )
                 }
-            }
-            if (index < HomeTab.entries.lastIndex) {
-                Spacer(modifier = Modifier.width(8.dp))
+                if (tab == HomeTab.Notifications && unreadCount > 0) {
+                    Badge(
+                        modifier = Modifier
+                            .align(Alignment.TopEnd)
+                            .offset(x = (-4).dp, y = 4.dp)
+                    ) {
+                        Text(if (unreadCount > 99) "99+" else unreadCount.toString())
+                    }
+                }
             }
         }
     }

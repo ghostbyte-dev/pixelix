@@ -1,4 +1,4 @@
-package com.daniebeler.pfpixelix.ui.composables.newpost
+package com.daniebeler.pfpixelix.ui.composables.post_editor
 
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
@@ -22,7 +22,6 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -52,7 +51,6 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.domain.model.License
 import com.daniebeler.pfpixelix.domain.model.request.FieldState
-import com.daniebeler.pfpixelix.domain.model.request.GPSData
 import com.daniebeler.pfpixelix.domain.model.request.MediaAttachmentMetadataRequest
 import com.daniebeler.pfpixelix.domain.service.capabilities.Capabilities
 import com.daniebeler.pfpixelix.ui.composables.licences_dropdown.LicensesDropdownComposable
@@ -98,7 +96,7 @@ import kotlin.time.Instant
 
 @Composable
 fun ImageTab(
-    image: NewPostViewModel.ImageItem,
+    image: PostEditorViewModel.ImageItem,
     canMoveLeft: Boolean,
     canMoveRight: Boolean,
     onMoveLeft: () -> Unit,

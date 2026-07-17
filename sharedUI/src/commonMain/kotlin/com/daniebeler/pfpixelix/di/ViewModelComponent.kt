@@ -9,7 +9,6 @@ import com.daniebeler.pfpixelix.ui.composables.collection.CollectionViewModel
 import com.daniebeler.pfpixelix.ui.composables.custom_account.CustomAccountViewModel
 import com.daniebeler.pfpixelix.ui.composables.direct_messages.chat.ChatViewModel
 import com.daniebeler.pfpixelix.ui.composables.direct_messages.conversations.ConversationsViewModel
-import com.daniebeler.pfpixelix.ui.composables.edit_post.EditPostViewModel
 import com.daniebeler.pfpixelix.ui.composables.edit_profile.EditProfileViewModel
 import com.daniebeler.pfpixelix.ui.composables.explore.ExploreViewModel
 import com.daniebeler.pfpixelix.ui.composables.explore.trending.trending_accounts.TrendingAccountElementViewModel
@@ -20,7 +19,7 @@ import com.daniebeler.pfpixelix.ui.composables.explore.trending.trending_posts.T
 import com.daniebeler.pfpixelix.ui.composables.followers.FollowersViewModel
 import com.daniebeler.pfpixelix.ui.composables.hashtagMentionText.TextWithClickableHashtagsAndMentionsViewModel
 import com.daniebeler.pfpixelix.ui.composables.mention.MentionViewModel
-import com.daniebeler.pfpixelix.ui.composables.newpost.NewPostViewModel
+import com.daniebeler.pfpixelix.ui.composables.post_editor.PostEditorViewModel
 import com.daniebeler.pfpixelix.ui.composables.notifications.CustomNotificationViewModel
 import com.daniebeler.pfpixelix.ui.composables.notifications.NotificationsViewModel
 import com.daniebeler.pfpixelix.ui.composables.post.PostViewModel
@@ -76,7 +75,7 @@ abstract class ViewModelComponent(
     abstract val localTimelineViewModel: LocalTimelineViewModel
     abstract val mentionViewModel: MentionViewModel
     abstract val mutedAccountsViewModel: MutedAccountsViewModel
-    abstract val newPostViewModel: NewPostViewModel
+    abstract val newPostViewModel: PostEditorViewModel
     abstract val notificationsViewModel: NotificationsViewModel
     abstract val otherProfileViewModel: OtherProfileViewModel
     abstract val ownProfileViewModel: OwnProfileViewModel
@@ -91,7 +90,6 @@ abstract class ViewModelComponent(
     abstract val trendingHashtagsViewModel: TrendingHashtagsViewModel
     abstract val trendingPostsViewModel: TrendingPostsViewModel
     abstract val conversationsViewModel: ConversationsViewModel
-    abstract val editPostViewModel: EditPostViewModel
     abstract val textFieldLocationsViewModel: TextFieldLocationsViewModel
     abstract val clearCacheViewModel: ClearCacheViewModel
     abstract val homeViewModel: HomeViewModel

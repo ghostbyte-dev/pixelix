@@ -1,4 +1,4 @@
-package com.daniebeler.pfpixelix.ui.composables.newpost
+package com.daniebeler.pfpixelix.ui.composables.post_editor
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Spring
@@ -19,7 +19,6 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuAnchorType
@@ -46,7 +45,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.domain.model.Visibility
-import com.daniebeler.pfpixelix.ui.composables.licences_dropdown.LicensesDropdownComposable
 import com.daniebeler.pfpixelix.ui.composables.textfield_location.TextFieldLocationsComposable
 import com.daniebeler.pfpixelix.ui.composables.widgets.MaxLengthTextField
 import com.daniebeler.pfpixelix.ui.composables.widgets.SuggestionsBar
@@ -73,14 +71,13 @@ import pixelix.app.generated.resources.send
 import pixelix.app.generated.resources.sensitive_content
 import pixelix.app.generated.resources.sensitive_nsfw_media
 import pixelix.app.generated.resources.tag
-import pixelix.app.generated.resources.translation
 import pixelix.app.generated.resources.unlisted
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GeneralTab(
-    viewModel: NewPostViewModel,
+    viewModel: PostEditorViewModel,
     paddingValues: PaddingValues
 ) {
     val suggestionsState by viewModel.hashtagMentionsSuggestionsManager.suggestionsState.collectAsStateWithLifecycle()

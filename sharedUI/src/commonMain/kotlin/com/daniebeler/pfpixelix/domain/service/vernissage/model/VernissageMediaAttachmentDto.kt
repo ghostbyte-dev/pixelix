@@ -12,7 +12,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class VernissageUploadedAttachment(
     @SerialName("id") val id: String,
-    @SerialName("url") val url: String?,
+    @SerialName("url") val url: String,
     @SerialName("preview_url") val previewUrl: String?,
     @SerialName("blurhash") val blurHash: String?,
     @SerialName("description") val description: String?,

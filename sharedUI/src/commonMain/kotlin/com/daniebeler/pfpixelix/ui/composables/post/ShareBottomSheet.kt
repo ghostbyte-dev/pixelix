@@ -154,14 +154,10 @@ fun ShareBottomSheet(
         if (minePost) {
             HorizontalDivider(Modifier.padding(12.dp))
 
-            if (viewModel.capabilities.general.supportsPosting) {
-                ButtonRowElement(
-                    icon = Res.drawable.edit,
-                    text = stringResource(Res.string.edit_post),
-                    onClick = {
-                        navController.navigate(Destination.EditPost(post.id))
-                    })
-            }
+            ButtonRowElement(
+                icon = Res.drawable.edit, text = stringResource(Res.string.edit_post), onClick = {
+                    navController.navigate(Destination.EditPost(post.id))
+                })
 
             ButtonRowElement(
                 icon = Res.drawable.trash,

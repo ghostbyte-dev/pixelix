@@ -1,5 +1,6 @@
-package com.daniebeler.pfpixelix.ui.composables.newpost
+package com.daniebeler.pfpixelix.ui.composables.post_editor
 
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -20,6 +21,7 @@ import com.daniebeler.pfpixelix.domain.service.general.AccountService
 import com.daniebeler.pfpixelix.domain.service.general.ExploreService
 import com.daniebeler.pfpixelix.domain.service.general.InstanceService
 import com.daniebeler.pfpixelix.domain.service.general.PostEditorService
+import com.daniebeler.pfpixelix.domain.service.general.PostService
 import com.daniebeler.pfpixelix.domain.service.general.Session
 import com.daniebeler.pfpixelix.domain.service.platform.Platform
 import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
@@ -30,6 +32,7 @@ import com.daniebeler.pfpixelix.ui.navigation.Destination
 import com.daniebeler.pfpixelix.utils.BlurHashEncoder
 import com.daniebeler.pfpixelix.utils.KmpUri
 import com.daniebeler.pfpixelix.utils.io
+import com.daniebeler.pfpixelix.utils.toKmpUri
 import io.github.vinceglb.filekit.ImageFormat
 import io.github.vinceglb.filekit.dialogs.compose.util.toImageBitmap
 import io.github.vinceglb.filekit.nameWithoutExtension
@@ -43,10 +46,12 @@ import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 import kotlin.time.Clock
 
+enum class EditorMode { CREATE, EDIT }
 
-class NewPostViewModel @Inject constructor(
+class PostEditorViewModel @Inject constructor(
     private val postEditorService: PostEditorService,
     private val exploreService: ExploreService,
+    private val postService: PostService,
     private val instanceService: InstanceService,
     private val fileService: FileService,
     private val platform: Platform,
@@ -57,7 +62,7 @@ class NewPostViewModel @Inject constructor(
 ) : ViewModel() {
     data class ImageItem(
         val imageUri: KmpUri,
-        val mimeType: String,
+        val mimeType: String?,
         var id: String?,
         var isLoading: Boolean,
         var isError: Boolean,
@@ -65,6 +70,9 @@ class NewPostViewModel @Inject constructor(
     )
 
     val capabilities = session.capabilities.value
+
+    var mode by mutableStateOf(EditorMode.CREATE)
+    var editingPostId: String? = null
 
     var images = mutableStateListOf<ImageItem>()
     var caption by mutableStateOf(TextFieldValue())
@@ -84,6 +92,27 @@ class NewPostViewModel @Inject constructor(
     var categoriesState by mutableStateOf(CategoriesState())
     var licensesState by mutableStateOf(LicensesState())
 
+    private var originalContent: String = ""
+    private var originalSensitive: Boolean = false
+    private var originalSensitiveText: String = ""
+    private var originalLocationId: String = ""
+    private var originalMediaIds = listOf<String>()
+    private var originalMediaDescriptions = mapOf<String, String>()
+
+    val isEdited: Boolean by derivedStateOf {
+        if (mode == EditorMode.CREATE) {
+            caption.text.isNotEmpty() || images.isNotEmpty() || sensitive || sensitiveText.isNotEmpty() || locationId.isNotEmpty()
+        } else {
+            val currentMediaIds = images.mapNotNull { it.id }
+            val currentDescriptionsChanged = images.any { image ->
+                val originalDesc = originalMediaDescriptions[image.id] ?: ""
+                image.metadata.description != originalDesc
+            }
+
+            caption.text != originalContent || sensitive != originalSensitive || sensitiveText != originalSensitiveText || locationId != originalLocationId || currentMediaIds != originalMediaIds || currentDescriptionsChanged
+        }
+    }
+
     init {
         viewModelScope.launch {
             getInstance()
@@ -92,13 +121,141 @@ class NewPostViewModel @Inject constructor(
             getLicenses()
         }
 
-        userPreferences.captionTemplateFlow
-            .onEach { caption = TextFieldValue(it) }
+        userPreferences.captionTemplateFlow.onEach { caption = TextFieldValue(it) }
             .launchIn(viewModelScope)
 
-        userPreferences.defaultVisibilityFlow
-            .onEach { audience = it }
-            .launchIn(viewModelScope)
+        userPreferences.defaultVisibilityFlow.onEach { audience = it }.launchIn(viewModelScope)
+    }
+
+
+    fun initForEdit(postId: String) {
+        // Prevent double-initialization if already loading/loaded
+        if (mode == EditorMode.EDIT && editingPostId == postId) return
+
+        mode = EditorMode.EDIT
+        editingPostId = postId
+        isOnGeneralPage =
+            true // Go straight to the text editor page since the post already has content
+
+        // Reuse the existing createPostState for loading to trigger the UI loaders automatically
+        createPostState = CreatePostState(isLoading = true)
+
+        // Using postEditorService as defined in your constructor
+        postService.getPostById(postId).onEach { result ->
+            createPostState = when (result) {
+                is Resource.Success -> {
+                    val post = result.data
+
+                    caption = TextFieldValue(post.content)
+                    sensitive = post.sensitive
+                    sensitiveText = post.spoilerText
+
+                    originalContent = post.content
+                    originalSensitive = post.sensitive
+                    originalSensitiveText = post.spoilerText
+                    originalLocationId = post.location?.id ?: ""
+                    originalMediaIds = post.mediaAttachments.map { it.id }
+                    originalMediaDescriptions = post.mediaAttachments.associate { it.id to (it.description ?: "") }
+
+                    post.location?.let {
+                        locationId = it.id
+                    }
+
+                    // 2. Map existing media attachments to the unified ImageItem structure
+                    val mappedImages = post.mediaAttachments.map { media ->
+                        ImageItem(
+                            imageUri = media.url.toKmpUri(), // Coil will fetch remote URLs converted to KmpUri
+                            mimeType = media.type ?: "image/jpeg",
+                            id = media.id,
+                            isLoading = false,
+                            isError = false,
+                            metadata = MediaAttachmentMetadataRequest(
+                                id = media.id,
+                                description = media.description ?: "",
+                                blurhash = media.blurHash
+                            )
+                        )
+                    }
+                    images.clear()
+                    images.addAll(mappedImages)
+
+                    // 3. Crucial: Populate mediaUploadState so your publish/save function
+                    // knows these files are already uploaded and doesn't get stuck waiting for uploads!
+                    mediaUploadState = MediaUploadState(
+                        mediaAttachments = post.mediaAttachments, isLoading = false
+                    )
+
+                    CreatePostState() // Success state (clears loading indicator)
+                }
+
+                is Resource.Error -> {
+                    CreatePostState(error = result.message)
+                }
+
+                is Resource.Loading -> {
+                    CreatePostState(isLoading = true)
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    // Update your main post() orchestrator
+    fun savePost(navController: NavController) {
+        if (images.find { it.isLoading } != null) return // Wait for uploads
+
+        createPostState = CreatePostState(isLoading = true)
+
+        // Trigger metadata updates for images if they were changed
+        images.forEachIndexed { index, _ -> updateMetadata(index) }
+
+        if (mode == EditorMode.CREATE) {
+            mediaUploadState = sortMediaUploadState(mediaUploadState)
+            createNewPost(mediaUploadState, navController)
+        } else {
+            updateExistingPost(navController)
+        }
+    }
+
+    fun post(navController: NavController) {
+        savePost(navController)
+    }
+
+    private fun updateExistingPost(navController: NavController) {
+        val postId = editingPostId ?: return
+        val mediaIds = images.mapNotNull { it.id }
+        val locationIdNullable = locationId.ifBlank { null }
+
+        val updateRequest = NewPostRequest(
+            note = caption.text,
+            mediaIds = mediaIds,
+            sensitive = sensitive,
+            visibility = audience,
+            contentWarning = sensitiveText,
+            placeId = locationIdNullable,
+            commentsDisabled = disableComments,
+            categoryId = categoriesState.selectedCategory?.id
+        )
+
+        postEditorService.updatePost(postId, updateRequest).onEach { result ->
+            createPostState = when (result) {
+                is Resource.Success -> {
+                    // Navigate back to the updated post details directly
+                    navController.popBackStack()
+                    navController.navigate(Destination.Post(postId, refresh = true)) {
+                        launchSingleTop = true
+                    }
+                    CreatePostState()
+                }
+
+                is Resource.Error -> {
+                    CreatePostState(error = result.message)
+                }
+
+                is Resource.Loading -> {
+                    CreatePostState(isLoading = true)
+                }
+            }
+        }.launchIn(viewModelScope)
     }
 
     fun updateCaption(newCaption: TextFieldValue) {
@@ -234,11 +391,13 @@ class NewPostViewModel @Inject constructor(
             if (instance != null && size > instance!!.configuration.mediaAttachmentConfig.imageSizeLimit) {
                 addImageError = AddMediaError(
                     AddMediaErrorType.TOO_BIG_MEDIA,
-                    "Image is to big", "This image is to big, the max size for this server is ${
+                    "Image is to big",
+                    "This image is to big, the max size for this server is ${
                         bytesIntoHumanReadable(
                             instance!!.configuration.mediaAttachmentConfig.imageSizeLimit
                         )
-                    }, your video has ${bytesIntoHumanReadable(size)}", uri
+                    }, your video has ${bytesIntoHumanReadable(size)}",
+                    uri
                 )
                 return
             }
@@ -246,7 +405,8 @@ class NewPostViewModel @Inject constructor(
             if (instance != null && instance?.configuration?.mediaAttachmentConfig?.videoSizeLimit != null && size > instance!!.configuration.mediaAttachmentConfig.videoSizeLimit!!) {
                 addImageError = AddMediaError(
                     AddMediaErrorType.ERROR,
-                    "Video is to big", "This Video is to big, the max size for this server is ${
+                    "Video is to big",
+                    "This Video is to big, the max size for this server is ${
                         bytesIntoHumanReadable(
                             instance!!.configuration.mediaAttachmentConfig.videoSizeLimit!!
                         )
@@ -399,8 +559,7 @@ class NewPostViewModel @Inject constructor(
                     val index = images.indexOfFirst { it.imageUri == uri }
                     if (index != -1) {
                         images[index] = images[index].copy(
-                            isLoading = false,
-                            isError = true
+                            isLoading = false, isError = true
                         )
                     }
                     mediaUploadState.copy(error = result.message, isLoading = false)
@@ -435,20 +594,6 @@ class NewPostViewModel @Inject constructor(
         } catch (e: Exception) {
             Logger.e("Failed to create BlurHash for $uri", e)
             null
-        }
-    }
-
-    fun post(navController: NavController) {
-        if (images.find { it.isLoading } != null && images.isEmpty()) {
-            return
-        }
-        createPostState = CreatePostState(isLoading = true)
-        if (images.size == mediaUploadState.mediaAttachments.size) {
-            images.forEachIndexed { index, _ ->
-                updateMetadata(index)
-            }
-            mediaUploadState = sortMediaUploadState(mediaUploadState)
-            createNewPost(mediaUploadState, navController)
         }
     }
 
@@ -499,17 +644,16 @@ class NewPostViewModel @Inject constructor(
         val locationIdNullable = locationId.ifBlank {
             null
         }
-        val createPostDto =
-            NewPostRequest(
-                note = caption.text,
-                mediaIds = mediaIds,
-                sensitive = sensitive,
-                visibility = audience,
-                contentWarning = sensitiveText,
-                placeId = locationIdNullable,
-                commentsDisabled = disableComments,
-                categoryId = categoriesState.selectedCategory?.id
-            )
+        val createPostDto = NewPostRequest(
+            note = caption.text,
+            mediaIds = mediaIds,
+            sensitive = sensitive,
+            visibility = audience,
+            contentWarning = sensitiveText,
+            placeId = locationIdNullable,
+            commentsDisabled = disableComments,
+            categoryId = categoriesState.selectedCategory?.id
+        )
         postEditorService.createPost(createPostDto).onEach { result ->
             createPostState = when (result) {
                 is Resource.Success -> {

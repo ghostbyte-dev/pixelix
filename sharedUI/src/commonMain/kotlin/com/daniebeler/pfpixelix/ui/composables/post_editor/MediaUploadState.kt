@@ -1,4 +1,4 @@
-package com.daniebeler.pfpixelix.ui.composables.newpost
+package com.daniebeler.pfpixelix.ui.composables.post_editor
 
 import com.daniebeler.pfpixelix.domain.model.MediaAttachment
 

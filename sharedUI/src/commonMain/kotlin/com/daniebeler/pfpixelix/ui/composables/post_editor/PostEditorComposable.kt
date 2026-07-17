@@ -1,4 +1,4 @@
-package com.daniebeler.pfpixelix.ui.composables.newpost
+package com.daniebeler.pfpixelix.ui.composables.post_editor
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -26,7 +26,6 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
@@ -58,7 +57,6 @@ import androidx.navigationevent.compose.NavigationBackHandler
 import androidx.navigationevent.compose.rememberNavigationEventState
 import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.di.injectViewModel
-import com.daniebeler.pfpixelix.domain.model.request.MediaAttachmentMetadataRequest
 import com.daniebeler.pfpixelix.domain.service.file.PlatformFile
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposableDialog
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
@@ -67,7 +65,6 @@ import com.daniebeler.pfpixelix.utils.KmpUri
 import com.daniebeler.pfpixelix.utils.getPlatformUriObject
 import com.daniebeler.pfpixelix.utils.parseExifMetadata
 import com.daniebeler.pfpixelix.utils.toKmpUri
-import io.github.vinceglb.filekit.PlatformFile
 import io.github.vinceglb.filekit.readBytes
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -93,7 +90,7 @@ import pixelix.app.generated.resources.release
 fun NewPostComposable(
     navController: NavController,
     uris: List<KmpUri>? = null,
-    viewModel: NewPostViewModel = injectViewModel(key = "new-post-viewmodel-key") { newPostViewModel }
+    viewModel: PostEditorViewModel = injectViewModel(key = "post-editor-viewmodel-key") { newPostViewModel }
 ) {
 
     var showReleaseAlert by remember {
@@ -164,9 +161,9 @@ fun NewPostComposable(
                     }
                 }, title = {
                     Text(
-                        text = stringResource(Res.string.new_post),
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp
+                        text = if (viewModel.mode == EditorMode.EDIT) "Edit Post" else stringResource(
+                            Res.string.new_post
+                        ), fontWeight = FontWeight.Bold, fontSize = 18.sp
                     )
                 }, actions = {
                     if (viewModel.images.isNotEmpty() && !viewModel.isOnGeneralPage) {
@@ -177,7 +174,10 @@ fun NewPostComposable(
                             enabled = viewModel.images.all { !it.isLoading },
                             onClick = { viewModel.isOnGeneralPage = true },
                         ) {
-                            Text(stringResource(Res.string.next), style = ButtonDefaults.textStyleFor(topBarButtonSize))
+                            Text(
+                                stringResource(Res.string.next),
+                                style = ButtonDefaults.textStyleFor(topBarButtonSize)
+                            )
                             Spacer(Modifier.size(ButtonDefaults.iconSpacingFor(topBarButtonSize)))
                             Icon(
                                 vectorResource(Res.drawable.arrow_right),
@@ -194,7 +194,11 @@ fun NewPostComposable(
                             ),
                             onClick = { showReleaseAlert = true },
                         ) {
-                            Text(stringResource(Res.string.publish),style = ButtonDefaults.textStyleFor(topBarButtonSize))
+                            Text(
+                                text = if (viewModel.mode == EditorMode.EDIT) "Save" else stringResource(
+                                    Res.string.publish
+                                ), style = ButtonDefaults.textStyleFor(topBarButtonSize)
+                            )
                         }
                     }
                 }, colors = TopAppBarDefaults.topAppBarColors(
@@ -225,11 +229,8 @@ fun NewPostComposable(
 
                                 Box(
                                     contentAlignment = Alignment.Center,
-                                    modifier = Modifier
-                                        .size(80.dp)
-                                        .clip(RoundedCornerShape(12.dp))
-                                        .alpha(if (isSelected) 1f else 0.5f)
-                                        .then(
+                                    modifier = Modifier.size(80.dp).clip(RoundedCornerShape(12.dp))
+                                        .alpha(if (isSelected) 1f else 0.5f).then(
                                             if (isSelected) {
                                                 Modifier.border(
                                                     width = 3.dp,
@@ -239,13 +240,11 @@ fun NewPostComposable(
                                             } else {
                                                 Modifier
                                             }
-                                        )
-                                        .clickable {
+                                        ).clickable {
                                             scope.launch {
                                                 pagerState.animateScrollToPage(index)
                                             }
-                                        }
-                                ) {
+                                        }) {
                                     AsyncImage(
                                         model = image.imageUri.getPlatformUriObject(),
                                         contentDescription = "Thumbnail $index",
@@ -255,8 +254,7 @@ fun NewPostComposable(
 
                                     if (image.isLoading) {
                                         Box(
-                                            modifier = Modifier
-                                                .fillMaxSize()
+                                            modifier = Modifier.fillMaxSize()
                                                 .background(Color.Black.copy(alpha = 0.3f))
                                         )
 
@@ -413,10 +411,7 @@ fun NewPostComposable(
                 Text(text = "Compressing...")
             }, text = {
                 CustomLoader()
-            }, onDismissRequest = {
-            }, dismissButton = {
-            }, confirmButton = {
-            })
+            }, onDismissRequest = {}, dismissButton = {}, confirmButton = {})
         }
 
         if (isCancelAlertOpen) {

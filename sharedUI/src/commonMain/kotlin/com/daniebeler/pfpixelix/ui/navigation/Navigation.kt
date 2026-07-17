@@ -3,16 +3,9 @@ package com.daniebeler.pfpixelix.ui.navigation
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.TopAppBarScrollBehavior
-import androidx.compose.ui.Modifier
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -23,17 +16,18 @@ import androidx.navigation.compose.dialog
 import androidx.navigation.compose.navigation
 import androidx.navigation.toRoute
 import com.daniebeler.pfpixelix.EdgeToEdgeDialogProperties
+import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.ui.composables.HomeComposable
 import com.daniebeler.pfpixelix.ui.composables.collection.CollectionComposable
 import com.daniebeler.pfpixelix.ui.composables.direct_messages.chat.ChatComposable
 import com.daniebeler.pfpixelix.ui.composables.direct_messages.conversations.ConversationsComposable
-import com.daniebeler.pfpixelix.ui.composables.edit_post.EditPostComposable
 import com.daniebeler.pfpixelix.ui.composables.edit_profile.EditProfileComposable
 import com.daniebeler.pfpixelix.ui.composables.explore.ExploreComposable
 import com.daniebeler.pfpixelix.ui.composables.followers.FollowersMainComposable
 import com.daniebeler.pfpixelix.ui.composables.mention.MentionComposable
-import com.daniebeler.pfpixelix.ui.composables.newpost.NewPostComposable
+import com.daniebeler.pfpixelix.ui.composables.post_editor.NewPostComposable
 import com.daniebeler.pfpixelix.ui.composables.notifications.NotificationsComposable
+import com.daniebeler.pfpixelix.ui.composables.post_editor.PostEditorViewModel
 import com.daniebeler.pfpixelix.ui.composables.profile.other_profile.OtherProfileComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.own_profile.OwnProfileComposable
 import com.daniebeler.pfpixelix.ui.composables.session.LoginComposable
@@ -50,7 +44,6 @@ import com.daniebeler.pfpixelix.ui.composables.timelines.hashtag_timeline.Hashta
 import com.daniebeler.pfpixelix.utils.KmpUri
 import com.daniebeler.pfpixelix.utils.toKmpUri
 import kotlinx.serialization.Serializable
-import kotlin.jvm.JvmSuppressWildcards
 
 sealed interface Destination {
     @Serializable data class Hashtag(val hashtag: String) : Destination
@@ -218,7 +211,21 @@ private fun NavGraphBuilder.tabGraph(
 
     composable<Destination.EditPost> { navBackStackEntry ->
         val args = navBackStackEntry.toRoute<Destination.EditPost>()
-        EditPostComposable(args.id, navController)
+
+        // Inject a unique ViewModel instance just for editing this specific post
+        val viewModel: PostEditorViewModel = injectViewModel(key = "edit-post-${args.id}") { newPostViewModel }
+
+        // Initialize the ViewModel for edit mode
+        LaunchedEffect(args.id) {
+            viewModel.initForEdit(args.id)
+        }
+
+        // Reuse your NewPostComposable!
+        NewPostComposable(
+            navController = navController,
+            uris = null,
+            viewModel = viewModel
+        )
     }
 
     composable<Destination.MutedAccounts> {

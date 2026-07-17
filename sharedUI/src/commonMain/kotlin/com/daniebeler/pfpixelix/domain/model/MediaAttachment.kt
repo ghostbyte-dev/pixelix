@@ -2,7 +2,7 @@ package com.daniebeler.pfpixelix.domain.model
 
 data class MediaAttachment(
     val id: String,
-    val url: String?,
+    val url: String,
     val previewUrl: String?,
     val aspectRatio: Double?,
     val metadata: MediaMetadata?,

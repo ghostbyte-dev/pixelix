@@ -1,0 +1,14 @@
+{
+  "version": "1",
+  "name": "Pixelfed API",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git",
+    "images"
+  ],
+  "presets": {
+    "requestType": "http",
+    "requestUrl": "{{baseUrl}}"
+  }
+}

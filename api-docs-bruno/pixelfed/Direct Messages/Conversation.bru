@@ -1,0 +1,15 @@
+meta {
+  name: Conversation
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/v1/conversations?limit=10
+  body: none
+  auth: inherit
+}
+
+query {
+  limit: 10
+}

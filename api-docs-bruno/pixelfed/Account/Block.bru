@@ -1,0 +1,16 @@
+meta {
+  name: Block
+  type: http
+  seq: 14
+}
+
+post {
+  url: {{baseUrl}}/api/v1/accounts/{{accountId}}/block
+  body: none
+  auth: none
+}
+
+assert {
+  res.body.following: eq false
+  res.body.blocking: eq true
+}

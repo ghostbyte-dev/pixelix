@@ -1,0 +1,15 @@
+meta {
+  name: Unbookmark
+  type: http
+  seq: 9
+}
+
+post {
+  url: {{baseUrl}}/api/v1/statuses/{{postId}}/unbookmark
+  body: none
+  auth: inherit
+}
+
+assert {
+  res.body.bookmarked: eq false
+}

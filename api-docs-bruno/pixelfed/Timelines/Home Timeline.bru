@@ -1,0 +1,19 @@
+meta {
+  name: Home Timeline
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/v1/timelines/home?_pe=1&limit=20&include_reblogs=true
+  body: none
+  auth: inherit
+}
+
+params:query {
+  _pe: 1
+  limit: 20
+  include_reblogs: true
+  ~_pe: 1
+  ~max_id: 686175555846999155
+}

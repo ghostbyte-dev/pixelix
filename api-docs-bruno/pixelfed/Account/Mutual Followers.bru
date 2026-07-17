@@ -1,0 +1,11 @@
+meta {
+  name: Mutual Followers
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{baseUrl}}/api/v1.1/accounts/mutuals/{{accountId}}
+  body: none
+  auth: inherit
+}

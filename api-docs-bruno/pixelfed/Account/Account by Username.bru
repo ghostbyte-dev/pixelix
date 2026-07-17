@@ -1,0 +1,15 @@
+meta {
+  name: Account by Username
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/api/v1.1/accounts/username/hiebeler05?_pe=1
+  body: none
+  auth: inherit
+}
+
+query {
+  _pe: 1
+}

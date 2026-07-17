@@ -1,0 +1,15 @@
+meta {
+  name: Follow
+  type: http
+  seq: 10
+}
+
+post {
+  url: {{baseUrl}}/api/v1/accounts/{{accountId}}/follow
+  body: none
+  auth: inherit
+}
+
+assert {
+  res.body.following: eq true
+}

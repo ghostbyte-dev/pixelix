@@ -1,0 +1,15 @@
+meta {
+  name: Post context
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/api/v1/statuses/{{postId}}/context?pe=1
+  body: none
+  auth: inherit
+}
+
+params:query {
+  pe: 1
+}

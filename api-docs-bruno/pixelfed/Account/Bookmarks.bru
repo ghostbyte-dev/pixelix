@@ -1,0 +1,15 @@
+meta {
+  name: Bookmarks
+  type: http
+  seq: 16
+}
+
+get {
+  url: {{baseUrl}}/api/v1/bookmarks
+  body: none
+  auth: inherit
+}
+
+query {
+  ~limit: 12
+}

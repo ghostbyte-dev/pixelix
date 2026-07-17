@@ -1,0 +1,15 @@
+meta {
+  name: Related Tags
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{baseUrl}}/api/v1/tags/photography/related
+  body: none
+  auth: inherit
+}
+
+query {
+  ~range: yearly
+}

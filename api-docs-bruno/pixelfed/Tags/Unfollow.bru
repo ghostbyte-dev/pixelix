@@ -1,0 +1,15 @@
+meta {
+  name: Unfollow
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/api/v1/tags/pixelix/unfollow
+  body: none
+  auth: none
+}
+
+assert {
+  res.body.following: eq false
+}

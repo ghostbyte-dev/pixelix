@@ -1,0 +1,15 @@
+meta {
+  name: Unblock
+  type: http
+  seq: 15
+}
+
+post {
+  url: {{baseUrl}}/api/v1/accounts/{{accountId}}/unblock
+  body: none
+  auth: none
+}
+
+assert {
+  res.body.blocking: eq false
+}

@@ -1,0 +1,20 @@
+meta {
+  name: Upload Media
+  type: http
+  seq: 10
+}
+
+post {
+  url: {{baseUrl}}/api/v2/media
+  body: multipartForm
+  auth: inherit
+}
+
+body:multipart-form {
+  file: @file(/home/emanuel/Pictures/backgrounds/wallpaperflare.com_wallpaper.jpg)
+  description: alt description
+}
+
+script:post-response {
+  bru.setEnvVar("mediaId",res.body.id)
+}

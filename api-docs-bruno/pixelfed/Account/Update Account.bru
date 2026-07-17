@@ -1,0 +1,22 @@
+meta {
+  name: Update Account
+  type: http
+  seq: 18
+}
+
+patch {
+  url: {{baseUrl}}/api/v1/accounts/update_credentials?_pe=1
+  body: formUrlEncoded
+  auth: none
+}
+
+query {
+  _pe: 1
+}
+
+body:form-urlencoded {
+  ~display_name: 
+  ~note: 
+  ~locked: 
+  ~website: 
+}

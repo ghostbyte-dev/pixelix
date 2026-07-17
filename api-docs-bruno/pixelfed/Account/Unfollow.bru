@@ -1,0 +1,15 @@
+meta {
+  name: Unfollow
+  type: http
+  seq: 11
+}
+
+post {
+  url: {{baseUrl}}/api/v1/accounts/{{accountId}}/unfollow
+  body: none
+  auth: none
+}
+
+assert {
+  res.body.following: eq false
+}

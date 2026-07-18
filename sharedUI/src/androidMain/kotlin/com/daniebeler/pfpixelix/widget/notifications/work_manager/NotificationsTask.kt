@@ -52,7 +52,7 @@ class NotificationsTask(
                         accountAvatarUrl = notification.account.avatar,
                         accountAvatarBitmap = bitmap,
                         accountId = notification.account.id,
-                        accountUsername = notification.account.username,
+                        accountUsername = notification.account.displayname ?: notification.account.username,
                         timeAgo = timeAgo(notification.createdAt),
                         type = notification.type,
                     )

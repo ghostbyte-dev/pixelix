@@ -99,6 +99,7 @@ import pixelix.app.generated.resources.bookmark_filled
 import pixelix.app.generated.resources.camera
 import pixelix.app.generated.resources.cancel
 import pixelix.app.generated.resources.chatbubble
+import pixelix.app.generated.resources.chemistry
 import pixelix.app.generated.resources.close
 import pixelix.app.generated.resources.datetime
 import pixelix.app.generated.resources.default_avatar
@@ -106,6 +107,7 @@ import pixelix.app.generated.resources.delete
 import pixelix.app.generated.resources.delete_post
 import pixelix.app.generated.resources.document_text
 import pixelix.app.generated.resources.exposure
+import pixelix.app.generated.resources.film
 import pixelix.app.generated.resources.flash
 import pixelix.app.generated.resources.heart
 import pixelix.app.generated.resources.heart_filled
@@ -120,7 +122,9 @@ import pixelix.app.generated.resources.others
 import pixelix.app.generated.resources.reblogged_by
 import pixelix.app.generated.resources.repost
 import pixelix.app.generated.resources.repost_strong
+import pixelix.app.generated.resources.scan
 import pixelix.app.generated.resources.software
+import pixelix.app.generated.resources.tag
 import pixelix.app.generated.resources.this_action_cannot_be_undone
 import pixelix.app.generated.resources.trash
 import kotlin.time.Duration.Companion.milliseconds
@@ -727,9 +731,11 @@ private fun PostActionBar(
             !it.name.isNullOrBlank() || !it.country?.name.isNullOrBlank()
         } == true
 
-        if (hasLocation || hasLicense || hasMetadata) {
+        if (hasLocation || hasLicense || post.category != null || hasMetadata) {
             Spacer(Modifier.height(12.dp))
         }
+
+        post.category?.let { MetadataItem(Res.drawable.tag, it.name) }
 
         displayLocation?.let { loc ->
             val label = when {
@@ -739,12 +745,30 @@ private fun PostActionBar(
                 else -> "${loc.name}, ${loc.country.name}"
             }
             if (label != null) {
-                MetadataItem(Res.drawable.location, label)
+                if (currentAttachment?.metadata?.longitude != null && currentAttachment.metadata.latitude != null) {
+                    MetadataItem(
+                        Res.drawable.location,
+                        label,
+                        url = "https://www.openstreetmap.org/?mlat=${currentAttachment.metadata.latitude}&mlon=${currentAttachment.metadata.longitude}"
+                    ) {
+                        viewModel.openUrl(it)
+                    }
+                } else if (loc.longitude != null && loc.latitude != null) {
+                    MetadataItem(
+                        Res.drawable.location,
+                        label,
+                        url = "https://www.openstreetmap.org/?mlat=${loc.latitude}&mlon=${loc.longitude}"
+                    ) {
+                        viewModel.openUrl(it)
+                    }
+                } else {
+                    MetadataItem(Res.drawable.location, label)
+                }
             }
         }
 
         if (viewModel.capabilities.value.post.showCameraMetadata && !hideMetadataPref) {
-            post.mediaAttachments.getOrNull(pagerState.currentPage)?.metadata?.let { metadata ->
+            currentAttachment?.metadata?.let { metadata ->
                 listOfNotNull(metadata.make, metadata.model).takeIf { it.isNotEmpty() }
                     ?.let { MetadataItem(Res.drawable.camera, it.joinToString(" ")) }
                 metadata.lens?.let { MetadataItem(Res.drawable.lens, it) }
@@ -757,6 +781,10 @@ private fun PostActionBar(
                 //metadata.focalLenIn35mmFilm?.let { MetadataItem(Res.drawable.trash, it) }
                 metadata.flash?.let { MetadataItem(Res.drawable.flash, it) }
                 metadata.software?.let { MetadataItem(Res.drawable.software, it) }
+
+                metadata.film?.let { MetadataItem(Res.drawable.film, it) }
+                metadata.chemistry?.let { MetadataItem(Res.drawable.chemistry, it) }
+                metadata.scanner?.let { MetadataItem(Res.drawable.scan, it) }
 
                 metadata.createDate?.let {
                     MetadataItem(
@@ -883,10 +911,10 @@ private fun PostDeleteDialog(viewModel: PostViewModel) {
 
     AlertDialog(
         icon = {
-        Icon(
-            imageVector = vectorResource(Res.drawable.trash), contentDescription = null
-        )
-    },
+            Icon(
+                imageVector = vectorResource(Res.drawable.trash), contentDescription = null
+            )
+        },
         title = { Text(text = stringResource(Res.string.delete_post)) },
         text = { Text(text = stringResource(Res.string.this_action_cannot_be_undone)) },
         onDismissRequest = { viewModel.deleteDialog = null },

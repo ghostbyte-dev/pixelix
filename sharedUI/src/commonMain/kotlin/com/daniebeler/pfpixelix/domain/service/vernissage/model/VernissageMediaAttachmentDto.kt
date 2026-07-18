@@ -80,7 +80,9 @@ data class VernissageExifDto(
     @SerialName("software") val software: String? = null,
     @SerialName("film") val film: String? = null,
     @SerialName("chemistry") val chemistry: String? = null,
-    @SerialName("scanner") val scanner: String? = null
+    @SerialName("scanner") val scanner: String? = null,
+    @SerialName("longitude") val longitude: String? = null,
+    @SerialName("latitude") val latitude: String? = null
 )
 
 fun VernissageUploadedAttachment.toDomain(): MediaAttachment {
@@ -126,8 +128,8 @@ fun VernissageLocationDto.toDomain(): Location {
     return Location(
         id = this.id,
         name = this.name,
-        latitude = this.lat,
-        longitude = this.long,
+        latitude = this.lat?.replace(",", "."),
+        longitude = this.long?.replace(",", "."),
         country = this.country?.toDomain()
     )
 }
@@ -155,6 +157,8 @@ fun VernissageMetaDto.toDomain(): MediaMetadata {
         focalLength = this.exif?.focalLength,
         film = this.exif?.film,
         chemistry = this.exif?.chemistry,
-        scanner = this.exif?.scanner
+        scanner = this.exif?.scanner,
+        latitude = this.exif?.latitude,
+        longitude = this.exif?.longitude
     )
 }

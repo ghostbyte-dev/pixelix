@@ -27,5 +27,7 @@ data class MediaMetadata(
     val software: String?,
     val film: String?,
     val chemistry: String?,
-    val scanner: String?
+    val scanner: String?,
+    val latitude: String? = null,
+    val longitude: String? = null,
 )

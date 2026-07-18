@@ -98,11 +98,11 @@ class TextFieldLocationsViewModel @Inject constructor(
         exploreService.getAllCountries().onEach { result ->
             countriesState = when (result) {
                 is Resource.Success -> {
-                    countriesState.copy(countries = result.data)
+                    countriesState.copy(countries = result.data, isLoading = false)
                 }
 
                 is Resource.Error -> {
-                    countriesState.copy(error = result.message)
+                    countriesState.copy(error = result.message, isLoading = false)
                 }
 
                 is Resource.Loading -> {

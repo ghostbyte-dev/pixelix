@@ -1,1 +1,1 @@
-Pixelix: Ein benutzerfreundlicher Pixelfed Client.
+Ein Client für Pixelfed und Vernissage

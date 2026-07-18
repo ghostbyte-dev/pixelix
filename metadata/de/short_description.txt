@@ -1,1 +1,1 @@
-Pixelix: Ein benutzerfreundlicher Pixelfed-Client für Fotos, Stöbern & Teilen.
+Ein Client für Pixelfed und Vernissage

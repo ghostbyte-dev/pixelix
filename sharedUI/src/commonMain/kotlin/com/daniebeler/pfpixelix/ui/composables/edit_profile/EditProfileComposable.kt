@@ -53,7 +53,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.decodeToImageBitmap
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
@@ -68,7 +67,6 @@ import coil3.compose.AsyncImage
 import com.attafitamim.krop.core.crop.AspectRatio
 import com.attafitamim.krop.core.crop.CropResult
 import com.attafitamim.krop.core.crop.CropState
-import com.attafitamim.krop.core.crop.DefaultCropperStyle
 import com.attafitamim.krop.core.crop.LocalCropperStyle
 import com.attafitamim.krop.core.crop.cropperStyle
 import com.attafitamim.krop.core.crop.rememberImageCropper
@@ -84,7 +82,7 @@ import com.daniebeler.pfpixelix.utils.imeAwareInsets
 import io.github.vinceglb.filekit.dialogs.FileKitMode
 import io.github.vinceglb.filekit.dialogs.FileKitType
 import io.github.vinceglb.filekit.dialogs.compose.rememberFilePickerLauncher
-import io.github.vinceglb.filekit.readBytes
+import io.github.vinceglb.filekit.dialogs.compose.util.toImageBitmap
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.painterResource
@@ -162,7 +160,7 @@ fun EditProfileComposable(
                                 file ?: return@rememberFilePickerLauncher
                                 coroutineScope.launch {
                                     val cropResult = imageCropper.crop {
-                                        ImageBitmapSrc(file.readBytes().decodeToImageBitmap())
+                                        ImageBitmapSrc(file.toImageBitmap())
                                     }
                                     if (cropResult is CropResult.Success) {
                                         viewModel.headerState =
@@ -239,7 +237,7 @@ fun EditProfileComposable(
                             file ?: return@rememberFilePickerLauncher
                             coroutineScope.launch {
                                 val cropResult = imageCropper.crop {
-                                    ImageBitmapSrc(file.readBytes().decodeToImageBitmap())
+                                    ImageBitmapSrc(file.toImageBitmap())
                                 }
                                 if (cropResult is CropResult.Success) {
                                     viewModel.avatarState =

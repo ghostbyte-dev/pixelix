@@ -35,10 +35,20 @@ fun DefaultVisibilityPref(capabilities: Capabilities) {
     val onOptionClick = { mode: Visibility ->
         pref.defaultVisibility = mode
     }
+
+    val visibilityDesc = when (visibility) {
+        Visibility.PUBLIC -> stringResource(Res.string.audience_public)
+        Visibility.UNLISTED -> stringResource(Res.string.unlisted)
+        Visibility.PRIVATE -> stringResource(Res.string.followers_only)
+        Visibility.DIRECT -> stringResource(Res.string.mentioned_only)
+        else -> ""
+    }
+
     val openCount = if (capabilities.newPost.includeDirectVisibility) {7} else {6}
     ExpandOptionsPref(
         leadingIcon = Res.drawable.eye,
         title = stringResource(Res.string.default_visibility),
+        desc = visibilityDesc,
         index = 1,
         count = 3
     ) {

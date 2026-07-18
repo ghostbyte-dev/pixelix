@@ -1,5 +1,6 @@
 package com.daniebeler.pfpixelix.domain.service.pixelfed.model
 
+import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.repository.serializers.HtmlAsTextSerializer
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -10,7 +11,7 @@ import kotlinx.serialization.json.JsonNames
 @Serializable
 data class PixelfedPostDto @OptIn(ExperimentalSerializationApi::class) constructor(
     @SerialName("id") val id: String = "",
-    @SerialName("account") val account: PixelfedAccountDto,
+    @SerialName("account") val account: PixelfedAccountDto?,
     @Serializable(with = HtmlAsTextSerializer::class) @SerialName("content") val content: String?,
     @SerialName("content_text") val contentText: String = "",
     @SerialName("created_at") val createdAt: String = "",
@@ -46,13 +47,13 @@ fun PixelfedPostDto.toDomain(): Post {
         // Handle flattened structural changes if this was a share/boost
         id = this.id,
         reblogId = this.reblog?.id,
-        rebloggedBy = if (this.reblog != null) this.account.toDomain() else null,
+        rebloggedBy = if (this.reblog != null) this.account?.toDomain() else null,
 
         // Dynamic fallback matching for string fields
         content = activePost.content ?: activePost.contentText,
 
         // Pass map downstream to children models
-        account = activePost.account.toDomain(),
+        account = activePost.account?.toDomain() ?: Account.unknown(),
         mediaAttachments = activePost.mediaAttachments.map { it.toDomain() },
         tags = activePost.tags.map { it.toDomain() },
         mentions = activePost.mentions.map { it.toDomain() },

@@ -22,7 +22,16 @@ data class Account(
     val manuallyApprovesFollowers: Boolean? = null,
     val includeProfilePageInSearchEngines: Boolean? = null,
     val includePublicPostsInSearchEngines: Boolean? = null
-): Identifiable
+): Identifiable {
+    companion object {
+        fun unknown() = Account(
+            id = "unknown",
+            username = "unknown",
+            acct = "unknown",
+            displayname = "Unknown Account"
+        )
+    }
+}
 
 fun credentialsToAccount(credentials: Credentials) = Account(
     username = credentials.username,

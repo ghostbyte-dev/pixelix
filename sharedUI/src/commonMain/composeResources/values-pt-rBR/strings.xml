@@ -83,9 +83,9 @@
     <string name="sensitive_nsfw_media">Mídia sensível/adulta</string>
     <string name="content_warning_or_spoiler_text">aviso de conteúdo ou texto spoiler</string>
     <string name="audience">Audiência</string>
-    <string name="unlisted">não-listado</string>
-    <string name="followers_only">apenas seguidores</string>
-    <string name="audience_public">público</string>
+    <string name="unlisted">Não listado</string>
+    <string name="followers_only">Apenas seguidores</string>
+    <string name="audience_public">Público</string>
     <string name="no_followed_hashtags">Sem hashtags seguidas</string>
     <string name="no_muted_accounts">Nenhuma conta silenciada</string>
     <string name="visibility_x">Visibilidade: %1$s</string>
@@ -105,8 +105,8 @@
     <string name="empty">Vazio</string>
     <string name="no_posts">Não há mensagens</string>
     <string name="home_timeline_explained">A linha do tempo inicial mostra publicações de pessoas e hashtags que você segue</string>
-    <string name="local_timeline_explained">A linha do tempo local mostra publicações de todos os usuários no seu servidor</string>
-    <string name="global_timeline_explained">A linha do tempo global mostra publicações de todos os usuários em todos os servidores com os quais seus servidores federam</string>
+    <string name="local_timeline_explained">A linha do tempo local mostra publicações de todos os usuários do seu servidor</string>
+    <string name="global_timeline_explained">A linha do tempo global mostra publicações de todos os usuários em todos os servidores com os quais seu servidor federa</string>
     <string name="this_user_has_not_postet_anything_yet">Este usuário ainda não postou nada</string>
     <string name="you_don_t_have_any_notifications">Vocë não tem notificações</string>
     <string name="view_more">ver mais</string>
@@ -293,4 +293,19 @@
         <item quantity="other">segundos</item>
     </plurals>
     <string name="character_count">%1$d / %2$d caracteres</string>
+    <string name="jump_to_top">Ir para o topo</string>
+    <string name="manually_accept_new_followers">Aceitar manualmente novos seguidores</string>
+    <string name="include_public_posts_in_search_engines">Incluir publicações públicas nos mecanismos de busca</string>
+    <string name="include_profile_in_search_engines">Incluir o perfil nos mecanismos de busca</string>
+    <string name="new_comment">escreveu um novo comentário</string>
+    <string name="follow_request">recebeu um pedido para seguir você</string>
+    <string name="new_status">criou uma nova publicação</string>
+    <string name="boosted_status_updated">A publicação impulsionada foi atualizada</string>
+    <string name="notification">Notificação</string>
+    <string name="accept_follow_request">Aceitar pedido de seguir</string>
+    <string name="reject_follow_request">Reheitar pedido de seguir</string>
+    <string name="reason">Motivo</string>
+    <string name="caption_template">Modelo de legenda</string>
+    <string name="send">Enviar</string>
+    <string name="default_visibility">Visibilidade padrão</string>
 </resources>

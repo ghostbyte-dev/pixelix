@@ -80,9 +80,9 @@
     <string name="sensitive_nsfw_media">Mídia sensível / para adultos</string>
     <string name="content_warning_or_spoiler_text">aviso de conteúdo ou texto revelador</string>
     <string name="audience">Audiência</string>
-    <string name="unlisted">não listado</string>
-    <string name="followers_only">apenas seguidores</string>
-    <string name="audience_public">público</string>
+    <string name="unlisted">Não listado</string>
+    <string name="followers_only">Apenas seguidores</string>
+    <string name="audience_public">Público</string>
     <string name="no_followed_hashtags">Sem etiquetas seguidas</string>
     <string name="no_muted_accounts">Nenhuma conta silenciada</string>
     <string name="visibility_x">Visibilidade: %1$s</string>
@@ -290,4 +290,11 @@
     <string name="open">aberto</string>
     <string name="closed">fechado</string>
     <string name="jump_to_top">Ir para o topo</string>
+    <string name="accept_follow_request">Aceitar pedido de seguimento</string>
+    <string name="reject_follow_request">Rejeitar pedido de seguimento</string>
+    <string name="reason">Motivo</string>
+    <string name="caption_template">Modelo de legenda</string>
+    <string name="send">Enviar</string>
+    <string name="default_visibility">Visibilidade padrão</string>
+    <string name="mentioned_only">Apenas mencionado</string>
 </resources>

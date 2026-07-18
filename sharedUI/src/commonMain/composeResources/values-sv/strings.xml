@@ -17,7 +17,7 @@
     <string name="load_more">Ladda Mer</string>
     <string name="follow">Följa</string>
     <string name="unfollow">Sluta följa</string>
-    <string name="followers">Anhängare</string>
+    <string name="followers">Följare</string>
     <string name="following">Följande</string>
     <string name="posts">Inlägg</string>
     <string name="reblogged_your_post">rebloggade ditt inlägg</string>
@@ -26,7 +26,7 @@
     <string name="share_this_post">Dela detta inlägg</string>
     <string name="trending">Trendande</string>
     <string name="accounts">Konto</string>
-    <string name="rules">Bestämmelse</string>
+    <string name="rules">Bestämmelser</string>
     <string name="instance_version">Instansversion</string>
     <string name="terms_of_use">Användningsvillkor</string>
     <string name="privacy_policy">Integritetspolicy</string>
@@ -44,7 +44,7 @@
     <string name="delete_this_post">Ta bort det här inlägget</string>
     <string name="delete_post">Radera inlägg?</string>
     <string name="this_action_cannot_be_undone">Denna åtgärd kan inte ångras</string>
-    <string name="delete">Bort</string>
+    <string name="delete">Radera</string>
     <string name="this_is_the_end">Detta är slutet!</string>
     <string name="and">och</string>
     <string name="followed_by">Följt av</string>
@@ -70,12 +70,12 @@
     <string name="unmute">slå på ljudet</string>
     <string name="media_description">Media Beskrivning</string>
     <string name="no_posts_yet">Inga inlägg ännu</string>
-    <string name="mentioned_you_in_a_post">nämnde du</string>
+    <string name="mentioned_you_in_a_post">nämnde deg</string>
     <string name="no_bookmarked_posts">Inga bokmärkta inlägg</string>
     <string name="nothing_to_show">Inget att visa</string>
     <string name="new_post">Nytt inlägg</string>
     <string name="release">Publicera</string>
-    <string name="alt_text">Texto Alternativo</string>
+    <string name="alt_text">Alternativ text</string>
     <string name="caption">bildtext</string>
     <string name="sensitive_nsfw_media">Känslig/NSFW Media</string>
     <string name="content_warning_or_spoiler_text">innehåll varning eller spoiler text</string>
@@ -203,10 +203,16 @@
     <string name="active_users">Aktiva användare:</string>
     <string name="visit_url">Besök %1$s</string>
     <string name="displayname">Displaynamn</string>
-    <string name="bio">Biobränsle</string>
+    <string name="bio">Biografi</string>
     <string name="website">Webbplats</string>
     <string name="location">Läge</string>
     <string name="mentions">Nämna</string>
-    <string name="explore">Explora</string>
-    <string name="reblogged_by">reblogueado por %1$s</string>
+    <string name="explore">Utforska</string>
+    <string name="reblogged_by">rebloggad av %1$s</string>
+    <string name="amoled">AMOLED</string>
+    <string name="no_followers_yet">Inga följare än</string>
+    <string name="not_following_anyone">Du följer ingen</string>
+    <string name="read_more">Visa mer</string>
+    <string name="read_less">Visa mindre</string>
+    <string name="delete_message">Radera meddelande</string>
 </resources>

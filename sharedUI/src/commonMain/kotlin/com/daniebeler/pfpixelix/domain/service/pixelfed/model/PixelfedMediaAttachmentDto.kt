@@ -7,8 +7,8 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class PixelfedMediaAttachmentDto(
     @SerialName("id") val id: String,
-    @SerialName("url") val url: String,
-    @SerialName("preview_url") val previewUrl: String,
+    @SerialName("url") val url: String?,
+    @SerialName("preview_url") val previewUrl: String?,
     @SerialName("meta") val meta: PixelfedMetaDto?,
     @SerialName("blurhash") val blurHash: String?,
     @SerialName("type") val type: String,
@@ -29,8 +29,8 @@ data class PixelfedOriginalDto(
 fun PixelfedMediaAttachmentDto.toDomain(): MediaAttachment {
     return MediaAttachment(
         id = this.id,
-        url = this.url,
-        previewUrl = this.previewUrl,
+        url = this.url ?: "",
+        previewUrl = this.previewUrl ?: "",
         metadata = null,
         blurHash = this.blurHash,
         type = this.type,

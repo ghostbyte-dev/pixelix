@@ -59,6 +59,7 @@ import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -430,9 +431,9 @@ private fun PostSensitiveOverlay(post: Post, viewModel: PostViewModel, isMasonry
         }
 
         Column(
-            Modifier.aspectRatio(aspectRatio).fillMaxWidth(),
+            Modifier.aspectRatio(aspectRatio).fillMaxWidth().padding(12.dp),
             verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             val textStyle = if (isMasonry) {
                 MaterialTheme.typography.bodySmall
@@ -441,7 +442,8 @@ private fun PostSensitiveOverlay(post: Post, viewModel: PostViewModel, isMasonry
             }
             Text(
                 text = post.spoilerText.ifEmpty { "This post may contain sensitive content." },
-                style = textStyle
+                style = textStyle,
+                textAlign = TextAlign.Center
             )
             Button(onClick = { viewModel.toggleShowPost() }) {
                 Text(text = "Show post", style = textStyle)
@@ -881,10 +883,10 @@ private fun PostDeleteDialog(viewModel: PostViewModel) {
 
     AlertDialog(
         icon = {
-            Icon(
-                imageVector = vectorResource(Res.drawable.trash), contentDescription = null
-            )
-        },
+        Icon(
+            imageVector = vectorResource(Res.drawable.trash), contentDescription = null
+        )
+    },
         title = { Text(text = stringResource(Res.string.delete_post)) },
         text = { Text(text = stringResource(Res.string.this_action_cannot_be_undone)) },
         onDismissRequest = { viewModel.deleteDialog = null },
@@ -927,8 +929,7 @@ fun PostImage(
     var altText by remember { mutableStateOf("") }
 
     Box(
-        modifier = Modifier.fillMaxWidth().zIndex(80f)
-            .clip(roundedCornerShape)
+        modifier = Modifier.fillMaxWidth().zIndex(80f).clip(roundedCornerShape)
     ) {
         val blurHashBitmap = BlurHashDecoder.decode(mediaAttachment.blurHash)
 

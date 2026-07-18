@@ -83,6 +83,7 @@ import com.daniebeler.pfpixelix.utils.imeAwareInsets
 import io.github.vinceglb.filekit.dialogs.FileKitMode
 import io.github.vinceglb.filekit.dialogs.FileKitType
 import io.github.vinceglb.filekit.dialogs.compose.rememberFilePickerLauncher
+import io.github.vinceglb.filekit.dialogs.compose.util.toImageBitmap
 import io.github.vinceglb.filekit.readBytes
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.StringResource
@@ -156,7 +157,7 @@ fun EditProfileComposable(
                             file ?: return@rememberFilePickerLauncher
                             coroutineScope.launch {
                                 val cropResult = imageCropper.crop {
-                                    ImageBitmapSrc(file.readBytes().decodeToImageBitmap())
+                                    ImageBitmapSrc(file.toImageBitmap())
                                 }
                                 if (cropResult is CropResult.Success) {
                                     viewModel.headerState =
@@ -224,7 +225,7 @@ fun EditProfileComposable(
                             file ?: return@rememberFilePickerLauncher
                             coroutineScope.launch {
                                 val cropResult = imageCropper.crop {
-                                    ImageBitmapSrc(file.readBytes().decodeToImageBitmap())
+                                    ImageBitmapSrc(file.toImageBitmap())
                                 }
                                 if (cropResult is CropResult.Success) {
                                     viewModel.avatarState =
@@ -241,7 +242,6 @@ fun EditProfileComposable(
                                     .height(112.dp)
                                     .width(112.dp)
                             ) {
-                                // The Base Avatar Image
                                 Image(
                                     bitmap = newAvatar,
                                     contentDescription = "",

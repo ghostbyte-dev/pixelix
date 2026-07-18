@@ -387,7 +387,7 @@ fun PostEditorComposable(
             }, confirmButton = {
                 TextButton(onClick = {
                     scope.launch {
-                        viewModel.compressImage(viewModel.mediaAdditionError.uri)
+                        viewModel.compressImage(viewModel.mediaAdditionError.uri, viewModel.mediaAdditionError.metadata)
                     }
                 }) {
                     Text(stringResource(Res.string.compress))

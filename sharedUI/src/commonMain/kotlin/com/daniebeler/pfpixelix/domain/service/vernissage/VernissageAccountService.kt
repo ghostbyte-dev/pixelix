@@ -11,6 +11,7 @@ import com.daniebeler.pfpixelix.domain.model.request.UserBlockRequest
 import com.daniebeler.pfpixelix.domain.model.request.UserMuteRequest
 import com.daniebeler.pfpixelix.domain.model.request.toVernissage
 import com.daniebeler.pfpixelix.domain.repository.vernissage.VernissageApi
+import com.daniebeler.pfpixelix.domain.service.file.FileService
 import com.daniebeler.pfpixelix.domain.service.general.AccountService
 import com.daniebeler.pfpixelix.domain.service.general.AuthService
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.toDomain
@@ -19,6 +20,7 @@ import com.daniebeler.pfpixelix.domain.service.utils.loadListResources
 import com.daniebeler.pfpixelix.domain.service.utils.loadResource
 import com.daniebeler.pfpixelix.domain.service.utils.loadVernissagePaginatedListResources
 import com.daniebeler.pfpixelix.utils.encodeToPngBytes
+import io.github.vinceglb.filekit.ImageFormat
 import io.ktor.client.request.forms.MultiPartFormDataContent
 import io.ktor.client.request.forms.formData
 import io.ktor.http.Headers
@@ -40,6 +42,7 @@ import kotlin.collections.emptyList
 class VernissageAccountService(
     private val authService: AuthService,
     private val api: VernissageApi,
+    private val fileService: FileService
 ) : AccountService {
     override val refreshSignal = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
     val emptyAccount = Account()
@@ -70,18 +73,26 @@ class VernissageAccountService(
         val bytes = withContext(Dispatchers.Default) {
             avatar?.encodeToPngBytes()
         }
+        if (bytes == null) {
+            return@loadResource
+        }
+        val compressedAvatar = fileService.compressImage(
+            bytes = bytes,
+            quality = 80,
+            maxWidth = 600,
+            maxHeight = 600,
+            imageFormat = ImageFormat.PNG
+        )
         val body = MultiPartFormDataContent(formData {
-            if (bytes != null) {
-                try {
-                    val fileName = "filename=avatar"
-                    val fileType = "image/png"
-                    append("file", bytes, Headers.build {
-                        append(HttpHeaders.ContentType, fileType)
-                        append(HttpHeaders.ContentDisposition, fileName)
-                    })
-                } catch (e: Throwable) {
-                    Logger.e("AccountService.updateAccount error", e)
-                }
+            try {
+                val fileName = "filename=avatar"
+                val fileType = "image/png"
+                append("file", compressedAvatar, Headers.build {
+                    append(HttpHeaders.ContentType, fileType)
+                    append(HttpHeaders.ContentDisposition, fileName)
+                })
+            } catch (e: Throwable) {
+                Logger.e("AccountService.updateAccount error", e)
             }
         })
         api.updateAvatar(username, body)
@@ -95,18 +106,26 @@ class VernissageAccountService(
         val bytes = withContext(Dispatchers.Default) {
             header?.encodeToPngBytes()
         }
+        if (bytes == null) {
+            return@loadResource
+        }
+        val compressedAvatar = fileService.compressImage(
+            bytes = bytes,
+            quality = 80,
+            maxWidth = 1500,
+            maxHeight = 500,
+            imageFormat = ImageFormat.PNG
+        )
         val body = MultiPartFormDataContent(formData {
-            if (bytes != null) {
-                try {
-                    val fileName = "filename=header"
-                    val fileType = "image/png"
-                    append("file", bytes, Headers.build {
-                        append(HttpHeaders.ContentType, fileType)
-                        append(HttpHeaders.ContentDisposition, fileName)
-                    })
-                } catch (e: Throwable) {
-                    Logger.e("AccountService.updateHeader error", e)
-                }
+            try {
+                val fileName = "filename=header"
+                val fileType = "image/png"
+                append("file", compressedAvatar, Headers.build {
+                    append(HttpHeaders.ContentType, fileType)
+                    append(HttpHeaders.ContentDisposition, fileName)
+                })
+            } catch (e: Throwable) {
+                Logger.e("AccountService.updateHeader error", e)
             }
         })
         api.updateHeader(username, body)

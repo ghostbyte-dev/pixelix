@@ -110,6 +110,7 @@ private fun LazyStaggeredGridScope.postsGridInScope(
     editRemove: (postId: String) -> Unit = { },
     onClick: ((id: String) -> Unit)? = null
 ) {
+    val filteredPosts = posts.filter { it.mediaAttachments.isNotEmpty() }
     val spacing = 4.dp
     val cornerRadius = 16.dp
 
@@ -119,16 +120,16 @@ private fun LazyStaggeredGridScope.postsGridInScope(
         0.dp
     }
 
-    val featuredCount = if (isFirstImageLarge && posts.size >= 3) {
+    val featuredCount = if (isFirstImageLarge && filteredPosts.size >= 3) {
         val smallColumnsCount = columnCount - 2
-        minOf(1 + smallColumnsCount * 2, posts.size)
+        minOf(1 + smallColumnsCount * 2, filteredPosts.size)
     } else 0
 
     if (featuredCount >= 3 && contentWidth > 0.dp) {
         item(key = "first_line_key", span = StaggeredGridItemSpan.FullLine) {
             val bigSize = columnWidth * 2 + spacing
             val smallColumnsCount = columnCount - 2
-            val remainingCount = posts.size - featuredCount
+            val remainingCount = filteredPosts.size - featuredCount
 
             Row(horizontalArrangement = Arrangement.spacedBy(spacing)) {
 
@@ -142,7 +143,7 @@ private fun LazyStaggeredGridScope.postsGridInScope(
                     )
 
                     CustomPost(
-                        post = posts[0],
+                        post = filteredPosts[0],
                         navController = navController,
                         isFullQuality = true,
                         modifier = Modifier.fillMaxSize(),
@@ -162,7 +163,7 @@ private fun LazyStaggeredGridScope.postsGridInScope(
 
                         if (topIdx < featuredCount) {
                             Box(Modifier.size(columnWidth)) {
-                                val isAbsoluteLast = topIdx == posts.size - 1
+                                val isAbsoluteLast = topIdx == filteredPosts.size - 1
                                 val topShape = RoundedCornerShape(
                                     topStart = 0.dp,
                                     topEnd = if (isLastColumn) cornerRadius else 0.dp,
@@ -171,7 +172,7 @@ private fun LazyStaggeredGridScope.postsGridInScope(
                                 )
 
                                 CustomPost(
-                                    post = posts[topIdx],
+                                    post = filteredPosts[topIdx],
                                     navController = navController,
                                     edit = edit,
                                     editRemove = editRemove,
@@ -182,7 +183,7 @@ private fun LazyStaggeredGridScope.postsGridInScope(
                         }
                         if (bottomIdx < featuredCount) {
                             Box(Modifier.size(columnWidth)) {
-                                val isAbsoluteLast = bottomIdx == posts.size - 1
+                                val isAbsoluteLast = bottomIdx == filteredPosts.size - 1
                                 val bottomShape = RoundedCornerShape(
                                     topStart = 0.dp,
                                     topEnd = 0.dp,
@@ -191,7 +192,7 @@ private fun LazyStaggeredGridScope.postsGridInScope(
                                 )
 
                                 CustomPost(
-                                    post = posts[bottomIdx],
+                                    post = filteredPosts[bottomIdx],
                                     navController = navController,
                                     edit = edit,
                                     editRemove = editRemove,
@@ -206,8 +207,8 @@ private fun LazyStaggeredGridScope.postsGridInScope(
         }
 
         // 3. REMAINING ITEMS (Below the featured block)
-        if (featuredCount < posts.size) {
-            val remaining = posts.subList(featuredCount, posts.size)
+        if (featuredCount < filteredPosts.size) {
+            val remaining = filteredPosts.subList(featuredCount, filteredPosts.size)
             items(remaining, key = { it.uiKey }) { post ->
                 val remIndex = remaining.indexOf(post)
                 val remCol = remIndex % columnCount
@@ -234,8 +235,8 @@ private fun LazyStaggeredGridScope.postsGridInScope(
             }
         }
     } else {
-        items(posts, key = { it.uiKey }) { post ->
-            val shape = calculateOuterGridShape(posts.indexOf(post), posts.size, columnCount)
+        items(filteredPosts, key = { it.uiKey }) { post ->
+            val shape = calculateOuterGridShape(filteredPosts.indexOf(post), filteredPosts.size, columnCount)
             CustomPost(
                 post = post,
                 navController = navController,
@@ -248,11 +249,11 @@ private fun LazyStaggeredGridScope.postsGridInScope(
         }
     }
 
-    if (endReached && posts.size > 10) {
+    if (endReached && filteredPosts.size > 10) {
         item(key = "end_of_list_key", span = StaggeredGridItemSpan.FullLine) { EndOfListComposable() }
     }
 
-    if (!isRefreshing && isLoading && posts.isNotEmpty()) {
+    if (!isRefreshing && isLoading && filteredPosts.isNotEmpty()) {
         item(key = "loading_key", span = StaggeredGridItemSpan.FullLine) {
             LoadingComposable(Modifier.fillMaxWidth().padding(vertical = 50.dp))
         }

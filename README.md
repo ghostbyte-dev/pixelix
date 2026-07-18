@@ -57,7 +57,18 @@ You can view the release download statistics here on [GitHub Release Stats](http
 
 Pixelix is licensed under the **GNU General Public License v3.0 (GPL-3.0)**.
 
+Copyright (C) 2026 Daniel Hiebeler, Emanuel Hiebeler, and contributors
+
+
 See the [LICENSE](./LICENSE) file for details.
+
+<br>
+
+## Contributors
+
+<a href="https://github.com/ghostbyte-dev/pixelix/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=ghostbyte-dev/pixelix" alt="list of contributors icons" />
+</a>
 
 <br>
 

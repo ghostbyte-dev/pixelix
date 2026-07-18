@@ -182,7 +182,7 @@ abstract class AppComponent(
                         }
                     }
                 }
-                level = LogLevel.ALL
+                level = LogLevel.NONE
             }
             install(HttpTimeout) {
                 requestTimeoutMillis = 60000
@@ -239,7 +239,7 @@ abstract class AppComponent(
                         }
                     }
                 }
-                level = LogLevel.ALL
+                level = LogLevel.INFO
             }
             install(HttpTimeout) {
                 requestTimeoutMillis = 60000

@@ -422,7 +422,8 @@ class PostEditorViewModel @Inject constructor(
                             instance!!.configuration.mediaAttachmentConfig.imageSizeLimit
                         )
                     }, your video has ${bytesIntoHumanReadable(size)}",
-                    uri
+                    uri,
+                    metadata
                 )
                 return
             }
@@ -461,7 +462,7 @@ class PostEditorViewModel @Inject constructor(
         uploadImage(uri)
     }
 
-    suspend fun compressImage(uri: KmpUri) {
+    suspend fun compressImage(uri: KmpUri, metadata: MediaAttachmentMetadataRequest?) {
         mediaAdditionError = AddMediaError()
         compressionLoading = true
         try {
@@ -486,8 +487,7 @@ class PostEditorViewModel @Inject constructor(
             val compressedFile = fileService.createTempFile(compressedFileName, compressedBytes)
             val safeUri = platform.toSafeUri(compressedFile)
             compressionLoading = false
-            //TODO: fix compress, (metadata has to be kept the same)
-            addImage(safeUri, MediaAttachmentMetadataRequest())
+            addImage(safeUri, metadata ?: MediaAttachmentMetadataRequest())
         } catch (exception: Throwable) {
             Logger.e(exception.message ?: "unexpected error", null, "compression")
         }

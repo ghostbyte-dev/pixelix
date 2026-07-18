@@ -10,6 +10,7 @@ import com.daniebeler.pfpixelix.domain.model.request.UserBlockRequest
 import com.daniebeler.pfpixelix.domain.model.request.UserMuteRequest
 import com.daniebeler.pfpixelix.domain.model.request.toPixelfed
 import com.daniebeler.pfpixelix.domain.repository.pixelfed.PixelfedApi
+import com.daniebeler.pfpixelix.domain.service.file.FileService
 import com.daniebeler.pfpixelix.domain.service.general.AccountService
 import com.daniebeler.pfpixelix.domain.service.general.AuthService
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedAccountDto
@@ -19,6 +20,7 @@ import com.daniebeler.pfpixelix.domain.service.utils.loadListResources
 import com.daniebeler.pfpixelix.domain.service.utils.loadResource
 import com.daniebeler.pfpixelix.utils.encodeToPngBytes
 import com.daniebeler.pfpixelix.utils.executeAndParsePagination
+import io.github.vinceglb.filekit.ImageFormat
 import io.ktor.client.request.forms.MultiPartFormDataContent
 import io.ktor.client.request.forms.formData
 import io.ktor.http.Headers
@@ -40,6 +42,7 @@ import me.tatarka.inject.annotations.Inject
 class PixelfedAccountService(
     private val authService: AuthService,
     private val api: PixelfedApi,
+    private val fileService: FileService
 ) : AccountService {
     override val refreshSignal = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
 
@@ -73,18 +76,26 @@ class PixelfedAccountService(
         val bytes = withContext(Dispatchers.Default) {
             avatar?.encodeToPngBytes()
         }
+        if (bytes == null) {
+            return@loadResource
+        }
+        val compressedAvatar = fileService.compressImage(
+            bytes = bytes,
+            quality = 80,
+            maxWidth = 1000,
+            maxHeight = 1000,
+            imageFormat = ImageFormat.PNG
+        )
         val body = MultiPartFormDataContent(formData {
-            if (bytes != null) {
-                try {
-                    val fileName = "filename=avatar"
-                    val fileType = "image/png"
-                    append("avatar", bytes, Headers.Companion.build {
-                        append(HttpHeaders.ContentType, fileType)
-                        append(HttpHeaders.ContentDisposition, fileName)
-                    })
-                } catch (e: Throwable) {
-                    Logger.Companion.e("AccountService.updateAccount error", e)
-                }
+            try {
+                val fileName = "filename=avatar"
+                val fileType = "image/png"
+                append("avatar", compressedAvatar, Headers.Companion.build {
+                    append(HttpHeaders.ContentType, fileType)
+                    append(HttpHeaders.ContentDisposition, fileName)
+                })
+            } catch (e: Throwable) {
+                Logger.Companion.e("AccountService.updateAccount error", e)
             }
         })
         api.updateAvatar(body).toDomain()

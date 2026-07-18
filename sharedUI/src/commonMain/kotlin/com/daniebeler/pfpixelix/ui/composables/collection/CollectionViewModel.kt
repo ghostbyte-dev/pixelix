@@ -7,10 +7,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.repository.pixelfed.PixelfedApi
-import com.daniebeler.pfpixelix.domain.service.general.CollectionService
 import com.daniebeler.pfpixelix.domain.service.general.AuthService
-import com.daniebeler.pfpixelix.domain.service.platform.Platform
+import com.daniebeler.pfpixelix.domain.service.general.CollectionService
 import com.daniebeler.pfpixelix.domain.service.general.PostService
+import com.daniebeler.pfpixelix.domain.service.platform.Platform
 import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.ui.composables.profile.ViewEnum
@@ -175,7 +175,7 @@ class CollectionViewModel @Inject constructor(
                 }
 
                 is Resource.Error -> {
-                    editState = editState.copy(errorAllPosts = "An unexpected error occurred", isAllPostsLoading = false)
+                    editState = editState.copy(errorAllPosts = result.message, isAllPostsLoading = false)
                 }
 
                 is Resource.Loading -> {
@@ -202,7 +202,7 @@ class CollectionViewModel @Inject constructor(
                     }
 
                     is Resource.Error -> {
-                        editState = editState.copy(error = "An unexpected error occurred", isAllPostsLoading = false)
+                        editState = editState.copy(error = result.message,isAllPostsLoading = false)
                     }
 
                     is Resource.Loading -> {
@@ -227,13 +227,13 @@ class CollectionViewModel @Inject constructor(
     fun confirmEdit() {
         collectionPostsState = collectionPostsState.copy(posts = editState.editPosts)
         editState = editState.copy(editMode = false)
-        editState.removedIds.forEach {
-            removePostOfCollection(it)
-        }
         editState.addedIds.forEach {
             addPostsOfCollection(
                 it
             )
+        }
+        editState.removedIds.forEach {
+            removePostOfCollection(it)
         }
         if (editState.name != collectionState.collection!!.title) {
             updateCollection(editState.name)
@@ -256,7 +256,7 @@ class CollectionViewModel @Inject constructor(
                     }
 
                     is Resource.Error -> {
-                        editState = editState.copy(updateError = "An unexpected error occurred while updating the collection")
+                        editState = editState.copy(updateError = result.message)
                     }
 
                     is Resource.Loading -> {
@@ -276,7 +276,7 @@ class CollectionViewModel @Inject constructor(
                     }
 
                     is Resource.Error -> {
-                        editState = editState.copy(updateError = "An unexpected error occurred while updating the collection")
+                        editState = editState.copy(updateError = result.message)
                     }
 
                     is Resource.Loading -> {
@@ -297,7 +297,7 @@ class CollectionViewModel @Inject constructor(
                         }
 
                         is Resource.Error -> {
-                            editState = editState.copy(updateError = "An unexpected error occurred while updating the collection")
+                            editState = editState.copy(updateError = result.message)
                         }
 
                         is Resource.Loading -> {

@@ -20,7 +20,8 @@ val PixelfedCapabilities = Capabilities(
         manuallyAcceptNewFollowersToggle = false,
         includePostsInSearchEngineToggle = false,
         includeProfileInSearchEngineToggle = false,
-        websiteField = true
+        websiteField = true,
+        headerImage = false
     ),
     trending = TrendingCapabilities(
         supportsMultipleProfileTimeRanges = false,

@@ -97,7 +97,7 @@ class VernissageAuthService(
             accountId = requireNotNull(account.id),
             username = requireNotNull(account.username),
             displayName = account.displayname ?: account.username,
-            avatar = account.avatar,
+            avatar = account.avatar ?: "",
             serverUrl = serverUrl.toString(),
             token = tokenResponse.accessToken + "test",
             refreshToken = tokenResponse.refreshToken,

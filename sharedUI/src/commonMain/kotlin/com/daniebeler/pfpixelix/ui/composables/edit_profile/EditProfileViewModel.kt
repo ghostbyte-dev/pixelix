@@ -14,6 +14,7 @@ import com.daniebeler.pfpixelix.domain.service.general.Session
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.domain.service.suggestions.HashtagMentionsSuggestionsManager
 import com.daniebeler.pfpixelix.utils.EmptyKmpUri
+import com.daniebeler.pfpixelix.utils.KmpUri
 import com.daniebeler.pfpixelix.utils.toKmpUri
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -33,8 +34,8 @@ class EditProfileViewModel @Inject constructor(
     var displayName by mutableStateOf(TextFieldValue())
     var note by mutableStateOf(TextFieldValue())
     var website by mutableStateOf(TextFieldValue())
-    var avatarUri by mutableStateOf(EmptyKmpUri)
-    var headerUri by mutableStateOf(EmptyKmpUri)
+    var avatarUri by mutableStateOf<KmpUri?>(null)
+    var headerUri by mutableStateOf<KmpUri?>(null)
     var privateProfile by mutableStateOf(false)
     var manuallyAcceptNewFollowers by mutableStateOf<Boolean?>(null)
     var includePublicPostsInSearchEngine by mutableStateOf<Boolean?>(null)
@@ -63,8 +64,8 @@ class EditProfileViewModel @Inject constructor(
                     note = TextFieldValue(accountState.account?.note ?: "")
                     website =
                         TextFieldValue(accountState.account?.website?.replace("https://", "") ?: "")
-                    avatarUri = accountState.account?.avatar!!.toKmpUri()
-                    headerUri = accountState.account?.headerUrl?.toKmpUri() ?: EmptyKmpUri
+                    avatarUri = accountState.account?.avatar?.toKmpUri()
+                    headerUri = accountState.account?.headerUrl?.toKmpUri()
                     privateProfile = accountState.account?.locked ?: false
                     manuallyAcceptNewFollowers =
                         accountState.account?.manuallyApprovesFollowers

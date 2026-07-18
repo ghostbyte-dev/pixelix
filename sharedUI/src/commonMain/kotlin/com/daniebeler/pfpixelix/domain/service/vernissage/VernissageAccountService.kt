@@ -52,7 +52,7 @@ class VernissageAccountService(
         return refreshSignal.onStart { emit(Unit) }.flatMapLatest {
             getAccount(current.accountId, current.username).onEach { resource ->
                 if (resource is Resource.Success) {
-                    authService.updateSessionAvatar(resource.data.id, resource.data.avatar)
+                    authService.updateSessionAvatar(resource.data.id, resource.data.avatar ?: "")
                 }
             }
         }

@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
@@ -97,7 +96,6 @@ import pixelix.app.generated.resources.more_menu
 import pixelix.app.generated.resources.mute_this_profile
 import pixelix.app.generated.resources.muted
 import pixelix.app.generated.resources.open_in_browser
-import pixelix.app.generated.resources.photo
 import pixelix.app.generated.resources.reason
 import pixelix.app.generated.resources.reject_follow_request
 import pixelix.app.generated.resources.requested
@@ -121,10 +119,7 @@ fun OtherProfileComposable(
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
-    val lazyGridState = rememberLazyStaggeredGridState()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-
-    val photoIcon = vectorResource(Res.drawable.photo)
 
     var showBottomSheet by remember { mutableStateOf(false) }
     var showMuteAlert by remember { mutableStateOf(false) }

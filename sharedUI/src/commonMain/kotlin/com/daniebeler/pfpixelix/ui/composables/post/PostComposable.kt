@@ -401,17 +401,25 @@ private fun PostMediaSection(
         }
     } else if (post.content.isNotBlank()) {
         Column(Modifier.padding(start = 16.dp, top = 8.dp, end = 16.dp)) {
-            HorizontalDivider()
+            if (!isMasonry) {
+                HorizontalDivider()
+            }
+
+            val textSize = if (isMasonry) 14.sp else 18.sp
+
             HashtagsMentionsTextView(
                 text = post.content,
                 mentions = post.mentions,
                 navController = navController,
-                textSize = 18.sp,
+                textSize = textSize,
                 openUrl = { url -> viewModel.openUrl(url) },
                 modifier = Modifier.padding(top = 16.dp, bottom = 16.dp),
                 emojis = post.emojis
             )
-            HorizontalDivider()
+
+            if (!isMasonry) {
+                HorizontalDivider()
+            }
         }
     }
 }
@@ -911,10 +919,10 @@ private fun PostDeleteDialog(viewModel: PostViewModel) {
 
     AlertDialog(
         icon = {
-            Icon(
-                imageVector = vectorResource(Res.drawable.trash), contentDescription = null
-            )
-        },
+        Icon(
+            imageVector = vectorResource(Res.drawable.trash), contentDescription = null
+        )
+    },
         title = { Text(text = stringResource(Res.string.delete_post)) },
         text = { Text(text = stringResource(Res.string.this_action_cannot_be_undone)) },
         onDismissRequest = { viewModel.deleteDialog = null },

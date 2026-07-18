@@ -32,6 +32,20 @@ fun EmptyStateComposable(emptyState: EmptyState, modifier: Modifier = Modifier.f
 }
 
 @Composable
+fun EmptyStateComposableWithoutRefresh(
+    emptyState: EmptyState,
+    modifier: Modifier = Modifier.fillMaxSize()
+) {
+    Column(
+        modifier = modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        InnerEmptyState(emptyState)
+    }
+}
+
+@Composable
 fun EmptyStateComposable(
     emptyState: EmptyState,
     onRefresh: () -> Unit,

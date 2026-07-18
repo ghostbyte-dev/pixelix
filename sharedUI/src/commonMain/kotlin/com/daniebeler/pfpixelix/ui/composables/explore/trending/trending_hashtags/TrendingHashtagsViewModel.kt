@@ -10,7 +10,7 @@ import com.daniebeler.pfpixelix.domain.service.general.ExploreService
 import com.daniebeler.pfpixelix.domain.service.general.Session
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.ui.composables.explore.trending.TrendingRange
-import com.daniebeler.pfpixelix.ui.composables.explore.trending.trending_accounts.TrendingAccountsState
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import me.tatarka.inject.annotations.Inject
@@ -19,7 +19,7 @@ class TrendingHashtagsViewModel @Inject constructor(
     private val exploreService: ExploreService,
     session: Session
 ) : ViewModel() {
-    val capabilities: Capabilities = session.capabilities.value
+    val capabilities: StateFlow<Capabilities> = session.capabilities
 
     var trendingHashtagsState by mutableStateOf(TrendingHashtagsState())
 

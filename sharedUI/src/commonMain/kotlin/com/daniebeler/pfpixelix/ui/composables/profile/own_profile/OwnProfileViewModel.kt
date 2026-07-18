@@ -8,15 +8,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.repository.pixelfed.PixelfedApi
-import com.daniebeler.pfpixelix.domain.service.capabilities.Capabilities
-import com.daniebeler.pfpixelix.domain.service.general.CollectionService
 import com.daniebeler.pfpixelix.domain.service.general.AccountService
-import com.daniebeler.pfpixelix.domain.service.general.AuthService
 import com.daniebeler.pfpixelix.domain.service.general.AppIconService
+import com.daniebeler.pfpixelix.domain.service.general.AuthService
 import com.daniebeler.pfpixelix.domain.service.general.BackendType
-import com.daniebeler.pfpixelix.domain.service.platform.Platform
+import com.daniebeler.pfpixelix.domain.service.general.CollectionService
 import com.daniebeler.pfpixelix.domain.service.general.PostService
 import com.daniebeler.pfpixelix.domain.service.general.Session
+import com.daniebeler.pfpixelix.domain.service.platform.Platform
 import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.ui.composables.profile.AccountState
@@ -38,7 +37,7 @@ class OwnProfileViewModel @Inject constructor(
     appIconService: AppIconService,
     session: Session
 ) : ViewModel() {
-    val capabilities: Capabilities = session.capabilities.value
+    val capabilities = session.capabilities
     val backendType: BackendType = session.backendType.value
     var accountState by mutableStateOf(AccountState())
     var postsState by mutableStateOf(PostsState())
@@ -73,7 +72,7 @@ class OwnProfileViewModel @Inject constructor(
         getAccount(refreshing)
         getPostsFirstLoad(refreshing)
 
-        if (capabilities.profile.showCollectionsOwnProfile) {
+        if (capabilities.value.profile.showCollectionsOwnProfile) {
             viewModelScope.launch {
                 val currentLoginData = authService.getCurrentSession()
                 currentLoginData?.let {
@@ -92,7 +91,7 @@ class OwnProfileViewModel @Inject constructor(
                 }
 
                 is Resource.Error -> {
-                    AccountState(error = result.message ?: "An unexpected error occurred")
+                    AccountState(error = result.message)
                 }
 
                 is Resource.Loading -> {
@@ -114,7 +113,7 @@ class OwnProfileViewModel @Inject constructor(
                 }
 
                 is Resource.Error -> {
-                    PostsState(error = result.message ?: "An unexpected error occurred")
+                    PostsState(error = result.message)
                 }
 
                 is Resource.Loading -> {
@@ -138,7 +137,7 @@ class OwnProfileViewModel @Inject constructor(
                     }
 
                     is Resource.Error -> {
-                        PostsState(error = result.message ?: "An unexpected error occurred")
+                        PostsState(error = result.message)
                     }
 
                     is Resource.Loading -> {
@@ -162,9 +161,9 @@ class OwnProfileViewModel @Inject constructor(
             when (result) {
                 is Resource.Success -> {
                     collectionsState = if (!paginated) {
-                        CollectionsState(collections = result.data ?: emptyList())
+                        CollectionsState(collections = result.data)
                     } else {
-                        val endReached = result.data!!.isEmpty()
+                        val endReached = result.data.isEmpty()
                         CollectionsState(
                             collections = collectionsState.collections + result.data,
                             endReached = endReached
@@ -174,7 +173,7 @@ class OwnProfileViewModel @Inject constructor(
 
                 is Resource.Error -> {
                     collectionsState =
-                        CollectionsState(error = result.message ?: "An unexpected error occurred")
+                        CollectionsState(error = result.message)
                 }
 
                 is Resource.Loading -> {

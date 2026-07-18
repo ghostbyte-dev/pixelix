@@ -61,7 +61,7 @@ fun TextFieldLocationsComposable(
     val focusManager = LocalFocusManager.current
     var expanded by remember { mutableStateOf(false) }
 
-    if (viewModel.capabilities.newPost.showCountryDropdown) {
+    if (viewModel.capabilities.value.newPost.showCountryDropdown) {
         ExposedDropdownMenuBox(
             expanded = expanded,
             onExpandedChange = { expanded = it }

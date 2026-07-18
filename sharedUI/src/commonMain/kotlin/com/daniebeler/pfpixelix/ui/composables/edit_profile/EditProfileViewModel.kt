@@ -22,9 +22,9 @@ import me.tatarka.inject.annotations.Inject
 class EditProfileViewModel @Inject constructor(
     private val accountService: AccountService,
     val hashtagMentionsSuggestionsManager: HashtagMentionsSuggestionsManager,
-    private val session: Session
+    session: Session
 ) : ViewModel() {
-    val capabilities = session.capabilities.value
+    val capabilities = session.capabilities
     var accountState by mutableStateOf(EditProfileState())
     var avatarState by mutableStateOf(EditImageState())
 

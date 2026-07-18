@@ -159,7 +159,7 @@ fun GeneralTab(
             ) {
                 TextField(
                     value = buttonText,
-                    onValueChange = { text ->
+                    onValueChange = { _ ->
                         isExpandedVisibility = true
                     },
                     modifier = Modifier
@@ -254,7 +254,7 @@ fun GeneralTab(
                                 )
                             }
                         })
-                    if (viewModel.capabilities.newPost.includeDirectVisibility) {
+                    if (viewModel.capabilities.value.newPost.includeDirectVisibility) {
                         DropdownMenuItem(
                             text = { Text(stringResource(Res.string.mentioned_only)) },
                             onClick = {
@@ -280,7 +280,7 @@ fun GeneralTab(
                 }
             }
 
-            if (viewModel.capabilities.newPost.showCategoriesDropdown) {
+            if (viewModel.capabilities.value.newPost.showCategoriesDropdown) {
                 var isCategoriesExpanded by remember { mutableStateOf(false) }
                 ExposedDropdownMenuBox(
                     expanded = isCategoriesExpanded,
@@ -288,7 +288,7 @@ fun GeneralTab(
                 ) {
                     TextField(
                         value = viewModel.categoriesState.selectedCategory?.name ?: "",
-                        onValueChange = { text ->
+                        onValueChange = { _ ->
                             isCategoriesExpanded = true
                         },
                         modifier = Modifier
@@ -348,7 +348,7 @@ fun GeneralTab(
                         onCheckedChange = { viewModel.areCommentsDisabled = it })
                 })
 
-            if (viewModel.capabilities.newPost.showLocationInputInGeneral) {
+            if (viewModel.capabilities.value.newPost.showLocationInputInGeneral) {
                 TextFieldLocationsComposable(
                     submit = {
                         viewModel.locationId = it.id

@@ -338,7 +338,7 @@ fun PostEditorComposable(
                                             tabIndex, it
                                         )
                                     },
-                                    capabilities = viewModel.capabilities,
+                                    capabilities = viewModel.capabilities.value,
                                     availableLicenses = viewModel.licensesState.licenses
                                 )
                             } else {

@@ -690,7 +690,7 @@ private fun PostActionBar(
             }
         }
 
-        if (viewModel.capabilities.post.showLikedBy) {
+        if (viewModel.capabilities.value.post.showLikedBy) {
             // "Liked by" row
             PostLikedByRow(
                 post = post, navController = navController, onLikesClick = onLikesClick
@@ -720,7 +720,7 @@ private fun PostActionBar(
         val hasLicense =
             currentAttachment?.license?.let { it.name != null || it.code != null } == true
         val hasMetadata =
-            viewModel.capabilities.post.showCameraMetadata && currentAttachment?.metadata != null
+            viewModel.capabilities.value.post.showCameraMetadata && currentAttachment?.metadata != null
         val hasLocation = displayLocation?.let {
             !it.name.isNullOrBlank() || !it.country?.name.isNullOrBlank()
         } == true
@@ -734,21 +734,21 @@ private fun PostActionBar(
                 loc.name.isNullOrBlank() && loc.country?.name.isNullOrEmpty() -> null
                 loc.name.isNullOrBlank() -> loc.country?.name
                 loc.country?.name.isNullOrBlank() -> loc.name
-                else -> "${loc.name}, ${loc.country?.name}"
+                else -> "${loc.name}, ${loc.country.name}"
             }
             if (label != null) {
                 MetadataItem(Res.drawable.location, label)
             }
         }
 
-        if (viewModel.capabilities.post.showCameraMetadata && !hideMetadataPref) {
+        if (viewModel.capabilities.value.post.showCameraMetadata && !hideMetadataPref) {
             post.mediaAttachments.getOrNull(pagerState.currentPage)?.metadata?.let { metadata ->
                 listOfNotNull(metadata.make, metadata.model).takeIf { it.isNotEmpty() }
                     ?.let { MetadataItem(Res.drawable.camera, it.joinToString(" ")) }
                 metadata.lens?.let { MetadataItem(Res.drawable.lens, it) }
                 listOfNotNull(
                     metadata.focalLength?.let { "${it}mm" },
-                    metadata.fNumber?.let { it },
+                    metadata.fNumber,
                     metadata.exposureTime?.let { "${it}s" },
                     metadata.photographicSensitivity?.let { "ISO ${it}" }).takeIf { it.isNotEmpty() }
                     ?.let { MetadataItem(Res.drawable.exposure, it.joinToString("   ")) }
@@ -881,10 +881,10 @@ private fun PostDeleteDialog(viewModel: PostViewModel) {
 
     AlertDialog(
         icon = {
-        Icon(
-            imageVector = vectorResource(Res.drawable.trash), contentDescription = null
-        )
-    },
+            Icon(
+                imageVector = vectorResource(Res.drawable.trash), contentDescription = null
+            )
+        },
         title = { Text(text = stringResource(Res.string.delete_post)) },
         text = { Text(text = stringResource(Res.string.this_action_cannot_be_undone)) },
         onDismissRequest = { viewModel.deleteDialog = null },

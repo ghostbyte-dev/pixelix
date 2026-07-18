@@ -3,23 +3,22 @@ package com.daniebeler.pfpixelix.ui.composables.textfield_location
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.domain.model.Country
-import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.domain.model.Location
 import com.daniebeler.pfpixelix.domain.service.general.ExploreService
 import com.daniebeler.pfpixelix.domain.service.general.Session
+import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import me.tatarka.inject.annotations.Inject
 
 class TextFieldLocationsViewModel @Inject constructor(
     private val exploreService: ExploreService,
-    private val session: Session
+    session: Session
 ) : ViewModel() {
-    val capabilities = session.capabilities.value
+    val capabilities = session.capabilities
     var locationText by mutableStateOf("")
     var countryText by mutableStateOf("")
     var locationsDropdownOpen by mutableStateOf(false)
@@ -28,7 +27,7 @@ class TextFieldLocationsViewModel @Inject constructor(
 
 
     init {
-        if (capabilities.newPost.showCountryDropdown) {
+        if (capabilities.value.newPost.showCountryDropdown) {
             loadCountries()
         }
     }
@@ -68,7 +67,7 @@ class TextFieldLocationsViewModel @Inject constructor(
 
                 is Resource.Error -> {
                     LocationsState(
-                        error = result.message ?: "An unexpected error occurred"
+                        error = result.message
                     )
                 }
 
@@ -88,11 +87,6 @@ class TextFieldLocationsViewModel @Inject constructor(
         countriesState = countriesState.copy(
             country = country
         )
-    }
-
-    fun removeLocation() {
-        locationText = ""
-        locationsSuggestions = LocationsState()
     }
 
     fun edit() {

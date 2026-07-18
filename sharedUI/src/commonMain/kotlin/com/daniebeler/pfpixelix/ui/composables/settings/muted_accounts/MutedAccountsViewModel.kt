@@ -5,13 +5,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.daniebeler.pfpixelix.domain.service.utils.Resource
-import com.daniebeler.pfpixelix.domain.model.Account
-import com.daniebeler.pfpixelix.domain.model.MutedAccount
 import com.daniebeler.pfpixelix.domain.model.request.UserMuteRequest
 import com.daniebeler.pfpixelix.domain.service.general.AccountService
 import com.daniebeler.pfpixelix.domain.service.general.Session
-import com.daniebeler.pfpixelix.ui.composables.profile.RelationshipState
+import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import me.tatarka.inject.annotations.Inject
@@ -19,7 +16,7 @@ import me.tatarka.inject.annotations.Inject
 class MutedAccountsViewModel @Inject constructor(
     private val accountService: AccountService, session: Session
 ) : ViewModel() {
-    val capabilities = session.capabilities.value
+    val capabilities = session.capabilities
 
     var mutedAccountsState by mutableStateOf(MutedAccountsState())
 
@@ -33,11 +30,11 @@ class MutedAccountsViewModel @Inject constructor(
         accountService.getMutedAccounts().onEach { result ->
             mutedAccountsState = when (result) {
                 is Resource.Success -> {
-                    MutedAccountsState(mutedAccounts = result.data ?: emptyList())
+                    MutedAccountsState(mutedAccounts = result.data)
                 }
 
                 is Resource.Error -> {
-                    MutedAccountsState(error = result.message ?: "An unexpected error occurred")
+                    MutedAccountsState(error = result.message)
                 }
 
                 is Resource.Loading -> {
@@ -69,7 +66,7 @@ class MutedAccountsViewModel @Inject constructor(
 
                 is Resource.Error -> {
                     mutedAccountsState.copy(
-                        error = result.message ?: "An unexpected error occurred"
+                        error = result.message
                     )
                 }
 

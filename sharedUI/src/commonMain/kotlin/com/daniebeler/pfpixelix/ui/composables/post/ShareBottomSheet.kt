@@ -36,19 +36,17 @@ import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.audience_public
 import pixelix.app.generated.resources.block_this_profile
 import pixelix.app.generated.resources.blocked
-import pixelix.app.generated.resources.download
 import pixelix.app.generated.resources.delete_this_post
-import pixelix.app.generated.resources.document_text
+import pixelix.app.generated.resources.download
 import pixelix.app.generated.resources.download_image
+import pixelix.app.generated.resources.edit
 import pixelix.app.generated.resources.edit_post
 import pixelix.app.generated.resources.eye
 import pixelix.app.generated.resources.followers_only
-import pixelix.app.generated.resources.license
-import pixelix.app.generated.resources.open_in_browser
-import pixelix.app.generated.resources.open
-import pixelix.app.generated.resources.edit
 import pixelix.app.generated.resources.mute_this_profile
 import pixelix.app.generated.resources.muted
+import pixelix.app.generated.resources.open
+import pixelix.app.generated.resources.open_in_browser
 import pixelix.app.generated.resources.report_this_post
 import pixelix.app.generated.resources.share
 import pixelix.app.generated.resources.share_this_post
@@ -220,7 +218,7 @@ fun ShareBottomSheet(
                 closeBottomSheet()
             },
             mutedAccount = viewModel.mutedAccount,
-            capabilities = viewModel.capabilities
+            capabilities = viewModel.capabilities.value
         )
     }
     if (showBlockAlert) {
@@ -236,7 +234,7 @@ fun ShareBottomSheet(
                 closeBottomSheet()
             },
             account = viewModel.post?.account,
-            capabilities = viewModel.capabilities
+            capabilities = viewModel.capabilities.value
         )
     }
 

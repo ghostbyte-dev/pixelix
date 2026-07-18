@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -112,7 +111,7 @@ private fun LazyStaggeredGridScope.postsGridInScope(
     onClick: ((id: String) -> Unit)? = null
 ) {
     val spacing = 4.dp
-    val cornerRadius = 16.dp // Matches masonry shape
+    val cornerRadius = 16.dp
 
     val columnWidth = if (contentWidth > 0.dp) {
         (contentWidth - spacing * (columnCount - 1)) / columnCount
@@ -229,7 +228,7 @@ private fun LazyStaggeredGridScope.postsGridInScope(
                     edit = edit,
                     editRemove = editRemove,
                     onClick = onClick,
-                    modifier = Modifier.aspectRatio(1f),
+                    modifier = Modifier.height(columnWidth),
                     roundedCornerShape = remShape
                 )
             }
@@ -243,7 +242,7 @@ private fun LazyStaggeredGridScope.postsGridInScope(
                 edit = edit,
                 editRemove = editRemove,
                 onClick = onClick,
-                modifier = Modifier.aspectRatio(1f),
+                modifier = Modifier.height(columnWidth),
                 roundedCornerShape = shape
             )
         }
@@ -401,7 +400,11 @@ fun calculateOuterGridShape(
 
     val column = index % columnCount
     val isTopRow = index < columnCount
-    val isBottomRow = index + columnCount >= totalCount
+
+    val remainder = totalCount % columnCount
+    val lastRowSize = if (remainder == 0) columnCount else remainder
+    val lastRowStartIndex = totalCount - lastRowSize
+    val isBottomRow = index >= lastRowStartIndex
 
     val topLeft = if (isTopRow && column == 0) cornerRadius else 0.dp
     val topRight = if (isTopRow && (column == columnCount - 1 || index == totalCount - 1)) cornerRadius else 0.dp

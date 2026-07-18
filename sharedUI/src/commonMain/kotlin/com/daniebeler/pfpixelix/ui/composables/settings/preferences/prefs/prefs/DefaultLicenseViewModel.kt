@@ -1,10 +1,14 @@
 package com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.domain.model.License
 import com.daniebeler.pfpixelix.domain.service.general.ExploreService
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
+import com.daniebeler.pfpixelix.ui.composables.profile.ViewEnum
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -20,6 +24,8 @@ class DefaultLicenseViewModel(
 
     val licenses: StateFlow<List<License>> = _licenses.asStateFlow()
 
+    var isLoading by mutableStateOf(false)
+
     init {
         getLicenses()
     }
@@ -30,12 +36,14 @@ class DefaultLicenseViewModel(
             when (result) {
                 is Resource.Success -> {
                     _licenses.value = result.data
+                    isLoading = false
                 }
 
                 is Resource.Error -> {
                 }
 
                 is Resource.Loading -> {
+                    isLoading = true
                 }
             }
         }.launchIn(viewModelScope)

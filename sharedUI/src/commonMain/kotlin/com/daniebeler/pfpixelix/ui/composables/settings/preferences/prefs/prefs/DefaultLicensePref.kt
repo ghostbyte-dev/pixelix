@@ -48,17 +48,23 @@ fun DefaultLicensePref(
     val state = remember { mutableStateOf(prefs.defaultLicense) }
 
     if (showAlert.value) {
-        DefaultLicenseDialog(state.value, allLicenses = viewModel.licenses.value, {
-            state.value = it
-            prefs.defaultLicense = it
-        }, {
-            showAlert.value = false
-        })
+        DefaultLicenseDialog(
+            state.value,
+            allLicenses = viewModel.licenses.value,
+            isLoading = viewModel.isLoading,
+            {
+                state.value = it
+                prefs.defaultLicense = it
+            },
+            {
+                showAlert.value = false
+            })
     }
 
     SettingPref(
         icon = Res.drawable.license,
         title = stringResource(Res.string.default_license),
+        desc = state.value?.name ?: "No default license",
         trailingContent = null,
         onClick = { showAlert.value = true },
         shapes = ListItemDefaults.segmentedShapes(index = 2, count = 3),
@@ -69,7 +75,8 @@ fun DefaultLicensePref(
 fun DefaultLicenseDialog(
     license: License?,
     allLicenses: List<License>,
-    onChange: (License) -> Unit,
+    isLoading: Boolean,
+    onChange: (License?) -> Unit,
     onDismiss: () -> Unit
 ) {
     Dialog(
@@ -78,12 +85,10 @@ fun DefaultLicenseDialog(
         )
     ) {
         Box(
-            modifier = Modifier.fillMaxSize()
-                .imePadding()
+            modifier = Modifier.fillMaxSize().imePadding()
         ) {
             Surface(
-                modifier = Modifier.align(Alignment.Center).padding(24.dp)
-                    .widthIn(max = 400.dp),
+                modifier = Modifier.align(Alignment.Center).padding(24.dp).widthIn(max = 400.dp),
                 shape = RoundedCornerShape(28.dp),
                 color = MaterialTheme.colorScheme.surfaceContainerHigh,
                 tonalElevation = 6.dp
@@ -101,6 +106,7 @@ fun DefaultLicenseDialog(
                     LicensesDropdownComposable(
                         licenses = allLicenses,
                         selectedLicense = license,
+                        isLoading = isLoading,
                         onLicenseSelected = onChange,
                         textFieldColor = MaterialTheme.colorScheme.surfaceContainerHighest
                     )
@@ -113,8 +119,7 @@ fun DefaultLicenseDialog(
                         TextButton(
                             onClick = {
                                 onDismiss()
-                            }
-                        ) { Text(stringResource(Res.string.ok)) }
+                            }) { Text(stringResource(Res.string.ok)) }
                     }
                 }
             }

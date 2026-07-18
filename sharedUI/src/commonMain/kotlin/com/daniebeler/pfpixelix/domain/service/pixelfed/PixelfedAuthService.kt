@@ -30,7 +30,7 @@ class PixelfedAuthService(
     private val savedSearchesService: SavedSearchesService,
     private val json: Json,
     private val platform: Platform
-): AuthService {
+) : AuthService {
     override val activeUser: Flow<String?> = session.credentials.map { it?.accountId }
 
     override suspend fun auth(host: String) {

@@ -18,7 +18,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 
-abstract class PaginatedPostsViewModel (
+abstract class PaginatedPostsViewModel(
     private val prefs: UserPreferences,
 ) : ViewModel() {
 
@@ -41,33 +41,53 @@ abstract class PaginatedPostsViewModel (
         if (timelineState.posts.isNotEmpty() && !refreshing) return
         fetchPage(null).onEach { result ->
             timelineState = when (result) {
-                is Resource.Success -> TimelineState(posts = result.data.data, nextId = result.data.next)
+                is Resource.Success -> TimelineState(
+                    posts = result.data.data,
+                    nextId = result.data.next
+                )
+
                 is Resource.Error -> timelineState.copy(
                     error = result.message,
                     isLoading = false,
                     isRefreshing = false
                 )
-                is Resource.Loading -> timelineState.copy(isLoading = true, isRefreshing = refreshing)
+
+                is Resource.Loading -> timelineState.copy(
+                    isLoading = true,
+                    isRefreshing = refreshing
+                )
             }
         }.launchIn(viewModelScope)
     }
 
     fun getItemsPaginated() {
-        if (timelineState.posts.isEmpty() || timelineState.isLoading) return
+        if (timelineState.posts.isEmpty() || timelineState.isLoading || timelineState.endReached) return
         fetchPage(timelineState.nextId).onEach { result ->
             timelineState = when (result) {
-                is Resource.Success -> timelineState.copy(
-                    posts = timelineState.posts + (result.data.data),
-                    nextId = result.data.next,
-                    isLoading = false,
-                    isRefreshing = false,
-                    error = ""
-                )
+                is Resource.Success ->
+                    if (result.data.data.isEmpty()) {
+                        timelineState.copy(
+                            isLoading = false,
+                            isRefreshing = false,
+                            error = "",
+                            endReached = true
+                        )
+                    } else {
+                        timelineState.copy(
+                            posts = timelineState.posts + (result.data.data),
+                            nextId = result.data.next,
+                            isLoading = false,
+                            isRefreshing = false,
+                            error = ""
+                        )
+                    }
+
                 is Resource.Error -> timelineState.copy(
                     error = result.message,
                     isLoading = false,
                     isRefreshing = false
                 )
+
                 is Resource.Loading -> timelineState.copy(isLoading = true)
             }
         }.launchIn(viewModelScope)

@@ -1,2 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="settings">Agordoj</string>
+    <string name="liked_posts">Ŝatataj afiŝoj</string>
+    <string name="blocked_accounts">Blokataj profiloj</string>
+    <string name="open_in_browser">Malfermi per retumilo</string>
+    <string name="block_this_profile">Bloki ĉi tiun profilon</string>
+    <string name="unblock_this_profile">Malbloki ĉi tiun profilon</string>
+    <string name="follow">Sekvi</string>
+    <string name="unfollow">Malsekvi</string>
+    <string name="followers">Sekvantoj</string>
+    <plurals name="follower">
+        <item quantity="one">Sekvanto</item>
+        <item quantity="other">Sekvantoj</item>
+    </plurals>
+    <plurals name="following">
+        <item quantity="one">Sekvas</item>
+    </plurals>
+    <plurals name="posts">
+        <item quantity="one">Afiŝo</item>
+        <item quantity="other">Afiŝoj</item>
+    </plurals>
+    <string name="liked_your_post">ŝatis vian afiŝon</string>
+    <string name="followed_you">sekvis vin</string>
+    <string name="accounts">Profiloj</string>
+    <string name="rules">Reguloj</string>
+    <string name="instance_version">Versio de la instanco</string>
+    <string name="users">Uzantoj</string>
+    <string name="stats">Statistikoj</string>
+    <string name="unblock">malbloki</string>
+    <string name="unblock_caps">Malbloki</string>
+    <string name="unblock_account">Malbloki profilon?</string>
+    <string name="no_blocked_accounts">neniu blokita profilo</string>
+    <string name="post_by">Afiŝo de</string>
+    <string name="liked_by">Ŝatata de</string>
+    <string name="this_is_the_end">Jen la fino!</string>
+    <string name="and">kaj</string>
+    <string name="followed_by">Sekvata de</string>
+    <string name="other">alia</string>
+    <string name="others">aliaj</string>
+    <string name="yearly">jare</string>
+    <string name="monthly">monate</string>
+    <string name="daily">tage</string>
+    <string name="i_don_t_have_an_account">Mi ne havas profilon</string>
+    <string name="server_url">Retadreso al la servilo</string>
+    <string name="are_you_sure_you_want_to_log_out">Ĉu vi certas ke vi volas elsaluti?</string>
+    <string name="view_comments">Vidi %1$s komentojn</string>
+    <string name="comment">Skribi komenton</string>
+    <string name="no_comments_yet">Neniu komento ĝis nun</string>
+    <string name="no_likes_yet">Neniu jam ŝatis ĉi tion</string>
+    <string name="no_liked_posts">neniu ŝatata afiŝo</string>
+    <string name="local">Loka</string>
+    <string name="global">Monda</string>
+    <string name="home">Hejme</string>
+    <string name="likes">%1$s ŝatoj</string>
+    <string name="search">Serĉi</string>
+    <string name="media_description">Bildpriskribo</string>
+    <string name="no_posts_yet">Neniu afiŝo ĝis nun</string>
+    <string name="mentioned_you_in_a_post">menciis vin</string>
+    <string name="new_post">Nova afiŝo</string>
+    <string name="release">Publikigi</string>
+    <string name="alt_text">Alternativa teksto</string>
+    <string name="caption">Priskribo</string>
+    <string name="followers_only">Nur por sekvantoj</string>
+    <string name="preferences">Agordoj</string>
+    <string name="about_x">Pri %1$s</string>
+    <string name="more_settings">Pluaj agordoj</string>
+    <string name="nobody_follows_you_yet">Neniu sekvas vin ĝuste nun</string>
+    <string name="empty">Malplena</string>
+    <string name="no_posts">Neniu afiŝo</string>
+    <string name="this_user_has_not_postet_anything_yet">Ĉi tiu uzanto ankoraŭ ne afiŝis ion</string>
+</resources>

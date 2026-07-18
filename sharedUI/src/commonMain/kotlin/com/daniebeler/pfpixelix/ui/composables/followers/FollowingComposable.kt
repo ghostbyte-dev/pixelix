@@ -1,27 +1,22 @@
 package com.daniebeler.pfpixelix.ui.composables.followers
 
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
-import androidx.compose.foundation.lazy.staggeredgrid.items
+import androidx.compose.foundation.lazy.staggeredgrid.itemsIndexed
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.di.injectViewModel
-import com.daniebeler.pfpixelix.ui.composables.widgets.InfiniteStaggeredGridHandler
+import com.daniebeler.pfpixelix.ui.composables.custom_account.AccountListItem
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
+import com.daniebeler.pfpixelix.ui.composables.states.EmptyStateComposable
 import com.daniebeler.pfpixelix.ui.composables.states.EndOfListComposable
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
-import com.daniebeler.pfpixelix.ui.composables.states.EmptyStateComposable
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
+import com.daniebeler.pfpixelix.ui.composables.widgets.InfiniteStaggeredGridHandler
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
@@ -39,11 +34,21 @@ fun FollowingComposable(
 ) {
     val staggeredGridState = rememberLazyStaggeredGridState()
 
-    LazyVerticalStaggeredGrid(columns = StaggeredGridCells.Adaptive(300.dp), state = staggeredGridState, contentPadding = PaddingValues(top = 24.dp)) {
-        items(viewModel.followingState.following, key = {
+    LazyVerticalStaggeredGrid(
+        columns = StaggeredGridCells.Fixed(1),
+        state = staggeredGridState,
+        contentPadding = PaddingValues(top = 32.dp, start = 8.dp, end = 8.dp)
+    ) {
+        itemsIndexed(viewModel.followingState.following, key = { _, it ->
             it.id
-        }) {
-            FollowerElementComposable(account = it, navController)
+        }) { index, account ->
+            AccountListItem(
+                account = account,
+                relationship = null,
+                navController = navController,
+                index = index,
+                count = viewModel.followingState.following.size
+            )
         }
 
         if (viewModel.followingState.following.isNotEmpty() && viewModel.followingState.isLoading && !viewModel.followingState.isRefreshing) {
@@ -77,7 +82,10 @@ fun FollowingComposable(
         )
     }
 
-    InfiniteStaggeredGridHandler(lazyStaggeredGridState = staggeredGridState, itemCount = viewModel.followingState.following.size) {
+    InfiniteStaggeredGridHandler(
+        lazyStaggeredGridState = staggeredGridState,
+        itemCount = viewModel.followingState.following.size
+    ) {
         viewModel.getFollowingPaginated()
     }
 

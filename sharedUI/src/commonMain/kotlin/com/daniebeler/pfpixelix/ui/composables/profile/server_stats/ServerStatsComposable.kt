@@ -101,7 +101,7 @@ fun DomainSoftwareComposable(
 
 @Preview(name = "Light Mode", showBackground = true)
 @Composable
-fun ContributeBottomSheetPreview() {
+fun ServerStatsSheetPreview() {
     MaterialTheme {
         ServerStatsSheet(
             FediseaInstance(
@@ -160,6 +160,7 @@ fun ServerStatsSheet(
             software?.let {
                 StatsCard(
                     icon = software.iconUrl,
+                    showIcon = true,
                     thumbnail = null,
                     name = software.name,
                     identifier = software.identifier,
@@ -203,6 +204,7 @@ fun ServerStatsSheet(
             instance?.let {
                 StatsCard(
                     icon = null,
+                    showIcon = false,
                     thumbnail = instance.thumbnailUrl,
                     name = instance.domain,
                     identifier = instance.domain,
@@ -260,6 +262,7 @@ fun ServerStatsSheet(
 @Composable
 fun StatsCard(
     icon: String?,
+    showIcon: Boolean,
     thumbnail: String?,
     name: String?,
     identifier: String,
@@ -288,7 +291,7 @@ fun StatsCard(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                if (thumbnail == null) {
+                if (showIcon) {
                     AsyncImage(
                         model = icon ?: Res.drawable.fediverse_logo,
                         error = painterResource(Res.drawable.fediverse_logo),

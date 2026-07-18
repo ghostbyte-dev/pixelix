@@ -3,6 +3,7 @@ package com.daniebeler.pfpixelix.domain.repository.serializers
 import androidx.datastore.core.okio.OkioSerializer
 import com.daniebeler.pfpixelix.domain.model.SavedSearches
 import kotlinx.serialization.SerializationException
+import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.json.Json
 import okio.BufferedSink
 import okio.BufferedSource

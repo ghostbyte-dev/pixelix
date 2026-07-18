@@ -7,7 +7,7 @@ import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.getTextAfterSelection
 import androidx.compose.ui.text.input.getTextBeforeSelection
-import com.daniebeler.pfpixelix.domain.service.hashtag.SearchService
+import com.daniebeler.pfpixelix.domain.service.general.ExploreService
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.ui.composables.post.SuggestionsState
 import kotlinx.coroutines.CoroutineScope
@@ -20,7 +20,7 @@ import kotlinx.coroutines.flow.update
 import me.tatarka.inject.annotations.Inject
 
 class HashtagMentionsSuggestionsManager @Inject constructor(
-    private val searchService: SearchService
+    private val exploreService: ExploreService
 ) {
     var suggestionsOpen by mutableStateOf(false)
     private val _suggestionsState = MutableStateFlow(SuggestionsState())
@@ -51,15 +51,15 @@ class HashtagMentionsSuggestionsManager @Inject constructor(
             "tags"
         }
         val searchShortened = searchString.substring(1)
-        searchJob = searchService.search(searchShortened, limit = 10).onEach { result ->
+        searchJob = exploreService.search(searchShortened, limit = 10).onEach { result ->
             _suggestionsState.update { currentState ->
                 when (result) {
                     is Resource.Success -> {
                         SuggestionsState(
                             suggestions = if (type == "accounts") {
-                                result.data.accounts.map { "@" + it.acct }
+                                result.data.accounts.map { Pair("@" + it.acct, it.avatar) }
                             } else {
-                                result.data.tags.map { "#" + it.name }
+                                result.data.tags.map { Pair("#" + it.name, null) }
                             }
                         )
                     }

@@ -31,14 +31,14 @@ fun TrendingAccountElement(
     viewModel: TrendingAccountElementViewModel = injectViewModel(key = account.id) { trendingAccountElementViewModel }
 ) {
     LaunchedEffect(account) {
-        viewModel.loadItems(account.id)
+        viewModel.loadItems(account.id, account.username)
     }
 
     Column(
         Modifier.clip(RoundedCornerShape(16.dp))
             .background(MaterialTheme.colorScheme.surfaceContainerLow).padding(8.dp).fillMaxWidth()
             .clickable {
-                navController.navigate(Destination.Profile(account.id))
+                navController.navigate(Destination.Profile(account.id, account.username))
             }) {
 
         CustomAccount(account = account)
@@ -56,7 +56,11 @@ fun TrendingAccountElement(
             Box(
                 modifier = Modifier
             ) {
-                CustomPost(post = viewModel.postsState.posts[it], navController = navController)
+                CustomPost(
+                    post = viewModel.postsState.posts[it],
+                    roundedCornerShape = RoundedCornerShape(8.dp),
+                    navController = navController
+                )
             }
         }
     }

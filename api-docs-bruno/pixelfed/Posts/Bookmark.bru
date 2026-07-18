@@ -1,0 +1,15 @@
+meta {
+  name: Bookmark
+  type: http
+  seq: 8
+}
+
+post {
+  url: {{baseUrl}}/api/v1/statuses/{{postId}}/bookmark
+  body: none
+  auth: inherit
+}
+
+assert {
+  res.body.bookmarked: eq true
+}

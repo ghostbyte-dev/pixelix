@@ -26,7 +26,7 @@ import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.model.Visibility
 import com.daniebeler.pfpixelix.domain.service.platform.PlatformFeatures
 import com.daniebeler.pfpixelix.ui.composables.profile.other_profile.BlockAccountAlert
-import com.daniebeler.pfpixelix.ui.composables.profile.other_profile.MuteAccountAlert
+import com.daniebeler.pfpixelix.ui.composables.settings.muted_accounts.MuteAccountAlert
 import com.daniebeler.pfpixelix.ui.composables.widgets.ButtonRowElement
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import org.jetbrains.compose.resources.getString
@@ -36,19 +36,17 @@ import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.audience_public
 import pixelix.app.generated.resources.block_this_profile
 import pixelix.app.generated.resources.blocked
-import pixelix.app.generated.resources.download
 import pixelix.app.generated.resources.delete_this_post
-import pixelix.app.generated.resources.document_text
+import pixelix.app.generated.resources.download
 import pixelix.app.generated.resources.download_image
+import pixelix.app.generated.resources.edit
 import pixelix.app.generated.resources.edit_post
 import pixelix.app.generated.resources.eye
 import pixelix.app.generated.resources.followers_only
-import pixelix.app.generated.resources.license
-import pixelix.app.generated.resources.open_in_browser
-import pixelix.app.generated.resources.open
-import pixelix.app.generated.resources.edit
 import pixelix.app.generated.resources.mute_this_profile
 import pixelix.app.generated.resources.muted
+import pixelix.app.generated.resources.open
+import pixelix.app.generated.resources.open_in_browser
 import pixelix.app.generated.resources.report_this_post
 import pixelix.app.generated.resources.share
 import pixelix.app.generated.resources.share_this_post
@@ -110,15 +108,16 @@ fun ShareBottomSheet(
 
             Text(text = stringResource(Res.string.visibility_x, humanReadableVisibility))
         }
-        if (mediaAttachment?.license != null) {
-            ButtonRowElement(
-                icon = Res.drawable.document_text, text = stringResource(
-                    Res.string.license, mediaAttachment.license.title
-                ), onClick = {
-                    viewModel.openUrl(mediaAttachment.license.url)
-                    closeBottomSheet()
-                })
-        }
+
+//        if (mediaAttachment?.license != null) {
+//            ButtonRowElement(
+//                icon = Res.drawable.document_text, text = stringResource(
+//                    Res.string.license, mediaAttachment.license.name
+//                ), onClick = {
+//                    viewModel.openUrl(mediaAttachment.license.url)
+//                    closeBottomSheet()
+//                })
+//        }
 
         HorizontalDivider(Modifier.padding(12.dp))
 
@@ -138,10 +137,7 @@ fun ShareBottomSheet(
                 closeBottomSheet()
             })
 
-        if (
-            PlatformFeatures.downloadToGallery &&
-            mediaAttachment?.url != null
-        ) {
+        if (PlatformFeatures.downloadToGallery && mediaAttachment?.url != null) {
             val snackbarPresenter = LocalSnackbarPresenter.current
             ButtonRowElement(
                 icon = Res.drawable.download,
@@ -150,20 +146,17 @@ fun ShareBottomSheet(
                     viewModel.saveImage(mediaAttachment.url)
                     snackbarPresenter("Image saved to the gallery")
                     closeBottomSheet()
-                }
-            )
+                })
         }
 
         if (minePost) {
             HorizontalDivider(Modifier.padding(12.dp))
 
             ButtonRowElement(
-                icon = Res.drawable.edit,
-                text = stringResource(Res.string.edit_post),
-                onClick = {
+                icon = Res.drawable.edit, text = stringResource(Res.string.edit_post), onClick = {
                     navController.navigate(Destination.EditPost(post.id))
-                }
-            )
+                })
+
             ButtonRowElement(
                 icon = Res.drawable.trash,
                 text = stringResource(Res.string.delete_this_post),
@@ -177,7 +170,7 @@ fun ShareBottomSheet(
 
             val relationship = viewModel.relationshipState.accountRelationship
 
-            if (relationship == null || !relationship.muting) {
+            if (relationship == null || relationship.muted == true || relationship.mutedNotifications == true || relationship.mutedStatuses == true || relationship.mutedReblogs == true) {
                 ButtonRowElement(
                     icon = Res.drawable.muted, text = stringResource(
                         Res.string.mute_this_profile
@@ -186,58 +179,74 @@ fun ShareBottomSheet(
                     }, color = MaterialTheme.colorScheme.error
                 )
             }
-            if (relationship == null || !relationship.blocking) {
+            if (relationship == null || !relationship.blocked) {
                 ButtonRowElement(
-                icon = Res.drawable.blocked, text = stringResource(
-                    Res.string.block_this_profile
-                ), onClick = {
-                    showBlockAlert = true
-                }, color = MaterialTheme.colorScheme.error
+                    icon = Res.drawable.blocked, text = stringResource(
+                        Res.string.block_this_profile
+                    ), onClick = {
+                        showBlockAlert = true
+                    }, color = MaterialTheme.colorScheme.error
+                )
+            }
+
+
+
+            ButtonRowElement(
+                icon = Res.drawable.warning,
+                text = stringResource(Res.string.report_this_post),
+                onClick = {
+                    isReportDialogOpen = true
+                },
+                color = MaterialTheme.colorScheme.error
             )
         }
+    }
 
-
-
-        ButtonRowElement(
-            icon = Res.drawable.warning,
-            text = stringResource(Res.string.report_this_post),
-            onClick = {
-                isReportDialogOpen = true
+    if (showMuteAlert) {
+        LaunchedEffect(Unit) {
+            viewModel.getRelationship()
+        }
+        MuteAccountAlert(
+            onDismissRequest = { showMuteAlert = false },
+            onConfirmation = { userMuteRequest ->
+                showMuteAlert = false
+                viewModel.post?.account?.let {
+                    viewModel.muteAccount(
+                        it.id, it.username, userMuteRequest
+                    )
+                }
+                closeBottomSheet()
             },
-            color = MaterialTheme.colorScheme.error
+            mutedAccount = viewModel.mutedAccount,
+            capabilities = viewModel.capabilities.value
         )
     }
-}
-
-if (showMuteAlert) {
-    MuteAccountAlert(
-        onDismissRequest = { showMuteAlert = false }, onConfirmation = {
-            showMuteAlert = false
-            viewModel.post?.account?.let { viewModel.muteAccount(it.id) }
-            closeBottomSheet()
-        }, account = viewModel.post?.account
-    )
-}
-if (showBlockAlert) {
-    BlockAccountAlert(
-        onDismissRequest = { showBlockAlert = false }, onConfirmation = {
-            showBlockAlert = false
-            viewModel.post?.account?.let { viewModel.blockAccount(it.id) }
-            closeBottomSheet()
-        }, account = viewModel.post?.account
-    )
-}
-
-if (isReportDialogOpen) {
-    ReportDialog(
-        dismissDialog = {
-            isReportDialogOpen = false
-            viewModel.reportState = null
-        },
-        reportState = viewModel.reportState
-    ) { category ->
-        viewModel.reportPost(category)
-        viewModel.reportState = null
+    if (showBlockAlert) {
+        BlockAccountAlert(
+            onDismissRequest = { showBlockAlert = false },
+            onConfirmation = { userBlockRequest ->
+                showBlockAlert = false
+                viewModel.post?.account?.let {
+                    viewModel.blockAccount(
+                        it.id, it.username, userBlockRequest
+                    )
+                }
+                closeBottomSheet()
+            },
+            account = viewModel.post?.account,
+            capabilities = viewModel.capabilities.value
+        )
     }
-}
+
+    if (isReportDialogOpen) {
+        ReportDialog(
+            dismissDialog = {
+                isReportDialogOpen = false
+                viewModel.reportState = null
+            }, reportState = viewModel.reportState
+        ) { category ->
+            viewModel.reportPost(category)
+            viewModel.reportState = null
+        }
+    }
 }

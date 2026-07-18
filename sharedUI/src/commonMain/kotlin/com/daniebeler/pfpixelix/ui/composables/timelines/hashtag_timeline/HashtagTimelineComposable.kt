@@ -21,7 +21,6 @@ fun HashtagTimelineComposable(
     LaunchedEffect(hashtag) {
         viewModel.getItemsFirstLoad(hashtag)
         viewModel.getHashtagInfo(hashtag)
-        viewModel.getRelatedHashtags(hashtag)
     }
 
     ScreenScaffold(
@@ -51,7 +50,7 @@ fun HashtagTimelineComposable(
             itemGetsDeleted = { viewModel.postGetsDeleted(it) },
             getItemsPaginated = { viewModel.getItemsPaginated(hashtag) },
             onRefresh = { viewModel.refresh() },
-            postsCount = viewModel.hashtagState.hashtag?.count ?: 0,
+            postsCount = viewModel.hashtagState.hashtag?.postsCount,
             navController = navController,
             postGetsUpdated = { viewModel.postGetsUpdated(it) })
     }

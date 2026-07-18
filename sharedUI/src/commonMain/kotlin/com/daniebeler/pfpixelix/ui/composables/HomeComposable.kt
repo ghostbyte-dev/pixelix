@@ -22,10 +22,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberBottomSheetState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -51,10 +53,11 @@ import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
+import pixelix.app.generated.resources.add_circle
 import pixelix.app.generated.resources.app_name
+import pixelix.app.generated.resources.coffee
 import pixelix.app.generated.resources.global
 import pixelix.app.generated.resources.global_timeline_explained
-import pixelix.app.generated.resources.coffee
 import pixelix.app.generated.resources.home
 import pixelix.app.generated.resources.home_timeline_explained
 import pixelix.app.generated.resources.local
@@ -79,6 +82,7 @@ fun HomeComposable(
     var showDonationBottomSheet by remember { mutableStateOf(false) }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
+
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top),
@@ -97,18 +101,31 @@ fun HomeComposable(
                         }) {
                             Icon(
                                 imageVector = vectorResource(Res.drawable.coffee),
-                                contentDescription = "Conversations"
+                                contentDescription = "Coffee"
                             )
                         }
 
                         IconButton(onClick = {
-                            navController.navigate(Destination.Conversations)
+                            navController.navigate(Destination.HomeTabNewPost)
                         }) {
                             Icon(
-                                imageVector = vectorResource(Res.drawable.mail),
-                                contentDescription = "Conversations"
+                                imageVector = vectorResource(Res.drawable.add_circle),
+                                contentDescription = "New Post"
                             )
                         }
+
+                        if (viewModel.capabilities.value.general.supportsDMs) {
+                            IconButton(onClick = {
+                                navController.navigate(Destination.Conversations)
+                            }) {
+                                Icon(
+                                    imageVector = vectorResource(Res.drawable.mail),
+                                    contentDescription = "Conversations"
+                                )
+                            }
+                        }
+
+
                         IconButton(onClick = {
                             openPreferencesDrawer()
                         }) {
@@ -180,15 +197,15 @@ fun HomeComposable(
             ) { tabIndex ->
                 when (tabIndex) {
                     0 -> Box(modifier = Modifier.fillMaxSize()) {
-                        HomeTimelineComposable(navController)
+                        HomeTimelineComposable(pagerState, tabIndex, navController)
                     }
 
                     1 -> Box(modifier = Modifier.fillMaxSize()) {
-                        LocalTimelineComposable(navController)
+                        LocalTimelineComposable(pagerState, tabIndex,  navController)
                     }
 
                     2 -> Box(modifier = Modifier.fillMaxSize()) {
-                        GlobalTimelineComposable(navController)
+                        GlobalTimelineComposable(pagerState, tabIndex, navController)
                     }
                 }
             }

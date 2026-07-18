@@ -5,17 +5,18 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.daniebeler.pfpixelix.domain.model.request.UserMuteRequest
+import com.daniebeler.pfpixelix.domain.service.general.AccountService
+import com.daniebeler.pfpixelix.domain.service.general.Session
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
-import com.daniebeler.pfpixelix.domain.model.Account
-import com.daniebeler.pfpixelix.domain.service.account.AccountService
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import me.tatarka.inject.annotations.Inject
 
 class MutedAccountsViewModel @Inject constructor(
-    private val accountService: AccountService
+    private val accountService: AccountService, session: Session
 ) : ViewModel() {
-
+    val capabilities = session.capabilities
 
     var mutedAccountsState by mutableStateOf(MutedAccountsState())
 
@@ -29,11 +30,11 @@ class MutedAccountsViewModel @Inject constructor(
         accountService.getMutedAccounts().onEach { result ->
             mutedAccountsState = when (result) {
                 is Resource.Success -> {
-                    MutedAccountsState(mutedAccounts = result.data ?: emptyList())
+                    MutedAccountsState(mutedAccounts = result.data)
                 }
 
                 is Resource.Error -> {
-                    MutedAccountsState(error = result.message ?: "An unexpected error occurred")
+                    MutedAccountsState(error = result.message)
                 }
 
                 is Resource.Loading -> {
@@ -47,17 +48,26 @@ class MutedAccountsViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    fun unmuteAccount(accountId: String) {
-        accountService.unMuteAccount(accountId).onEach { result ->
+    fun muteAccount(userId: String, username: String, userMuteRequest: UserMuteRequest) {
+        val isMuting =
+            userMuteRequest.mute == true || userMuteRequest.muteStatuses == true || userMuteRequest.muteReblogs == true || userMuteRequest.muteNotifications == true || userMuteRequest.removeStatusesFromTimeline == true || userMuteRequest.removeReblogsFromTimeline == true
+
+        accountService.muteAccount(userId, username, userMuteRequest).onEach { result ->
             mutedAccountsState = when (result) {
                 is Resource.Success -> {
-                    val newMutedAccounts =
-                        mutedAccountsState.mutedAccounts.filter { account: Account -> account.id != accountId }
-                    MutedAccountsState(mutedAccounts = newMutedAccounts)
+                    if (isMuting) {
+                        mutedAccountsState
+                    } else {
+                        val newMutedAccounts =
+                            mutedAccountsState.mutedAccounts.filter { it.account.id != userId }
+                        MutedAccountsState(mutedAccounts = newMutedAccounts)
+                    }
                 }
 
                 is Resource.Error -> {
-                    mutedAccountsState.copy(error = result.message ?: "An unexpected error occurred")
+                    mutedAccountsState.copy(
+                        error = result.message
+                    )
                 }
 
                 is Resource.Loading -> {
@@ -66,5 +76,4 @@ class MutedAccountsViewModel @Inject constructor(
             }
         }.launchIn(viewModelScope)
     }
-
 }

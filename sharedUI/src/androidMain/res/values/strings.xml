@@ -7,6 +7,11 @@
     <string name="sent_a_dm">sent a dm</string>
     <string name="reblogged_your_post">reblogged your post</string>
     <string name="followed_you">followed you</string>
+    <string name="new_comment">wrote a new comment</string>
+    <string name="follow_request">requested to follow you</string>
+    <string name="new_status">created a new post</string>
+    <string name="boosted_status_updated">boosted post got updated</string>
+    <string name="notification">Notification</string>
     <string name="latest_image_widget_description">have a look at the newest post from your home timeline, right on your homescreen</string>
     <string name="notification_widget_description">Stay updated with your latest notifications from Pixelfed right on your home screen</string>
 </resources>

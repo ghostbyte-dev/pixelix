@@ -1,13 +1,14 @@
 package com.daniebeler.pfpixelix.domain.model
 
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
-
-@Serializable
 data class Relationship(
-    @SerialName("id") val id: String,
-    @SerialName("following") val following: Boolean,
-    @SerialName("followed_by") val followedBy: Boolean,
-    @SerialName("muting") val muting: Boolean,
-    @SerialName("blocking") val blocking: Boolean
+    val id: String,
+    val following: Boolean,
+    val followedBy: Boolean,
+    val blocked: Boolean,
+    val muted: Boolean? = null,
+    val mutedNotifications: Boolean? = null,
+    val mutedReblogs: Boolean? = null,
+    val mutedStatuses: Boolean? = null,
+    val requested: Boolean,
+    val requestedBy: Boolean,
 )

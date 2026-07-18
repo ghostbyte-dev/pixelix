@@ -163,7 +163,7 @@ fun HashtagsMentionsTextView(
                                                 } else {
                                                     navController.navigate(
                                                         Destination.Profile(
-                                                            account.id
+                                                            account.id, account.username
                                                         )
                                                     )
                                                 }

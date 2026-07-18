@@ -7,14 +7,16 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.domain.model.Post
-import com.daniebeler.pfpixelix.domain.repository.PixelfedApi
-import com.daniebeler.pfpixelix.domain.service.account.AccountService
-import com.daniebeler.pfpixelix.domain.service.collection.CollectionService
-import com.daniebeler.pfpixelix.domain.service.icon.AppIconService
+import com.daniebeler.pfpixelix.domain.repository.pixelfed.PixelfedApi
+import com.daniebeler.pfpixelix.domain.service.general.AccountService
+import com.daniebeler.pfpixelix.domain.service.general.AppIconService
+import com.daniebeler.pfpixelix.domain.service.general.AuthService
+import com.daniebeler.pfpixelix.domain.service.general.BackendType
+import com.daniebeler.pfpixelix.domain.service.general.CollectionService
+import com.daniebeler.pfpixelix.domain.service.general.PostService
+import com.daniebeler.pfpixelix.domain.service.general.Session
 import com.daniebeler.pfpixelix.domain.service.platform.Platform
-import com.daniebeler.pfpixelix.domain.service.post.PostService
 import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
-import com.daniebeler.pfpixelix.domain.service.session.AuthService
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.ui.composables.profile.AccountState
 import com.daniebeler.pfpixelix.ui.composables.profile.CollectionsState
@@ -32,8 +34,11 @@ class OwnProfileViewModel @Inject constructor(
     private val collectionService: CollectionService,
     private val authService: AuthService,
     private val platform: Platform,
-    private val appIconService: AppIconService
+    appIconService: AppIconService,
+    session: Session
 ) : ViewModel() {
+    val capabilities = session.capabilities
+    val backendType: BackendType = session.backendType.value
     var accountState by mutableStateOf(AccountState())
     var postsState by mutableStateOf(PostsState())
     var ownDomain by mutableStateOf("")
@@ -67,11 +72,13 @@ class OwnProfileViewModel @Inject constructor(
         getAccount(refreshing)
         getPostsFirstLoad(refreshing)
 
-        viewModelScope.launch {
-            val currentLoginData = authService.getCurrentSession()
-            currentLoginData?.let {
-                collectionsState = collectionsState.copy(endReached = false)
-                getCollections(it.accountId, false)
+        if (capabilities.value.profile.showCollectionsOwnProfile) {
+            viewModelScope.launch {
+                val currentLoginData = authService.getCurrentSession()
+                currentLoginData?.let {
+                    collectionsState = collectionsState.copy(endReached = false)
+                    getCollections(it.accountId, false)
+                }
             }
         }
     }
@@ -84,7 +91,7 @@ class OwnProfileViewModel @Inject constructor(
                 }
 
                 is Resource.Error -> {
-                    AccountState(error = result.message ?: "An unexpected error occurred")
+                    AccountState(error = result.message)
                 }
 
                 is Resource.Loading -> {
@@ -101,16 +108,16 @@ class OwnProfileViewModel @Inject constructor(
         postService.getOwnPosts().onEach { result ->
             postsState = when (result) {
                 is Resource.Success -> {
-                    val endReached = (result.data.size) < PixelfedApi.PROFILE_POSTS_LIMIT
-                    PostsState(posts = result.data, endReached = endReached)
+                    val endReached = (result.data.data.size) < PixelfedApi.PROFILE_POSTS_LIMIT
+                    PostsState(posts = result.data.data, endReached = endReached, nextId = result.data.next)
                 }
 
                 is Resource.Error -> {
-                    PostsState(error = result.message ?: "An unexpected error occurred")
+                    PostsState(error = result.message)
                 }
 
                 is Resource.Loading -> {
-                    PostsState(isLoading = true, posts = postsState.posts, refreshing = refreshing)
+                    PostsState(isLoading = true, posts = postsState.posts, refreshing = refreshing, nextId = postsState.nextId)
                 }
             }
         }.launchIn(viewModelScope)
@@ -118,22 +125,23 @@ class OwnProfileViewModel @Inject constructor(
 
     fun getPostsPaginated() {
         if (postsState.posts.isNotEmpty() && !postsState.isLoading && !postsState.endReached) {
-            postService.getOwnPosts(postsState.posts.last().id).onEach { result ->
+            postService.getOwnPosts(postsState.nextId).onEach { result ->
                 postsState = when (result) {
                     is Resource.Success -> {
-                        val endReached = (result.data?.size ?: 0) < PixelfedApi.PROFILE_POSTS_LIMIT
+                        val endReached = result.data.data.size < PixelfedApi.PROFILE_POSTS_LIMIT
                         PostsState(
-                            posts = postsState.posts + (result.data ?: emptyList()),
-                            endReached = endReached
+                            posts = postsState.posts + (result.data.data),
+                            endReached = endReached,
+                            nextId = result.data.next
                         )
                     }
 
                     is Resource.Error -> {
-                        PostsState(error = result.message ?: "An unexpected error occurred")
+                        PostsState(error = result.message)
                     }
 
                     is Resource.Loading -> {
-                        PostsState(isLoading = true, posts = postsState.posts)
+                        PostsState(isLoading = true, posts = postsState.posts, nextId = postsState.nextId)
                     }
                 }
             }.launchIn(viewModelScope)
@@ -153,9 +161,9 @@ class OwnProfileViewModel @Inject constructor(
             when (result) {
                 is Resource.Success -> {
                     collectionsState = if (!paginated) {
-                        CollectionsState(collections = result.data ?: emptyList())
+                        CollectionsState(collections = result.data)
                     } else {
-                        val endReached = result.data!!.isEmpty()
+                        val endReached = result.data.isEmpty()
                         CollectionsState(
                             collections = collectionsState.collections + result.data,
                             endReached = endReached
@@ -165,7 +173,7 @@ class OwnProfileViewModel @Inject constructor(
 
                 is Resource.Error -> {
                     collectionsState =
-                        CollectionsState(error = result.message ?: "An unexpected error occurred")
+                        CollectionsState(error = result.message)
                 }
 
                 is Resource.Loading -> {

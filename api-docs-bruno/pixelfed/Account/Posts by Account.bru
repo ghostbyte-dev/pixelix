@@ -1,0 +1,16 @@
+meta {
+  name: Posts by Account
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/api/pixelfed/v1/accounts/{{accountId}}/statuses
+  body: none
+  auth: inherit
+}
+
+params:query {
+  ~limit: 
+  ~max_id: 
+}

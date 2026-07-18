@@ -5,16 +5,19 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.daniebeler.pfpixelix.domain.service.utils.Resource
+import com.daniebeler.pfpixelix.domain.model.Notification
+import com.daniebeler.pfpixelix.domain.service.general.NotificationService
 import com.daniebeler.pfpixelix.domain.service.platform.Platform
-import com.daniebeler.pfpixelix.domain.service.widget.WidgetService
+import com.daniebeler.pfpixelix.domain.service.utils.Resource
+import com.daniebeler.pfpixelix.ui.events.NotificationBadgeState
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import me.tatarka.inject.annotations.Inject
 
 class NotificationsViewModel @Inject constructor(
-    private val widgetService: WidgetService,
-    private val platform: Platform
+    private val notificationService: NotificationService,
+    private val platform: Platform,
+    private val badgeState: NotificationBadgeState
 ) : ViewModel() {
 
     var notificationsState by mutableStateOf(NotificationsState())
@@ -25,56 +28,73 @@ class NotificationsViewModel @Inject constructor(
     }
 
     private fun getNotificationsFirstLoad(refreshing: Boolean) {
-        widgetService.getNotifications().onEach { result ->
+        notificationService.getNotifications().onEach { result ->
             notificationsState = when (result) {
                 is Resource.Success -> {
-                    val endReached = (result.data?.size ?: 0) == 0
-                    NotificationsState(notifications = result.data ?: emptyList(), endReached = endReached)
+                    val endReached = (result.data.data.size ?: 0) == 0
+                    onNotificationsLoaded(result.data.data)
+                    NotificationsState(notifications = result.data.data, endReached = endReached, nextId = result.data.next)
                 }
 
                 is Resource.Error -> {
-                    NotificationsState(error = result.message ?: "An unexpected error occurred")
+                    NotificationsState(error = result.message)
                 }
 
                 is Resource.Loading -> {
-                    NotificationsState(
-                        isLoading = true,
-                        isRefreshing = refreshing,
-                        notifications = notificationsState.notifications
-                    )
+                    notificationsState.copy(isLoading = true, isRefreshing = refreshing)
                 }
             }
         }.launchIn(viewModelScope)
     }
 
+    fun onNotificationsLoaded(notifications: List<Notification>) {
+        val newest = notifications.firstOrNull() ?: return
+
+        notificationService.markNotifications(newest.id)
+            .onEach { result ->
+                when (result) {
+                    is Resource.Success -> {
+                        badgeState.clear()
+                    }
+                    is Resource.Error -> {}
+                    is Resource.Loading -> {
+                    }
+                }
+            }
+            .launchIn(viewModelScope)
+    }
+
     fun getNotificationsPaginated() {
-        if (notificationsState.notifications.isNotEmpty() && !notificationsState.isLoading && !notificationsState.endReached) {
-            widgetService.getNotifications(notificationsState.notifications.last().id).onEach { result ->
+        if (notificationsState.notifications.isNotEmpty() && !notificationsState.isLoading && !notificationsState.endReached && notificationsState.nextId != null) {
+            notificationService.getNotifications(notificationsState.nextId).onEach { result ->
                 notificationsState = when (result) {
                     is Resource.Success -> {
-                        val endReached = result.data?.size == 0
+                        val endReached = result.data.data.isEmpty() || result.data.next == null
                         NotificationsState(
-                            notifications = notificationsState.notifications + (result.data
-                                ?: emptyList()),
-                            endReached = endReached
+                            notifications = notificationsState.notifications + (result.data.data),
+                            endReached = endReached,
+                            nextId = result.data.next
                         )
                     }
 
                     is Resource.Error -> {
-                        NotificationsState(error = result.message ?: "An unexpected error occurred")
+                        NotificationsState(error = result.message)
                     }
 
                     is Resource.Loading -> {
-                        NotificationsState(
-                            isLoading = true,
-                            isRefreshing = false,
-                            notifications = notificationsState.notifications
-                        )
+                        notificationsState.copy(isLoading = true, isRefreshing = false)
+
                     }
                 }
             }.launchIn(viewModelScope)
         }
 
+    }
+
+    fun removeNotification(notification: Notification) {
+        notificationsState = notificationsState.copy(
+            notifications = notificationsState.notifications.filter { it.id != notification.id }
+        )
     }
 
     fun changeFilter(selectedFilter: NotificationsFilterEnum) {

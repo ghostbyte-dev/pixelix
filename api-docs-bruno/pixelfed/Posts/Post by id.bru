@@ -1,0 +1,15 @@
+meta {
+  name: Post by id
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/v1/statuses/{{postId}}?_pe=1
+  body: none
+  auth: inherit
+}
+
+query {
+  _pe: 1
+}

@@ -7,14 +7,14 @@ plugins {
 
 android {
     namespace = "com.daniebeler.pfpixelix"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.daniebeler.pfpixelix"
         minSdk = 26
-        targetSdk = 36
-        versionCode = 40
-        versionName = "4.4.2"
+        targetSdk = 37
+        versionCode = 42
+        versionName = "5.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {

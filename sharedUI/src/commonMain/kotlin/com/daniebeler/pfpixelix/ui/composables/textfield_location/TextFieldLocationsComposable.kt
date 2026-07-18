@@ -1,50 +1,42 @@
 package com.daniebeler.pfpixelix.ui.composables.textfield_location
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuAnchorType
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.unit.dp
 import com.daniebeler.pfpixelix.di.injectViewModel
-import com.daniebeler.pfpixelix.domain.model.Place
-import com.daniebeler.pfpixelix.ui.composables.newpost.NewPostPref
+import com.daniebeler.pfpixelix.domain.model.Location
+import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposableDialog
 import org.jetbrains.compose.resources.StringResource
-import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
-import pixelix.app.generated.resources.browser
-import pixelix.app.generated.resources.edit
-import pixelix.app.generated.resources.trash
+import pixelix.app.generated.resources.globe
+import pixelix.app.generated.resources.location
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TextFieldLocationsComposable(
-    submit: (id: String) -> Unit,
-    submitPlace: (place: Place?) -> Unit,
-    initialValue: Place?,
+    submit: (location: Location) -> Unit,
+    initialValue: Location?,
     labelStringId: StringResource,
     submitButton: (@Composable () -> Unit)?,
     modifier: Modifier?,
@@ -52,6 +44,12 @@ fun TextFieldLocationsComposable(
     suggestionsBoxColor: Color,
     viewModel: TextFieldLocationsViewModel = injectViewModel("textFieldLocationsViewModel") { textFieldLocationsViewModel }
 ) {
+
+    LaunchedEffect(viewModel.locationsSuggestions.location) {
+        viewModel.locationsSuggestions.location?.let { location ->
+            submit(location)
+        }
+    }
 
     LaunchedEffect(initialValue) {
         initialValue?.let {
@@ -61,8 +59,146 @@ fun TextFieldLocationsComposable(
 
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
-    Column {
+    var expanded by remember { mutableStateOf(false) }
 
+    if (viewModel.capabilities.value.newPost.showCountryDropdown) {
+        ExposedDropdownMenuBox(
+            expanded = expanded,
+            onExpandedChange = { expanded = it }
+        ) {
+            TextField(
+                value = viewModel.countriesState.country?.name ?: viewModel.countryText,
+                onValueChange = { text ->
+                    viewModel.changeCountryText(text)
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryEditable, enabled = true)
+                    .onFocusChanged { if (it.isFocused) expanded = true },
+                label = { Text("Country") },
+                trailingIcon = {
+                    ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+                },
+                leadingIcon = {
+                    Icon(
+                        imageVector = vectorResource(Res.drawable.globe),
+                        contentDescription = null
+                    )
+                },
+                colors = TextFieldDefaults.colors(
+                    unfocusedIndicatorColor = Color.Transparent,
+                    focusedIndicatorColor = Color.Transparent,
+                    focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh
+                ),
+                shape = MaterialTheme.shapes.medium,
+                readOnly = false
+            )
+
+            ExposedDropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false }
+            ) {
+                if (viewModel.countriesState.isLoading) {
+                    DropdownMenuItem(
+                        text = { Text("Loading countries...") },
+                        onClick = {},
+                        enabled = false
+                    )
+                } else if (viewModel.countriesState.error.isNotEmpty()) {
+                    DropdownMenuItem(
+                        text = { Text("Error: ${viewModel.countriesState.error}") },
+                        onClick = {},
+                        enabled = false
+                    )
+                } else {
+                    viewModel.countriesState.filteredCountries.forEach { country ->
+                        DropdownMenuItem(
+                            text = { Text(country.name) },
+                            onClick = {
+                                viewModel.selectCountry(country)
+                                expanded = false
+                                keyboardController?.hide()
+                                focusManager.clearFocus()
+                            },
+                            contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+
+    ExposedDropdownMenuBox(
+        expanded = viewModel.locationsDropdownOpen,
+        onExpandedChange = { viewModel.locationsDropdownOpen = it }
+    ) {
+        TextField(
+            value = viewModel.locationsSuggestions.location?.name ?: viewModel.locationText,
+            onValueChange = { text ->
+                viewModel.changeLocationText(text)
+                viewModel.locationsDropdownOpen = true
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryEditable, enabled = true),
+            label = { Text("City") },
+            trailingIcon = {
+                ExposedDropdownMenuDefaults.TrailingIcon(expanded = viewModel.locationsDropdownOpen)
+            },
+            leadingIcon = {
+                Icon(
+                    imageVector = vectorResource(Res.drawable.location),
+                    contentDescription = null
+                )
+            },
+            colors = TextFieldDefaults.colors(
+                unfocusedIndicatorColor = Color.Transparent,
+                focusedIndicatorColor = Color.Transparent,
+                focusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh
+            ),
+            shape = MaterialTheme.shapes.medium,
+            readOnly = false
+        )
+
+        ExposedDropdownMenu(
+            expanded = viewModel.locationsDropdownOpen,
+            onDismissRequest = { viewModel.locationsDropdownOpen = false }
+        ) {
+            if (viewModel.locationsSuggestions.isLoading) {
+                DropdownMenuItem(
+                    text = { Text("Loading countries...") },
+                    onClick = {},
+                    enabled = false
+                )
+            } else if (viewModel.locationsSuggestions.error.isNotEmpty()) {
+                DropdownMenuItem(
+                    text = { Text("Error: ${viewModel.countriesState.error}") },
+                    onClick = {},
+                    enabled = false
+                )
+            } else {
+                viewModel.locationsSuggestions.locations.forEach { location ->
+                    DropdownMenuItem(
+                        text = { Text(location.name ?: "undefined") },
+                        onClick = {
+                            submit(location)
+                            viewModel.clickLocation(location)
+                            viewModel.locationsDropdownOpen = false
+                            keyboardController?.hide()
+                            focusManager.clearFocus()
+                        },
+                        contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
+                    )
+                }
+            }
+        }
+    }
+
+    /*
+    Column {
         if (viewModel.locationsSuggestions.location != null) {
             NewPostPref(
                 leadingIcon = Res.drawable.browser,
@@ -74,14 +210,20 @@ fun TextFieldLocationsComposable(
                             submit("")
                             submitPlace(null)
                         }) {
-                            Icon(imageVector = vectorResource(Res.drawable.edit), contentDescription = "edit")
+                            Icon(
+                                imageVector = vectorResource(Res.drawable.edit),
+                                contentDescription = "edit"
+                            )
                         }
                         IconButton(onClick = {
                             viewModel.removeLocation()
                             submit("")
                             submitPlace(null)
                         }) {
-                            Icon(imageVector = vectorResource(Res.drawable.trash), contentDescription = "remove")
+                            Icon(
+                                imageVector = vectorResource(Res.drawable.trash),
+                                contentDescription = "remove"
+                            )
                         }
                     }
                 }
@@ -101,7 +243,9 @@ fun TextFieldLocationsComposable(
                         unfocusedIndicatorColor = Color.Transparent,
                         focusedIndicatorColor = Color.Transparent,
                         focusedContainerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(4.dp),
-                        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(4.dp)
+                        unfocusedContainerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(
+                            4.dp
+                        )
                     ),
                     keyboardOptions = KeyboardOptions(imeAction = imeAction),
                     keyboardActions = KeyboardActions(onDone = {
@@ -145,5 +289,13 @@ fun TextFieldLocationsComposable(
                 }
             }
         }
-    }
+    }*/
+    ErrorComposableDialog(viewModel.countriesState.error, {
+        viewModel.countriesState =
+            CountriesState()
+    })
+    ErrorComposableDialog(viewModel.locationsSuggestions.error, {
+        viewModel.locationsSuggestions =
+            LocationsState()
+    })
 }

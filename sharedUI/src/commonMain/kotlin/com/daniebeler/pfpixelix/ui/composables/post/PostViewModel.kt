@@ -9,17 +9,21 @@ import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
 import com.daniebeler.pfpixelix.domain.model.Instance
 import com.daniebeler.pfpixelix.domain.model.LikedBy
+import com.daniebeler.pfpixelix.domain.model.MutedAccount
 import com.daniebeler.pfpixelix.domain.model.NewReport
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.model.ReportObjectType
-import com.daniebeler.pfpixelix.domain.service.account.AccountService
-import com.daniebeler.pfpixelix.domain.service.editor.PostEditorService
+import com.daniebeler.pfpixelix.domain.model.request.UserBlockRequest
+import com.daniebeler.pfpixelix.domain.model.request.UserMuteRequest
 import com.daniebeler.pfpixelix.domain.service.file.FileService
-import com.daniebeler.pfpixelix.domain.service.instance.InstanceService
+import com.daniebeler.pfpixelix.domain.service.general.AccountService
+import com.daniebeler.pfpixelix.domain.service.general.AuthService
+import com.daniebeler.pfpixelix.domain.service.general.InstanceService
+import com.daniebeler.pfpixelix.domain.service.general.PostEditorService
+import com.daniebeler.pfpixelix.domain.service.general.PostService
+import com.daniebeler.pfpixelix.domain.service.general.Session
 import com.daniebeler.pfpixelix.domain.service.platform.Platform
-import com.daniebeler.pfpixelix.domain.service.post.PostService
 import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
-import com.daniebeler.pfpixelix.domain.service.session.AuthService
 import com.daniebeler.pfpixelix.domain.service.suggestions.HashtagMentionsSuggestionsManager
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.ui.composables.post.reply.OwnReplyState
@@ -27,8 +31,10 @@ import com.daniebeler.pfpixelix.ui.composables.post.reply.RepliesState
 import com.daniebeler.pfpixelix.ui.composables.profile.RelationshipState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 
@@ -37,14 +43,15 @@ class PostViewModel @Inject constructor(
     private val postService: PostService,
     private val prefs: UserPreferences,
     private val postEditorService: PostEditorService,
-    private val authService: AuthService,
+    authService: AuthService,
     private val accountService: AccountService,
     private val platform: Platform,
     private val fileService: FileService,
     private val instanceService: InstanceService,
+    session: Session,
     val hashtagMentionsSuggestionsManager: HashtagMentionsSuggestionsManager
 ) : ViewModel() {
-
+    val capabilities = session.capabilities
     var post: Post? by mutableStateOf(null)
 
     var repliesState by mutableStateOf(RepliesState())
@@ -53,6 +60,8 @@ class PostViewModel @Inject constructor(
 
     var likedByState by mutableStateOf(LikedByState())
 
+    private val _deleteEventChannel = Channel<DeleteEvent>()
+    val deleteEvents = _deleteEventChannel.receiveAsFlow()
     var deleteState by mutableStateOf(DeleteState())
     var deleteDialog: String? by mutableStateOf(null)
     var reportState by mutableStateOf<ReportState?>(null)
@@ -62,7 +71,7 @@ class PostViewModel @Inject constructor(
     var myUsername: String? = null
 
     var isAltTextButtonHidden by mutableStateOf(false)
-    var isInFocusMode by mutableStateOf(false)
+    var hideMetadataPref by mutableStateOf(true)
     var isAutoplayVideos by mutableStateOf(true)
     var blurSensitiveContent by mutableStateOf(false)
     var instance: Instance? = null
@@ -71,17 +80,30 @@ class PostViewModel @Inject constructor(
     var volume by mutableStateOf(prefs.enableVolume)
     var relationshipState by mutableStateOf(RelationshipState())
 
+    val mutedAccount: MutedAccount?
+        get() {
+            val account = post?.account ?: return null
+            val relationship = relationshipState.accountRelationship ?: return null
+            return MutedAccount(
+                id = account.id, account = account, muteOptions = UserMuteRequest(
+                    mute = relationship.muted,
+                    muteNotifications = relationship.mutedNotifications,
+                    muteReblogs = relationship.mutedReblogs,
+                    muteStatuses = relationship.mutedStatuses
+                )
+            )
+        }
+
     init {
         myAccountId = authService.getCurrentSession()!!.accountId
         myUsername = authService.getCurrentSession()!!.username
-        getInstance()
         viewModelScope.launch {
             prefs.hideAltTextButtonFlow.collect {
                 isAltTextButtonHidden = it
             }
         }
         viewModelScope.launch {
-            prefs.focusModeFlow.collect { isInFocusMode = it }
+            prefs.hideMetadataFlow.collect { hideMetadataPref = it }
         }
         viewModelScope.launch {
             prefs.autoplayVideoFlow.collect { isAutoplayVideos = it }
@@ -109,7 +131,10 @@ class PostViewModel @Inject constructor(
         }
     }
 
-    private fun getInstance() {
+    fun getInstance() {
+        if (instance != null) {
+            return
+        }
         instanceService.getInstance().onEach { result ->
             when (result) {
                 is Resource.Success -> {
@@ -128,17 +153,18 @@ class PostViewModel @Inject constructor(
     fun deletePost(postId: String) {
         deleteDialog = null
         postEditorService.deletePost(postId).onEach { result ->
-            deleteState = when (result) {
+            when (result) {
                 is Resource.Success -> {
-                    DeleteState(deleted = true)
+                    deleteState = DeleteState()
+                    _deleteEventChannel.send(DeleteEvent.Success)
                 }
 
                 is Resource.Error -> {
-                    DeleteState(error = result.message)
+                    deleteState = DeleteState(error = result.message)
                 }
 
                 is Resource.Loading -> {
-                    DeleteState(isLoading = true)
+                    deleteState = DeleteState(isLoading = true)
                 }
             }
         }.launchIn(viewModelScope)
@@ -177,8 +203,7 @@ class PostViewModel @Inject constructor(
                     }
 
                     is Resource.Error -> {
-                        ownReplyState =
-                            OwnReplyState(error = result.message)
+                        ownReplyState = OwnReplyState(error = result.message)
                     }
 
                     is Resource.Loading -> {
@@ -208,12 +233,41 @@ class PostViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
+    fun getRelationship() {
+        if (post?.account?.username != null) {
+            accountService.getRelationships(List(1) { post!!.account.id }).onEach { result ->
+                relationshipState = when (result) {
+                    is Resource.Success -> {
+                        RelationshipState(
+                            accountRelationship = if (result.data.isNotEmpty()) {
+                                result.data[0]
+                            } else {
+                                null
+                            }
+                        )
+                    }
+
+                    is Resource.Error -> {
+                        RelationshipState(error = result.message)
+                    }
+
+                    is Resource.Loading -> {
+                        RelationshipState(
+                            isLoading = true,
+                            accountRelationship = relationshipState.accountRelationship
+                        )
+                    }
+                }
+            }.launchIn(viewModelScope)
+        }
+    }
+
 
     fun loadLikedBy(postId: String) {
-        accountService.getLikedBy(postId).onEach { result ->
+        postService.getLikedBy(postId).onEach { result ->
             likedByState = when (result) {
                 is Resource.Success -> {
-                    LikedByState(likedBy = result.data)
+                    LikedByState(likedBy = result.data.data)
                 }
 
                 is Resource.Error -> {
@@ -281,15 +335,14 @@ class PostViewModel @Inject constructor(
         )
 
         post?.likedBy?.let {
-            if (it.username == myUsername) {
-                post = post!!.copy(
+            post = if (it.username == myUsername) {
+                post!!.copy(
                     likedBy = post!!.likedBy!!.copy(
-                        username = null,
-                        totalCount = post!!.likedBy!!.totalCount - 1
+                        username = null, totalCount = post!!.likedBy!!.totalCount - 1
                     )
                 )
             } else {
-                post = post!!.copy(
+                post!!.copy(
                     likedBy = post!!.likedBy!!.copy(totalCount = post!!.likedBy!!.totalCount - 1)
                 )
             }
@@ -323,22 +376,23 @@ class PostViewModel @Inject constructor(
     fun reblogPost(postId: String, updatePost: (Post) -> Unit) {
         if (post?.reblogged == false) {
             post = post?.copy(
-                reblogged = true,
-                reblogCount = post?.reblogCount?.plus(1) ?: 0
+                reblogged = true, reblogCount = post?.reblogCount?.plus(1) ?: 0
             )
             post?.let { updatePost(it) }
             CoroutineScope(Dispatchers.Default).launch {
                 postService.reblogPost(postId).onEach { result ->
                     when (result) {
                         is Resource.Success -> {
-                            post = post?.copy(reblogged = result.data.reblogged, reblogCount = result.data.reblogCount)
+                            post = post?.copy(
+                                reblogged = result.data.reblogged,
+                                reblogCount = result.data.reblogCount
+                            )
                             post?.let { updatePost(it) }
                         }
 
                         is Resource.Error -> {
                             post = post?.copy(
-                                reblogged = false,
-                                reblogCount = post?.reblogCount?.minus(1) ?: 0
+                                reblogged = false, reblogCount = post?.reblogCount?.minus(1) ?: 0
                             )
                             post?.let { updatePost(it) }
                         }
@@ -368,8 +422,7 @@ class PostViewModel @Inject constructor(
 
                         is Resource.Error -> {
                             post = post?.copy(
-                                reblogged = true,
-                                reblogCount = post?.reblogCount?.plus(1) ?: 0
+                                reblogged = true, reblogCount = post?.reblogCount?.plus(1) ?: 0
                             )
                             post?.let { updatePost(it) }
                         }
@@ -436,16 +489,12 @@ class PostViewModel @Inject constructor(
         reportState = ReportState(isLoading = true, reported = false)
         if (post == null) {
             reportState = ReportState(
-                isLoading = false,
-                reported = false,
-                error = "an unexpected error occurred"
+                isLoading = false, reported = false, error = "an unexpected error occurred"
             )
             return
         }
         val newReport = NewReport(
-            reportType = category,
-            objectType = ReportObjectType.POST,
-            objectId = post!!.id
+            reportType = category, objectType = ReportObjectType.POST, objectId = post!!.id
         )
         CoroutineScope(Dispatchers.Default).launch {
             postService.reportPost(newReport).onEach { result ->
@@ -472,8 +521,8 @@ class PostViewModel @Inject constructor(
         }
     }
 
-    fun muteAccount(userId: String) {
-        accountService.muteAccount(userId).onEach { result ->
+    fun muteAccount(userId: String, username: String, userMuteRequest: UserMuteRequest) {
+        accountService.muteAccount(userId, username, userMuteRequest).onEach { result ->
             relationshipState = when (result) {
                 is Resource.Success -> {
                     RelationshipState(accountRelationship = result.data)
@@ -490,8 +539,8 @@ class PostViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    fun blockAccount(userId: String) {
-        accountService.blockAccount(userId).onEach { result ->
+    fun blockAccount(userId: String, username: String, userBlockRequest: UserBlockRequest) {
+        accountService.blockAccount(userId, username, userBlockRequest).onEach { result ->
             relationshipState = when (result) {
                 is Resource.Success -> {
                     RelationshipState(accountRelationship = result.data)
@@ -527,3 +576,4 @@ class PostViewModel @Inject constructor(
         hashtagMentionsSuggestionsManager.changeText(newReplyText, viewModelScope)
     }
 }
+

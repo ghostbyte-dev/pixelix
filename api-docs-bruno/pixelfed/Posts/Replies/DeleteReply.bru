@@ -1,0 +1,11 @@
+meta {
+  name: DeleteReply
+  type: http
+  seq: 3
+}
+
+delete {
+  url: {{baseUrl}}/api/v1/statuses/{{replyId}}
+  body: none
+  auth: none
+}

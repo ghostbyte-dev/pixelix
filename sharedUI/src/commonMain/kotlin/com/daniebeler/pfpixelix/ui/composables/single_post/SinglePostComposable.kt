@@ -67,7 +67,7 @@ fun SinglePostComposable(
     Scaffold(contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top)) { paddingValues ->
         Box(
             modifier = Modifier.padding(paddingValues)
-                .padding(top = TopAppBarDefaults.TopAppBarExpandedHeight - 24.dp, bottom = 60.dp)
+                .padding(top = TopAppBarDefaults.TopAppBarExpandedHeight - 24.dp)
                 .fillMaxSize()
         ) {
             CustomPullToRefreshBox(

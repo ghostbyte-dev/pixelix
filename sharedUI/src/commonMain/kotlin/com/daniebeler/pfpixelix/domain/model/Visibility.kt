@@ -1,12 +1,26 @@
 package com.daniebeler.pfpixelix.domain.model
 
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
+import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedVisibilityDto
+import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageVisibilityDto
 
-@Serializable
 enum class Visibility {
-    @SerialName("public") PUBLIC,
-    @SerialName("unlisted") UNLISTED,
-    @SerialName("private") PRIVATE,
-    @SerialName("direct") DIRECT
+    PUBLIC,
+    UNLISTED,
+    PRIVATE,
+    DIRECT
+}
+
+
+fun Visibility.toVernissage(): VernissageVisibilityDto = when (this) {
+    Visibility.PUBLIC   -> VernissageVisibilityDto.PUBLIC
+    Visibility.UNLISTED -> VernissageVisibilityDto.QUIETPUBLIC
+    Visibility.PRIVATE  -> VernissageVisibilityDto.FOLLOWERS
+    Visibility.DIRECT   -> VernissageVisibilityDto.MENTIONED
+}
+
+fun Visibility.toPixelfed(): PixelfedVisibilityDto = when (this) {
+    Visibility.PUBLIC -> PixelfedVisibilityDto.PUBLIC
+    Visibility.UNLISTED -> PixelfedVisibilityDto.UNLISTED
+    Visibility.PRIVATE -> PixelfedVisibilityDto.PRIVATE
+    Visibility.DIRECT -> PixelfedVisibilityDto.DIRECT
 }

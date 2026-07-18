@@ -1,0 +1,19 @@
+info:
+  name: Tag Timeline
+  type: http
+  seq: 3
+
+http:
+  method: GET
+  url: "{{baseUrl}}/api/v1/timelines/hashtag/:tag"
+  params:
+    - name: tag
+      value: winter
+      type: path
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

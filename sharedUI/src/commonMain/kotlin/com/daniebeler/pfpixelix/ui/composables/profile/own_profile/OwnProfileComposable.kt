@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -15,9 +14,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
-import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
-import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
-import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -49,25 +45,19 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.service.platform.PlatformFeatures
-import com.daniebeler.pfpixelix.ui.composables.widgets.InfiniteStaggeredGridHandler
 import com.daniebeler.pfpixelix.ui.composables.profile.CollectionsComposable
-import com.daniebeler.pfpixelix.ui.composables.profile.postsWrapperComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.ProfileTopSection
-import com.daniebeler.pfpixelix.ui.composables.profile.SwitchViewComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.server_stats.DomainSoftwareComposable
-import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
-import com.daniebeler.pfpixelix.ui.composables.states.EmptyStateComposable
-import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposableDialog
-import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
-import com.daniebeler.pfpixelix.ui.composables.widgets.CustomPullToRefreshBox
+import com.daniebeler.pfpixelix.ui.composables.widgets.InfinitePostsList
+import com.daniebeler.pfpixelix.ui.composables.widgets.InfiniteStaggeredGridHandler
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import com.daniebeler.pfpixelix.utils.DomainFormat
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
-import pixelix.app.generated.resources.edit_profile
 import pixelix.app.generated.resources.arrow_down
+import pixelix.app.generated.resources.edit_profile
 import pixelix.app.generated.resources.more_menu
 import pixelix.app.generated.resources.photo
 
@@ -91,188 +81,129 @@ fun OwnProfileComposable(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             TopAppBar(
-                scrollBehavior = scrollBehavior,
-                title = {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(12.dp),
-                        modifier = Modifier.clickable { showBottomSheet = 2 }) {
-                        Column {
-                            Text(
-                                text = viewModel.accountState.account?.username ?: "",
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 18.sp
-                            )
-                            Text(
-                                text = DomainFormat.formatDomain(viewModel.ownDomain),
-                                fontSize = 12.sp,
-                                lineHeight = 6.sp
-                            )
-                        }
-                        Icon(
-                            imageVector = vectorResource(Res.drawable.arrow_down),
-                            contentDescription = "Switch account"
+                scrollBehavior = scrollBehavior, title = {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    modifier = Modifier.clickable { showBottomSheet = 2 }) {
+                    Column {
+                        Text(
+                            text = viewModel.accountState.account?.username ?: "",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 18.sp
+                        )
+                        Text(
+                            text = DomainFormat.formatDomain(viewModel.ownDomain),
+                            fontSize = 12.sp,
+                            lineHeight = 6.sp
                         )
                     }
-                }, actions = {
-                    if (viewModel.ownDomain.isNotEmpty()) {
-                        DomainSoftwareComposable(
-                            domain = viewModel.ownDomain
-                        )
-                    }
+                    Icon(
+                        imageVector = vectorResource(Res.drawable.arrow_down),
+                        contentDescription = "Switch account"
+                    )
+                }
+            }, actions = {
+                if (viewModel.ownDomain.isNotEmpty()) {
+                    DomainSoftwareComposable(
+                        domain = viewModel.ownDomain
+                    )
+                }
 
-                    IconButton(onClick = {
-                        showBottomSheet = 1
-                    }) {
-                        Icon(
-                            imageVector = vectorResource(Res.drawable.more_menu),
-                            contentDescription = "preferences"
-                        )
-                    }
-                }, colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceContainer
-                )
+                IconButton(onClick = {
+                    showBottomSheet = 1
+                }) {
+                    Icon(
+                        imageVector = vectorResource(Res.drawable.more_menu),
+                        contentDescription = "preferences"
+                    )
+                }
+            }, colors = TopAppBarDefaults.topAppBarColors(
+                containerColor = MaterialTheme.colorScheme.surfaceContainer
+            )
             )
         }) { paddingValues ->
         Box(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
-            CustomPullToRefreshBox(
+            InfinitePostsList(
+                items = viewModel.postsState.posts,
+                isLoading = viewModel.postsState.isLoading,
                 isRefreshing = viewModel.accountState.refreshing || viewModel.postsState.refreshing,
-                onRefresh = { viewModel.loadData(true) },
-                modifier = Modifier.fillMaxSize()
-                    .background(MaterialTheme.colorScheme.background)
-            ) {
-                BoxWithConstraints {
-                    val gridContentWidth = maxWidth - 8.dp
-                    val gridColumnCount = maxOf(3, (gridContentWidth / 120.dp).toInt())
-                    LazyVerticalStaggeredGrid(
-                        columns = when (viewModel.view) {
-                            com.daniebeler.pfpixelix.ui.composables.profile.ViewEnum.Grid -> StaggeredGridCells.Fixed(
-                                gridColumnCount
-                            )
+                error = viewModel.postsState.error,
+                view = viewModel.view,
+                changeView = { viewModel.changeView(it) },
+                endReached = false,
+                navController = navController,
+                getItemsPaginated = { viewModel.getPostsPaginated() },
+                onRefresh = {
+                    viewModel.loadData(true)
+                },
+                postsCount = viewModel.accountState.account?.postsCount,
+                itemGetsDeleted = { postId -> viewModel.postGetsDeleted(postId) },
+                postGetsUpdated = { },
+                isFirstItemLarge = true,
+                before = {
+                    Column(
+                        modifier = Modifier.layout { measurable, constraints ->
+                            val horizontalPadding = 4.dp.roundToPx()
 
-                            com.daniebeler.pfpixelix.ui.composables.profile.ViewEnum.Masonry -> StaggeredGridCells.Adaptive(
-                                150.dp
+                            val expandedWidth = constraints.maxWidth + (horizontalPadding * 2)
+                            val placeable = measurable.measure(
+                                constraints.copy(
+                                    maxWidth = expandedWidth, minWidth = expandedWidth
+                                )
                             )
-
-                            com.daniebeler.pfpixelix.ui.composables.profile.ViewEnum.Timeline -> StaggeredGridCells.Adaptive(
-                                350.dp
-                            )
-                        },
-                        verticalItemSpacing = 4.dp,
-                        horizontalArrangement = Arrangement.spacedBy(4.dp),
-                        state = lazyGridState,
-                        contentPadding = PaddingValues(bottom = 60.dp, start = 4.dp, end = 4.dp)
+                            layout(constraints.maxWidth, placeable.height) {
+                                placeable.placeRelative(-horizontalPadding, 0)
+                            }
+                        }.fillMaxWidth().clip(
+                            RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)
+                        ).background(MaterialTheme.colorScheme.surfaceContainer)
+                            .padding(bottom = 12.dp)
                     ) {
-                        item(span = StaggeredGridItemSpan.FullLine) {
-                            Column(
-                                modifier = Modifier.layout { measurable, constraints ->
-                                    val horizontalPadding = 4.dp.roundToPx()
+                        if (viewModel.accountState.account != null) {
+                            ProfileTopSection(
+                                account = viewModel.accountState.account,
+                                relationship = null,
+                                navController,
+                                openUrl = { url -> viewModel.openUrl(url) })
 
-                                    val expandedWidth =
-                                        constraints.maxWidth + (horizontalPadding * 2)
-                                    val placeable = measurable.measure(
-                                        constraints.copy(
-                                            maxWidth = expandedWidth,
-                                            minWidth = expandedWidth
-                                        )
-                                    )
-                                    layout(constraints.maxWidth, placeable.height) {
-                                        placeable.placeRelative(-horizontalPadding, 0)
-                                    }
-                                }.fillMaxWidth().clip(
-                                    RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)
-                                ).background(MaterialTheme.colorScheme.surfaceContainer)
-                                    .padding(top = 24.dp, bottom = 12.dp)
+                            Row(
+                                Modifier.fillMaxWidth().padding(horizontal = 12.dp)
                             ) {
-                                if (viewModel.accountState.account != null) {
-                                    ProfileTopSection(
-                                        account = viewModel.accountState.account,
-                                        relationship = null,
-                                        navController,
-                                        openUrl = { url -> viewModel.openUrl(url) })
-
-                                    Row(
-                                        Modifier.fillMaxWidth().padding(horizontal = 12.dp)
-                                    ) {
-                                        Button(
-                                            onClick = {
-                                                navController.navigate(Destination.EditProfile)
-                                            },
-                                            modifier = Modifier.fillMaxWidth(),
-                                            shape = RoundedCornerShape(12.dp),
-                                            contentPadding = PaddingValues(12.dp),
-                                            colors = ButtonDefaults.buttonColors(
-                                                containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-                                                contentColor = MaterialTheme.colorScheme.onSurface
-                                            )
-                                        ) {
-                                            Text(text = stringResource(Res.string.edit_profile))
-                                        }
-                                    }
-                                }
-
-                                CollectionsComposable(
-                                    collectionsState = viewModel.collectionsState,
-                                    getMoreCollections = {
-                                        viewModel.accountState.account?.let {
-                                            viewModel.getCollections(
-                                                it.id, true
-                                            )
-                                        }
+                                Button(
+                                    onClick = {
+                                        navController.navigate(Destination.EditProfile)
                                     },
-                                    navController = navController,
-                                    addNewButton = PlatformFeatures.addCollection,
-                                    instanceDomain = viewModel.ownDomain,
-                                ) { url -> viewModel.openUrl(url) }
+                                    modifier = Modifier.fillMaxWidth(),
+                                    shape = RoundedCornerShape(12.dp),
+                                    contentPadding = PaddingValues(12.dp),
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                                        contentColor = MaterialTheme.colorScheme.onSurface
+                                    )
+                                ) {
+                                    Text(text = stringResource(Res.string.edit_profile))
+                                }
                             }
                         }
-
-                        item(span = StaggeredGridItemSpan.FullLine) {
-                            SwitchViewComposable(
-                                postsCount = viewModel.accountState.account?.postsCount ?: 0,
-                                viewType = viewModel.view,
-                                onViewChange = { viewModel.changeView(it) })
-                        }
-
-                        postsWrapperComposable(
-                            posts = viewModel.postsState.posts,
-                            isLoading = viewModel.postsState.isLoading,
-                            isRefreshing = viewModel.accountState.refreshing || viewModel.postsState.refreshing,
-                            endReached = viewModel.postsState.endReached,
-                            view = viewModel.view,
-                            postGetsDeleted = { viewModel.postGetsDeleted(it) },
-                            updatePost = { viewModel.updatePost(it) },
-                            isFirstImageLarge = true,
-                            gridColumnCount = gridColumnCount,
-                            gridContentWidth = gridContentWidth,
-                            navController = navController
-                        )
-                        if (viewModel.postsState.posts.isEmpty() && viewModel.postsState.error.isNotBlank()) {
-                            item(span = StaggeredGridItemSpan.FullLine) {
-                                ErrorComposable(
-                                    message = viewModel.postsState.error,
-                                    modifier = Modifier.fillMaxSize().padding(36.dp, 20.dp)
-                                )
-                            }
-                        }
-                        if (viewModel.postsState.isLoading && viewModel.postsState.posts.isEmpty()) {
-                            item(span = StaggeredGridItemSpan.FullLine) {
-                                LoadingComposable(viewModel.postsState.isLoading)
-                            }
-                        }
-                        if (viewModel.postsState.posts.isEmpty() && !viewModel.postsState.isLoading && viewModel.postsState.error.isEmpty()) {
-                            item(span = StaggeredGridItemSpan.FullLine) {
-                                EmptyStateComposable(
-                                    emptyState = EmptyState(icon = photoIcon, heading = "No Posts")
-                                )
-                            }
+                        if (viewModel.capabilities.value.profile.showCollectionsOwnProfile) {
+                            CollectionsComposable(
+                                collectionsState = viewModel.collectionsState,
+                                getMoreCollections = {
+                                    viewModel.accountState.account?.let {
+                                        viewModel.getCollections(
+                                            it.id, true
+                                        )
+                                    }
+                                },
+                                navController = navController,
+                                addNewButton = PlatformFeatures.addCollection,
+                                instanceDomain = viewModel.ownDomain,
+                            ) { url -> viewModel.openUrl(url) }
                         }
                     }
-                }
-            }
+                })
         }
-
-
     }
 
     InfiniteStaggeredGridHandler(
@@ -283,11 +214,9 @@ fun OwnProfileComposable(
 
     if (viewModel.accountState.error.isNotEmpty()) {
         ErrorComposableDialog(
-            viewModel.accountState.error,
-            onDismiss = {
+            viewModel.accountState.error, onDismiss = {
                 viewModel.dismissError()
-            }
-        )
+            })
     }
 
     if (showBottomSheet > 0) {
@@ -300,8 +229,9 @@ fun OwnProfileComposable(
                 val icon = viewModel.appIcon.collectAsState()
                 ModalBottomSheetContent(
                     navController = navController,
-                    instanceDomain = viewModel.ownDomain,
+                    instanceDomain = DomainFormat.formatDomain(viewModel.ownDomain),
                     appIcon = icon.value,
+                    backendType = viewModel.backendType,
                     closeBottomSheet = {
                         showBottomSheet = 0
                     },
@@ -316,5 +246,4 @@ fun OwnProfileComposable(
             }
         }
     }
-
 }

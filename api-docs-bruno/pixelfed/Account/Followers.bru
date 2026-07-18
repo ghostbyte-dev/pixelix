@@ -1,0 +1,16 @@
+meta {
+  name: Followers
+  type: http
+  seq: 6
+}
+
+get {
+  url: {{baseUrl}}/api/v1/accounts/{{accountId}}/followers?limit=40&max_id=552190916122697274
+  body: none
+  auth: inherit
+}
+
+query {
+  limit: 40
+  max_id: 552190916122697274
+}

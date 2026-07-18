@@ -31,7 +31,6 @@
         <item quantity="one">Bejegyzés</item>
         <item quantity="other">Bejegyzés</item>
     </plurals>
-    <string name="posts">Bejegyzés</string>
     <string name="hashtags">Hashtagek</string>
     <string name="reblogged_your_post">megosztotta a bejegyzésed</string>
     <string name="liked_your_post">kedvelte a bejegyzésed</string>
@@ -286,4 +285,9 @@
     <string name="cancel_post_warning">Bejegyzés elvetése?</string>
     <string name="cancel_profile_edit">Változtatások elvetése?</string>
     <string name="cancel_post_edit">Változtatások elvetése?</string>
+    <string name="license_label">Licenc</string>
+    <string name="registration">Regisztráció</string>
+    <string name="jump_to_top">Ugrás a lap tetejére</string>
+    <string name="open">nyílt</string>
+    <string name="closed">zárt</string>
 </resources>

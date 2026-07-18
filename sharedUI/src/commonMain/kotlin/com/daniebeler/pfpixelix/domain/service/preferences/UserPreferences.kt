@@ -1,58 +1,139 @@
 package com.daniebeler.pfpixelix.domain.service.preferences
 
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.*
+import com.daniebeler.pfpixelix.di.AppSingleton
 import com.daniebeler.pfpixelix.domain.model.AppAccentColor
 import com.daniebeler.pfpixelix.domain.model.AppThemeMode
-import com.russhwolf.settings.ExperimentalSettingsApi
-import com.russhwolf.settings.ExperimentalSettingsImplementation
-import com.russhwolf.settings.boolean
-import com.russhwolf.settings.coroutines.toBlockingSettings
-import com.russhwolf.settings.datastore.DataStoreSettings
-import com.russhwolf.settings.int
-import com.russhwolf.settings.long
+import com.daniebeler.pfpixelix.domain.model.License
+import com.daniebeler.pfpixelix.domain.model.Visibility
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
+import kotlinx.serialization.json.Json
 import me.tatarka.inject.annotations.Inject
+import kotlin.properties.ReadWriteProperty
+import kotlin.reflect.KProperty
 
-@OptIn(ExperimentalSettingsApi::class, ExperimentalSettingsImplementation::class)
 @Inject
-class UserPreferences(observableSettings: DataStoreSettings) {
-    private val settings = observableSettings.toBlockingSettings()
+@AppSingleton
+class UserPreferences(private val dataStore: DataStore<Preferences>) {
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
-    var hideSensitiveContent by settings.boolean("k_hide_sensitive_content", true)
-    var blurSensitiveContent by settings.boolean("k_blur_sensitive_content", true)
-    var blurSensitiveContentFlow = observableSettings.getBooleanFlow("k_blur_sensitive_content", blurSensitiveContent)
+    // In-memory snapshot backing the synchronous property accessors. Starts empty (so the
+    // defaults apply) and is kept up to date as the DataStore emits persisted snapshots.
+    private var cache: Preferences = emptyPreferences()
 
-    var useInAppBrowser by settings.boolean("k_use_in_app_browser", true)
+    private inner class Prop<T>(val key: Preferences.Key<T>, val default: T) : ReadWriteProperty<Any?, T> {
+        override fun getValue(thisRef: Any?, property: KProperty<*>) = cache[key] ?: default
+        override fun setValue(thisRef: Any?, property: KProperty<*>, value: T) {
+            cache = cache.toMutablePreferences().apply { this[key] = value }
+            scope.launch { dataStore.edit { it[key] = value } }
+        }
+    }
 
-    var hideAltTextButton by settings.boolean("k_hide_alt_text_button", false)
-    val hideAltTextButtonFlow = observableSettings.getBooleanFlow("k_hide_alt_text_button", hideAltTextButton)
+    init {
+        dataStore.data.onEach { cache = it }.launchIn(scope)
+    }
 
-    var focusMode by settings.boolean("k_focus_mode", false)
-    val focusModeFlow = observableSettings.getBooleanFlow("k_focus_mode", focusMode)
+    /**
+     * Warms up the in-memory [cache] with the persisted snapshot. Call once during app startup,
+     * before the first UI render, so synchronous property reads return persisted values instead
+     * of defaults. Non-blocking: it suspends until the first snapshot arrives.
+     */
+    suspend fun preload() {
+        cache = dataStore.data.first()
+    }
 
-    var autoplayVideo by settings.boolean("k_autoplay_mode", true)
-    val autoplayVideoFlow = observableSettings.getBooleanFlow("k_autoplay_mode", autoplayVideo)
+    var hideSensitiveContent by boolean("k_hide_sensitive_content", true)
+    var blurSensitiveContent by boolean("k_blur_sensitive_content", true)
+    val blurSensitiveContentFlow = booleanFlow("k_blur_sensitive_content", true)
+
+    var useInAppBrowser by boolean("k_use_in_app_browser", true)
+
+    var hideAltTextButton by boolean("k_hide_alt_text_button", false)
+    val hideAltTextButtonFlow = booleanFlow("k_hide_alt_text_button", false)
+    var autoplayVideo by boolean("k_autoplay_mode", true)
+    val autoplayVideoFlow = booleanFlow("k_autoplay_mode", true)
 
 
-    var showUserGridTimeline by settings.int("k_timeline_view", 1)
-    val showUserGridTimelineFlow = observableSettings.getIntFlow("k_timeline_view", showUserGridTimeline)
+    var showUserGridTimeline by int("k_timeline_view", 2)
+    val showUserGridTimelineFlow = intFlow("k_timeline_view", 2)
 
-    var enableVolume by settings.boolean("k_enable_volume", true)
-    val enableVolumeFlow = observableSettings.getBooleanFlow("k_enable_volume", enableVolume)
+    var enableVolume by boolean("k_enable_volume", true)
+    val enableVolumeFlow = booleanFlow("k_enable_volume", true)
 
-    var appThemeMode by settings.int("k_theme_mode", AppThemeMode.FOLLOW_SYSTEM)
-    val appThemeModeFlow = observableSettings.getIntFlow("k_theme_mode", appThemeMode)
+    var appThemeMode by int("k_theme_mode", AppThemeMode.FOLLOW_SYSTEM)
+    val appThemeModeFlow = intFlow("k_theme_mode", AppThemeMode.FOLLOW_SYSTEM)
 
-    var accentColor by settings.long("k_accent_color", AppAccentColor.GREEN)
-    val accentColorFlow = observableSettings.getLongFlow("k_accent_color", accentColor)
+    var accentColor by long("k_accent_color", AppAccentColor.GREEN)
+    val accentColorFlow = longFlow("k_accent_color", AppAccentColor.GREEN)
 
-    var enableSwipeBetweenTabs by settings.boolean("k_enable_swipe_between_timelines", true)
-    val enableSwipeBetweenTabsFlow = observableSettings.getBooleanFlow("k_enable_swipe_between_timelines", enableSwipeBetweenTabs)
+    var enableSwipeBetweenTabs by boolean("k_enable_swipe_between_timelines", true)
+    val enableSwipeBetweenTabsFlow = booleanFlow("k_enable_swipe_between_timelines", true)
 
-    var showHomeTimelineHelp by settings.boolean("k_show_home_timeline_help", true)
-    val showHomeTimelineHelpFlow = observableSettings.getBooleanFlow("k_show_home_timeline_help", showHomeTimelineHelp)
+    var showHomeTimelineHelp by boolean("k_show_home_timeline_help", true)
+    val showHomeTimelineHelpFlow = booleanFlow("k_show_home_timeline_help", true)
 
-    var showLocalTimelineHelp by settings.boolean("k_show_local_timeline_help", true)
-    val showLocalTimelineHelpFlow = observableSettings.getBooleanFlow("k_show_local_timeline_help", showLocalTimelineHelp)
+    var showLocalTimelineHelp by boolean("k_show_local_timeline_help", true)
+    val showLocalTimelineHelpFlow = booleanFlow("k_show_local_timeline_help", true)
 
-    var showGlobalTimelineHelp by settings.boolean("k_show_global_timeline_help", true)
-    val showGlobalTimelineHelpFlow = observableSettings.getBooleanFlow("k_show_global_timeline_help", showGlobalTimelineHelp)
+    var showGlobalTimelineHelp by boolean("k_show_global_timeline_help", true)
+    val showGlobalTimelineHelpFlow = booleanFlow("k_show_global_timeline_help", true)
+
+    var captionTemplate by string("k_caption_template", "")
+    val captionTemplateFlow = stringFlow("k_caption_template", "")
+
+    var hideMetadata by boolean("k_hide_metadata", false)
+    val hideMetadataFlow = booleanFlow("k_hide_metadata", false)
+
+    private var _defaultVisibility: Int by Prop(intPreferencesKey("k_default_visibility"), Visibility.PUBLIC.ordinal)
+    var defaultVisibility: Visibility
+        get() = Visibility.entries.getOrElse(_defaultVisibility) { Visibility.PUBLIC }
+        set(value) {
+            _defaultVisibility = value.ordinal
+        }
+
+    val defaultVisibilityFlow: Flow<Visibility> =
+        intFlow("k_default_visibility", Visibility.PUBLIC.ordinal)
+            .map { ordinal ->
+                Visibility.entries.getOrElse(ordinal) { Visibility.PUBLIC }
+            }
+
+    private var _defaultLicenseJson by string("k_default_license", "")
+
+    var defaultLicense: License?
+        get() = _defaultLicenseJson.takeIf { it.isNotEmpty() }?.let { json ->
+            runCatching { Json.decodeFromString<License>(json) }.getOrNull()
+        }
+        set(value) {
+            _defaultLicenseJson = if (value != null) Json.encodeToString(value) else ""
+        }
+
+    val defaultLicenseFlow: Flow<License?> =
+        stringFlow("k_default_license", "")
+            .map { json ->
+                json.takeIf { it.isNotEmpty() }?.let {
+                    runCatching { Json.decodeFromString<License>(it) }.getOrNull()
+                }
+            }
+
+    private fun boolean(key: String, default: Boolean) = Prop(booleanPreferencesKey(key), default)
+    private fun int(key: String, default: Int) = Prop(intPreferencesKey(key), default)
+    private fun long(key: String, default: Long) = Prop(longPreferencesKey(key), default)
+    private fun string(key: String, default: String) = Prop(stringPreferencesKey(key), default)
+
+    private fun booleanFlow(key: String, default: Boolean): Flow<Boolean> =
+        dataStore.data.map { it[booleanPreferencesKey(key)] ?: default }.distinctUntilChanged()
+
+    private fun intFlow(key: String, default: Int): Flow<Int> =
+        dataStore.data.map { it[intPreferencesKey(key)] ?: default }.distinctUntilChanged()
+
+    private fun longFlow(key: String, default: Long): Flow<Long> =
+        dataStore.data.map { it[longPreferencesKey(key)] ?: default }.distinctUntilChanged()
+
+    private fun stringFlow(key: String, default: String): Flow<String> =
+        dataStore.data.map { it[stringPreferencesKey(key)] ?: default }.distinctUntilChanged()
 }

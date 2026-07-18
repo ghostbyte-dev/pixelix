@@ -3,16 +3,17 @@ package com.daniebeler.pfpixelix
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Badge
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -28,18 +29,17 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MaterialTheme.shapes
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.ModalDrawerSheet
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
@@ -62,17 +62,16 @@ import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.di.AppComponent
 import com.daniebeler.pfpixelix.di.LocalAppComponent
-import com.daniebeler.pfpixelix.domain.service.utils.GlobalNavigationEvent
 import com.daniebeler.pfpixelix.ui.composables.profile.own_profile.AccountSwitchBottomSheet
-import com.daniebeler.pfpixelix.ui.composables.settings.preferences.PreferencesComposable
+import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.PreferencesComposable
 import com.daniebeler.pfpixelix.ui.composables.widgets.ReverseModalNavigationDrawer
+import com.daniebeler.pfpixelix.ui.events.GlobalNavigationEvent
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import com.daniebeler.pfpixelix.ui.navigation.appGraph
 import com.daniebeler.pfpixelix.ui.theme.PixelixTheme
@@ -87,19 +86,17 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
-import pixelix.app.generated.resources.add_circle_strong
-import pixelix.app.generated.resources.add_circle
 import pixelix.app.generated.resources.bookmark
 import pixelix.app.generated.resources.default_avatar
 import pixelix.app.generated.resources.home
 import pixelix.app.generated.resources.house
 import pixelix.app.generated.resources.house_strong
-import pixelix.app.generated.resources.new_post
-import pixelix.app.generated.resources.notifications_strong
 import pixelix.app.generated.resources.notifications
+import pixelix.app.generated.resources.notifications_strong
 import pixelix.app.generated.resources.profile
-import pixelix.app.generated.resources.search_strong
 import pixelix.app.generated.resources.search
+import pixelix.app.generated.resources.search_strong
+import kotlin.time.Duration.Companion.milliseconds
 
 val LocalSnackbarPresenter = compositionLocalOf<(String) -> Unit> {
     error("No LocalSnackbarPresenter provided")
@@ -108,7 +105,9 @@ val LocalSnackbarPresenter = compositionLocalOf<(String) -> Unit> {
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun App(
-    appComponent: AppComponent, exitApp: () -> Unit
+    appComponent: AppComponent,
+    onNavHostReady: suspend (NavController) -> Unit = {},
+    exitApp: () -> Unit
 ) {
     val uriHandler = LocalUriHandler.current
     DisposableEffect(uriHandler) {
@@ -127,7 +126,7 @@ fun App(
             if (event == Lifecycle.Event.ON_RESUME) {
                 if (appComponent.systemUrlHandler.isAuthInProgress) {
                     coroutineScope.launch {
-                        delay(200)
+                        delay(200.milliseconds)
                         appComponent.systemUrlHandler.cancelWaiting()
                     }
                 }
@@ -148,8 +147,12 @@ fun App(
         PixelixTheme {
             var activeUser by remember { mutableStateOf<String?>("unknown") }
             LaunchedEffect(Unit) {
+                appComponent.preferences.preload()
                 val authService = appComponent.authService
                 authService.openSessionIfExist()
+
+                appComponent.notificationBadgeRefresher.start()
+
                 authService.activeUser.collect {
                     activeUser = it
                 }
@@ -197,6 +200,13 @@ fun App(
                     }
                 }
 
+                // Bridges the NavController to the host platform once the graph is set up.
+                // On web this binds browser Back/Forward and the address bar to navigation;
+                // other platforms pass the default no-op.
+                LaunchedEffect(navController) {
+                    onNavHostReady(navController)
+                }
+
                 CompositionLocalProvider(
                     LocalSnackbarPresenter provides snackBarPresenter
                 ) {
@@ -216,7 +226,7 @@ fun App(
                             }
                         }) {
                         val scrollBehaviorBottom =
-                            FloatingToolbarDefaults.exitAlwaysScrollBehavior(exitDirection = FloatingToolbarExitDirection.Bottom);
+                            FloatingToolbarDefaults.exitAlwaysScrollBehavior(exitDirection = FloatingToolbarExitDirection.Bottom)
                         Scaffold(
                             contentWindowInsets = WindowInsets(0),
                             snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -238,32 +248,25 @@ fun App(
                                         )
                                     })
 
-                                /* Box(
-                                     modifier = Modifier.align(Alignment.BottomCenter)
-                                         .clip(RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp))
-                                         .background(MaterialTheme.colorScheme.surface)
-                                 ) {
-                                     BottomBar(
-                                         navController = navController,
-                                         openAccountSwitchBottomSheet = {
-                                             showAccountSwitchBottomSheet = true
-                                         },
-                                     )
-                                 }*/
-                                Box(
-                                    modifier = Modifier.align(Alignment.BottomCenter)
-                                ) {
-                                    BottomBarFloating(
-                                        navController,
-                                        openAccountSwitchBottomSheet = {
-                                            showAccountSwitchBottomSheet = true
-                                        },
-                                        scrollBehaviorBottom
-                                    )
+                                val navBackStackEntry by navController.currentBackStackEntryAsState()
+                                val currentDestination = navBackStackEntry?.destination
 
+                                val showBottomBar =
+                                    currentDestination?.hasRoute<Destination.OwnProfile>() == true || currentDestination?.hasRoute<Destination.Feeds>() == true || currentDestination?.hasRoute<Destination.Search>() == true || currentDestination?.hasRoute<Destination.Notifications>() == true
+
+                                if (showBottomBar) {
+                                    Box(
+                                        modifier = Modifier.align(Alignment.BottomCenter)
+                                    ) {
+                                        BottomBarFloating(
+                                            navController, openAccountSwitchBottomSheet = {
+                                                showAccountSwitchBottomSheet = true
+                                            }, scrollBehaviorBottom
+                                        )
+
+                                    }
                                 }
                             }
-
                         }
                     }
                 }
@@ -279,10 +282,10 @@ fun App(
                 }
 
                 LaunchedEffect(Unit) {
-                    appComponent.accountIntentHandler.pendingAccountId.collect { accountId ->
-                        if (accountId.isNotEmpty()) {
+                    appComponent.accountIntentHandler.pendingAccount.collect { accountPair ->
+                        if (accountPair.first.isNotEmpty() && accountPair.second.isNotEmpty()) {
                             navController.navigate(
-                                Destination.Profile(accountId)
+                                Destination.Profile(accountPair.first, accountPair.second)
                             )
                         }
                     }
@@ -321,12 +324,6 @@ private enum class HomeTab(
         Res.drawable.search_strong,
         Res.string.search
     ),
-    NewPost(
-        Destination.HomeTabNewPost,
-        Res.drawable.add_circle,
-        Res.drawable.add_circle_strong,
-        Res.string.new_post
-    ),
     Notifications(
         Destination.HomeTabNotifications,
         Res.drawable.notifications,
@@ -350,6 +347,7 @@ private fun BottomBarFloating(
 ) {
     var avatar by remember { mutableStateOf<String?>(null) }
     val appComponent = LocalAppComponent.current
+    val unreadCount by appComponent.notificationBadgeState.count.collectAsState()
     LaunchedEffect(Unit) {
         val authService = appComponent.authService
         authService.activeUser.map { authService.getCurrentSession() }.collect {
@@ -374,7 +372,7 @@ private fun BottomBarFloating(
             fabContainerColor = MaterialTheme.colorScheme.error
         )
     ) {
-        HomeTab.entries.forEachIndexed { index, tab ->
+        HomeTab.entries.forEachIndexed { _, tab ->
             val isSelected = currentDestination.hierarchy.any {
                 it.hasRoute(tab.destination::class)
             }
@@ -389,7 +387,7 @@ private fun BottomBarFloating(
                         is PressInteraction.Press -> {
                             isLongPress = false
                             coroutineScope.launch {
-                                delay(500L)
+                                delay(500L.milliseconds)
                                 if (tab == HomeTab.OwnProfile) {
                                     openAccountSwitchBottomSheet()
                                 }
@@ -407,118 +405,37 @@ private fun BottomBarFloating(
                 if (isSelected) MaterialTheme.colorScheme.primary else Color.Transparent
             val contentColor =
                 if (isSelected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface
+            Box {
+                IconButton(
+                    colors = IconButtonDefaults.iconButtonColors(
+                        containerColor = containerColor, contentColor = contentColor
+                    ), onClick = {
 
-            IconButton(
-                colors = IconButtonDefaults.iconButtonColors(
-                    containerColor = containerColor,
-                    contentColor = contentColor
-                ),
-                onClick = {
-
-                    if (!isLongPress) {
-                        if (!isSelected) {
-                            navController.navigate(tab.destination) {
-                                launchSingleTop = true
-                                restoreState = true
-                                popUpTo(navController.graph.findStartDestination().id) {
-                                    inclusive = false
-                                    saveState = true
+                        if (!isLongPress) {
+                            if (!isSelected) {
+                                navController.navigate(tab.destination) {
+                                    launchSingleTop = true
+                                    restoreState = true
+                                    popUpTo(navController.graph.findStartDestination().id) {
+                                        inclusive = false
+                                        saveState = true
+                                    }
+                                }
+                            } else {
+                                val tabRoot = tabContainer.findStartDestination()
+                                val isOnRoot = currentDestination == tabRoot
+                                if (!isOnRoot) {
+                                    navController.popBackStack(
+                                        route = tabRoot.route!!, inclusive = false
+                                    )
+                                } else if (currentDestination.hasRoute<Destination.Search>()) {
+                                    appComponent.searchFieldFocus.focus()
+                                } else if (currentDestination.hasRoute<Destination.Feeds>()) {
+                                    appComponent.backToTopTrigger.scrollToTop()
                                 }
                             }
-                        } else {
-                            val tabRoot = tabContainer.findStartDestination()
-                            val isOnRoot = currentDestination == tabRoot
-                            if (!isOnRoot) {
-                                navController.popBackStack(
-                                    route = tabRoot.route!!, inclusive = false
-                                )
-                            } else if (currentDestination.hasRoute<Destination.Search>()) {
-                                appComponent.searchFieldFocus.focus()
-                            } else if (currentDestination.hasRoute<Destination.Feeds>()) {
-                                appComponent.backToTopTrigger.scrollToTop()
-                            }
                         }
-                    }
-                }
-            ) {
-                if (tab == HomeTab.OwnProfile && avatar != null) {
-                    AsyncImage(
-                        model = avatar,
-                        error = painterResource(Res.drawable.default_avatar),
-                        contentDescription = "",
-                        modifier = Modifier.height(30.dp).width(30.dp).clip(CircleShape)
-                    )
-                } else {
-                    Icon(
-                        imageVector = vectorResource(
-                            if (isSelected) tab.activeIcon else tab.icon
-                        ),
-                        modifier = Modifier.size(30.dp),
-                        contentDescription = stringResource(tab.label)
-                    )
-                }
-            }
-            if (index < HomeTab.entries.lastIndex) {
-                Spacer(modifier = Modifier.width(8.dp))
-            }
-        }
-    }
-}
-
-@Composable
-private fun BottomBar(
-    navController: NavHostController, openAccountSwitchBottomSheet: () -> Unit
-) {
-    val systemNavigationBarHeight =
-        WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
-
-    var avatar by remember { mutableStateOf<String?>(null) }
-    val appComponent = LocalAppComponent.current
-    LaunchedEffect(Unit) {
-        val authService = appComponent.authService
-        authService.activeUser.map { authService.getCurrentSession() }.collect {
-            avatar = it?.avatar
-        }
-    }
-
-    NavigationBar(
-        modifier = Modifier.height(60.dp + systemNavigationBarHeight)
-    ) {
-        val navBackStackEntry = navController.currentBackStackEntryAsState().value
-        val currentDestination = navBackStackEntry?.destination ?: return@NavigationBar
-        val tabContainer = currentDestination.parent ?: return@NavigationBar
-
-        HomeTab.entries.forEach { tab ->
-            val isSelected = currentDestination.hierarchy.any {
-                it.hasRoute(tab.destination::class)
-            }
-
-            val interactionSource = remember { MutableInteractionSource() }
-            val coroutineScope = rememberCoroutineScope()
-            var isLongPress by remember { mutableStateOf(false) }
-
-            LaunchedEffect(interactionSource) {
-                interactionSource.interactions.collect { interaction ->
-                    when (interaction) {
-                        is PressInteraction.Press -> {
-                            isLongPress = false // Reset flag before starting detection
-                            coroutineScope.launch {
-                                delay(500L) // Long-press threshold
-                                if (tab == HomeTab.OwnProfile) {
-                                    openAccountSwitchBottomSheet()
-                                }
-                                isLongPress = true
-                            }
-                        }
-
-                        is PressInteraction.Release, is PressInteraction.Cancel -> {
-                            coroutineScope.coroutineContext.cancelChildren()
-                        }
-                    }
-                }
-            }
-            NavigationBarItem(
-                icon = {
+                    }) {
                     if (tab == HomeTab.OwnProfile && avatar != null) {
                         AsyncImage(
                             model = avatar,
@@ -531,38 +448,21 @@ private fun BottomBar(
                             imageVector = vectorResource(
                                 if (isSelected) tab.activeIcon else tab.icon
                             ),
-                            modifier = Modifier.size(30.dp),
+                            modifier = Modifier.size(28.dp),
                             contentDescription = stringResource(tab.label)
                         )
                     }
-                }, selected = isSelected, colors = NavigationBarItemDefaults.colors(
-                    selectedIconColor = MaterialTheme.colorScheme.inverseSurface,
-                    indicatorColor = Color.Transparent
-                ), interactionSource = interactionSource, onClick = {
-                    if (!isLongPress) {
-                        if (!isSelected) {
-                            navController.navigate(tab.destination) {
-                                launchSingleTop = true
-                                restoreState = true
-                                popUpTo(navController.graph.findStartDestination().id) {
-                                    inclusive = false
-                                    saveState = true
-                                }
-                            }
-                        } else {
-                            val tabRoot = tabContainer.findStartDestination()
-                            val isOnRoot = currentDestination == tabRoot
-                            if (!isOnRoot) {
-                                //back to root
-                                navController.popBackStack(
-                                    route = tabRoot.route!!, inclusive = false
-                                )
-                            } else if (currentDestination.hasRoute<Destination.Search>()) {
-                                appComponent.searchFieldFocus.focus()
-                            }
-                        }
+                }
+                if (tab == HomeTab.Notifications && unreadCount > 0) {
+                    Badge(
+                        modifier = Modifier
+                            .align(Alignment.TopEnd)
+                            .offset(x = (-4).dp, y = 4.dp)
+                    ) {
+                        Text(if (unreadCount > 99) "99+" else unreadCount.toString())
                     }
-                })
+                }
+            }
         }
     }
 }

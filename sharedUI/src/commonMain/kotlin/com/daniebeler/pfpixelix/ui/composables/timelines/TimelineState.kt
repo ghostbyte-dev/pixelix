@@ -7,5 +7,6 @@ data class TimelineState(
     val isLoading: Boolean = false,
     val isRefreshing: Boolean = false,
     val endReached: Boolean = false,
-    val error: String = ""
+    val error: String = "",
+    val nextId: String? = null
 )

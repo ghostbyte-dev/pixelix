@@ -2,6 +2,7 @@ package com.daniebeler.pfpixelix.ui.composables.profile
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -10,11 +11,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
@@ -35,7 +39,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
-import com.daniebeler.pfpixelix.ui.composables.followers.FollowerElementComposable
+import com.daniebeler.pfpixelix.ui.composables.custom_account.AccountListItem
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import org.jetbrains.compose.resources.stringResource
 import pixelix.app.generated.resources.Res
@@ -45,7 +49,7 @@ import pixelix.app.generated.resources.mutual_followers
 import pixelix.app.generated.resources.other
 import pixelix.app.generated.resources.others
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun MutualFollowersComposable(
     mutualFollowersState: MutualFollowersState, navController: NavController
@@ -65,57 +69,66 @@ fun MutualFollowersComposable(
         val annotatedString = buildAnnotatedString {
             withStyle(style = normalStyle) {
                 append(stringResource(Res.string.followed_by) + " ")
+                val firstFollower = mutualFollowersState.mutualFollowers.first()
                 withStyle(style = boldStyle) {
                     pushStringAnnotation(
                         tag = "account",
-                        annotation = mutualFollowersState.mutualFollowers.first().id
+                        annotation = "${firstFollower.id}|${firstFollower.username}"
                     )
-                    append(mutualFollowersState.mutualFollowers.first().username)
+                    append(firstFollower.username)
                     pop()
                 }
 
                 if (listSize == 2) {
+                    val secondFollower = mutualFollowersState.mutualFollowers[1]
+
                     append(" " + stringResource(Res.string.and) + " ")
                     withStyle(style = boldStyle) {
                         pushStringAnnotation(
                             tag = "account",
-                            annotation = mutualFollowersState.mutualFollowers[1].id
+                            annotation = "${secondFollower.id}|${secondFollower.username}"
                         )
-                        append(mutualFollowersState.mutualFollowers[1].username)
+                        append(secondFollower.username)
                         pop()
                     }
                 }
                 if (listSize > 2) {
+                    val secondFollower = mutualFollowersState.mutualFollowers[1]
+
                     append(", ")
                     withStyle(style = boldStyle) {
                         pushStringAnnotation(
                             tag = "account",
-                            annotation = mutualFollowersState.mutualFollowers[1].id
+                            annotation = "${secondFollower.id}|${secondFollower.username}"
                         )
-                        append(mutualFollowersState.mutualFollowers[1].username)
+                        append(secondFollower.username)
                         pop()
                     }
                 }
 
                 if (listSize == 3) {
+                    val thirdFollower = mutualFollowersState.mutualFollowers[2]
+
                     append(" " + stringResource(Res.string.and) + " ")
                     withStyle(style = boldStyle) {
                         pushStringAnnotation(
                             tag = "account",
-                            annotation = mutualFollowersState.mutualFollowers[2].id
+                            annotation = "${thirdFollower.id}|${thirdFollower.username}"
                         )
-                        append(mutualFollowersState.mutualFollowers[2].username)
+                        append(thirdFollower.username)
                         pop()
                     }
                 }
                 if (listSize > 3) {
+                    val thirdFollower = mutualFollowersState.mutualFollowers[2]
+
                     append(", ")
                     withStyle(style = boldStyle) {
                         pushStringAnnotation(
                             tag = "account",
-                            annotation = mutualFollowersState.mutualFollowers[2].id
+                            annotation = "${thirdFollower.id}|${thirdFollower.username}"
                         )
-                        append(mutualFollowersState.mutualFollowers[2].username)
+                        append(thirdFollower.username)
                         pop()
                     }
                     append(" " + stringResource(Res.string.and) + " ")
@@ -143,15 +156,11 @@ fun MutualFollowersComposable(
                 AsyncImage(
                     model = mutualFollowersState.mutualFollowers.first().avatar,
                     contentDescription = "",
-                    modifier = Modifier
-                        .height(36.dp)
-                        .width(36.dp)
-                        .clip(CircleShape)
-                        .border(
-                            width = 2.dp,
-                            shape = CircleShape,
-                            color = MaterialTheme.colorScheme.background
-                        )
+                    modifier = Modifier.height(36.dp).width(36.dp).clip(CircleShape).border(
+                        width = 2.dp,
+                        shape = CircleShape,
+                        color = MaterialTheme.colorScheme.background
+                    )
                 )
 
                 if (listSize > 1) {
@@ -160,15 +169,11 @@ fun MutualFollowersComposable(
                         AsyncImage(
                             model = mutualFollowersState.mutualFollowers[1].avatar,
                             contentDescription = "",
-                            modifier = Modifier
-                                .height(36.dp)
-                                .width(36.dp)
-                                .clip(CircleShape)
-                                .border(
-                                    width = 2.dp,
-                                    shape = CircleShape,
-                                    color = MaterialTheme.colorScheme.background
-                                )
+                            modifier = Modifier.height(36.dp).width(36.dp).clip(CircleShape).border(
+                                width = 2.dp,
+                                shape = CircleShape,
+                                color = MaterialTheme.colorScheme.background
+                            )
                         )
                     }
                 }
@@ -178,15 +183,11 @@ fun MutualFollowersComposable(
                         AsyncImage(
                             model = mutualFollowersState.mutualFollowers[2].avatar,
                             contentDescription = "",
-                            modifier = Modifier
-                                .height(36.dp)
-                                .width(36.dp)
-                                .clip(CircleShape)
-                                .border(
-                                    width = 2.dp,
-                                    shape = CircleShape,
-                                    color = MaterialTheme.colorScheme.background
-                                )
+                            modifier = Modifier.height(36.dp).width(36.dp).clip(CircleShape).border(
+                                width = 2.dp,
+                                shape = CircleShape,
+                                color = MaterialTheme.colorScheme.background
+                            )
                         )
                     }
                 }
@@ -194,16 +195,20 @@ fun MutualFollowersComposable(
 
             Spacer(modifier = Modifier.width(10.dp))
 
-            ClickableText(text = annotatedString,
-                style = MaterialTheme.typography.bodyMedium,
-                onClick = {
+            ClickableText(
+                text = annotatedString, style = MaterialTheme.typography.bodyMedium, onClick = {
                     annotatedString.getStringAnnotations("others", it, it).firstOrNull()?.let {
                         showBottomSheet = true
                     }
 
-                    annotatedString.getStringAnnotations("account", it, it)
-                        .firstOrNull()?.let { annotation ->
-                            navController.navigate(Destination.Profile(annotation.item))
+                    annotatedString.getStringAnnotations("account", it, it).firstOrNull()
+                        ?.let { annotation ->
+                            val parts = annotation.item.split("|")
+                            if (parts.size == 2) {
+                                val accountId = parts[0]
+                                val username = parts[1]
+                                navController.navigate(Destination.Profile(accountId, username))
+                            }
                         }
                 })
         }
@@ -216,21 +221,30 @@ fun MutualFollowersComposable(
             ) {
                 val lazyListState = rememberLazyListState()
 
-                LazyColumn(state = lazyListState, content = {
+                LazyColumn(state = lazyListState, contentPadding = PaddingValues(start = 8.dp, end = 8.dp, bottom = 8.dp), content = {
 
                     item {
                         Text(
                             text = stringResource(Res.string.mutual_followers),
                             textAlign = TextAlign.Center,
-                            modifier = Modifier.fillMaxWidth()
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
                         )
-                        HorizontalDivider(Modifier.padding(12.dp))
                     }
 
-                    items(mutualFollowersState.mutualFollowers, key = {
+                    itemsIndexed(mutualFollowersState.mutualFollowers, key = { _, it ->
                         it.id
-                    }) {
-                        FollowerElementComposable(account = it, navController)
+                    }) { index, account ->
+                        AccountListItem(
+                            account = account,
+                            relationship = null,
+                            navController = navController,
+                            index = index,
+                            count = mutualFollowersState.mutualFollowers.size,
+                            colors = ListItemDefaults.segmentedColors(
+                                containerColor = MaterialTheme.colorScheme.surface
+                            )
+                        )
                     }
 
                 })

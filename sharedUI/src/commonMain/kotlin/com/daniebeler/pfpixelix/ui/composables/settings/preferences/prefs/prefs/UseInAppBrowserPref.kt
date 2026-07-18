@@ -1,5 +1,7 @@
-package com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs
+package com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs
 
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
@@ -11,6 +13,7 @@ import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.browser
 import pixelix.app.generated.resources.use_in_app_browser
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun UseInAppBrowserPref() {
     val prefs = LocalAppComponent.current.preferences
@@ -19,8 +22,9 @@ fun UseInAppBrowserPref() {
         prefs.useInAppBrowser = state.value
     }
     SwitchPref(
-        leadingIcon =  Res.drawable.browser,
+        icon = Res.drawable.browser,
         title = stringResource(Res.string.use_in_app_browser),
+        shapes = ListItemDefaults.segmentedShapes(index = 2, count = 7),
         state = state
     )
 }

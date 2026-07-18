@@ -1,15 +1,19 @@
 package com.daniebeler.pfpixelix.ui.composables.widgets
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.staggeredgrid.LazyStaggeredGridState
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
@@ -21,6 +25,7 @@ import com.daniebeler.pfpixelix.ui.composables.profile.SwitchViewComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.ViewEnum
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyStateComposable
+import com.daniebeler.pfpixelix.ui.composables.states.EmptyStateComposableWithoutRefresh
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import org.jetbrains.compose.resources.vectorResource
@@ -58,90 +63,99 @@ fun InfinitePostsList(
     staggeredGridState: LazyStaggeredGridState = rememberLazyStaggeredGridState()
 ) {
 
-    if (error.isEmpty() || items.isNotEmpty()) {
-        CustomPullToRefreshBox(
-            isRefreshing = isRefreshing,
-            onRefresh = onRefresh,
-            animatedBox = true,
-            enabled = refreshable
-        ) {
-            BoxWithConstraints {
-                val gridContentWidth = maxWidth - 8.dp // account for horizontal padding
-                val gridColumnCount = maxOf(3, (gridContentWidth / 120.dp).toInt())
-                val columns = when (view) {
-                    ViewEnum.Grid -> StaggeredGridCells.Fixed(gridColumnCount)
-                    ViewEnum.Masonry -> StaggeredGridCells.Adaptive(150.dp)
-                    ViewEnum.Timeline -> StaggeredGridCells.Adaptive(350.dp)
-                }
+    CustomPullToRefreshBox(
+        isRefreshing = isRefreshing,
+        onRefresh = onRefresh,
+        animatedBox = true,
+        enabled = refreshable
+    ) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            if (error.isEmpty() || items.isNotEmpty() || before != null || isLoading) {
+                BoxWithConstraints {
+                    val gridContentWidth = maxWidth
 
-                LazyVerticalStaggeredGrid(
-                    columns = columns,
-                    verticalItemSpacing = 4.dp,
-                    horizontalArrangement = Arrangement.spacedBy(4.dp),
-                    modifier = Modifier.padding(horizontal = 4.dp),
-                    state = staggeredGridState,
-                    contentPadding = PaddingValues(
-                        top = contentPaddingTop, bottom = contentPaddingBottom
-                    )
-                ) {
-                    postsCount?.let {
-                        item(span = StaggeredGridItemSpan.FullLine) {
+                    val columnCount = when (view) {
+                        ViewEnum.Grid -> maxOf(3, (maxWidth / 120.dp).toInt())
+                        ViewEnum.Masonry -> maxOf(2, (maxWidth / 150.dp).toInt())
+                        ViewEnum.LargeMasonry -> maxOf(1, (maxWidth / 350.dp).toInt())
+                        ViewEnum.Timeline -> maxOf(1, (maxWidth / 350.dp).toInt())
+                    }
+
+                    val columns = StaggeredGridCells.Fixed(columnCount)
+
+                    LazyVerticalStaggeredGrid(
+                        modifier = Modifier.fillMaxSize(),
+                        columns = columns,
+                        verticalItemSpacing = 4.dp,
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                        state = staggeredGridState,
+                        contentPadding = PaddingValues(
+                            top = contentPaddingTop, bottom = contentPaddingBottom
+                        )
+                    ) {
+                        if (before != null) {
+                            item(key = "before_list_key", span = StaggeredGridItemSpan.FullLine) {
+                                before()
+                            }
+                        }
+
+                        item(key = "switch_view_key", span = StaggeredGridItemSpan.FullLine) {
                             SwitchViewComposable(
                                 postsCount = postsCount,
                                 viewType = view,
-                                onViewChange = { changeView(it) }
-                            )
+                                onViewChange = { changeView(it) })
                         }
-                    }
-                    if (before != null) {
-                        item(span = StaggeredGridItemSpan.FullLine) {
-                            before()
-                        }
-                    }
-                    postsWrapperComposable(
-                        posts = items,
-                        isLoading = isLoading,
-                        isRefreshing = isRefreshing,
-                        endReached = endReached,
-                        view = view,
-                        postGetsDeleted = { itemGetsDeleted(it) },
-                        updatePost = { postGetsUpdated(it) },
-                        isFirstImageLarge = isFirstItemLarge,
-                        gridColumnCount = gridColumnCount,
-                        gridContentWidth = gridContentWidth,
-                        navController = navController,
-                        edit = edit, editRemove = editRemove,
-                        onClick = onClick
-                    )
-                    if (after != null) {
-                        item(span = StaggeredGridItemSpan.FullLine) {
-                            after()
-                        }
-                    }
 
+                        postsWrapperComposable(
+                            posts = items,
+                            isLoading = isLoading,
+                            isRefreshing = isRefreshing,
+                            endReached = endReached,
+                            view = view,
+                            postGetsDeleted = { itemGetsDeleted(it) },
+                            updatePost = { postGetsUpdated(it) },
+                            isFirstImageLarge = isFirstItemLarge,
+                            gridColumnCount = columnCount,
+                            gridContentWidth = gridContentWidth,
+                            navController = navController,
+                            edit = edit,
+                            editRemove = editRemove,
+                            onClick = onClick
+                        )
+
+                        if (items.isEmpty() && !isLoading && error.isEmpty()) {
+                            item(key = "empty_state_key", span = StaggeredGridItemSpan.FullLine) {
+                                EmptyStateComposableWithoutRefresh(
+                                    emptyMessage, modifier = Modifier.height(300.dp)
+                                )
+                            }
+                        }
+
+                        if (after != null) {
+                            item(key = "after_list_key", span = StaggeredGridItemSpan.FullLine) {
+                                after()
+                            }
+                        }
+                    }
+                }
+                ToTopButton(staggeredGridState) { onRefresh() }
+            } else {
+                if (isLoading) {
+                    LoadingComposable()
+                } else if (items.isEmpty() && error.isEmpty()) {
+                    EmptyStateComposableWithoutRefresh(
+                        emptyMessage
+                    )
+                } else if (error.isNotEmpty() && items.isEmpty()) {
+                    ErrorComposable(error, onRefresh = onRefresh, isRefreshing = isRefreshing)
                 }
             }
-            ToTopButton(staggeredGridState) { onRefresh() }
         }
-    }
 
-    InfiniteStaggeredGridHandler(
-        lazyStaggeredGridState = staggeredGridState,
-        itemCount = items.size
-    ) {
-        getItemsPaginated()
-    }
-
-    if (items.isEmpty() && !isLoading && error.isEmpty()) {
-        EmptyStateComposable(emptyMessage, isRefreshing = isRefreshing, onRefresh = onRefresh)
-    }
-
-    if (!isRefreshing && items.isEmpty() && isLoading) {
-        LoadingComposable()
-    }
-
-
-    if (error.isNotEmpty() && items.isEmpty()) {
-        ErrorComposable(error, onRefresh = onRefresh, isRefreshing = isRefreshing)
+        InfiniteStaggeredGridHandler(
+            lazyStaggeredGridState = staggeredGridState, itemCount = items.size
+        ) {
+            getItemsPaginated()
+        }
     }
 }

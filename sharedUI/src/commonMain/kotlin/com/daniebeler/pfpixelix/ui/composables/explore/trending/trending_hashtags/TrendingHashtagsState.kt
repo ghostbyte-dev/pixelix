@@ -6,5 +6,7 @@ data class TrendingHashtagsState(
     val isLoading: Boolean = false,
     val isRefreshing: Boolean = false,
     val trendingHashtags: List<Tag> = emptyList(),
-    val error: String = ""
+    val error: String = "",
+    val nextId: String? = null,
+    val endReached: Boolean = false
 )

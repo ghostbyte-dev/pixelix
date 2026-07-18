@@ -1,6 +1,7 @@
 package com.daniebeler.pfpixelix.widget.notifications.models
 
 import coil3.Bitmap
+import com.daniebeler.pfpixelix.domain.model.NotificationType
 import com.daniebeler.pfpixelix.widget.BitmapSerializer
 import kotlinx.serialization.Serializable
 
@@ -20,5 +21,5 @@ data class NotificationStoreItem(
     val accountId: String,
     val accountUsername: String,
     val timeAgo: String,
-    val type: String
+    val type: NotificationType
 )

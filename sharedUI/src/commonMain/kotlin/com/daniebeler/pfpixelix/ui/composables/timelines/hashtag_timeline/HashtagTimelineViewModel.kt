@@ -8,10 +8,10 @@ import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.model.RelatedHashtag
-import com.daniebeler.pfpixelix.domain.repository.PixelfedApi
-import com.daniebeler.pfpixelix.domain.service.hashtag.SearchService
+import com.daniebeler.pfpixelix.domain.repository.pixelfed.PixelfedApi
+import com.daniebeler.pfpixelix.domain.service.general.ExploreService
+import com.daniebeler.pfpixelix.domain.service.general.TimelineService
 import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
-import com.daniebeler.pfpixelix.domain.service.timeline.TimelineService
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.ui.composables.profile.ViewEnum
 import com.daniebeler.pfpixelix.ui.composables.timelines.TimelineState
@@ -21,7 +21,7 @@ import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 
 class HashtagTimelineViewModel @Inject constructor(
-    private val searchService: SearchService,
+    private val exploreService: ExploreService,
     private val timelineService: TimelineService,
     private val prefs: UserPreferences
 ) : ViewModel() {
@@ -29,10 +29,6 @@ class HashtagTimelineViewModel @Inject constructor(
     var timelineState by mutableStateOf(TimelineState())
     var hashtagState by mutableStateOf(HashtagState())
     var view by mutableStateOf(ViewEnum.Grid)
-
-    var relatedHashtags by mutableStateOf<List<RelatedHashtag>>(emptyList())
-
-
 
     init {
         viewModelScope.launch {
@@ -62,9 +58,10 @@ class HashtagTimelineViewModel @Inject constructor(
             timelineState = when (result) {
                 is Resource.Success -> {
                     val endReached =
-                        (result.data?.size ?: 0) < PixelfedApi.HASHTAG_TIMELINE_POSTS_LIMIT
+                        (result.data.data.size) < PixelfedApi.HASHTAG_TIMELINE_POSTS_LIMIT
                     TimelineState(
-                        posts = result.data ?: emptyList(),
+                        posts = result.data.data,
+                        nextId = result.data.next,
                         error = "",
                         isLoading = false,
                         isRefreshing = false,
@@ -75,7 +72,8 @@ class HashtagTimelineViewModel @Inject constructor(
                 is Resource.Error -> {
                     TimelineState(
                         posts = timelineState.posts,
-                        error = result.message ?: "An unexpected error occurred",
+                        nextId = timelineState.nextId,
+                        error = result.message,
                         isLoading = false,
                         isRefreshing = false
                     )
@@ -84,6 +82,7 @@ class HashtagTimelineViewModel @Inject constructor(
                 is Resource.Loading -> {
                     TimelineState(
                         posts = timelineState.posts,
+                        nextId = timelineState.nextId,
                         error = "",
                         isLoading = true,
                         isRefreshing = refreshing
@@ -101,10 +100,10 @@ class HashtagTimelineViewModel @Inject constructor(
             ).onEach { result ->
                 timelineState = when (result) {
                     is Resource.Success -> {
-                        val endReached = (result.data?.size ?: 0) == 0
+                        val endReached = (result.data.data.size ?: 0) == 0
                         TimelineState(
-                            posts = timelineState.posts + (result.data
-                                ?: emptyList()),
+                            posts = timelineState.posts + (result.data.data),
+                            nextId = result.data.next,
                             error = "",
                             isLoading = false,
                             isRefreshing = false,
@@ -115,6 +114,7 @@ class HashtagTimelineViewModel @Inject constructor(
                     is Resource.Error -> {
                         TimelineState(
                             posts = timelineState.posts,
+                            nextId = timelineState.nextId,
                             error = result.message ?: "An unexpected error occurred",
                             isLoading = false,
                             isRefreshing = false
@@ -124,6 +124,7 @@ class HashtagTimelineViewModel @Inject constructor(
                     is Resource.Loading -> {
                         TimelineState(
                             posts = timelineState.posts,
+                            nextId = timelineState.nextId,
                             error = "",
                             isLoading = true,
                             isRefreshing = false
@@ -134,24 +135,13 @@ class HashtagTimelineViewModel @Inject constructor(
         }
     }
 
-    fun getRelatedHashtags(hashtag: String) {
-        searchService.getRelatedHashtags(hashtag).onEach { result ->
-            if (result is Resource.Success) {
-                relatedHashtags = result.data
-                Logger.v("juhuu" + result.data)
-            } else {
-                Logger.v("fief" + result.message)
-            }
-        }.launchIn(viewModelScope)
-    }
-
     fun postGetsDeleted(postId: String) {
         timelineState =
             timelineState.copy(posts = timelineState.posts.filter { post -> post.id != postId })
     }
 
     fun getHashtagInfo(hashtag: String) {
-        searchService.getHashtag(hashtag).onEach { result ->
+        exploreService.getHashtag(hashtag).onEach { result ->
             hashtagState = when (result) {
                 is Resource.Success -> {
                     HashtagState(hashtag = result.data)
@@ -169,12 +159,12 @@ class HashtagTimelineViewModel @Inject constructor(
     }
 
     fun followHashtag(hashtag: String) {
-        searchService.followHashtag(hashtag).onEach { result ->
+        exploreService.followHashtag(hashtag).onEach { result ->
             hashtagState = when (result) {
                 is Resource.Success -> {
                     val newHashtag = hashtagState.hashtag
                     if (newHashtag != null) {
-                        HashtagState(hashtag = newHashtag.copy(following = true))
+                        HashtagState(hashtag = newHashtag.copy(following = true), isLoading = false)
                     } else {
                         HashtagState(hashtag = result.data)
                     }
@@ -192,19 +182,19 @@ class HashtagTimelineViewModel @Inject constructor(
     }
 
     fun unfollowHashtag(hashtag: String) {
-        searchService.unfollowHashtag(hashtag).onEach { result ->
+        exploreService.unfollowHashtag(hashtag).onEach { result ->
             hashtagState = when (result) {
                 is Resource.Success -> {
                     val newHashtag = hashtagState.hashtag
                     if (newHashtag != null) {
-                        HashtagState(hashtag = newHashtag.copy(following = false))
+                        HashtagState(hashtag = newHashtag.copy(following = false), isLoading = false)
                     } else {
-                        HashtagState(hashtag = result.data)
+                        hashtagState
                     }
                 }
 
                 is Resource.Error -> {
-                    HashtagState(error = result.message ?: "An unexpected error occurred")
+                    HashtagState(error = result.message)
                 }
 
                 is Resource.Loading -> {

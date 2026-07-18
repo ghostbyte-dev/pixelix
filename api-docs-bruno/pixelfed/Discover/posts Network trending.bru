@@ -1,0 +1,11 @@
+meta {
+  name: posts Network trending
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{baseUrl}}/api/v1.1/discover/posts/network/trending
+  body: none
+  auth: inherit
+}

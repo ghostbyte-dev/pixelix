@@ -31,7 +31,6 @@
         <item quantity="one">Post</item>
         <item quantity="other">Post</item>
     </plurals>
-    <string name="posts">Post</string>
     <string name="hashtags">Hashtag</string>
     <string name="reblogged_your_post">ha ricondiviso il tuo post</string>
     <string name="liked_your_post">ha messo mi piace al tuo post</string>

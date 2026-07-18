@@ -4,9 +4,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
-import com.daniebeler.pfpixelix.domain.service.account.AccountService
+import com.daniebeler.pfpixelix.domain.service.general.AccountService
+import com.daniebeler.pfpixelix.domain.service.general.TimelineService
 import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
-import com.daniebeler.pfpixelix.domain.service.timeline.TimelineService
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.ui.composables.widgets.PaginatedPostsViewModel
 import kotlinx.coroutines.flow.launchIn
@@ -18,7 +18,7 @@ class HomeTimelineViewModel @Inject constructor(
     private val timelineService: TimelineService,
     private val accountService: AccountService,
     private val userPreferences: UserPreferences
-) : PaginatedPostsViewModel() {
+) : PaginatedPostsViewModel(userPreferences) {
 
     private var enableReblogs: Boolean = false
     var showTimelineHelp by mutableStateOf(false)
@@ -36,7 +36,7 @@ class HomeTimelineViewModel @Inject constructor(
         accountService.getAccountSettings().onEach { result ->
             when (result) {
                 is Resource.Success -> {
-                    enableReblogs = result.data.enableReblogs
+                    enableReblogs = result.data.enableReblogs ?: false
                     loadItems(false)
                 }
                 is Resource.Error -> loadItems(false)

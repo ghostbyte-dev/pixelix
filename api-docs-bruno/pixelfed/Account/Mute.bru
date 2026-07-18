@@ -1,0 +1,15 @@
+meta {
+  name: Mute
+  type: http
+  seq: 12
+}
+
+post {
+  url: {{baseUrl}}/api/v1/accounts/{{accountId}}/mute
+  body: none
+  auth: inherit
+}
+
+assert {
+  res.body.muting: eq true
+}

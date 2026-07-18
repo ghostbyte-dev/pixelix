@@ -1,0 +1,15 @@
+meta {
+  name: Unmute
+  type: http
+  seq: 13
+}
+
+post {
+  url: {{baseUrl}}/api/v1/accounts/{{accountId}}/unmute
+  body: none
+  auth: inherit
+}
+
+assert {
+  res.body.muting: eq false
+}

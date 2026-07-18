@@ -1,0 +1,11 @@
+meta {
+  name: Trending Accounts
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/api/v1.1/discover/accounts/popular
+  body: none
+  auth: inherit
+}

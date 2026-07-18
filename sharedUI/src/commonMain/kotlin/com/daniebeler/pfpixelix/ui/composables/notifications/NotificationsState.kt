@@ -7,5 +7,6 @@ data class NotificationsState(
     val isRefreshing: Boolean = false,
     val endReached: Boolean = false,
     val notifications: List<Notification> = emptyList(),
-    val error: String = ""
+    val error: String = "",
+    val nextId: String? = null
 )

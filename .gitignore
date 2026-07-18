@@ -16,3 +16,5 @@ xcuserdata/
 *.jks
 *.gpg
 /iosApp/iosApp/Assets.xcassets/AppIcon.appiconset/iosApp 2025-03-27 12-51-49/
+node_modules
+package*.json

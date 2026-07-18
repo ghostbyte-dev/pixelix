@@ -1,0 +1,11 @@
+meta {
+  name: Favourited by
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{baseUrl}}/api/v1/statuses/{{postId}}/favourited_by
+  body: none
+  auth: inherit
+}

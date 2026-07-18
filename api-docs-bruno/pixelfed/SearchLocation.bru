@@ -1,0 +1,17 @@
+meta {
+  name: SearchLocation
+  type: http
+  seq: 9
+}
+
+get {
+  url: {{baseUrl}}/api/v1.1/compose/search/location?q=lustenau
+  body: none
+  auth: inherit
+}
+
+params:query {
+  q: lustenau
+  ~type: accounts
+  ~limit: 5
+}

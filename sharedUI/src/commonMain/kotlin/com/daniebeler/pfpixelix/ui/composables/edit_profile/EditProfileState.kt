@@ -1,5 +1,6 @@
 package com.daniebeler.pfpixelix.ui.composables.edit_profile
 
+import androidx.compose.ui.graphics.ImageBitmap
 import com.daniebeler.pfpixelix.domain.model.Account
 
 data class EditProfileState(

@@ -1,7 +1,9 @@
-package com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs
+package com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs
 
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -14,11 +16,9 @@ import com.daniebeler.pfpixelix.domain.model.AppThemeMode.FOLLOW_SYSTEM
 import com.daniebeler.pfpixelix.domain.model.AppThemeMode.LIGHT
 import com.daniebeler.pfpixelix.domain.service.platform.PlatformFeatures
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.basic.ExpandOptionsPref
-import com.daniebeler.pfpixelix.ui.composables.settings.preferences.basic.OptionShapes
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.basic.ValueOption
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.basic.imageVectorIconBlock
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.basic.radioButtonBlock
-import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.CustomAccentColorPref
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
@@ -33,6 +33,7 @@ import pixelix.app.generated.resources.theme_dark
 import pixelix.app.generated.resources.theme_light
 import pixelix.app.generated.resources.theme_system
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ThemePref() {
     val pref = LocalAppComponent.current.preferences
@@ -45,9 +46,11 @@ fun ThemePref() {
     ExpandOptionsPref(
         leadingIcon = Res.drawable.theme,
         title = stringResource(Res.string.app_theme),
+        index = 0,
+        count = 2
     ) {
         ValueOption(
-            shape = OptionShapes.indexOfShape(0, 3),
+            shapes = ListItemDefaults.segmentedShapes(index = 2, count = 4),
             leadingIcon = imageVectorIconBlock(
                 imageVector = vectorResource(Res.drawable.device_theme),
                 contentDescription = stringResource(Res.string.theme_system)
@@ -58,7 +61,7 @@ fun ThemePref() {
             onOptionClick = onOptionClick,
         )
         ValueOption(
-            shape = OptionShapes.indexOfShape(1, 3),
+            shapes = ListItemDefaults.segmentedShapes(index = 2, count = 4),
             leadingIcon = imageVectorIconBlock(
                 imageVector = vectorResource(Res.drawable.light_theme),
                 contentDescription = stringResource(Res.string.theme_light)
@@ -69,7 +72,7 @@ fun ThemePref() {
             onOptionClick = onOptionClick,
         )
         ValueOption(
-            shape = OptionShapes.indexOfShape(2, 3),
+            shapes = ListItemDefaults.segmentedShapes(index = 2, count = 4),
             leadingIcon = imageVectorIconBlock(
                 imageVector = vectorResource(Res.drawable.dark_theme),
                 contentDescription = stringResource(Res.string.theme_dark)
@@ -80,7 +83,7 @@ fun ThemePref() {
             onOptionClick = onOptionClick,
         )
         ValueOption(
-            shape = OptionShapes.indexOfShape(2, 3),
+            shapes = ListItemDefaults.segmentedShapes(index = 2, count = 4),
             leadingIcon = imageVectorIconBlock(
                 imageVector = vectorResource(Res.drawable.amoled_theme),
                 contentDescription = stringResource(Res.string.amoled)
@@ -94,7 +97,7 @@ fun ThemePref() {
         if (PlatformFeatures.customAccentColors) {
             Spacer(modifier = Modifier.height(1.dp))
 
-             CustomAccentColorPref()
+            CustomAccentColorPref()
         }
     }
 }

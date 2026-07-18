@@ -1,17 +1,40 @@
 package com.daniebeler.pfpixelix.domain.model
 
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
-
-@Serializable
 data class Instance(
-    @SerialName("uri") val domain: String,
-    @SerialName("rules") val rules: List<Rule>,
-    @SerialName("short_description") val shortDescription: String,
-    @SerialName("description") val description: String,
-    @SerialName("thumbnail") val thumbnailUrl: String,
-    @SerialName("contact_account") val admin: Account? = null,
-    @SerialName("stats") val stats: InstanceStats,
-    @SerialName("version") val version: String,
-    @SerialName("configuration") val configuration: Configuration
+    val domain: String,
+    val rules: List<Rule>,
+    val shortDescription: String,
+    val description: String,
+    val thumbnailUrl: String,
+    val admin: Account? = null,
+    val stats: InstanceStats,
+    val version: String,
+    val configuration: Configuration
+)
+
+data class Rule(
+    val id: String,
+    val text: String
+)
+
+data class InstanceStats(
+    val userCount: Int,
+    val statusCount: Int,
+    val domainCount: Int
+)
+
+data class Configuration(
+    val mediaAttachmentConfig: MediaAttachmentConfiguration,
+    val statusConfig: StatusConfiguration
+)
+
+data class MediaAttachmentConfiguration(
+    val supportedMimeTypes: List<String>,
+    val imageSizeLimit: Long,
+    val videoSizeLimit: Long?
+)
+
+data class StatusConfiguration(
+    val maxMediaAttachments: Int,
+    val maxCharacters: Int?
 )

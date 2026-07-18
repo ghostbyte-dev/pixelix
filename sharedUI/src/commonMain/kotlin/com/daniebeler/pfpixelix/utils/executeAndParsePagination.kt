@@ -18,11 +18,14 @@ import kotlin.coroutines.resumeWithException
  *
  * @return a [PaginatedResponse] with the data and the next page
  */
-suspend fun <T> Call<T>.executeAndParsePagination(
+suspend fun <T, R> Call<T>.executeAndParsePagination(
     directionNext: Boolean,
-    paginationName: String
-): PaginatedResponse<T> {
-    val (response, data) = this.executeWithResponse()
+    paginationName: String,
+    transform: (T) -> R
+): PaginatedResponse<R> {
+    val (response, dtoData) = this.executeWithResponse()
+    val data = transform(dtoData)
+
     val linkHeader = response.headers["link"] ?: ""
     val links = linkHeader.split(",")
     val direction = if (directionNext) "next" else "prev"
@@ -31,7 +34,7 @@ suspend fun <T> Call<T>.executeAndParsePagination(
     val matchResult = regex.find(nextLink)
     val next = matchResult?.groupValues?.get(1)
 
-    return PaginatedResponse<T>(data, next)
+    return PaginatedResponse(data, next)
 }
 
 private suspend fun <T> Call<T>.executeWithResponse() = suspendCancellableCoroutine { cont ->

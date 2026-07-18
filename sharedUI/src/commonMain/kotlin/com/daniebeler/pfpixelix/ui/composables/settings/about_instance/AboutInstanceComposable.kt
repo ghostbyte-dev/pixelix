@@ -14,10 +14,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SegmentedListItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -29,10 +35,13 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.di.injectViewModel
+import com.daniebeler.pfpixelix.domain.service.general.BackendType
+import com.daniebeler.pfpixelix.ui.composables.custom_account.AccountListItem
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pfpixelix.ui.composables.widgets.ScreenScaffold
 import com.daniebeler.pfpixelix.ui.navigation.Destination
+import com.daniebeler.pfpixelix.utils.DomainFormat
 import com.daniebeler.pfpixelix.utils.StringFormat
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -47,7 +56,7 @@ import pixelix.app.generated.resources.stats
 import pixelix.app.generated.resources.terms_of_use
 import pixelix.app.generated.resources.users
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AboutInstanceComposable(
     navController: NavController,
@@ -56,7 +65,14 @@ fun AboutInstanceComposable(
 
     val lazyListState = rememberLazyListState()
 
-    ScreenScaffold(title = viewModel.ownInstanceDomain, navController = navController) {
+    val colors =
+        ListItemDefaults.colors(disabledContainerColor = MaterialTheme.colorScheme.surfaceContainer)
+
+
+    ScreenScaffold(
+        title = DomainFormat.formatDomain(viewModel.ownInstanceDomain),
+        navController = navController
+    ) {
         LazyColumn(
             state = lazyListState
         ) {
@@ -72,10 +88,16 @@ fun AboutInstanceComposable(
                         modifier = Modifier.fillMaxWidth()
                     )
                     Spacer(modifier = Modifier.height(18.dp))
-                    Text(
-                        text = viewModel.instanceState.instance?.description ?: "",
-                        Modifier.padding(12.dp, 0.dp)
-                    )
+                    viewModel.instanceState.instance?.let {
+                        Text(
+                            text = if (it.description.length > 100) {
+                                it.shortDescription
+                            } else {
+                                it.description
+                            }, Modifier.padding(12.dp, 0.dp)
+                        )
+                    }
+
                     Spacer(modifier = Modifier.height(18.dp))
 
                     Text(
@@ -118,70 +140,65 @@ fun AboutInstanceComposable(
                             modifier = Modifier.padding(12.dp, 0.dp)
                         )
 
-                        Row(
-                            modifier = Modifier.clickable {
-                                navController.navigate(Destination.Profile(account.id))
-                            }.padding(horizontal = 12.dp, vertical = 8.dp).fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            AsyncImage(
-                                model = account.avatar,
-                                error = painterResource(Res.drawable.default_avatar),
-                                contentDescription = "",
-                                modifier = Modifier.height(46.dp).width(46.dp).clip(CircleShape)
-                            )
-                            Spacer(modifier = Modifier.width(10.dp))
-                            Column {
-                                if (account.displayname != null) {
-                                    Text(text = account.displayname)
-                                }
-                                Text(text = "@${account.username}")
-                            }
+                        Box(Modifier.padding(8.dp)) {
+                            AccountListItem(
+                                account = account,
+                                relationship = null,
+                                navController = navController,
+                                index = 0,
+                                count = 1,
+                                onClick = {
+                                    navController.navigate(
+                                        Destination.Profile(
+                                            account.id, account.username
+                                        )
+                                    )
+                                })
                         }
                     }
 
                     Spacer(modifier = Modifier.height(18.dp))
 
                     Text(
-                        text = stringResource(Res.string.privacy_policy),
+                        text = "Legal",
                         fontWeight = FontWeight.Bold,
                         fontSize = 18.sp,
-                        modifier = Modifier.padding(12.dp, 0.dp)
+                        modifier = Modifier.padding(start = 12.dp, bottom = 8.dp)
                     )
 
-                    Text(
-                        text = "https://" + viewModel.instanceState.instance?.domain + "/site/privacy",
-                        color = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.padding(12.dp, 0.dp).clickable {
-                            if (viewModel.instanceState.instance != null) {
-                                viewModel.openUrl(
-                                    url = "https://" + viewModel.instanceState.instance!!.domain + "/site/privacy"
-                                )
-                            }
+                    val privacyPath =
+                        if (viewModel.backendType == BackendType.PIXELFED) "/site/privacy" else "/privacy"
+                    val termsPath =
+                        if (viewModel.backendType == BackendType.PIXELFED) "/site/terms" else "/terms"
+                    val domain =
+                        DomainFormat.formatDomain(viewModel.instanceState.instance?.domain ?: "")
+
+                    val linkColors =
+                        ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.surfaceContainer)
+
+                    SegmentedListItem(
+                        onClick = { viewModel.instanceState.instance?.let { viewModel.openUrl("https://$domain$privacyPath") } },
+                        colors = linkColors,
+                        shapes = ListItemDefaults.segmentedShapes(index = 0, count = 2),
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 1.dp),
+                        content = {
+                            Text(
+                                text = stringResource(Res.string.privacy_policy),
+                                color = MaterialTheme.colorScheme.primary
+                            )
                         })
 
-
-                    Spacer(modifier = Modifier.height(18.dp))
-
-
-                    Text(
-                        text = stringResource(Res.string.terms_of_use),
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp,
-                        modifier = Modifier.padding(12.dp, 0.dp)
-                    )
-
-                    Text(
-                        text = "https://" + viewModel.instanceState.instance?.domain + "/site/terms",
-                        color = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.padding(12.dp, 0.dp).clickable {
-                            if (viewModel.instanceState.instance != null) {
-                                viewModel.openUrl(
-                                    url = "https://" + viewModel.instanceState.instance!!.domain + "/site/terms"
-                                )
-                            }
+                    SegmentedListItem(
+                        onClick = { viewModel.instanceState.instance?.let { viewModel.openUrl("https://$domain$termsPath") } },
+                        colors = linkColors,
+                        shapes = ListItemDefaults.segmentedShapes(index = 1, count = 2),
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 1.dp),
+                        content = {
+                            Text(
+                                text = stringResource(Res.string.terms_of_use),
+                                color = MaterialTheme.colorScheme.primary
+                            )
                         })
-
 
                     Spacer(modifier = Modifier.height(18.dp))
 
@@ -189,22 +206,38 @@ fun AboutInstanceComposable(
                         text = stringResource(Res.string.rules),
                         fontWeight = FontWeight.Bold,
                         fontSize = 18.sp,
-                        modifier = Modifier.padding(12.dp, 0.dp)
+                        modifier = Modifier.padding(start = 12.dp, bottom = 8.dp)
                     )
                 }
 
-                items(viewModel.instanceState.instance?.rules ?: emptyList()) {
-                    Row(modifier = Modifier.padding(vertical = 12.dp, horizontal = 12.dp)) {
-                        Text(
-                            text = it.id,
-                            fontSize = 24.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                        Spacer(modifier = Modifier.width(18.dp))
-                        Text(text = it.text)
-                    }
+                val rules = viewModel.instanceState.instance?.rules ?: emptyList()
+
+                itemsIndexed(rules) { index, rule ->
+                    SegmentedListItem(
+                        enabled = false,
+                        onClick = {},
+                        colors = colors,
+                        shapes = ListItemDefaults.segmentedShapes(
+                            index = index, count = rules.size
+                        ),
+                        modifier = Modifier.padding(8.dp, 1.dp),
+                        leadingContent = {
+                            Text(
+                                text = rule.id,
+                                style = MaterialTheme.typography.headlineSmall,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.primary,
+                            )
+                        },
+                        content = {
+                            Text(
+                                text = rule.text,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurface,
+                            )
+                        })
                 }
+
 
                 item {
                     Spacer(modifier = Modifier.height(18.dp))
@@ -232,7 +265,10 @@ fun AboutInstanceComposable(
         }
 
         if (viewModel.instanceState.error.isNotBlank()) {
-            ErrorComposable(message = viewModel.instanceState.error, modifier = Modifier.fillMaxSize().padding(36.dp, 20.dp))
+            ErrorComposable(
+                message = viewModel.instanceState.error,
+                modifier = Modifier.fillMaxSize().padding(36.dp, 20.dp)
+            )
         }
     }
 }

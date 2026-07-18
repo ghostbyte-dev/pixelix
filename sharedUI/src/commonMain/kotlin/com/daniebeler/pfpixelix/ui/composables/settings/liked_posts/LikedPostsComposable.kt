@@ -72,7 +72,7 @@ fun LikedPostsComposable(
                 isRefreshing = viewModel.likedPostsState.isRefreshing,
                 error = viewModel.likedPostsState.error,
                 emptyMessage = EmptyState(
-                    icon = vectorResource(Res.drawable.heart), heading = "Empty Collection"
+                    icon = vectorResource(Res.drawable.heart), heading = "No liked posts"
                 ),
                 endReached = viewModel.likedPostsState.endReached,
                 itemGetsDeleted = {},

@@ -1,5 +1,7 @@
 package com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs
 
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
@@ -11,6 +13,7 @@ import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.swipe_gesture
 import pixelix.app.generated.resources.swipe_between_tabs
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun SwipeBetweenTimelines() {
     val prefs = LocalAppComponent.current.preferences
@@ -19,8 +22,9 @@ fun SwipeBetweenTimelines() {
         prefs.enableSwipeBetweenTabs = state.value
     }
     SwitchPref(
-        leadingIcon =  Res.drawable.swipe_gesture,
+        icon = Res.drawable.swipe_gesture,
         title = stringResource(Res.string.swipe_between_tabs),
+        shapes = ListItemDefaults.segmentedShapes(index = 6, count = 7),
         state = state
     )
 }

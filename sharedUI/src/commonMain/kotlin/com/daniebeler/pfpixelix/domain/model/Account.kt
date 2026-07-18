@@ -1,28 +1,37 @@
 package com.daniebeler.pfpixelix.domain.model
 
-import com.daniebeler.pfpixelix.domain.repository.serializers.HtmlAsTextSerializer
-import com.daniebeler.pfpixelix.domain.service.session.Credentials
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
-
-@Serializable
 data class Account(
-    @SerialName("id") val id: String = "",
-    @SerialName("username") val username: String = "",
-    @SerialName("acct") val acct: String = "",
-    @SerialName("display_name") val displayname: String? = null,
-    @SerialName("avatar") val avatar: String = "",
-    @SerialName("followers_count")val followersCount: Int = 0,
-    @SerialName("following_count")val followingCount: Int = 0,
-    @SerialName("statuses_count") val postsCount: Int = 0,
-    @SerialName("website") val website: String = "",
-    @Serializable(with = HtmlAsTextSerializer::class) @SerialName("note") val note: String = "",
-    @SerialName("url") val url: String = "",
-    @SerialName("locked") val locked: Boolean = false,
-    @SerialName("created_at") val createdAt: String = "",
-    @SerialName("is_admin") val isAdmin: Boolean = false,
-    @SerialName("pronouns") val pronouns: List<String> = emptyList()
-)
+    override val id: String = "",
+    val username: String = "",
+    val acct: String = "",
+    val displayname: String? = null,
+    val avatar: String? = null,
+    val followersCount: Int = 0,
+    val followingCount: Int = 0,
+    val postsCount: Int = 0,
+    val website: String = "",
+    val note: String = "",
+    val url: String = "",
+    val locked: Boolean = false,
+    val createdAt: String = "",
+    val isAdmin: Boolean = false,
+    val pronouns: List<String> = emptyList(),
+    val headerUrl: String? = null,
+    val fields: List<Field> = emptyList(),
+    val isSupporterFlagEnabled: Boolean = false,
+    val manuallyApprovesFollowers: Boolean? = null,
+    val includeProfilePageInSearchEngines: Boolean? = null,
+    val includePublicPostsInSearchEngines: Boolean? = null
+): Identifiable {
+    companion object {
+        fun unknown() = Account(
+            id = "unknown",
+            username = "unknown",
+            acct = "unknown",
+            displayname = "Unknown Account"
+        )
+    }
+}
 
 fun credentialsToAccount(credentials: Credentials) = Account(
     username = credentials.username,
@@ -40,4 +49,12 @@ fun credentialsToAccount(credentials: Credentials) = Account(
     followingCount = 0,
     website = "",
     pronouns = emptyList()
+)
+
+data class Field(
+    val id: String?,
+    val key: String,
+    val value: String,
+    val valueHtml: String?,
+    val isVerified: Boolean
 )

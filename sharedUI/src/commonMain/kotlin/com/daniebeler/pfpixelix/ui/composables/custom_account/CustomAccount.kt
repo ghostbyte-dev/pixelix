@@ -9,9 +9,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.ListItemColors
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SegmentedListItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -38,6 +42,107 @@ import pixelix.app.generated.resources.default_avatar
 import pixelix.app.generated.resources.follower
 import pixelix.app.generated.resources.trash
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+fun AccountListItem(
+    account: Account,
+    relationship: Relationship?,
+    navController: NavController,
+    index: Int,
+    count: Int,
+    showFollowers: Boolean = true,
+    onClick: () -> Unit = {},
+    removeSavedSearch: (() -> Unit)? = null,
+    colors: ListItemColors = ListItemDefaults.segmentedColors(
+        containerColor = MaterialTheme.colorScheme.surfaceContainerLow
+    ),
+    viewModel: CustomAccountViewModel = injectViewModel(key = "custom-account" + account.id) { customAccountViewModel }
+) {
+    SegmentedListItem(
+        onClick = {
+            onClick()
+            navController.navigate(Destination.Profile(account.id, account.username))
+        },
+        shapes = ListItemDefaults.segmentedShapes(index = index, count = count),
+        modifier = Modifier.fillMaxWidth().padding(vertical = 1.dp),
+        colors = colors,
+        leadingContent = {
+            AsyncImage(
+                model = account.avatar,
+                error = painterResource(Res.drawable.default_avatar),
+                contentDescription = null,
+                modifier = Modifier.height(46.dp).width(46.dp).clip(CircleShape)
+            )
+        },
+        trailingContent = {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                FollowButton(
+                    firstLoaded = relationship != null,
+                    isLoading = viewModel.relationshipState.isLoading,
+                    isFollowing = if (viewModel.gotUpdatedRelationship) {
+                        viewModel.relationshipState.accountRelationship?.following ?: false
+                    } else {
+                        relationship?.following ?: false
+                    },
+                    onFollowClick = { viewModel.followAccount(account.id, account.username) },
+                    onUnFollowClick = { viewModel.unfollowAccount(account.id, account.username) },
+                    iconButton = true
+                )
+
+                if (removeSavedSearch != null) {
+                    IconButton(
+                        onClick = removeSavedSearch, modifier = Modifier.height(22.dp).width(22.dp)
+                    ) {
+                        Icon(
+                            imageVector = vectorResource(Res.drawable.close),
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                }
+            }
+        },
+        supportingContent = {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = account.username,
+                    fontSize = 12.sp,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                val domain = account.url.substringAfter("https://").substringBefore("/")
+                Text(
+                    text = " \u2022 $domain",
+                    color = MaterialTheme.colorScheme.secondary,
+                    fontSize = 12.sp,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
+        },
+        content = {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = account.displayname ?: account.username,
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                if (showFollowers && account.displayname != null) {
+                    Text(
+                        text = " \u2022 ${StringFormat.groupDigits(account.followersCount)} ${
+                            pluralStringResource(Res.plurals.follower, account.followersCount)
+                        }",
+                        fontSize = 12.sp,
+                        color = MaterialTheme.colorScheme.primary,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+            }
+        })
+}
+
 /**
  * Clickable account row with navigation and optional follow button.
  */
@@ -52,13 +157,10 @@ fun CustomAccount(
     viewModel: CustomAccountViewModel = injectViewModel(key = "custom-account" + account.id) { customAccountViewModel }
 ) {
     AccountRow(
-        account = account,
-        showFollowers = showFollowers,
-        modifier = Modifier.clickable {
+        account = account, showFollowers = showFollowers, modifier = Modifier.clickable {
             onClick()
-            navController.navigate(Destination.Profile(account.id))
-        }
-    ) {
+            navController.navigate(Destination.Profile(account.id, account.username))
+        }) {
         FollowButton(
             firstLoaded = relationship != null,
             isLoading = viewModel.relationshipState.isLoading,
@@ -67,13 +169,15 @@ fun CustomAccount(
             } else {
                 relationship?.following ?: false
             },
-            onFollowClick = { viewModel.followAccount(account.id) },
-            onUnFollowClick = { viewModel.unfollowAccount(account.id) },
+            onFollowClick = { viewModel.followAccount(account.id, account.username) },
+            onUnFollowClick = { viewModel.unfollowAccount(account.id, account.username) },
             iconButton = true
         )
 
         if (removeSavedSearch != null) {
-            IconButton(onClick = removeSavedSearch, modifier = Modifier.height(22.dp).width(22.dp)) {
+            IconButton(
+                onClick = removeSavedSearch, modifier = Modifier.height(22.dp).width(22.dp)
+            ) {
                 Icon(
                     imageVector = vectorResource(Res.drawable.close),
                     contentDescription = null,
@@ -95,13 +199,11 @@ fun CustomAccount(
     logout: () -> Unit = {}
 ) {
     AccountRow(
-        account = account,
-        showFollowers = showFollowers
+        account = account, showFollowers = showFollowers
     ) {
         if (logoutButton) {
             IconButton(
-                onClick = logout,
-                modifier = Modifier.height(36.dp).width(36.dp)
+                onClick = logout, modifier = Modifier.height(36.dp).width(36.dp)
             ) {
                 Icon(
                     imageVector = vectorResource(Res.drawable.trash),
@@ -121,9 +223,7 @@ private fun AccountRow(
     trailingContent: @Composable () -> Unit = {}
 ) {
     Row(
-        modifier = modifier
-            .padding(horizontal = 12.dp, vertical = 8.dp)
-            .fillMaxWidth(),
+        modifier = modifier.padding(horizontal = 12.dp, vertical = 8.dp).fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
         AsyncImage(
@@ -161,7 +261,12 @@ private fun AccountRow(
             }
 
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(text = account.username, fontSize = 12.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                Text(
+                    text = account.username,
+                    fontSize = 12.sp,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
                 val domain = account.url.substringAfter("https://").substringBefore("/")
                 Text(
                     text = " \u2022 $domain",

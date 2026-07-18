@@ -15,14 +15,14 @@ plugins {
 }
 
 ktorfit {
-    compilerPluginVersion.set("2.3.3")
+    compilerPluginVersion.set("2.3.5")
 }
 
 kotlin {
     jvmToolchain(21)
     android {
         namespace = "com.daniebeler.pfpixelix"
-        compileSdk = 36
+        compileSdk = 37
         minSdk = 26
 
         androidResources { enable = true }
@@ -41,7 +41,25 @@ kotlin {
         }
     }
 
+    wasmJs { browser() }
+
     sourceSets {
+        applyDefaultHierarchyTemplate()
+
+        val skikoMain by creating {
+            dependsOn(commonMain.get())
+            iosMain.get().dependsOn(this)
+            jvmMain.get().dependsOn(this)
+            webMain.get().dependsOn(this)
+        }
+
+        val nonWebMain by creating {
+            dependsOn(commonMain.get())
+            androidMain.get().dependsOn(this)
+            iosMain.get().dependsOn(this)
+            jvmMain.get().dependsOn(this)
+        }
+
         commonMain.dependencies {
             //compose
             api(libs.runtime)
@@ -79,13 +97,7 @@ kotlin {
             implementation(libs.kotlin.inject.runtime)
 
             //datastore
-            implementation(libs.androidx.datastore)
             implementation(libs.androidx.datastore.preferences)
-
-            //shared preferences
-            implementation(libs.multiplatform.settings)
-            implementation(libs.multiplatform.settings.coroutines)
-            implementation(libs.multiplatform.settings.datastore)
 
             //file picker
             implementation(libs.filekit.compose)
@@ -117,6 +129,7 @@ kotlin {
         }
 
         androidMain.dependencies {
+            implementation(libs.androidx.exifinterface)
             implementation(libs.kotlinx.coroutines.android)
             implementation(libs.ktor.client.okhttp)
 
@@ -135,10 +148,16 @@ kotlin {
             implementation(libs.androidx.glance.material3)
             // work Manager
             implementation(libs.androidx.work.runtime.ktx)
+
+            //blurhash
+            implementation(libs.vanniktech.blurhash)
         }
 
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
+
+            //blurhash
+            implementation(libs.vanniktech.blurhash)
         }
 
         jvmMain.dependencies {
@@ -146,6 +165,9 @@ kotlin {
             implementation(libs.kotlinx.coroutines.swing)
             implementation(libs.ktor.client.okhttp)
             implementation(libs.slf4j.simple)
+
+            //blurhash
+            implementation(libs.vanniktech.blurhash)
         }
     }
 
@@ -163,7 +185,8 @@ dependencies {
         "kspAndroid",
         "kspJvm",
         "kspIosArm64",
-        "kspIosSimulatorArm64"
+        "kspIosSimulatorArm64",
+        "kspWasmJs"
     ).forEach {
         add(it, libs.kotlin.inject.compiler.ksp)
     }

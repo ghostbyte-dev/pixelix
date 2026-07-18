@@ -1,0 +1,11 @@
+meta {
+  name: Post edit history
+  type: http
+  seq: 15
+}
+
+get {
+  url: {{baseUrl}}/api/v1/statuses/{{postId}}/history
+  body: none
+  auth: none
+}

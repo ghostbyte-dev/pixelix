@@ -31,7 +31,6 @@
         <item quantity="one">Publicación</item>
         <item quantity="other">Publicacións</item>
     </plurals>
-    <string name="posts">Publicacións</string>
     <string name="hashtags">Cancelos</string>
     <string name="reblogged_your_post">compartiu a túa publicación</string>
     <string name="liked_your_post">gustoulle a túa publicación</string>

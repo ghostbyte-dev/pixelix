@@ -39,7 +39,7 @@ fun CustomBlockedAccountRow(
     ) {
 
         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.clickable {
-            navController.navigate(Destination.Profile(account.id))
+            navController.navigate(Destination.Profile(account.id, account.username))
         }) {
             AsyncImage(
                 model = account.avatar,
@@ -68,7 +68,7 @@ fun CustomBlockedAccountRow(
             onDismissRequest = { viewModel.unblockAccountAlert = "" },
             onConfirmation = {
                 viewModel.unblockAccountAlert = ""
-                viewModel.unblockAccount(account.id) },
+                viewModel.unblockAccount(account.id, account.username) },
             account = account
         )
     }

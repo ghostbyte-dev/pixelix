@@ -14,10 +14,10 @@ import me.tatarka.inject.annotations.Inject
 class HomeViewModel @Inject constructor(
     private val prefs: UserPreferences,
     private val platform: Platform,
-    private val session: Session
+    session: Session
 ) : ViewModel() {
 
-    val capabilities = session.capabilities.value
+    val capabilities = session.capabilities
     var isSwipeBetweenTabsEnabled by mutableStateOf(true)
     init {
         viewModelScope.launch {

@@ -76,7 +76,7 @@ fun CustomMutedAccountRow(
                 viewModel.unmuteAccountAlert = ""
             },
             mutedAccount = mutedAccount,
-            capabilities = viewModel.capabilities
+            capabilities = viewModel.capabilities.value
         )
 
     }

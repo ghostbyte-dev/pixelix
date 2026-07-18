@@ -102,7 +102,7 @@ fun PreferencesComposable(
 
             HideAltTextButtonPref()
 
-            if (viewModel.capabilities.post.showCameraMetadata) {
+            if (viewModel.capabilities.value.post.showCameraMetadata) {
                 HideMetadataPref()
             }
 
@@ -115,7 +115,7 @@ fun PreferencesComposable(
             SwipeBetweenTimelines()
 
 
-            if (viewModel.capabilities.profile.showRepostSettings) {
+            if (viewModel.capabilities.value.profile.showRepostSettings) {
                 RepostSettingsPref { viewModel.openRepostSettings() }
             }
 
@@ -145,7 +145,7 @@ fun PreferencesComposable(
             Spacer(modifier = Modifier.height(6.dp))
 
             CaptionTemplate(viewModel.suggestionsManager)
-            DefaultVisibilityPref(viewModel.capabilities)
+            DefaultVisibilityPref(viewModel.capabilities.value)
             DefaultLicensePref()
 
             Spacer(modifier = Modifier.height(12.dp))

@@ -300,7 +300,7 @@ fun EditProfileComposable(
 
 
 
-                    if (viewModel.capabilities.editProfile.websiteField) {
+                    if (viewModel.capabilities.value.editProfile.websiteField) {
                         Spacer(modifier = Modifier.height(18.dp))
 
                         EditProfileTextField(
@@ -314,7 +314,7 @@ fun EditProfileComposable(
                     }
 
 
-                    if (viewModel.capabilities.editProfile.privateAccountToggle) {
+                    if (viewModel.capabilities.value.editProfile.privateAccountToggle) {
                         Spacer(modifier = Modifier.height(18.dp))
 
                         EditProfileSwitch(
@@ -326,7 +326,7 @@ fun EditProfileComposable(
                         )
                     }
 
-                    if (viewModel.capabilities.editProfile.manuallyAcceptNewFollowersToggle && viewModel.manuallyAcceptNewFollowers != null) {
+                    if (viewModel.capabilities.value.editProfile.manuallyAcceptNewFollowersToggle && viewModel.manuallyAcceptNewFollowers != null) {
                         Spacer(modifier = Modifier.height(18.dp))
 
                         EditProfileSwitch(
@@ -338,7 +338,7 @@ fun EditProfileComposable(
                         )
                     }
 
-                    if (viewModel.capabilities.editProfile.includePostsInSearchEngineToggle && viewModel.includePublicPostsInSearchEngine != null) {
+                    if (viewModel.capabilities.value.editProfile.includePostsInSearchEngineToggle && viewModel.includePublicPostsInSearchEngine != null) {
                         Spacer(modifier = Modifier.height(18.dp))
 
                         EditProfileSwitch(
@@ -350,7 +350,7 @@ fun EditProfileComposable(
                         )
                     }
 
-                    if (viewModel.capabilities.editProfile.includeProfileInSearchEngineToggle && viewModel.includeProfileInSearchEngine != null) {
+                    if (viewModel.capabilities.value.editProfile.includeProfileInSearchEngineToggle && viewModel.includeProfileInSearchEngine != null) {
                         Spacer(modifier = Modifier.height(18.dp))
 
                         EditProfileSwitch(

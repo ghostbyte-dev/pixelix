@@ -15,7 +15,6 @@ import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.model.ReportObjectType
 import com.daniebeler.pfpixelix.domain.model.request.UserBlockRequest
 import com.daniebeler.pfpixelix.domain.model.request.UserMuteRequest
-import com.daniebeler.pfpixelix.domain.service.capabilities.Capabilities
 import com.daniebeler.pfpixelix.domain.service.file.FileService
 import com.daniebeler.pfpixelix.domain.service.general.AccountService
 import com.daniebeler.pfpixelix.domain.service.general.AuthService
@@ -52,7 +51,7 @@ class PostViewModel @Inject constructor(
     session: Session,
     val hashtagMentionsSuggestionsManager: HashtagMentionsSuggestionsManager
 ) : ViewModel() {
-    val capabilities: Capabilities = session.capabilities.value
+    val capabilities = session.capabilities
     var post: Post? by mutableStateOf(null)
 
     var repliesState by mutableStateOf(RepliesState())
@@ -336,14 +335,14 @@ class PostViewModel @Inject constructor(
         )
 
         post?.likedBy?.let {
-            if (it.username == myUsername) {
-                post = post!!.copy(
+            post = if (it.username == myUsername) {
+                post!!.copy(
                     likedBy = post!!.likedBy!!.copy(
                         username = null, totalCount = post!!.likedBy!!.totalCount - 1
                     )
                 )
             } else {
-                post = post!!.copy(
+                post!!.copy(
                     likedBy = post!!.likedBy!!.copy(totalCount = post!!.likedBy!!.totalCount - 1)
                 )
             }

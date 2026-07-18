@@ -1,7 +1,6 @@
 package com.daniebeler.pfpixelix.ui.composables.notifications
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -16,7 +15,6 @@ import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SegmentedListItem
@@ -24,7 +22,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.produceState
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
@@ -69,7 +66,7 @@ fun CustomNotification(
     viewModel: CustomNotificationViewModel = injectViewModel(key = "custom-notification-viewmodel-key${notification.id}") { customNotificationViewModel }
 ) {
     var showImage = false
-    var text = ""
+    var text: String
     when (notification.type) {
         NotificationType.FOLLOW -> {
             text = " " + stringResource(Res.string.followed_you)
@@ -177,7 +174,7 @@ fun CustomNotification(
                 })
         },
         supportingContent = {
-            if (notification.type == NotificationType.FOLLOW_REQUEST && viewModel.capabilities.notification.supportsFollowRequestActions) {
+            if (notification.type == NotificationType.FOLLOW_REQUEST && viewModel.capabilities.value.notification.supportsFollowRequestActions) {
                 Row {
                     Button(
                         onClick = {

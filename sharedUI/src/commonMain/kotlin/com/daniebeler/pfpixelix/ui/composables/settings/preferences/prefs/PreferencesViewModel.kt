@@ -9,6 +9,7 @@ import com.daniebeler.pfpixelix.domain.service.general.BackendType
 import com.daniebeler.pfpixelix.domain.service.general.Session
 import com.daniebeler.pfpixelix.domain.service.platform.Platform
 import com.daniebeler.pfpixelix.domain.service.suggestions.HashtagMentionsSuggestionsManager
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 
@@ -20,7 +21,7 @@ class PreferencesViewModel(
     appIconService: AppIconService,
     session: Session
 ) : ViewModel() {
-    val capabilities: Capabilities = session.capabilities.value
+    val capabilities: StateFlow<Capabilities> = session.capabilities
     val backendType: BackendType = session.backendType.value
     val appIcon = appIconService.currentIcon
     val versionName = platform.getAppVersion()

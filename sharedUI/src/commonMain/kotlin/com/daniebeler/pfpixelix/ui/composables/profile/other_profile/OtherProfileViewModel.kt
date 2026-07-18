@@ -12,15 +12,13 @@ import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.model.request.UserBlockRequest
 import com.daniebeler.pfpixelix.domain.model.request.UserMuteRequest
 import com.daniebeler.pfpixelix.domain.repository.pixelfed.PixelfedApi
-import com.daniebeler.pfpixelix.domain.service.capabilities.Capabilities
-import com.daniebeler.pfpixelix.domain.service.general.CollectionService
 import com.daniebeler.pfpixelix.domain.service.general.AccountService
 import com.daniebeler.pfpixelix.domain.service.general.AuthService
 import com.daniebeler.pfpixelix.domain.service.general.BackendType
-import com.daniebeler.pfpixelix.domain.service.general.ExploreService
-import com.daniebeler.pfpixelix.domain.service.platform.Platform
+import com.daniebeler.pfpixelix.domain.service.general.CollectionService
 import com.daniebeler.pfpixelix.domain.service.general.PostService
 import com.daniebeler.pfpixelix.domain.service.general.Session
+import com.daniebeler.pfpixelix.domain.service.platform.Platform
 import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.ui.composables.notifications.FollowRequestState
@@ -46,7 +44,7 @@ class OtherProfileViewModel(
     private val authService: AuthService,
     private val session: Session
 ) : ViewModel() {
-    val capabilities: Capabilities = session.capabilities.value
+    val capabilities = session.capabilities
 
     var userId: String = ""
     var username: String = ""
@@ -147,7 +145,7 @@ class OtherProfileViewModel(
                 }
 
                 is Resource.Error -> {
-                    RelationshipState(error = result.message ?: "An unexpected error occurred")
+                    RelationshipState(error = result.message)
                 }
 
                 is Resource.Loading -> {
@@ -164,11 +162,11 @@ class OtherProfileViewModel(
         accountService.getMutualFollowers(userId).onEach { result ->
             mutualFollowersState = when (result) {
                 is Resource.Success -> {
-                    MutualFollowersState(mutualFollowers = result.data ?: emptyList())
+                    MutualFollowersState(mutualFollowers = result.data)
                 }
 
                 is Resource.Error -> {
-                    MutualFollowersState(error = result.message ?: "An unexpected error occurred")
+                    MutualFollowersState(error = result.message)
                 }
 
                 is Resource.Loading -> {
@@ -188,7 +186,7 @@ class OtherProfileViewModel(
                 }
 
                 is Resource.Error -> {
-                    AccountState(error = result.message ?: "An unexpected error occurred")
+                    AccountState(error = result.message)
                 }
 
                 is Resource.Loading -> {
@@ -209,13 +207,13 @@ class OtherProfileViewModel(
         accountService.getAccountByUsername(username).onEach { result ->
             accountState = when (result) {
                 is Resource.Success -> {
-                    userId = result.data!!.id
+                    userId = result.data.id
                     loadDataExceptAccount(refreshing)
                     AccountState(account = result.data)
                 }
 
                 is Resource.Error -> {
-                    AccountState(error = result.message ?: "An unexpected error occurred")
+                    AccountState(error = result.message)
                 }
 
                 is Resource.Loading -> {
@@ -257,7 +255,7 @@ class OtherProfileViewModel(
 
                 is Resource.Error -> {
                     collectionsState =
-                        CollectionsState(error = result.message ?: "An unexpected error occurred")
+                        CollectionsState(error = result.message)
                 }
 
                 is Resource.Loading -> {
@@ -283,7 +281,7 @@ class OtherProfileViewModel(
                 }
 
                 is Resource.Error -> {
-                    PostsState(error = result.message ?: "An unexpected error occurred")
+                    PostsState(error = result.message)
                 }
 
                 is Resource.Loading -> {
@@ -333,7 +331,7 @@ class OtherProfileViewModel(
                 }
 
                 is Resource.Error -> {
-                    RelationshipState(error = result.message ?: "An unexpected error occurred")
+                    RelationshipState(error = result.message)
                 }
 
                 is Resource.Loading -> {
@@ -354,7 +352,7 @@ class OtherProfileViewModel(
                 }
 
                 is Resource.Error -> {
-                    RelationshipState(error = result.message ?: "An unexpected error occurred")
+                    RelationshipState(error = result.message)
                 }
 
                 is Resource.Loading -> {
@@ -375,7 +373,7 @@ class OtherProfileViewModel(
                 }
 
                 is Resource.Error -> {
-                    RelationshipState(error = result.message ?: "An unexpected error occurred")
+                    RelationshipState(error = result.message)
                 }
 
                 is Resource.Loading -> {
@@ -394,7 +392,7 @@ class OtherProfileViewModel(
                 }
 
                 is Resource.Error -> {
-                    RelationshipState(error = result.message ?: "An unexpected error occurred")
+                    RelationshipState(error = result.message)
                 }
 
                 is Resource.Loading -> {
@@ -412,7 +410,7 @@ class OtherProfileViewModel(
                 }
 
                 is Resource.Error -> {
-                    RelationshipState(error = result.message ?: "An unexpected error occurred")
+                    RelationshipState(error = result.message)
                 }
 
                 is Resource.Loading -> {

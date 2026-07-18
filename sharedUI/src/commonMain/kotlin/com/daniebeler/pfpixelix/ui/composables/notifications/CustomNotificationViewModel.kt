@@ -5,11 +5,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.service.general.AccountService
 import com.daniebeler.pfpixelix.domain.service.general.PostService
 import com.daniebeler.pfpixelix.domain.service.general.Session
+import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import me.tatarka.inject.annotations.Inject
@@ -17,9 +17,9 @@ import me.tatarka.inject.annotations.Inject
 class CustomNotificationViewModel @Inject constructor(
     private val postService: PostService,
     private val accountService: AccountService,
-    private val session: Session
-): ViewModel() {
-    val capabilities = session.capabilities.value
+    session: Session
+) : ViewModel() {
+    val capabilities = session.capabilities
     var ancestor by mutableStateOf<Post?>(null)
     val followRequestState = mutableStateOf(FollowRequestState())
 
@@ -33,16 +33,19 @@ class CustomNotificationViewModel @Inject constructor(
 
     fun acceptFollowRequest(accountId: String, removeNotification: () -> Unit) {
         accountService.acceptFollowRequest(accountId).onEach { result ->
-            when(result) {
+            when (result) {
                 is Resource.Success -> {
                     removeNotification()
                     followRequestState.value = FollowRequestState(relationship = result.data)
                 }
+
                 is Resource.Error -> {
                     followRequestState.value = FollowRequestState(error = result.message)
                 }
+
                 is Resource.Loading -> {
-                    followRequestState.value = FollowRequestState(isLoading = true, isAccepting = true)
+                    followRequestState.value =
+                        FollowRequestState(isLoading = true, isAccepting = true)
                 }
             }
         }.launchIn(viewModelScope)
@@ -50,16 +53,19 @@ class CustomNotificationViewModel @Inject constructor(
 
     fun rejectFollowRequest(accountId: String, removeNotification: () -> Unit) {
         accountService.rejectFollowRequest(accountId).onEach { result ->
-            when(result) {
+            when (result) {
                 is Resource.Success -> {
                     removeNotification()
                     followRequestState.value = FollowRequestState(relationship = result.data)
                 }
+
                 is Resource.Error -> {
                     followRequestState.value = FollowRequestState(error = result.message)
                 }
+
                 is Resource.Loading -> {
-                    followRequestState.value = FollowRequestState(isLoading = true, isAccepting = false)
+                    followRequestState.value =
+                        FollowRequestState(isLoading = true, isAccepting = false)
                 }
             }
         }.launchIn(viewModelScope)

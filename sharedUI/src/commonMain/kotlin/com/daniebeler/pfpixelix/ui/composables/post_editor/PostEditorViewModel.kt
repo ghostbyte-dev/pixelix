@@ -74,7 +74,7 @@ class PostEditorViewModel @Inject constructor(
         var metadata: MediaAttachmentMetadataRequest
     )
 
-    val capabilities = session.capabilities.value
+    val capabilities = session.capabilities
 
     var mode by mutableStateOf(EditorMode.CREATE)
     var editingPostId: String? = null

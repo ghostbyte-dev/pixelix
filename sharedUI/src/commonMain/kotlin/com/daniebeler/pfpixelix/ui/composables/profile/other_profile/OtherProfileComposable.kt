@@ -1,10 +1,7 @@
 package com.daniebeler.pfpixelix.ui.composables.profile.other_profile
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -19,14 +16,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
-import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
-import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -37,7 +29,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
@@ -65,25 +56,16 @@ import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.model.request.UserBlockRequest
-import com.daniebeler.pfpixelix.domain.model.request.UserMuteRequest
 import com.daniebeler.pfpixelix.domain.service.capabilities.Capabilities
-import com.daniebeler.pfpixelix.domain.service.platform.PlatformFeatures
 import com.daniebeler.pfpixelix.ui.composables.profile.CollectionsComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.MutualFollowersComposable
-import com.daniebeler.pfpixelix.ui.composables.profile.postsWrapperComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.ProfileTopSection
-import com.daniebeler.pfpixelix.ui.composables.profile.SwitchViewComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.server_stats.DomainSoftwareComposable
 import com.daniebeler.pfpixelix.ui.composables.settings.muted_accounts.MuteAccountAlert
-import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
-import com.daniebeler.pfpixelix.ui.composables.states.EmptyStateComposable
-import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposableDialog
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pfpixelix.ui.composables.widgets.ButtonRowElement
-import com.daniebeler.pfpixelix.ui.composables.widgets.CustomPullToRefreshBox
 import com.daniebeler.pfpixelix.ui.composables.widgets.InfinitePostsList
-import com.daniebeler.pfpixelix.ui.composables.widgets.InfiniteStaggeredGridHandler
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import com.daniebeler.pfpixelix.utils.DomainFormat
 import org.jetbrains.compose.resources.painterResource
@@ -105,25 +87,17 @@ import pixelix.app.generated.resources.block_consequence_7
 import pixelix.app.generated.resources.block_consequence_8
 import pixelix.app.generated.resources.block_consequence_9
 import pixelix.app.generated.resources.block_this_profile
+import pixelix.app.generated.resources.blocked
 import pixelix.app.generated.resources.browser
 import pixelix.app.generated.resources.cancel
 import pixelix.app.generated.resources.default_avatar
-import pixelix.app.generated.resources.more_menu
 import pixelix.app.generated.resources.follow
 import pixelix.app.generated.resources.message
-import pixelix.app.generated.resources.mute
-import pixelix.app.generated.resources.mute_account
-import pixelix.app.generated.resources.mute_consequence_1
-import pixelix.app.generated.resources.mute_consequence_2
-import pixelix.app.generated.resources.mute_consequence_3
-import pixelix.app.generated.resources.mute_consequence_4
-import pixelix.app.generated.resources.mute_consequence_5
+import pixelix.app.generated.resources.more_menu
 import pixelix.app.generated.resources.mute_this_profile
+import pixelix.app.generated.resources.muted
 import pixelix.app.generated.resources.open_in_browser
 import pixelix.app.generated.resources.photo
-import pixelix.app.generated.resources.blocked
-import pixelix.app.generated.resources.edit_profile
-import pixelix.app.generated.resources.muted
 import pixelix.app.generated.resources.reason
 import pixelix.app.generated.resources.reject_follow_request
 import pixelix.app.generated.resources.requested
@@ -133,8 +107,6 @@ import pixelix.app.generated.resources.unblock_account
 import pixelix.app.generated.resources.unblock_caps
 import pixelix.app.generated.resources.unblock_this_profile
 import pixelix.app.generated.resources.unfollow
-import pixelix.app.generated.resources.unmute_account
-import pixelix.app.generated.resources.unmute_caps
 import pixelix.app.generated.resources.unmute_this_profile
 
 @OptIn(
@@ -321,7 +293,7 @@ fun OtherProfileComposable(
                                 }
                             }
 
-                            if (viewModel.capabilities.general.supportsDMs) {
+                            if (viewModel.capabilities.value.general.supportsDMs) {
                                 Spacer(modifier = Modifier.width(12.dp))
 
                                 Button(
@@ -488,7 +460,7 @@ fun OtherProfileComposable(
                         viewModel.muteAccount(userMuteRequest)
                     },
                     mutedAccount = viewModel.mutedAccount,
-                    capabilities = viewModel.capabilities
+                    capabilities = viewModel.capabilities.value
                 )
             }
             if (showBlockAlert) {
@@ -500,7 +472,7 @@ fun OtherProfileComposable(
                         viewModel.blockAccount(userBlockRequest)
                     },
                     account = viewModel.accountState.account!!,
-                    capabilities = viewModel.capabilities
+                    capabilities = viewModel.capabilities.value
                 )
             }
             if (showUnBlockAlert) {

@@ -59,8 +59,8 @@ class UserPreferences(private val dataStore: DataStore<Preferences>) {
     val autoplayVideoFlow = booleanFlow("k_autoplay_mode", true)
 
 
-    var showUserGridTimeline by int("k_timeline_view", 1)
-    val showUserGridTimelineFlow = intFlow("k_timeline_view", 1)
+    var showUserGridTimeline by int("k_timeline_view", 2)
+    val showUserGridTimelineFlow = intFlow("k_timeline_view", 2)
 
     var enableVolume by boolean("k_enable_volume", true)
     val enableVolumeFlow = booleanFlow("k_enable_volume", true)

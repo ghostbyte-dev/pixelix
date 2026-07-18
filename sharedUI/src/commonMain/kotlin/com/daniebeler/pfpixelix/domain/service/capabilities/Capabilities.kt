@@ -37,7 +37,8 @@ data class EditProfileCapabilities(
     val manuallyAcceptNewFollowersToggle: Boolean,
     val includePostsInSearchEngineToggle: Boolean,
     val includeProfileInSearchEngineToggle: Boolean,
-    val websiteField: Boolean
+    val websiteField: Boolean,
+    val headerImage: Boolean
 )
 
 data class NotificationCapabilities(

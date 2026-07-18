@@ -13,7 +13,7 @@ data class VernissageAccountDto(
     @SerialName("userName") val username: String,
     @SerialName("account") val account: String = "",
     @SerialName("name") val displayname: String? = null,
-    @SerialName("avatarUrl") val avatar: String? = "",
+    @SerialName("avatarUrl") val avatar: String? = null,
     @SerialName("followersCount") val followersCount: Int = 0,
     @SerialName("followingCount") val followingCount: Int = 0,
     @SerialName("photosCount") val postsCount: Int = 0,

@@ -46,10 +46,11 @@ class NotificationsTask(
             if (res is Resource.Success) {
                 val notifications = res.data.data.take(10)
                 val notificationStoreItems = notifications.map { notification ->
-                    val bitmap = getBitmap(context, notification.account.avatar)
+
+                    val bitmap = notification.account.avatar?.let { getBitmap(context, notification.account.avatar)}
                     NotificationStoreItem(
                         id = notification.id,
-                        accountAvatarUrl = notification.account.avatar,
+                        accountAvatarUrl = notification.account.avatar ?: "",
                         accountAvatarBitmap = bitmap,
                         accountId = notification.account.id,
                         accountUsername = notification.account.displayname ?: notification.account.username,

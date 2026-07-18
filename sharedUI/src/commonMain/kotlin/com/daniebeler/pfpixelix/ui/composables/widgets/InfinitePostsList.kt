@@ -123,10 +123,10 @@ fun InfinitePostsList(
                             onClick = onClick
                         )
 
-                        if (items.isEmpty() && !isLoading && error.isEmpty() && before != null) {
+                        if (items.isEmpty() && !isLoading && error.isEmpty()) {
                             item(key = "empty_state_key", span = StaggeredGridItemSpan.FullLine) {
                                 EmptyStateComposableWithoutRefresh(
-                                    emptyMessage, modifier = Modifier.height(200.dp)
+                                    emptyMessage, modifier = Modifier.height(300.dp)
                                 )
                             }
                         }

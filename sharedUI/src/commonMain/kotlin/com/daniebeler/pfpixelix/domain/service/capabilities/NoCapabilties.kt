@@ -19,7 +19,8 @@ val NoCapabilities = Capabilities(
         manuallyAcceptNewFollowersToggle = false,
         includePostsInSearchEngineToggle = false,
         includeProfileInSearchEngineToggle = false,
-        websiteField = false
+        websiteField = false,
+        headerImage = false
     ),
     trending = TrendingCapabilities(
         supportsMultipleProfileTimeRanges = false, supportsMultipleHashtagTimeRanges = false

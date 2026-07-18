@@ -5,7 +5,7 @@ data class Account(
     val username: String = "",
     val acct: String = "",
     val displayname: String? = null,
-    val avatar: String = "",
+    val avatar: String? = null,
     val followersCount: Int = 0,
     val followingCount: Int = 0,
     val postsCount: Int = 0,

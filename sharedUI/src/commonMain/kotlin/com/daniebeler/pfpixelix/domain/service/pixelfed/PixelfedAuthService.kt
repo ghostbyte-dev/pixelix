@@ -71,7 +71,7 @@ class PixelfedAuthService(
             accountId = requireNotNull(account.id),
             username = requireNotNull(account.username),
             displayName = account.displayname ?: account.username,
-            avatar = account.avatar,
+            avatar = account.avatar ?: "",
             serverUrl = serverUrl.toString(),
             token = token.accessToken,
             refreshToken = token.refreshToken,

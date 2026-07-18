@@ -84,7 +84,7 @@ class VernissageExploreService(
             val followedHashtags = followedDeferred.await()
             val searchHashtags = searchDeferred.await().tags
 
-            val count = searchHashtags.find { it.name == hashtag }?.amount ?: 0
+            val count = searchHashtags.find { it.name == hashtag }?.amount
             val isFollowed = followedHashtags.find { it.name == hashtag } != null
 
             Tag(

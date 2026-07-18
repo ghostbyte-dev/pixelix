@@ -50,7 +50,7 @@ fun HashtagTimelineComposable(
             itemGetsDeleted = { viewModel.postGetsDeleted(it) },
             getItemsPaginated = { viewModel.getItemsPaginated(hashtag) },
             onRefresh = { viewModel.refresh() },
-            postsCount = viewModel.hashtagState.hashtag?.postsCount ?: 0,
+            postsCount = viewModel.hashtagState.hashtag?.postsCount,
             navController = navController,
             postGetsUpdated = { viewModel.postGetsUpdated(it) })
     }

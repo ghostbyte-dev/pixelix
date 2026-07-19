@@ -54,7 +54,7 @@
     <string name="no_blocked_accounts">nessun account bloccato</string>
     <string name="cancel">Cancella</string>
     <string name="post_by">Post di</string>
-    <string name="liked_by">Piaciuto da</string>
+    <string name="liked_by">Piace a</string>
     <string name="delete_this_post">Elimina questo post</string>
     <string name="delete_post">Elimina post?</string>
     <string name="this_action_cannot_be_undone">Questa azione non può essere annullata</string>

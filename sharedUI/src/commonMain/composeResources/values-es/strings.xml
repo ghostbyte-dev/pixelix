@@ -13,13 +13,14 @@
     <string name="block_this_profile">Bloquear este perfil</string>
     <string name="unblock_this_profile">Desbloquear este perfil</string>
     <string name="mute_this_profile">Silenciar este perfil</string>
-    <string name="unmute_this_profile">Desbloquear este perfil</string>
+    <string name="unmute_this_profile">No silenciar este perfil</string>
     <string name="load_more">Cargar más</string>
     <string name="follow">Seguir</string>
     <string name="unfollow">No seguir</string>
     <string name="followers">Seguidores</string>
     <plurals name="follower">
         <item quantity="one">Seguidor</item>
+        <item quantity="many">Seguidores</item>
         <item quantity="other">Seguidores</item>
     </plurals>
     <string name="following">Siguiendo</string>
@@ -29,9 +30,10 @@
     </plurals>
     <plurals name="posts">
         <item quantity="one">Publicación</item>
+        <item quantity="many">Publicaciones</item>
         <item quantity="other">Publicaciones</item>
     </plurals>
-    <string name="hashtags">Hashtags</string>
+    <string name="hashtags">Etiquetas</string>
     <string name="reblogged_your_post">reblogueó tu publicación</string>
     <string name="liked_your_post">me gustó tu publicación</string>
     <string name="followed_you">te siguió</string>
@@ -93,9 +95,9 @@
     <string name="sensitive_nsfw_media">Sensible/Contenido NSFW</string>
     <string name="content_warning_or_spoiler_text">advertencia de contenido o texto de spoiler</string>
     <string name="audience">Público</string>
-    <string name="unlisted">privado</string>
-    <string name="followers_only">solo seguidores</string>
-    <string name="audience_public">público</string>
+    <string name="unlisted">No listada</string>
+    <string name="followers_only">Solo seguidores</string>
+    <string name="audience_public">Pública</string>
     <string name="no_followed_hashtags">Sin hashtags seguidos</string>
     <string name="no_muted_accounts">Ninguna cuenta silenciada</string>
     <string name="visibility_x">Notoriedad: %1$s</string>
@@ -117,7 +119,7 @@
     <string name="no_posts">Sin temas</string>
     <string name="home_timeline_explained">La cronología inicial muestra las publicaciones de las personas y hashtags que sigues.</string>
     <string name="local_timeline_explained">La línea de tiempo local muestra las publicaciones de todos los usuarios en tu servidor.</string>
-    <string name="global_timeline_explained">La cronología global muestra mensajes de todos los usuarios en todos los servidores a los que está conectado tu servidor</string>
+    <string name="global_timeline_explained">La cronología global muestra mensajes de todos los usuarios en todos los servidores a los que está conectado tu servidor.</string>
     <string name="this_user_has_not_postet_anything_yet">Este usuario no ha publicado nada todavía</string>
     <string name="you_don_t_have_any_notifications">Sin notificaciones</string>
     <string name="view_more">ver más</string>
@@ -237,30 +239,37 @@
     <string name="video_player_not_supported">El reproductor de vídeo no es compatible</string>
     <plurals name="second">
         <item quantity="one">segundo</item>
+        <item quantity="many">segundos</item>
         <item quantity="other">segundos</item>
     </plurals>
     <plurals name="minute">
         <item quantity="one">minuto</item>
+        <item quantity="many">minutos</item>
         <item quantity="other">minutos</item>
     </plurals>
     <plurals name="hour">
         <item quantity="one">hora</item>
+        <item quantity="many">horas</item>
         <item quantity="other">horas</item>
     </plurals>
     <plurals name="day">
         <item quantity="one">día</item>
+        <item quantity="many">días</item>
         <item quantity="other">días</item>
     </plurals>
     <plurals name="week">
         <item quantity="one">semana</item>
+        <item quantity="many">semanas</item>
         <item quantity="other">semanas</item>
     </plurals>
     <plurals name="month">
         <item quantity="one">mes</item>
+        <item quantity="many">meses</item>
         <item quantity="other">meses</item>
     </plurals>
     <plurals name="year">
         <item quantity="one">año</item>
+        <item quantity="many">años</item>
         <item quantity="other">años</item>
     </plurals>
     <string name="blur_sensitive_content">Difuminar contenido sensible</string>
@@ -295,12 +304,44 @@
     <string name="include_profile_in_search_engines">Incluir perfil en motores de búsqueda</string>
     <string name="optional_end_date">Fecha de fin opcional</string>
     <string name="requested">Solicitado</string>
-    <string name="new_comment">escribe un nuevo comentario</string>
-    <string name="follow_request">solicitó seguirte</string>
-    <string name="new_status">creó una nueva publicación</string>
-    <string name="boosted_status_updated">Publicación impulsada se editó</string>
+    <string name="new_comment">Escribe un nuevo comentario</string>
+    <string name="follow_request">Solicitó seguirte</string>
+    <string name="new_status">Creó una nueva publicación</string>
+    <string name="boosted_status_updated">Una publicación impulsada se editó</string>
     <string name="notification">Notificación</string>
     <string name="accept_follow_request">Aceptar solicitud de seguimiento</string>
     <string name="reject_follow_request">Rechazar solicitud de seguimiento</string>
     <string name="reason">Razón</string>
+    <string name="caption_template">Plantilla de descripción</string>
+    <string name="send">Enviar</string>
+    <string name="default_visibility">Visibilidad por defecto</string>
+    <string name="mentioned_only">Solo mencionados</string>
+    <string name="brand">Marca</string>
+    <string name="model">Modelo</string>
+    <string name="flash">Flash</string>
+    <string name="lens">Lente</string>
+    <string name="focal_length">Distancia focal</string>
+    <string name="focal_length_35mm">Distancia focal 35 mm</string>
+    <string name="aperture">Apertura</string>
+    <string name="exposure_time">Tiempo de exposición</string>
+    <string name="iso">ISO</string>
+    <string name="software">Software</string>
+    <string name="creation_date">Fecha de creación</string>
+    <string name="creation_time">Hora de creación</string>
+    <string name="disable_comments">Desactivar comentarios</string>
+    <string name="category">Categoría</string>
+    <string name="next">Siguiente</string>
+    <string name="publish">Publicar</string>
+    <string name="gps_coordinates">Coordenadas GPS</string>
+    <string name="latitude">Latitud</string>
+    <string name="longitude">Longitud</string>
+    <string name="film">Película</string>
+    <string name="chemistry">Revelado</string>
+    <string name="scanner">Escáner</string>
+    <string name="hide_camera_metadata">Ocultar metadatos de la cámara</string>
+    <string name="back">Atrás</string>
+    <string name="edit_images">Editar imágenes</string>
+    <string name="compress">Comprimir</string>
+    <string name="compressing">Comprimiendo...</string>
+    <string name="default_license">Licencia por defecto</string>
 </resources>

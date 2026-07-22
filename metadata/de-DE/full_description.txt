@@ -1,1 +1,11 @@
-Pixelix bietet eine glatte und intuitive Oberfläche zum Interagieren mit Pixelfed, dem föderierten sozialen Netzwerk zum Teilen von Bildern. Entworfen mit Bedacht auf gute Benutzererfahrung, macht Pixelix es dir kinderleicht, dich mit deiner Pixelfed-Instanz zu verbinden, Bilder direkt von deinem Gerät hochzuladen und deinen Feed zu durchstöbern. Egal, ob du ein alter Hase bist oder mit Pixelfed gerade erst anfängst – Pixelix bietet dir eine elegante Möglichkeit, visuelle Inhalte zu entdecken und zu teilen.
+Pixelix ist ein Open-Source-Client für die Fediverse-Fotosharing-Plattformen Pixelfed und Vernissage.
+
+ - Material Design
+ - Multi-Account-Support
+ - Dark und Light Theme
+ - Profileinstellungen
+ - Home / Lokale / Globale Timelines
+ - Trending Posts, Trending Hashtags und Trending Profile
+ - Auswählbare App-Icons
+ - Post-Vorlagen
+ - Open Source

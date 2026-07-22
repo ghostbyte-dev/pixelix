@@ -1,0 +1,6 @@
+- Vernissage-Unterstützung
+- Neuer Post-Editor
+- Post-Vorlagen
+- Allgemeine Design-Verbesserungen
+- Weitere Übersetzungen hinzugefügt
+- Bug fixes

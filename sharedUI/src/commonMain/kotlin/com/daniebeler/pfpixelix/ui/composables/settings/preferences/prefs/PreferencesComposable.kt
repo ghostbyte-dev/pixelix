@@ -146,7 +146,9 @@ fun PreferencesComposable(
 
             CaptionTemplate(viewModel.suggestionsManager)
             DefaultVisibilityPref(viewModel.capabilities.value)
-            DefaultLicensePref()
+            if (viewModel.capabilities.value.newPost.supportLicenses) {
+                DefaultLicensePref()
+            }
 
             Spacer(modifier = Modifier.height(12.dp))
             Text(

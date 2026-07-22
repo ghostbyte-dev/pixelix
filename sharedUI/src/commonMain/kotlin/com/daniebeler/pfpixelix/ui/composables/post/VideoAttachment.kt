@@ -38,6 +38,8 @@ import androidx.navigationevent.compose.NavigationBackHandler
 import androidx.navigationevent.compose.rememberNavigationEventState
 import com.daniebeler.pfpixelix.domain.model.MediaAttachment
 import com.daniebeler.pfpixelix.utils.KeepScreenOn
+import io.github.kdroidfilter.composemediaplayer.AudioMode
+import io.github.kdroidfilter.composemediaplayer.InterruptionMode
 import io.github.kdroidfilter.composemediaplayer.VideoPlayerState
 import io.github.kdroidfilter.composemediaplayer.VideoPlayerSurface
 import io.github.kdroidfilter.composemediaplayer.rememberVideoPlayerState
@@ -54,12 +56,14 @@ import pixelix.app.generated.resources.volume_mute
 fun VideoAttachment(
     attachment: MediaAttachment, viewModel: PostViewModel, onReady: () -> Unit
 ) {
-    val player = rememberVideoPlayerState().apply {
+    val player = rememberVideoPlayerState(
+        audioMode = AudioMode(interruptionMode = InterruptionMode.MixWithOthers)
+    ).apply {
         loop = true
         userDragging = false
     }
     LaunchedEffect(attachment) {
-        player.openUri(attachment.url.orEmpty())
+        player.openUri(attachment.url)
     }
 
     var videoFrameIsVisible by remember { mutableStateOf(false) }
@@ -168,7 +172,7 @@ fun VideoAttachment(
                 val hasAudio = (player.metadata.audioChannels ?: 0) > 0
                 if (hasAudio) {
                     IconButton(
-                        modifier = Modifier.padding(8.dp), onClick = {
+                        modifier = Modifier.padding(9.dp), onClick = {
                             viewModel.toggleVolume(!viewModel.volume)
                         }, colors = IconButtonDefaults.filledTonalIconButtonColors()
                     ) {

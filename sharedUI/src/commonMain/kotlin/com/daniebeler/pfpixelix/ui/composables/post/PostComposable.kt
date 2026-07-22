@@ -1065,7 +1065,7 @@ private fun ImageWrapper(
     onSuccess: () -> Unit
 ) {
     AsyncImage(
-        model = mediaAttachment.previewUrl,
+        model = mediaAttachment.previewUrl ?: mediaAttachment.url,
         contentDescription = null,
         modifier = Modifier.fillMaxWidth(),
         contentScale = ContentScale.FillWidth,

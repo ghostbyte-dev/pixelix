@@ -32,7 +32,7 @@ class MentionViewModel @Inject constructor(
                 }
 
                 is Resource.Error -> {
-                    SinglePostState(error = result.message ?: "An unexpected error occurred")
+                    SinglePostState(error = result.message)
                 }
 
                 is Resource.Loading -> {
@@ -43,14 +43,14 @@ class MentionViewModel @Inject constructor(
     }
 
     private fun getPostContext(postId: String, refreshing: Boolean) {
-        postService.getReplies(postId).onEach { result ->
+        postService.postContext(postId).onEach { result ->
             postContextState = when (result) {
                 is Resource.Success -> {
                     PostContextState(postContext = result.data)
                 }
 
                 is Resource.Error -> {
-                    PostContextState(error = result.message ?: "An unexpected error occurred")
+                    PostContextState(error = result.message)
                 }
 
                 is Resource.Loading -> {

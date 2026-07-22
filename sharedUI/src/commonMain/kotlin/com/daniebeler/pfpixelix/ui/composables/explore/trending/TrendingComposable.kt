@@ -10,10 +10,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ButtonGroup
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.PrimaryTabRow
@@ -36,12 +34,10 @@ import com.daniebeler.pfpixelix.ui.composables.explore.trending.trending_hashtag
 import com.daniebeler.pfpixelix.ui.composables.explore.trending.trending_posts.TrendingPostsComposable
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.accounts
-import pixelix.app.generated.resources.datetime
 import pixelix.app.generated.resources.hashtags
-import pixelix.app.generated.resources.posts
+import pixelix.app.generated.resources.posts_title
 import pixelix.app.generated.resources.trending_account_description
 import pixelix.app.generated.resources.trending_hashtag_description
 import pixelix.app.generated.resources.trending_post_description
@@ -105,7 +101,7 @@ fun TrendingComposable(navController: NavController, initialPage: Int, isSwipeEn
                 .clip(RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp))
         ) {
             Tab(
-                text = { Text(stringResource(Res.string.posts)) },
+                text = { Text(stringResource(Res.string.posts_title)) },
                 selected = pagerState.currentPage == 0,
                 selectedContentColor = MaterialTheme.colorScheme.primary,
                 unselectedContentColor = MaterialTheme.colorScheme.onSurface,

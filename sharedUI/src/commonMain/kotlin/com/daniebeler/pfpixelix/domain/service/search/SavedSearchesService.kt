@@ -27,7 +27,8 @@ class SavedSearchesService(
                     acct = account.acct,
                     displayname = account.displayname,
                     avatar = account.avatar ?: "",
-                    followersCount = account.followersCount
+                    followersCount = account.followersCount,
+                    url = account.url
                 )
             ), accountId
         )

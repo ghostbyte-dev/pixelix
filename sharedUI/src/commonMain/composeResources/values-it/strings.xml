@@ -19,8 +19,9 @@
     <string name="unfollow">Smetti di seguire</string>
     <string name="followers">Seguaci</string>
     <plurals name="follower">
-        <item quantity="one">Seguace</item>
-        <item quantity="other">Seguaci</item>
+        <item quantity="one">Follower</item>
+        <item quantity="many">Follower</item>
+        <item quantity="other">Follower</item>
     </plurals>
     <string name="following">Seguiti</string>
     <plurals name="following">
@@ -29,6 +30,7 @@
     </plurals>
     <plurals name="posts">
         <item quantity="one">Post</item>
+        <item quantity="many">Post</item>
         <item quantity="other">Post</item>
     </plurals>
     <string name="hashtags">Hashtag</string>
@@ -52,7 +54,7 @@
     <string name="no_blocked_accounts">nessun account bloccato</string>
     <string name="cancel">Cancella</string>
     <string name="post_by">Post di</string>
-    <string name="liked_by">Piaciuto da</string>
+    <string name="liked_by">Piace a</string>
     <string name="delete_this_post">Elimina questo post</string>
     <string name="delete_post">Elimina post?</string>
     <string name="this_action_cannot_be_undone">Questa azione non può essere annullata</string>
@@ -92,10 +94,10 @@
     <string name="caption">didascalia</string>
     <string name="sensitive_nsfw_media">Contenuto Sensibile/NSFW</string>
     <string name="content_warning_or_spoiler_text">avviso contenuto o testo spoiler</string>
-    <string name="audience">Udienza</string>
-    <string name="unlisted">non in lista</string>
-    <string name="followers_only">solo seguaci</string>
-    <string name="audience_public">pubblico</string>
+    <string name="audience">Privacy</string>
+    <string name="unlisted">Non in lista</string>
+    <string name="followers_only">Solo follower</string>
+    <string name="audience_public">Pubblico</string>
     <string name="no_followed_hashtags">Nessun hashtag seguito</string>
     <string name="no_muted_accounts">Nessun account silenziato</string>
     <string name="visibility_x">Visibilità: %1$s</string>
@@ -115,9 +117,9 @@
     <string name="empty">Vuoto</string>
     <string name="follow_accounts_or_hashtags_to_fill_your_home_timeline">Segui account o hashtag per riempire la tua timeline della home</string>
     <string name="no_posts">Nessun post</string>
-    <string name="home_timeline_explained">La timeline della Home mostra i post delle persone e gli hashtag che segui</string>
-    <string name="local_timeline_explained">La timeline Locale mostra i post di tutti gli utenti del tuo server</string>
-    <string name="global_timeline_explained">La timeline Globale mostra i post i tutti gli utenti e i server ai quali il tuo server si è federato</string>
+    <string name="home_timeline_explained">La timeline della Home mostra i post delle persone e degli hashtag che segui.</string>
+    <string name="local_timeline_explained">La timeline Locale mostra i post di tutti gli utenti del tuo server.</string>
+    <string name="global_timeline_explained">La timeline Globale mostra i post i tutti gli utenti e i server coi quali il tuo server è federato.</string>
     <string name="this_user_has_not_postet_anything_yet">Questo utente non ha ancora pubblicato nulla</string>
     <string name="you_don_t_have_any_notifications">Non hai nessuna notifica</string>
     <string name="view_more">mostra di più</string>
@@ -237,30 +239,37 @@
     <string name="video_player_not_supported">Il riproduttore video non è supportato</string>
     <plurals name="second">
         <item quantity="one">secondo</item>
+        <item quantity="many">secondi</item>
         <item quantity="other">secondi</item>
     </plurals>
     <plurals name="minute">
         <item quantity="one">minuto</item>
+        <item quantity="many">minuti</item>
         <item quantity="other">minuti</item>
     </plurals>
     <plurals name="hour">
         <item quantity="one">ora</item>
+        <item quantity="many">ore</item>
         <item quantity="other">ore</item>
     </plurals>
     <plurals name="day">
         <item quantity="one">giorno</item>
+        <item quantity="many">giorni</item>
         <item quantity="other">giorni</item>
     </plurals>
     <plurals name="week">
         <item quantity="one">settimana</item>
+        <item quantity="many">settimane</item>
         <item quantity="other">settimane</item>
     </plurals>
     <plurals name="month">
         <item quantity="one">mese</item>
+        <item quantity="many">mesi</item>
         <item quantity="other">mesi</item>
     </plurals>
     <plurals name="year">
         <item quantity="one">anno</item>
+        <item quantity="many">anni</item>
         <item quantity="other">anni</item>
     </plurals>
     <string name="blur_sensitive_content">Nascondi contenuto sensibile</string>
@@ -280,4 +289,59 @@
     <string name="delete_account">Elimina Account</string>
     <string name="character_count">%1$d / %2$d caratteri</string>
     <string name="swipe_between_tabs">Scorri per cambiare scheda</string>
+    <string name="license_label">Licenza</string>
+    <string name="discard">Scarta</string>
+    <string name="are_you_sure">Sei sicuro?</string>
+    <string name="cancel_post_warning">Vuoi scartare questo post?</string>
+    <string name="cancel_profile_edit">Vuoi scartare le modifiche?</string>
+    <string name="cancel_post_edit">Vuoi scartare le modifiche?</string>
+    <string name="registration">Registrazione</string>
+    <string name="open">apri</string>
+    <string name="closed">chiuso</string>
+    <string name="jump_to_top">Torna in cima</string>
+    <string name="manually_accept_new_followers">Approva manualmente i nuovi follower</string>
+    <string name="include_public_posts_in_search_engines">Includi i post pubblici nei motori di ricerca</string>
+    <string name="include_profile_in_search_engines">Includi il profilo nei motori di ricerca</string>
+    <string name="optional_end_date">Data finale opzionale</string>
+    <string name="requested">Richiesta</string>
+    <string name="new_comment">Scrivi un nuovo commento</string>
+    <string name="follow_request">Richieste di seguirti</string>
+    <string name="new_status">Creato un nuovo post</string>
+    <string name="boosted_status_updated">Un post che hai ricondiviso è stato modificato</string>
+    <string name="notification">Notifica</string>
+    <string name="accept_follow_request">Accetta richiesta di seguirti</string>
+    <string name="reject_follow_request">Respingi richiesta di seguirti</string>
+    <string name="reason">Motivo</string>
+    <string name="caption_template">Modello per le didascalie</string>
+    <string name="send">Invia</string>
+    <string name="default_visibility">Visibilità predefinita</string>
+    <string name="mentioned_only">Solo menzioni</string>
+    <string name="brand">Marca</string>
+    <string name="model">Modello</string>
+    <string name="flash">Flash</string>
+    <string name="lens">Lente</string>
+    <string name="focal_length">Lunghezza focale</string>
+    <string name="focal_length_35mm">Lunghezza focale 35 mm</string>
+    <string name="aperture">Apertura</string>
+    <string name="exposure_time">Tempo di esposizione</string>
+    <string name="iso">ISO</string>
+    <string name="software">Software</string>
+    <string name="creation_date">Data di creazione</string>
+    <string name="creation_time">Ora di creazione</string>
+    <string name="disable_comments">Disattiva commenti</string>
+    <string name="category">Categoria</string>
+    <string name="next">Prossimo</string>
+    <string name="publish">Pubblica</string>
+    <string name="gps_coordinates">Coordinate GPS</string>
+    <string name="latitude">Latitudine</string>
+    <string name="longitude">Longitudine</string>
+    <string name="film">Pellicola</string>
+    <string name="chemistry">Chimica</string>
+    <string name="scanner">Scanner</string>
+    <string name="hide_camera_metadata">Nascondi metadati fotocamera</string>
+    <string name="back">Indietro</string>
+    <string name="edit_images">Modifica immagini</string>
+    <string name="compress">Comprimi</string>
+    <string name="compressing">Compressione...</string>
+    <string name="default_license">Licenza predefinita</string>
 </resources>

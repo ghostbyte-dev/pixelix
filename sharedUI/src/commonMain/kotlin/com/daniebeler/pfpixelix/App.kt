@@ -62,6 +62,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.Navigation
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -259,9 +260,7 @@ fun App(
                                         modifier = Modifier.align(Alignment.BottomCenter)
                                     ) {
                                         BottomBarFloating(
-                                            navController, openAccountSwitchBottomSheet = {
-                                                showAccountSwitchBottomSheet = true
-                                            }, scrollBehaviorBottom
+                                            navController, scrollBehaviorBottom
                                         )
 
                                     }
@@ -342,7 +341,6 @@ private enum class HomeTab(
 @Composable
 private fun BottomBarFloating(
     navController: NavController,
-    openAccountSwitchBottomSheet: () -> Unit,
     scrollBehavior: FloatingToolbarScrollBehavior
 ) {
     var avatar by remember { mutableStateOf<String?>(null) }
@@ -377,30 +375,8 @@ private fun BottomBarFloating(
                 it.hasRoute(tab.destination::class)
             }
 
-            val interactionSource = remember { MutableInteractionSource() }
-            val coroutineScope = rememberCoroutineScope()
             var isLongPress by remember { mutableStateOf(false) }
 
-            LaunchedEffect(interactionSource) {
-                interactionSource.interactions.collect { interaction ->
-                    when (interaction) {
-                        is PressInteraction.Press -> {
-                            isLongPress = false
-                            coroutineScope.launch {
-                                delay(500L.milliseconds)
-                                if (tab == HomeTab.OwnProfile) {
-                                    openAccountSwitchBottomSheet()
-                                }
-                                isLongPress = true
-                            }
-                        }
-
-                        is PressInteraction.Release, is PressInteraction.Cancel -> {
-                            coroutineScope.coroutineContext.cancelChildren()
-                        }
-                    }
-                }
-            }
             val containerColor =
                 if (isSelected) MaterialTheme.colorScheme.primary else Color.Transparent
             val contentColor =
@@ -426,7 +402,7 @@ private fun BottomBarFloating(
                                 val isOnRoot = currentDestination == tabRoot
                                 if (!isOnRoot) {
                                     navController.popBackStack(
-                                        route = tabRoot.route!!, inclusive = false
+                                        route = tabRoot.route ?: Destination.HomeTabFeeds, inclusive = false
                                     )
                                 } else if (currentDestination.hasRoute<Destination.Search>()) {
                                     appComponent.searchFieldFocus.focus()

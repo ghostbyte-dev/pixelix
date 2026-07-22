@@ -9,6 +9,7 @@ data class PixelfedMediaAttachmentDto(
     @SerialName("id") val id: String,
     @SerialName("url") val url: String?,
     @SerialName("preview_url") val previewUrl: String?,
+    @SerialName("optimized_url") val optimizedUrl: String?,
     @SerialName("meta") val meta: PixelfedMetaDto?,
     @SerialName("blurhash") val blurHash: String?,
     @SerialName("type") val type: String,
@@ -30,7 +31,7 @@ fun PixelfedMediaAttachmentDto.toDomain(): MediaAttachment {
     return MediaAttachment(
         id = this.id,
         url = this.url ?: "",
-        previewUrl = this.previewUrl ?: "",
+        previewUrl = this.optimizedUrl,
         metadata = null,
         blurHash = this.blurHash,
         type = this.type,

@@ -21,7 +21,13 @@ import com.daniebeler.pfpixelix.domain.service.general.AuthService
 import com.daniebeler.pfpixelix.domain.service.general.InstanceService
 import com.daniebeler.pfpixelix.domain.service.general.PostEditorService
 import com.daniebeler.pfpixelix.domain.service.general.PostService
+import com.daniebeler.pfpixelix.domain.service.general.ReplyChildrenState
+import com.daniebeler.pfpixelix.domain.service.general.ReplyNode
 import com.daniebeler.pfpixelix.domain.service.general.Session
+import com.daniebeler.pfpixelix.domain.service.general.insertChild
+import com.daniebeler.pfpixelix.domain.service.general.removeNode
+import com.daniebeler.pfpixelix.domain.service.general.updateChildrenState
+import com.daniebeler.pfpixelix.domain.service.general.updatePost
 import com.daniebeler.pfpixelix.domain.service.platform.Platform
 import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
 import com.daniebeler.pfpixelix.domain.service.suggestions.HashtagMentionsSuggestionsManager
@@ -174,21 +180,32 @@ class PostViewModel @Inject constructor(
         showPost = !showPost
     }
 
-    fun loadReplies(postId: String) {
+    fun loadRepliesInit(postId: String) {
+        repliesState = repliesState.copy(isLoading = true)
         postService.getReplies(postId).onEach { result ->
             repliesState = when (result) {
-                is Resource.Success -> {
-                    RepliesState(replies = result.data.descendants)
-                }
-
-                is Resource.Error -> {
-                    RepliesState(error = result.message)
-                }
-
-                is Resource.Loading -> {
-                    RepliesState(isLoading = true)
-                }
+                is Resource.Success -> repliesState.copy(replies = result.data, isLoading = false)
+                is Resource.Error -> repliesState.copy(error = result.message, isLoading = false)
+                is Resource.Loading -> repliesState
             }
+        }.launchIn(viewModelScope)
+    }
+
+    fun loadReplies(postId: String) {
+        repliesState = repliesState.copy(
+            replies = repliesState.replies.updateChildrenState(postId) { ReplyChildrenState.Loading }
+        )
+
+        postService.getReplies(postId).onEach { result ->
+            repliesState = repliesState.copy(
+                replies = repliesState.replies.updateChildrenState(postId) { current ->
+                    when (result) {
+                        is Resource.Success -> ReplyChildrenState.Loaded(result.data)
+                        is Resource.Error -> ReplyChildrenState.Error(result.message)
+                        is Resource.Loading -> current
+                    }
+                }
+            )
         }.launchIn(viewModelScope)
     }
 
@@ -198,8 +215,23 @@ class PostViewModel @Inject constructor(
                 when (result) {
                     is Resource.Success -> {
                         ownReplyState = OwnReplyState(reply = result.data)
-                        repliesState =
-                            repliesState.copy(replies = repliesState.replies + result.data)
+
+                        val newNode = ReplyNode(
+                            post = result.data,
+                            knownReplyCount = 0,
+                            childrenState = ReplyChildrenState.Loaded(emptyList())
+                        )
+
+                        repliesState = if (postId == post?.id) {
+                            repliesState.copy(replies = repliesState.replies + newNode)
+                        } else {
+                            repliesState.copy(
+                                replies = repliesState.replies.insertChild(
+                                    postId,
+                                    newNode
+                                )
+                            )
+                        }
                     }
 
                     is Resource.Error -> {
@@ -218,17 +250,58 @@ class PostViewModel @Inject constructor(
         postEditorService.deletePost(postId).onEach { result ->
             when (result) {
                 is Resource.Success -> {
-                    repliesState =
-                        repliesState.copy(replies = repliesState.replies.filter { it.id != postId })
+                    repliesState = repliesState.copy(
+                        replies = repliesState.replies.removeNode(postId)
+                    )
                 }
 
                 is Resource.Error -> {
-                    Logger.e(result.message)
+                    repliesState = repliesState.copy(error = result.message)
                 }
 
                 is Resource.Loading -> {
                     Logger.v("is loading")
                 }
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    fun likeReply(postId: String) {
+        repliesState = repliesState.copy(
+            replies = repliesState.replies.updatePost(postId) { it.copy(favourited = true) }
+        )
+
+        postService.likePost(postId).onEach { result ->
+            when (result) {
+                is Resource.Error -> {
+                    repliesState = repliesState.copy(
+                        replies = repliesState.replies.updatePost(postId) { it.copy(favourited = false) }
+                    )
+                }
+
+                is Resource.Success -> { /* already applied optimistically */
+                }
+
+                is Resource.Loading -> Logger.v("is loading")
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    fun unlikeReply(postId: String) {
+        repliesState = repliesState.copy(
+            replies = repliesState.replies.updatePost(postId) { it.copy(favourited = false) }
+        )
+
+        postService.unlikePost(postId).onEach { result ->
+            when (result) {
+                is Resource.Error -> {
+                    repliesState = repliesState.copy(
+                        replies = repliesState.replies.updatePost(postId) { it.copy(favourited = true) }
+                    )
+                }
+
+                is Resource.Success -> {}
+                is Resource.Loading -> Logger.v("is loading")
             }
         }.launchIn(viewModelScope)
     }

@@ -38,7 +38,8 @@ data class EditProfileCapabilities(
     val includePostsInSearchEngineToggle: Boolean,
     val includeProfileInSearchEngineToggle: Boolean,
     val websiteField: Boolean,
-    val headerImage: Boolean
+    val headerImage: Boolean,
+    val includeFields: Boolean
 )
 
 data class NotificationCapabilities(

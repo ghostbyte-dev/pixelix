@@ -28,6 +28,7 @@ data class VernissagePostDto @OptIn(ExperimentalSerializationApi::class) constru
     // @JsonNames allows fallback matching during parsing.
     // This completely removes the need for PostDtoTransformingSerializer!
     @SerialName("repliesCount") val replyCount: Int = 0,
+    @SerialName("replyToStatusId") val replyToStatusId: String?,
 
     @SerialName("sensitive") val sensitive: Boolean = false,
     @SerialName("contentWarning") val spoilerText: String = "",
@@ -72,7 +73,7 @@ data class VernissagePostDto @OptIn(ExperimentalSerializationApi::class) constru
             bookmarked = activePost.bookmarked,
             reblogCount = activePost.reblogsCount,
             //inReplyToId = activePost.inReplyToId,
-            inReplyToId = null,
+            inReplyToId = replyToStatusId,
             // Nested nullable options
             location = null,
             //place = activePost.place?.toDomain(),

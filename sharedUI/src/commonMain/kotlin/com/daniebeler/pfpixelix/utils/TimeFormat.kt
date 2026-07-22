@@ -1,16 +1,14 @@
 package com.daniebeler.pfpixelix.utils
 
 import org.jetbrains.compose.resources.getPluralString
-import org.jetbrains.compose.resources.getString
 import pixelix.app.generated.resources.Res
-import pixelix.app.generated.resources.ago
-import pixelix.app.generated.resources.day
-import pixelix.app.generated.resources.hour
-import pixelix.app.generated.resources.minute
-import pixelix.app.generated.resources.month
-import pixelix.app.generated.resources.second
-import pixelix.app.generated.resources.week
-import pixelix.app.generated.resources.year
+import pixelix.app.generated.resources.days_ago
+import pixelix.app.generated.resources.hours_ago
+import pixelix.app.generated.resources.minutes_ago
+import pixelix.app.generated.resources.months_ago
+import pixelix.app.generated.resources.seconds_ago
+import pixelix.app.generated.resources.weeks_ago
+import pixelix.app.generated.resources.years_ago
 import kotlin.time.Clock
 import kotlin.time.Instant
 
@@ -20,11 +18,9 @@ suspend fun timeAgo(dataDate: String): String {
         return ""
     }
     var convTime = ""
-    val suffix = getString(Res.string.ago)
 
     try {
         val pasTime: Instant = Instant.parse(dataDate)
-        // Using the new standard library Clock
         val nowTime: Instant = Clock.System.now()
         val dateDiff = nowTime - pasTime
 
@@ -33,45 +29,43 @@ suspend fun timeAgo(dataDate: String): String {
         val hours = dateDiff.inWholeHours
         val days = dateDiff.inWholeDays
 
-        // Logic flow from smallest to largest unit
         convTime = when {
             seconds < 60 -> {
-                val count = seconds.toInt()
-                "$count ${getPluralString(Res.plurals.second, count)} $suffix"
+                val count = seconds.toInt().coerceAtLeast(1)
+                getPluralString(Res.plurals.seconds_ago, count, count)
             }
 
             minutes < 60 -> {
                 val count = minutes.toInt()
-                "$count ${getPluralString(Res.plurals.minute, count)} $suffix"
+                getPluralString(Res.plurals.minutes_ago, count, count)
             }
 
             hours < 24 -> {
                 val count = hours.toInt()
-                "$count ${getPluralString(Res.plurals.hour, count)} $suffix"
+                getPluralString(Res.plurals.hours_ago, count, count)
             }
 
             days < 7 -> {
                 val count = days.toInt()
-                "$count ${getPluralString(Res.plurals.day, count)} $suffix"
+                getPluralString(Res.plurals.days_ago, count, count)
             }
 
             days < 30 -> {
                 val count = (days / 7).toInt()
-                "$count ${getPluralString(Res.plurals.week, count)} $suffix"
+                getPluralString(Res.plurals.weeks_ago, count, count)
             }
 
             days < 365 -> {
                 val count = (days / 30).toInt()
-                "$count ${getPluralString(Res.plurals.month, count)} $suffix"
+                getPluralString(Res.plurals.months_ago, count, count)
             }
 
             else -> {
                 val count = (days / 365).toInt()
-                "$count ${getPluralString(Res.plurals.year, count)} $suffix"
+                getPluralString(Res.plurals.years_ago, count, count)
             }
         }
     } catch (e: Throwable) {
-        // Instant.parse can throw DateTimeFormatException or IllegalArgumentException
         e.printStackTrace()
     }
     return convTime

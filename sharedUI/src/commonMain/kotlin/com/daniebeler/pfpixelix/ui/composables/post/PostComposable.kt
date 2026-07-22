@@ -75,6 +75,7 @@ import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.model.MediaAttachment
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.ui.composables.hashtagMentionText.HashtagsMentionsTextView
+import com.daniebeler.pfpixelix.ui.composables.post.reply.OwnReplyState
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposableDialog
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pfpixelix.ui.navigation.Destination
@@ -179,7 +180,7 @@ fun PostComposable(
     }
 
     LaunchedEffect(openReplies) {
-        if (openReplies) viewModel.loadReplies(postId)
+        if (openReplies) viewModel.loadRepliesInit(postId)
     }
 
     val pagerState = rememberPagerState(pageCount = { post.mediaAttachments.count() })
@@ -237,7 +238,7 @@ fun PostComposable(
             animateHeart = { animateHeart = true },
             animateBoost = { animateBoost = !animateBoost },
             onCommentsClick = {
-                viewModel.loadReplies(postId)
+                viewModel.loadRepliesInit(postId)
                 viewModel.getInstance()
                 activeSheet = BottomSheetType.Comments
             },
@@ -265,6 +266,12 @@ fun PostComposable(
     LoadingComposable(isLoading = viewModel.deleteState.isLoading)
     ErrorComposableDialog(viewModel.deleteState.error, {
         viewModel.deleteState = DeleteState()
+    })
+    ErrorComposableDialog(viewModel.ownReplyState.error, {
+        viewModel.ownReplyState = OwnReplyState()
+    })
+    ErrorComposableDialog(viewModel.repliesState.error, {
+        viewModel.repliesState = viewModel.repliesState.copy(error = "")
     })
 }
 
@@ -1065,7 +1072,7 @@ private fun ImageWrapper(
     onSuccess: () -> Unit
 ) {
     AsyncImage(
-        model = mediaAttachment.previewUrl,
+        model = mediaAttachment.previewUrl ?: mediaAttachment.url,
         contentDescription = null,
         modifier = Modifier.fillMaxWidth(),
         contentScale = ContentScale.FillWidth,

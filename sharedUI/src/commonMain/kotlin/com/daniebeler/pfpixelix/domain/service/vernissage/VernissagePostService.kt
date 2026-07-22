@@ -3,10 +3,13 @@ package com.daniebeler.pfpixelix.domain.service.vernissage
 import com.daniebeler.pfpixelix.domain.model.NewReport
 import com.daniebeler.pfpixelix.domain.model.PaginatedResponse
 import com.daniebeler.pfpixelix.domain.model.Post
+import com.daniebeler.pfpixelix.domain.model.PostContext
 import com.daniebeler.pfpixelix.domain.model.ReportResponse
 import com.daniebeler.pfpixelix.domain.repository.vernissage.VernissageApi
 import com.daniebeler.pfpixelix.domain.service.general.AuthService
 import com.daniebeler.pfpixelix.domain.service.general.PostService
+import com.daniebeler.pfpixelix.domain.service.general.ReplyChildrenState
+import com.daniebeler.pfpixelix.domain.service.general.ReplyNode
 import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.domain.service.utils.loadResource
@@ -60,6 +63,30 @@ class VernissagePostService(
     }
 
     override fun getReplies(postId: String) = loadResource {
+        val context = api.getReplies(postId).toDomain()
+        val result = buildTree(context.descendants, rootId = postId)
+        result
+    }
+
+    private fun buildTree(descendants: List<Post>, rootId: String): List<ReplyNode> {
+        val byParent = descendants.groupBy { it.inReplyToId ?: rootId }
+
+        fun buildNode(post: Post): ReplyNode = ReplyNode(
+            post = post,
+            knownReplyCount = post.replyCount,
+            childrenState = ReplyChildrenState.Loaded(
+                (byParent[post.id] ?: emptyList())
+                    .sortedBy { it.createdAt }
+                    .map { buildNode(it) }
+            )
+        )
+
+        return (byParent[rootId] ?: emptyList())
+            .sortedBy { it.createdAt }
+            .map { buildNode(it) }
+    }
+
+    override fun postContext(postId: String): Flow<Resource<PostContext>> = loadResource {
         api.getReplies(postId).toDomain()
     }
 

@@ -37,10 +37,12 @@ import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.di.injectViewModel
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.arrow_left
+import pixelix.app.generated.resources.follower
 import pixelix.app.generated.resources.followers
 import pixelix.app.generated.resources.following
 
@@ -119,8 +121,8 @@ fun FollowersMainComposable(
                     text = {
                         if (viewModel.accountState.account != null) {
                             Text(
-                                viewModel.accountState.account?.followersCount.toString() + " " + stringResource(
-                                    Res.string.followers
+                                viewModel.accountState.account?.followersCount.toString() + " " + pluralStringResource(
+                                    Res.plurals.follower, viewModel.accountState.account?.followersCount ?: 0
                                 )
                             )
                         } else {
@@ -140,12 +142,12 @@ fun FollowersMainComposable(
                     text = {
                         if (viewModel.accountState.account != null) {
                             Text(
-                                viewModel.accountState.account?.followingCount.toString() + " " + stringResource(
-                                    Res.string.following
+                                viewModel.accountState.account?.followingCount.toString() + " " + pluralStringResource(
+                                    Res.plurals.following, viewModel.accountState.account?.followingCount ?: 0
                                 )
                             )
                         } else {
-                            Text(text = stringResource(Res.string.following))
+                            Text(text = pluralStringResource(Res.plurals.following, 0))
                         }
                     },
                     selected = pagerState.currentPage == 1,

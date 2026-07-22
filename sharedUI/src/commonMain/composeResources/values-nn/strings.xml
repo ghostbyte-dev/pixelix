@@ -24,6 +24,7 @@
     </plurals>
     <plurals name="following">
         <item quantity="one">Følger</item>
+        <item quantity="other">Følger</item>
     </plurals>
     <plurals name="posts">
         <item quantity="one">Innlegg</item>
@@ -291,12 +292,12 @@
     <string name="manually_accept_new_followers">Godkjenn følgarar manuelt</string>
     <string name="include_public_posts_in_search_engines">Gjer offentlege innlegg tilgjengelege for søkemotorar</string>
     <string name="include_profile_in_search_engines">Gjer profilen tilgjengeleg for søkemotorar</string>
-    <string name="optional_end_date">valfri sluttdato</string>
+    <string name="optional_end_date">Valfri sluttdato</string>
     <string name="requested">Førespurt</string>
-    <string name="new_comment">skreiv ein kommentar</string>
-    <string name="follow_request">bad om å få følge deg</string>
-    <string name="new_status">la ut eit nytt innlegg</string>
-    <string name="boosted_status_updated">framheva innlegg vart oppdatert</string>
+    <string name="new_comment">Skreiv ein kommentar</string>
+    <string name="follow_request">Bad om å få følge deg</string>
+    <string name="new_status">La ut eit nytt innlegg</string>
+    <string name="boosted_status_updated">Framheva innlegg vart oppdatert</string>
     <string name="notification">Varsel</string>
     <string name="accept_follow_request">Godta førespurnad om å følge deg</string>
     <string name="reject_follow_request">Avvis førespurnad om å følge deg</string>
@@ -305,4 +306,32 @@
     <string name="send">Send</string>
     <string name="default_visibility">Standard synlegheit</string>
     <string name="mentioned_only">Berre nemnde</string>
+    <string name="brand">Merke</string>
+    <string name="model">Modell</string>
+    <string name="flash">Blits</string>
+    <string name="lens">Objektiv</string>
+    <string name="focal_length">Brennvidde</string>
+    <string name="focal_length_35mm">Brennvidde fullformat</string>
+    <string name="aperture">Blendaropning</string>
+    <string name="exposure_time">Lukkartid</string>
+    <string name="iso">ISO</string>
+    <string name="software">Programvare</string>
+    <string name="creation_date">Tatt dato</string>
+    <string name="creation_time">Tatt kl.</string>
+    <string name="disable_comments">Slå av kommentarar</string>
+    <string name="category">Kategori</string>
+    <string name="next">Neste</string>
+    <string name="publish">Publiser</string>
+    <string name="gps_coordinates">GPS-koordinatar</string>
+    <string name="latitude">Breiddegrad</string>
+    <string name="longitude">Lengdegrad</string>
+    <string name="film">Film</string>
+    <string name="chemistry">Kjemi</string>
+    <string name="scanner">Skannar</string>
+    <string name="hide_camera_metadata">Skjul metadata frå kameraet</string>
+    <string name="back">Tilbake</string>
+    <string name="edit_images">Rediger bilde</string>
+    <string name="compress">Komprimer</string>
+    <string name="compressing">Komprimerer …</string>
+    <string name="default_license">Standard lisens</string>
 </resources>

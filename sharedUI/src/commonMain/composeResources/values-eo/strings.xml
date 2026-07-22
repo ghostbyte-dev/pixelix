@@ -69,4 +69,21 @@
     <string name="empty">Malplena</string>
     <string name="no_posts">Neniu afiŝo</string>
     <string name="this_user_has_not_postet_anything_yet">Ĉi tiu uzanto ankoraŭ ne afiŝis ion</string>
+    <string name="brand">Marko</string>
+    <string name="model">Modelo</string>
+    <string name="flash">Fulmilo</string>
+    <string name="lens">Objektivo</string>
+    <string name="focal_length">Fokusdistanco</string>
+    <string name="focal_length_35mm">Fokusdistanco 35 mm</string>
+    <string name="aperture">Apertaĵo</string>
+    <string name="exposure_time">Tempo de ekspono</string>
+    <string name="iso">ISO</string>
+    <string name="software">Programo</string>
+    <string name="creation_date">Datita</string>
+    <string name="creation_time">Farita je</string>
+    <string name="disable_comments">Malŝalti komentojn</string>
+    <string name="category">Kategorio</string>
+    <string name="next">Sekva</string>
+    <string name="publish">Publikigi</string>
+    <string name="gps_coordinates">GPS-koordinatoj</string>
 </resources>

@@ -1,0 +1,4 @@
+ - Fix 1:1 aspect ratio in Pixelfed
+ - Fix comments / replies
+ - Fix stopping background music
+ - Other bug fixes

@@ -2,18 +2,19 @@ package com.daniebeler.pfpixelix.ui.composables.edit_profile
 
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.daniebeler.pfpixelix.domain.model.request.UpdateFieldRequest
 import com.daniebeler.pfpixelix.domain.model.request.UpdateUserRequest
 import com.daniebeler.pfpixelix.domain.service.general.AccountService
 import com.daniebeler.pfpixelix.domain.service.general.Session
-import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.domain.service.suggestions.HashtagMentionsSuggestionsManager
-import com.daniebeler.pfpixelix.utils.EmptyKmpUri
+import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.utils.KmpUri
 import com.daniebeler.pfpixelix.utils.toKmpUri
 import kotlinx.coroutines.flow.launchIn
@@ -40,14 +41,28 @@ class EditProfileViewModel @Inject constructor(
     var manuallyAcceptNewFollowers by mutableStateOf<Boolean?>(null)
     var includePublicPostsInSearchEngine by mutableStateOf<Boolean?>(null)
     var includeProfileInSearchEngine by mutableStateOf<Boolean?>(null)
+    var fields = mutableStateListOf<UpdateFieldRequest>()
 
 
     val isEdited: Boolean by derivedStateOf {
-        if (accountState.account == null) return@derivedStateOf false
-        !(displayName.text == (accountState.account?.displayname
-            ?: "") && note.text == (accountState.account?.note
-            ?: "") && ("https://${website.text}" == (accountState.account?.website
-            ?: "") || (accountState.account?.website.isNullOrEmpty() && website.text.isEmpty())) && avatarState.newImage == null && headerState.newImage == null && privateProfile == accountState.account?.locked && manuallyAcceptNewFollowers == accountState.account?.manuallyApprovesFollowers && includeProfileInSearchEngine == accountState.account?.includeProfilePageInSearchEngines && includePublicPostsInSearchEngine == accountState.account?.includePublicPostsInSearchEngines)
+        val account = accountState.account ?: return@derivedStateOf false
+
+        val originalFields = account.fields
+        val fieldsChanged = fields.size != originalFields.size || fields.zip(originalFields).any { (newField, oldField) ->
+            newField.key != oldField.key || newField.value != oldField.value
+        }
+
+        val isDisplayNameUnchanged = displayName.text == (account.displayname ?: "")
+        val isNoteUnchanged = note.text == (account.note)
+        val isWebsiteUnchanged = ("https://${website.text}" == (account.website)) ||
+                (account.website.isEmpty() && website.text.isEmpty())
+        val areImagesUnchanged = avatarState.newImage == null && headerState.newImage == null
+        val areSettingsUnchanged = privateProfile == account.locked &&
+                manuallyAcceptNewFollowers == account.manuallyApprovesFollowers &&
+                includeProfileInSearchEngine == account.includeProfilePageInSearchEngines &&
+                includePublicPostsInSearchEngine == account.includePublicPostsInSearchEngines
+
+        fieldsChanged || !(isDisplayNameUnchanged && isNoteUnchanged && isWebsiteUnchanged && areImagesUnchanged && areSettingsUnchanged)
     }
 
     init {
@@ -73,6 +88,17 @@ class EditProfileViewModel @Inject constructor(
                         accountState.account?.includeProfilePageInSearchEngines
                     includePublicPostsInSearchEngine =
                         accountState.account?.includePublicPostsInSearchEngines
+                    accountState.account?.fields?.map {
+                        UpdateFieldRequest(
+                            id = it.id,
+                            key = it.key,
+                            value = it.value,
+                            valueHtml = it.valueHtml,
+                            isVerified = it.isVerified
+                        )
+                    }?.let {
+                        fields.addAll(it)
+                    }
                     firstLoaded = true
                 }
 
@@ -151,7 +177,8 @@ class EditProfileViewModel @Inject constructor(
             locked = privateProfile,
             manuallyAcceptNewFollowers = manuallyAcceptNewFollowers,
             includeProfilePageInSearchEngines = includeProfileInSearchEngine,
-            includePublicPostsInSearchEngines = includePublicPostsInSearchEngine
+            includePublicPostsInSearchEngines = includePublicPostsInSearchEngine,
+            fields = fields
         )
 
         accountService.updateAccount(
@@ -176,5 +203,29 @@ class EditProfileViewModel @Inject constructor(
     fun updateNote(newNote: TextFieldValue) {
         note = newNote
         hashtagMentionsSuggestionsManager.changeText(newNote, viewModelScope)
+    }
+
+    fun addField() {
+        fields.add(
+            UpdateFieldRequest()
+        )
+    }
+
+    fun removeField(index: Int) {
+        if (index in fields.indices) {
+            fields.removeAt(index)
+        }
+    }
+
+    fun updateFieldKey(index: Int, newKey: String) {
+        if (index in fields.indices) {
+            fields[index] = fields[index].copy(key = newKey)
+        }
+    }
+
+    fun updateFieldValue(index: Int, newValue: String) {
+        if (index in fields.indices) {
+            fields[index] = fields[index].copy(value = newValue)
+        }
     }
 }

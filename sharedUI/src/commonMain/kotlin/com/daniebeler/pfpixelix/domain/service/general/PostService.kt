@@ -11,7 +11,6 @@ import com.daniebeler.pfpixelix.domain.repository.pixelfed.PixelfedApi
 import com.daniebeler.pfpixelix.domain.service.pixelfed.PixelfedPostService
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.domain.service.vernissage.VernissagePostService
-import com.daniebeler.pfpixelix.domain.service.vernissage.VernissageTimelineService
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import me.tatarka.inject.annotations.Inject
@@ -44,7 +43,8 @@ interface PostService {
 
     fun createReply(postId: String, content: String): Flow<Resource<Post>>
 
-    fun getReplies(postId: String): Flow<Resource<PostContext>>
+    fun getReplies(postId: String): Flow<Resource<List<ReplyNode>>>
+    fun postContext(postId: String): Flow<Resource<PostContext>>
 
     fun likePost(postId: String): Flow<Resource<Post>>
 
@@ -74,6 +74,89 @@ interface PostService {
                 event
             }
         }
+}
+
+sealed class ReplyChildrenState {
+    data object NotLoaded : ReplyChildrenState()
+    data object Loading : ReplyChildrenState()
+    data class Loaded(val nodes: List<ReplyNode>) : ReplyChildrenState()
+    data class Error(val message: String) : ReplyChildrenState()
+}
+
+data class ReplyNode(
+    val post: Post,
+    val knownReplyCount: Int,
+    val childrenState: ReplyChildrenState
+)
+
+fun List<ReplyNode>.updateChildrenState(
+    nodeId: String,
+    transform: (ReplyChildrenState) -> ReplyChildrenState
+): List<ReplyNode> = map { node ->
+    when {
+        node.post.id == nodeId -> node.copy(childrenState = transform(node.childrenState))
+        node.childrenState is ReplyChildrenState.Loaded ->
+            node.copy(
+                childrenState = ReplyChildrenState.Loaded(
+                    node.childrenState.nodes.updateChildrenState(nodeId, transform)
+                )
+            )
+        else -> node
+    }
+}
+
+fun List<ReplyNode>.removeNode(nodeId: String): List<ReplyNode> {
+    return this
+        .filterNot { it.post.id == nodeId }
+        .map { node ->
+            val state = node.childrenState
+            if (state is ReplyChildrenState.Loaded) {
+                node.copy(childrenState = ReplyChildrenState.Loaded(state.nodes.removeNode(nodeId)))
+            } else {
+                node
+            }
+        }
+}
+
+fun List<ReplyNode>.insertChild(parentId: String, newNode: ReplyNode): List<ReplyNode> {
+    return map { node ->
+        when {
+            node.post.id == parentId -> {
+                val existingChildren = when (val state = node.childrenState) {
+                    is ReplyChildrenState.Loaded -> state.nodes
+                    else -> emptyList()
+                }
+                node.copy(
+                    knownReplyCount = node.knownReplyCount + 1,
+                    childrenState = ReplyChildrenState.Loaded(existingChildren + newNode)
+                )
+            }
+            else -> {
+                val state = node.childrenState
+                if (state is ReplyChildrenState.Loaded) {
+                    node.copy(childrenState = ReplyChildrenState.Loaded(state.nodes.insertChild(parentId, newNode)))
+                } else {
+                    node
+                }
+            }
+        }
+    }
+}
+
+fun List<ReplyNode>.updatePost(nodeId: String, transform: (Post) -> Post): List<ReplyNode> {
+    return map { node ->
+        when {
+            node.post.id == nodeId -> node.copy(post = transform(node.post))
+            else -> {
+                val state = node.childrenState
+                if (state is ReplyChildrenState.Loaded) {
+                    node.copy(childrenState = ReplyChildrenState.Loaded(state.nodes.updatePost(nodeId, transform)))
+                } else {
+                    node
+                }
+            }
+        }
+    }
 }
 
 @Inject
@@ -107,8 +190,10 @@ class PostServiceDelegate(
         postId: String, content: String
     ): Flow<Resource<Post>> = current.createReply(postId, content)
 
-    override fun getReplies(postId: String): Flow<Resource<PostContext>> =
+    override fun getReplies(postId: String): Flow<Resource<List<ReplyNode>>> =
         current.getReplies(postId)
+
+    override fun postContext(postId: String): Flow<Resource<PostContext>> = current.postContext(postId)
 
     override fun likePost(postId: String): Flow<Resource<Post>> = current.likePost(postId)
 

@@ -18,7 +18,9 @@
     <string name="follow">Sledovat</string>
     <string name="unfollow">Zrušit sledování</string>
     <string name="followers">Sledující</string>
-    <string name="following">Sleduje</string>
+    <plurals name="following">
+        <item quantity="one">Sleduje</item>
+    </plurals>
     <string name="posts">Příspěvky</string>
     <string name="hashtags">Hashtagy</string>
     <string name="reblogged_your_post">reblogoval tvůj příspěvek</string>

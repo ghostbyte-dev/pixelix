@@ -24,7 +24,11 @@
         <item quantity="one">Follower</item>
         <item quantity="other">Followers</item>
     </plurals>
-    <string name="following">Following</string>
+    <plurals name="following">
+        <item quantity="one">Following</item>
+        <item quantity="other">Following</item>
+    </plurals>
+    <string name="posts_title">Posts</string>
     <plurals name="posts">
         <item quantity="one">Post</item>
         <item quantity="other">Posts</item>

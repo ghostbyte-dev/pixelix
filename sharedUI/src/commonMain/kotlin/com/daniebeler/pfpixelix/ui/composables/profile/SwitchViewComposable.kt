@@ -17,13 +17,13 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
-import pixelix.app.generated.resources.grid_filled
 import pixelix.app.generated.resources.grid
-import pixelix.app.generated.resources.list_filled
+import pixelix.app.generated.resources.grid_filled
 import pixelix.app.generated.resources.list
+import pixelix.app.generated.resources.list_filled
 import pixelix.app.generated.resources.masonry
 import pixelix.app.generated.resources.masonry_filled
 import pixelix.app.generated.resources.posts
@@ -49,7 +49,7 @@ fun SwitchViewComposable(
                     Text(
                         text = postsCount.toString(), fontWeight = FontWeight.Bold, fontSize = 18.sp
                     )
-                    Text(text = " " + stringResource(Res.string.posts), fontSize = 12.sp)
+                    Text(text = " " + pluralStringResource(Res.plurals.posts, postsCount), fontSize = 12.sp)
                 }
             } ?: Box {}
 

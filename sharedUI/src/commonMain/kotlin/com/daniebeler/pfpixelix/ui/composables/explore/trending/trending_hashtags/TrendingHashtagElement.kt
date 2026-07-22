@@ -30,7 +30,7 @@ import com.daniebeler.pfpixelix.domain.model.Tag
 import com.daniebeler.pfpixelix.ui.composables.widgets.CustomPost
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import com.daniebeler.pfpixelix.utils.StringFormat
-import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.resources.pluralStringResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.posts
 
@@ -61,8 +61,8 @@ fun TrendingHashtagElement(
                 Text(
                     text = "  • " + StringFormat.groupDigits(
                         hashtag.postsCount
-                    ) + " " + stringResource(
-                        Res.string.posts
+                    ) + " " + pluralStringResource(
+                        Res.plurals.posts, hashtag.postsCount
                     ), fontSize = 12.sp, color = MaterialTheme.colorScheme.secondary
                 )
             }
@@ -82,7 +82,7 @@ fun TrendingHashtagElement(
 
                 itemsIndexed(viewModel.postsState.posts) { index, post ->
 
-                    val postsCount = viewModel.postsState.posts.size;
+                    val postsCount = viewModel.postsState.posts.size
 
                     val baseModifier = Modifier
 

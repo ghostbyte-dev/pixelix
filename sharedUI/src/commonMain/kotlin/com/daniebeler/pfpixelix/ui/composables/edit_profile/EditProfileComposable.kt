@@ -3,6 +3,7 @@ package com.daniebeler.pfpixelix.ui.composables.edit_profile
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -29,8 +30,10 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
@@ -89,6 +92,8 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
+import pixelix.app.generated.resources.add
+import pixelix.app.generated.resources.add_field
 import pixelix.app.generated.resources.are_you_sure
 import pixelix.app.generated.resources.arrow_left
 import pixelix.app.generated.resources.bio
@@ -99,12 +104,16 @@ import pixelix.app.generated.resources.default_avatar
 import pixelix.app.generated.resources.discard
 import pixelix.app.generated.resources.displayname
 import pixelix.app.generated.resources.edit_profile
+import pixelix.app.generated.resources.fields
 import pixelix.app.generated.resources.include_profile_in_search_engines
 import pixelix.app.generated.resources.include_public_posts_in_search_engines
+import pixelix.app.generated.resources.key
 import pixelix.app.generated.resources.manually_accept_new_followers
 import pixelix.app.generated.resources.private_profile
+import pixelix.app.generated.resources.remove
 import pixelix.app.generated.resources.save
 import pixelix.app.generated.resources.undo
+import pixelix.app.generated.resources.value
 import pixelix.app.generated.resources.website
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -370,6 +379,10 @@ fun EditProfileComposable(
                             })
                     }
 
+                    if (viewModel.capabilities.value.editProfile.includeFields) {
+                        Spacer(modifier = Modifier.height(18.dp))
+                        EditFields(viewModel)
+                    }
 
                     Spacer(Modifier.height(80.dp + navigationBarPadding))
                 }
@@ -496,6 +509,98 @@ fun EditProfileComposable(
     }
 }
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+private fun EditFields(
+    viewModel: EditProfileViewModel
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier.padding(start = 6.dp).fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = stringResource(Res.string.fields), style = MaterialTheme.typography.bodyLarge
+            )
+
+            val buttonSize = ButtonDefaults.ExtraSmallContainerHeight
+            Button(
+                contentPadding = ButtonDefaults.contentPaddingFor(
+                    buttonSize, hasEndIcon = true
+                ),
+                onClick = {
+                    viewModel.addField()
+                },
+            ) {
+                Text(
+                    stringResource(Res.string.add_field),
+                    style = ButtonDefaults.textStyleFor(buttonSize)
+                )
+                Spacer(Modifier.size(ButtonDefaults.iconSpacingFor(buttonSize)))
+                Icon(
+                    vectorResource(Res.drawable.add),
+                    contentDescription = "",
+                    modifier = Modifier.size(ButtonDefaults.iconSizeFor(buttonSize)),
+                )
+            }
+        }
+        val customTextFieldColors = TextFieldDefaults.colors(
+            unfocusedIndicatorColor = Color.Transparent,
+            focusedIndicatorColor = Color.Transparent,
+            focusedContainerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(4.dp),
+            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(4.dp)
+        )
+        Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+            viewModel.fields.forEachIndexed { index, field ->
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Column(verticalArrangement = Arrangement.spacedBy(6.dp), modifier = Modifier.weight(1f)) {
+                        TextField(
+                            value = field.key,
+                            onValueChange = {
+                                viewModel.updateFieldKey(index, it)
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                            label = { Text(stringResource(Res.string.key)) },
+                            shape = RoundedCornerShape(16.dp),
+                            colors = customTextFieldColors,
+                            singleLine = true
+                        )
+                        TextField(
+                            value = field.value,
+                            onValueChange = {
+                                viewModel.updateFieldValue(index, it)
+                            },
+                            modifier = Modifier.fillMaxWidth(),
+                            label = { Text(stringResource(Res.string.value)) },
+                            shape = RoundedCornerShape(16.dp),
+                            colors = customTextFieldColors,
+                            singleLine = false
+                        )
+                    }
+                    IconButton(
+                        onClick = {
+                            viewModel.removeField(index)
+                        },
+                        colors = IconButtonColors(
+                            containerColor = MaterialTheme.colorScheme.errorContainer,
+                            contentColor = MaterialTheme.colorScheme.error,
+                            disabledContentColor = Color.Unspecified,
+                            disabledContainerColor = Color.Unspecified
+                        )
+                    ) {
+                        Icon(
+                            imageVector = vectorResource(Res.drawable.remove),
+                            contentDescription = "Remove field",
+                            modifier = Modifier.size(ButtonDefaults.MediumIconSize)
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
 @Composable
 private fun EditProfileTextField(
     label: StringResource,
@@ -504,21 +609,13 @@ private fun EditProfileTextField(
     singleLine: Boolean = true,
     prefix: @Composable (() -> Unit)? = null
 ) {
-    Row {
-        Spacer(Modifier.width(6.dp))
-        Text(
-            text = stringResource(label), fontWeight = FontWeight.Bold
-        )
-    }
-
-    Spacer(Modifier.height(6.dp))
-
     TextField(
         value = value,
         singleLine = singleLine,
         prefix = prefix,
         onValueChange = onValueChange,
         modifier = Modifier.fillMaxWidth(),
+        label = { Text(stringResource(label)) },
         shape = RoundedCornerShape(16.dp),
         colors = TextFieldDefaults.colors(
             unfocusedIndicatorColor = Color.Transparent,
@@ -540,7 +637,7 @@ private fun EditProfileSwitch(
     Row(verticalAlignment = Alignment.CenterVertically) {
         Spacer(Modifier.width(6.dp))
         Text(
-            text = stringResource(label), fontWeight = FontWeight.Bold
+            text = stringResource(label), style = MaterialTheme.typography.bodyLarge
         )
         Spacer(modifier = Modifier.weight(1f))
         Switch(

@@ -12,7 +12,7 @@ http:
       type: query
       disabled: true
     - name: userName
-      value: hiebeler05@pixelfed.social
+      value: hiebeler05
       type: path
   auth: inherit
 

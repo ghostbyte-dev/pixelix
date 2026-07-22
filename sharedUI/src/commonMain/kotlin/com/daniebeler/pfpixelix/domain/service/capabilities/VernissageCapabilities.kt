@@ -16,7 +16,8 @@ val VernissageCapabilities = Capabilities(
         includePostsInSearchEngineToggle = true,
         includeProfileInSearchEngineToggle = true,
         websiteField = false,
-        headerImage = true
+        headerImage = true,
+        includeFields = true
     ), trending = TrendingCapabilities(
         supportsMultipleProfileTimeRanges = true, supportsMultipleHashtagTimeRanges = true
     ), newPost = NewPostCapabilities(

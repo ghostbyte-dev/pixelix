@@ -9,5 +9,15 @@ data class VernissageUpdateUserRequest(
     @SerialName("bio") val bio: String? = null,
     @SerialName("manuallyApprovesFollowers") val manuallyApprovesFollowers: Boolean?,
     @SerialName("includeProfilePageInSearchEngines") val includeProfilePageInSearchEngines: Boolean? = null,
-    @SerialName("includePublicPostsInSearchEngines") val includePublicPostsInSearchEngines: Boolean? = null
+    @SerialName("includePublicPostsInSearchEngines") val includePublicPostsInSearchEngines: Boolean? = null,
+    @SerialName("fields") val fields: List<VernissageUpdateFieldRequest> = emptyList()
+)
+
+@Serializable
+data class VernissageUpdateFieldRequest(
+    @SerialName("id")val id: String?,
+    @SerialName("key")val key: String,
+    @SerialName("value")val value: String,
+    @SerialName("valueHtml") val valueHtml: String?,
+    @SerialName("isVerified") val isVerified: Boolean?
 )

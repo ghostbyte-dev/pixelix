@@ -338,4 +338,8 @@
     <string name="compress">Compress</string>
     <string name="compressing">Compressing...</string>
     <string name="default_license">Default license</string>
+    <string name="fields">Fields</string>
+    <string name="add_field">Add field</string>
+    <string name="key">Key</string>
+    <string name="value">Value</string>
 </resources>

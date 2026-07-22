@@ -261,8 +261,9 @@ private fun AccountRow(
             }
 
             Row(verticalAlignment = Alignment.CenterVertically) {
+                val username = account.username.substringBefore("@")
                 Text(
-                    text = account.username,
+                    text = username,
                     fontSize = 12.sp,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis

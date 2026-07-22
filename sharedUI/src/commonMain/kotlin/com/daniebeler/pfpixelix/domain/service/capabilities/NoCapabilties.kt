@@ -20,7 +20,8 @@ val NoCapabilities = Capabilities(
         includePostsInSearchEngineToggle = false,
         includeProfileInSearchEngineToggle = false,
         websiteField = false,
-        headerImage = false
+        headerImage = false,
+        includeFields = false
     ),
     trending = TrendingCapabilities(
         supportsMultipleProfileTimeRanges = false, supportsMultipleHashtagTimeRanges = false

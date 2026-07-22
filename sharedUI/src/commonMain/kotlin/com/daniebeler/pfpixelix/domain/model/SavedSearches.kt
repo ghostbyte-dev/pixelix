@@ -1,7 +1,5 @@
 package com.daniebeler.pfpixelix.domain.model
 
-import com.daniebeler.pfpixelix.domain.repository.serializers.HtmlAsTextSerializer
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -25,6 +23,7 @@ data class SavedSearchesAccount(
     val displayname: String? = null,
     val avatar: String = "",
     val followersCount: Int = 0,
+    val url: String? = ""
 )
 
 fun SavedSearchesAccount.toDomain(): Account {
@@ -39,7 +38,7 @@ fun SavedSearchesAccount.toDomain(): Account {
         postsCount = 0,
         website = "",
         note = "",
-        url = "",
+        url = this.url ?: "",
         locked = false,
         createdAt = "",
         isAdmin = false,

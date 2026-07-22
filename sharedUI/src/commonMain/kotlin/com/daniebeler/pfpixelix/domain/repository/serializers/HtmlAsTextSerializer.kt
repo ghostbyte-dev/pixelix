@@ -2,6 +2,7 @@ package com.daniebeler.pfpixelix.domain.repository.serializers
 
 import com.fleeksoft.ksoup.Ksoup
 import com.fleeksoft.ksoup.nodes.Document
+import com.fleeksoft.ksoup.nodes.TextNode
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
@@ -13,17 +14,18 @@ internal object HtmlAsTextSerializer : KSerializer<String> {
     override fun serialize(encoder: Encoder, value: String) = encoder.encodeString(value)
     override fun deserialize(decoder: Decoder): String {
         val html = decoder.decodeString()
-        val withoutDoubleBreaks = html.replace("<br />\n", "\n")
-        val htmlWithBreaks = withoutDoubleBreaks.replace("\n", "<br>")
-        val document = Ksoup.parse(htmlWithBreaks)
-        document.outputSettings(Document.OutputSettings().prettyPrint(false)) // Prevent auto formatting
-        document.select("br").append("\\n") // Replace <br> with newlines
-        document.select("p").prepend("\\n\\n") // Add double newline for paragraphs
 
-        val text = document.text().replace("\\n", "\n")
-        val cleanedText = text.lines().joinToString("\n") { it.trimStart() } // Trim leading spaces
+        val document = Ksoup.parse(html)
+        document.outputSettings(Document.OutputSettings().prettyPrint(false))
 
-        return cleanedText.trim()
+        document.select("br").forEach { it.replaceWith(TextNode("\n")) }
+
+        val text = document.wholeText()
+
+        return text
+            .lines()
+            .joinToString("\n") { it.trimStart() }
+            .trim()
     }
 }
 

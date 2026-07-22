@@ -19,11 +19,10 @@ import com.daniebeler.pfpixelix.ui.composables.explore.trending.trending_posts.T
 import com.daniebeler.pfpixelix.ui.composables.followers.FollowersViewModel
 import com.daniebeler.pfpixelix.ui.composables.hashtagMentionText.TextWithClickableHashtagsAndMentionsViewModel
 import com.daniebeler.pfpixelix.ui.composables.mention.MentionViewModel
-import com.daniebeler.pfpixelix.ui.composables.post_editor.PostEditorViewModel
 import com.daniebeler.pfpixelix.ui.composables.notifications.CustomNotificationViewModel
 import com.daniebeler.pfpixelix.ui.composables.notifications.NotificationsViewModel
 import com.daniebeler.pfpixelix.ui.composables.post.PostViewModel
-import com.daniebeler.pfpixelix.ui.composables.post.reply.ReplyElementViewModel
+import com.daniebeler.pfpixelix.ui.composables.post_editor.PostEditorViewModel
 import com.daniebeler.pfpixelix.ui.composables.profile.other_profile.OtherProfileViewModel
 import com.daniebeler.pfpixelix.ui.composables.profile.own_profile.AccountSwitchViewModel
 import com.daniebeler.pfpixelix.ui.composables.profile.own_profile.OwnProfileViewModel
@@ -62,7 +61,6 @@ abstract class ViewModelComponent(
     abstract val accountSwitchViewModel: AccountSwitchViewModel
     abstract val blockedAccountsViewModel: BlockedAccountsViewModel
     abstract val bookmarkedPostsViewModel: BookmarkedPostsViewModel
-    abstract val replyElementViewModel: ReplyElementViewModel
     abstract val customNotificationViewModel: CustomNotificationViewModel
     abstract val editProfileViewModel: EditProfileViewModel
     abstract val exploreViewModel: ExploreViewModel

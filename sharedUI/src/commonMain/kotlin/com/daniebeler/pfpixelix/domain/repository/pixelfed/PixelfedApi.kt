@@ -3,6 +3,7 @@ package com.daniebeler.pfpixelix.domain.repository.pixelfed
 import com.daniebeler.pfpixelix.domain.model.FediseaInstance
 import com.daniebeler.pfpixelix.domain.model.FediseaServersResponse
 import com.daniebeler.pfpixelix.domain.model.FediseaSoftware
+import com.daniebeler.pfpixelix.domain.model.NewReply
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedAccountDto
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedChatDto
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedCollectionDto
@@ -366,7 +367,7 @@ interface PixelfedApi {
     @Headers("Content-Type: application/json")
     @POST("api/v1/statuses")
     suspend fun createReply(
-        @Body createReply: String
+        @Body createReply: NewReply
     ): PixelfedPostDto
 
     @Headers("Content-Type: application/json")

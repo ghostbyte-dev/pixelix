@@ -45,6 +45,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
@@ -56,12 +58,12 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
-import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.model.Instance
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.model.Visibility
+import com.daniebeler.pfpixelix.domain.service.general.ReplyChildrenState
+import com.daniebeler.pfpixelix.domain.service.general.ReplyNode
 import com.daniebeler.pfpixelix.ui.composables.hashtagMentionText.HashtagsMentionsTextView
-import com.daniebeler.pfpixelix.ui.composables.post.reply.ReplyElementViewModel
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pfpixelix.ui.composables.widgets.MaxLengthTextField
@@ -89,6 +91,8 @@ fun CommentsBottomSheet(
 ) {
     val suggestionsState by viewModel.hashtagMentionsSuggestionsManager.suggestionsState.collectAsStateWithLifecycle()
 
+    val focusManager = LocalFocusManager.current
+    val keyboardController = LocalSoftwareKeyboardController.current
     Box {
         Column(Modifier.fillMaxWidth().align(Alignment.TopStart)) {
             LazyColumn(
@@ -122,28 +126,43 @@ fun CommentsBottomSheet(
                             category = null
                         )
                         ReplyElement(
-                            reply = ownDescription,
+                            reply = ReplyNode(
+                                post = ownDescription,
+                                knownReplyCount = 0,
+                                childrenState = ReplyChildrenState.NotLoaded
+                            ),
                             true,
                             navController = navController,
                             {},
                             viewModel.myAccountId,
                             { url -> viewModel.openUrl(url) },
-                            instance = viewModel.instance
+                            instance = viewModel.instance,
+                            viewModel = viewModel
                         )
                     }
 
-                    Row(verticalAlignment = Alignment.Bottom, modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                    Row(
+                        verticalAlignment = Alignment.Bottom,
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
                         MaxLengthTextField(
                             value = viewModel.replyText,
                             onValueChange = { viewModel.updateReplyText(it) },
-                            textFieldModifier = Modifier.fillMaxWidth().onFocusChanged { focusState ->
-                                viewModel.hashtagMentionsSuggestionsManager.onFocusChanged(focusState.isFocused)
-                            },
+                            textFieldModifier = Modifier.fillMaxWidth()
+                                .onFocusChanged { focusState ->
+                                    viewModel.hashtagMentionsSuggestionsManager.onFocusChanged(
+                                        focusState.isFocused
+                                    )
+                                },
                             modifier = Modifier.weight(1f),
                             label = Res.string.reply,
                             imeAction = ImeAction.Send,
                             maxLength = viewModel.instance?.configuration?.statusConfig?.maxCharacters,
                             submit = { text ->
+                                focusManager.clearFocus()
+                                keyboardController?.hide()
+
                                 viewModel.replyText = TextFieldValue()
                                 viewModel.createReply(
                                     post.id, text
@@ -153,6 +172,9 @@ fun CommentsBottomSheet(
                         Button(
                             onClick = {
                                 if (!viewModel.ownReplyState.isLoading) {
+                                    focusManager.clearFocus()
+                                    keyboardController?.hide()
+
                                     viewModel.createReply(post.id, viewModel.replyText.text)
                                     viewModel.replyText = viewModel.replyText.copy(text = "")
                                 }
@@ -184,16 +206,17 @@ fun CommentsBottomSheet(
                 }
 
                 items(viewModel.repliesState.replies, key = {
-                    it.id
-                }) { reply ->
+                    it.post.id
+                }) { node ->
                     ReplyElement(
-                        reply = reply,
+                        reply = node,
                         false,
                         navController = navController,
-                        { viewModel.deleteReply(reply.id) },
+                        { viewModel.deleteReply(node.post.id) },
                         viewModel.myAccountId,
                         { url -> viewModel.openUrl(url) },
-                        instance = viewModel.instance
+                        instance = viewModel.instance,
+                        viewModel = viewModel
                     )
                 }
 
@@ -231,49 +254,51 @@ fun CommentsBottomSheet(
             if (viewModel.hashtagMentionsSuggestionsManager.suggestionsOpen) {
                 SuggestionsBar(
                     state = suggestionsState, bottomBarPadding = false, onSelected = { selected ->
-                        viewModel.replyText = viewModel.hashtagMentionsSuggestionsManager.selectSuggestion(
-                            selected, viewModel.replyText
-                        )
+                        viewModel.replyText =
+                            viewModel.hashtagMentionsSuggestionsManager.selectSuggestion(
+                                selected, viewModel.replyText
+                            )
                     })
             }
         }
-
     }
 }
 
 
 @Composable
 private fun ReplyElement(
-    reply: Post,
+    reply: ReplyNode,
     postDescription: Boolean,
     navController: NavController,
     deleteReply: () -> Unit,
     myAccountId: String?,
     openUrl: (url: String) -> Unit,
-    viewModel: ReplyElementViewModel = injectViewModel(key = reply.id) { replyElementViewModel },
+    viewModel: PostViewModel,
     instance: Instance?
 ) {
 
     var timeAgo: String by remember { mutableStateOf("") }
-    var replyCount: Int by remember { mutableIntStateOf(reply.replyCount) }
+    var replyCount: Int by remember { mutableIntStateOf(reply.post.replyCount) }
     val openAddReplyDialog = remember { mutableStateOf(false) }
     val showDeleteReplyDialog = remember {
         mutableStateOf(false)
     }
 
-    LaunchedEffect(reply.createdAt) {
-        if (myAccountId != null) {
-            viewModel.onInit(reply, myAccountId)
-        }
-        timeAgo = timeAgo(reply.createdAt)
+    LaunchedEffect(reply.post.createdAt) {
+        timeAgo = timeAgo(reply.post.createdAt)
     }
     Column(modifier = Modifier.padding(vertical = 8.dp)) {
         Row {
             AsyncImage(
-                model = reply.account.avatar,
+                model = reply.post.account.avatar,
                 contentDescription = "",
                 modifier = Modifier.height(42.dp).width(42.dp).clip(CircleShape).clickable {
-                    navController.navigate(Destination.Profile(reply.account.id, reply.account.username))
+                    navController.navigate(
+                        Destination.Profile(
+                            reply.post.account.id,
+                            reply.post.account.username
+                        )
+                    )
                 })
 
             Spacer(modifier = Modifier.width(12.dp))
@@ -281,13 +306,18 @@ private fun ReplyElement(
             Column {
                 Row {
                     Text(
-                        text = reply.account.acct,
+                        text = reply.post.account.acct,
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Bold,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         modifier = Modifier.clickable {
-                            navController.navigate(Destination.Profile(reply.account.id, reply.account.username))
+                            navController.navigate(
+                                Destination.Profile(
+                                    reply.post.account.id,
+                                    reply.post.account.username
+                                )
+                            )
                         })
 
                     Text(
@@ -299,9 +329,9 @@ private fun ReplyElement(
                 }
 
                 HashtagsMentionsTextView(
-                    text = reply.content,
-                    mentions = reply.mentions,
-                    emojis = reply.emojis,
+                    text = reply.post.content,
+                    mentions = reply.post.mentions,
+                    emojis = reply.post.emojis,
                     navController = navController,
                     openUrl = { url -> openUrl(url) })
             }
@@ -309,7 +339,7 @@ private fun ReplyElement(
 
         if (!postDescription) {
             Row(Modifier.padding(54.dp, 0.dp, 0.dp, 0.dp)) {
-                if (reply.account.id == myAccountId) {
+                if (reply.post.account.id == myAccountId) {
                     IconButton(onClick = { showDeleteReplyDialog.value = true }) {
                         Icon(
                             imageVector = vectorResource(Res.drawable.trash),
@@ -325,9 +355,9 @@ private fun ReplyElement(
                     )
                 }
 
-                if (viewModel.likedReply) {
+                if (reply.post.favourited) {
                     IconButton(onClick = {
-                        viewModel.unlikeReply(reply.id)
+                        viewModel.unlikeReply(reply.post.id)
                     }) {
                         Icon(
                             imageVector = vectorResource(Res.drawable.heart_filled),
@@ -337,18 +367,19 @@ private fun ReplyElement(
                     }
                 } else {
                     IconButton(onClick = {
-                        viewModel.likeReply(reply.id)
+                        viewModel.likeReply(reply.post.id)
                     }) {
                         Icon(
-                            imageVector = vectorResource(Res.drawable.heart), contentDescription = ""
+                            imageVector = vectorResource(Res.drawable.heart),
+                            contentDescription = ""
                         )
                     }
                 }
             }
 
-            if (replyCount != 0 && viewModel.repliesState.replies.isEmpty()) {
+            if (reply.childrenState is ReplyChildrenState.NotLoaded && replyCount > 0) {
                 Box(modifier = Modifier.padding(54.dp, 0.dp, 0.dp, 0.dp)) {
-                    TextButton(onClick = { viewModel.loadReplies(reply.id) }) {
+                    TextButton(onClick = { viewModel.loadReplies(reply.post.id) }) {
                         Text(
                             text = if (replyCount == 1) {
                                 "view $replyCount reply"
@@ -359,23 +390,28 @@ private fun ReplyElement(
                     }
                 }
             }
-            if (viewModel.repliesState.isLoading) {
+            if (reply.childrenState is ReplyChildrenState.Loading) {
                 Box(modifier = Modifier.padding(54.dp, 0.dp, 0.dp, 0.dp)) {
                     LoadingComposable(Modifier.fillMaxWidth().padding(vertical = 50.dp))
                 }
-            } else if (viewModel.repliesState.error != "") {
+            } else if (reply.childrenState is ReplyChildrenState.Error) {
                 Box(modifier = Modifier.padding(54.dp, 0.dp, 0.dp, 0.dp)) {
-                    ErrorComposable(viewModel.repliesState.error)
+                    ErrorComposable(
+                        reply.childrenState.message,
+                        Modifier.fillMaxWidth().padding(vertical = 50.dp)
+                    )
                 }
-            } else if (viewModel.repliesState.replies.isNotEmpty()) {
+            } else if (reply.childrenState is ReplyChildrenState.Loaded) {
                 Box(Modifier.padding(20.dp, 0.dp, 0.dp, 0.dp)) {
+                    val childrenState = reply.childrenState
                     Column {
-                        viewModel.repliesState.replies.map {
+                        childrenState.nodes.forEach {
                             ReplyElement(
                                 reply = it, false, navController = navController, {
-                                    viewModel.deleteReply(it.id)
+                                    viewModel.deleteReply(it.post.id)
                                     replyCount--
-                                }, myAccountId, openUrl, instance = instance
+                                }, myAccountId, openUrl, instance = viewModel.instance,
+                                viewModel = viewModel
                             )
                         }
                     }
@@ -383,13 +419,12 @@ private fun ReplyElement(
             }
         }
     }
+
     if (openAddReplyDialog.value) {
         AddReplyDialog(onDismissRequest = { openAddReplyDialog.value = false }, onConfirmation = {
             openAddReplyDialog.value = false
             replyCount++
-            if (myAccountId != null) {
-                viewModel.createReply(reply.id, it, myAccountId)
-            }
+            viewModel.createReply(reply.post.id, it)
         }, instance = instance, viewModel = viewModel)
     }
 
@@ -409,6 +444,7 @@ private fun ReplyElement(
         }, confirmButton = {
             TextButton(onClick = {
                 deleteReply()
+                showDeleteReplyDialog.value = false
             }) {
                 Text(stringResource(Res.string.delete), color = MaterialTheme.colorScheme.error)
             }
@@ -427,7 +463,7 @@ fun AddReplyDialog(
     onDismissRequest: () -> Unit,
     onConfirmation: (replyText: String) -> Unit,
     instance: Instance?,
-    viewModel: ReplyElementViewModel
+    viewModel: PostViewModel
 ) {
     val suggestionsState by viewModel.hashtagMentionsSuggestionsManager.suggestionsState.collectAsStateWithLifecycle()
 
@@ -468,10 +504,10 @@ fun AddReplyDialog(
                         label = Res.string.reply,
                         maxLength = instance?.configuration?.statusConfig?.maxCharacters,
                         submit = { text ->
-                            viewModel.replyText = TextFieldValue()
                             onConfirmation(
                                 text
                             )
+                            viewModel.replyText = TextFieldValue()
                         },
                         colors = TextFieldDefaults.colors(
                             unfocusedIndicatorColor = Color.Transparent,
@@ -486,11 +522,11 @@ fun AddReplyDialog(
                     Row(
                         modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End
                     ) {
-                    TextButton(onClick = onDismissRequest) { Text(stringResource(Res.string.cancel)) }
+                        TextButton(onClick = onDismissRequest) { Text(stringResource(Res.string.cancel)) }
                         TextButton(
                             onClick = {
-                                viewModel.replyText = TextFieldValue()
                                 onConfirmation(viewModel.replyText.text)
+                                viewModel.replyText = TextFieldValue()
                             },
                             enabled = (instance?.configuration?.statusConfig?.maxCharacters
                                 ?: Int.MAX_VALUE) > viewModel.replyText.text.length
@@ -505,10 +541,13 @@ fun AddReplyDialog(
                         .background(MaterialTheme.colorScheme.surfaceContainerHighest)
                 ) {
                     SuggestionsBar(
-                        state = suggestionsState, bottomBarPadding = false, onSelected = { selected ->
-                            viewModel.replyText = viewModel.hashtagMentionsSuggestionsManager.selectSuggestion(
-                                selected, viewModel.replyText
-                            )
+                        state = suggestionsState,
+                        bottomBarPadding = false,
+                        onSelected = { selected ->
+                            viewModel.replyText =
+                                viewModel.hashtagMentionsSuggestionsManager.selectSuggestion(
+                                    selected, viewModel.replyText
+                                )
                         })
                 }
             }

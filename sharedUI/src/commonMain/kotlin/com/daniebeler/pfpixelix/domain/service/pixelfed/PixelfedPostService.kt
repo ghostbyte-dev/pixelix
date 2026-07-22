@@ -5,21 +5,21 @@ import com.daniebeler.pfpixelix.domain.model.NewReply
 import com.daniebeler.pfpixelix.domain.model.NewReport
 import com.daniebeler.pfpixelix.domain.model.PaginatedResponse
 import com.daniebeler.pfpixelix.domain.model.Post
+import com.daniebeler.pfpixelix.domain.model.PostContext
 import com.daniebeler.pfpixelix.domain.repository.pixelfed.PixelfedApi
 import com.daniebeler.pfpixelix.domain.service.general.AuthService
 import com.daniebeler.pfpixelix.domain.service.general.PostService
-import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedPostDto
+import com.daniebeler.pfpixelix.domain.service.general.ReplyChildrenState
+import com.daniebeler.pfpixelix.domain.service.general.ReplyNode
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.toDomain
 import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
-import com.daniebeler.pfpixelix.domain.service.utils.loadListResources
 import com.daniebeler.pfpixelix.domain.service.utils.loadPaginatedListResources
 import com.daniebeler.pfpixelix.domain.service.utils.loadResource
 import com.daniebeler.pfpixelix.utils.executeAndParsePagination
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.map
 import kotlinx.serialization.json.Json
 import me.tatarka.inject.annotations.Inject
 
@@ -76,10 +76,20 @@ class PixelfedPostService(
 
     override fun createReply(postId: String, content: String) = loadResource {
         val dto = NewReply(status = content, toId = postId)
-        api.createReply(json.encodeToString(dto)).toDomain()
+        api.createReply(dto).toDomain()
     }
 
     override fun getReplies(postId: String) = loadResource {
+        api.getReplies(postId).toDomain().descendants.map { post ->
+            ReplyNode(
+                post = post,
+                knownReplyCount = post.replyCount,
+                childrenState = ReplyChildrenState.NotLoaded
+            )
+        }
+    }
+
+    override fun postContext(postId: String): Flow<Resource<PostContext>> = loadResource {
         api.getReplies(postId).toDomain()
     }
 

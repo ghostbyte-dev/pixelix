@@ -344,4 +344,39 @@
     <string name="compress">Comprimir</string>
     <string name="compressing">Comprimiendo...</string>
     <string name="default_license">Licencia por defecto</string>
+    <plurals name="seconds_ago">
+        <item quantity="one">Hace %1$d segundo</item>
+        <item quantity="many">Hace %1$d segundos</item>
+        <item quantity="other">Hace %1$d segundos</item>
+    </plurals>
+    <plurals name="minutes_ago">
+        <item quantity="one">Hace %1$d minuto</item>
+        <item quantity="many">Hace %1$d minutos</item>
+        <item quantity="other">Hace %1$d minutos</item>
+    </plurals>
+    <plurals name="hours_ago">
+        <item quantity="one">Hace %1$d hora</item>
+        <item quantity="many">Hace %1$d horas</item>
+        <item quantity="other">Hace %1$d horas</item>
+    </plurals>
+    <plurals name="days_ago">
+        <item quantity="one">Hace %1$d día</item>
+        <item quantity="many">Hace %1$d días</item>
+        <item quantity="other">Hace %1$d días</item>
+    </plurals>
+    <plurals name="weeks_ago">
+        <item quantity="one">Hace %1$d semana</item>
+        <item quantity="many">Hace %1$d semanas</item>
+        <item quantity="other">Hace %1$d semanas</item>
+    </plurals>
+    <plurals name="months_ago">
+        <item quantity="one">Hace %1$d mes</item>
+        <item quantity="many">Hace %1$d meses</item>
+        <item quantity="other">Hace %1$d meses</item>
+    </plurals>
+    <plurals name="years_ago">
+        <item quantity="one">Hace %1$d año</item>
+        <item quantity="many">Hace %1$d años</item>
+        <item quantity="other">Hace %1$d años</item>
+    </plurals>
 </resources>

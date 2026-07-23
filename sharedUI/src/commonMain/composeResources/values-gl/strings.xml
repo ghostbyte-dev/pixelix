@@ -335,4 +335,37 @@
     <string name="compressing">Comprimindo…</string>
     <string name="default_license">Licenza predeterminada</string>
     <string name="ago">atrás</string>
+    <string name="posts_title">Publicacións</string>
+    <plurals name="minutes_ago">
+        <item quantity="one">hai %1$d minuto</item>
+        <item quantity="other">hai %1$d minutos</item>
+    </plurals>
+    <plurals name="hours_ago">
+        <item quantity="one">hai %1$d hora</item>
+        <item quantity="other">hai %1$d horas</item>
+    </plurals>
+    <plurals name="days_ago">
+        <item quantity="one">hai %1$d día</item>
+        <item quantity="other">hai %1$d días</item>
+    </plurals>
+    <plurals name="weeks_ago">
+        <item quantity="one">hai %1$d semana</item>
+        <item quantity="other">hai %1$d semanas</item>
+    </plurals>
+    <plurals name="months_ago">
+        <item quantity="one">hai %1$d mes</item>
+        <item quantity="other">hai %1$d meses</item>
+    </plurals>
+    <plurals name="years_ago">
+        <item quantity="one">hai %1$d ano</item>
+        <item quantity="other">hai %1$d anos</item>
+    </plurals>
+    <string name="fields">Campos</string>
+    <string name="add_field">Engadir campo</string>
+    <string name="key">Clave</string>
+    <string name="value">Valor</string>
+    <plurals name="seconds_ago">
+        <item quantity="one">hai %1$d segundo</item>
+        <item quantity="other">hai %1$d segundos</item>
+    </plurals>
 </resources>

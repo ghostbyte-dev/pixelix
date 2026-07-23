@@ -7,7 +7,9 @@ import com.daniebeler.pfpixelix.domain.model.request.MediaAttachmentMetadataRequ
 import io.github.vinceglb.filekit.PlatformFile
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.addressOf
+import kotlinx.cinterop.reinterpret
 import kotlinx.cinterop.usePinned
+import platform.CoreFoundation.CFDataCreate
 import platform.CoreFoundation.CFDataRef
 import platform.CoreFoundation.CFRelease
 import platform.CoreFoundation.CFStringRef
@@ -21,8 +23,13 @@ import platform.Foundation.NSData
 import platform.Foundation.NSString
 import platform.Foundation.NSURL
 import platform.Foundation.create
+import platform.Foundation.dataWithBytes
+import platform.Foundation.dataWithData
 import platform.ImageIO.CGImageSourceCopyPropertiesAtIndex
 import platform.ImageIO.CGImageSourceCreateWithData
+import platform.ImageIO.CGImageSourceGetCount
+import platform.ImageIO.CGImageSourceGetStatusAtIndex
+import platform.ImageIO.CGImageSourceGetType
 import platform.ImageIO.kCGImagePropertyExifDateTimeOriginal
 import platform.ImageIO.kCGImagePropertyExifDictionary
 import platform.ImageIO.kCGImagePropertyExifExposureTime
@@ -68,61 +75,69 @@ actual val KmpContext.coilContext get() = PlatformContext.INSTANCE
 @OptIn(ExperimentalForeignApi::class)
 actual fun parseExifMetadata(bytes: ByteArray): MediaAttachmentMetadataRequest {
     return try {
-        val nsData = bytes.usePinned {
-            NSData.create(
-                bytes = it.addressOf(0),
-                length = bytes.size.toULong()
-            )
-        }
-        val imageSource = CGImageSourceCreateWithData(nsData as CFDataRef, null)
-            ?: return MediaAttachmentMetadataRequest()
+        val cfData = bytes.usePinned { pinned ->
+            CFDataCreate(null, pinned.addressOf(0).reinterpret(), bytes.size.toLong())
+        } ?: return MediaAttachmentMetadataRequest()
 
-        val properties =
-            CGImageSourceCopyPropertiesAtIndex(imageSource, 0u, null) as? Map<Any?, Any?>
+        val imageSource = try {
+            CGImageSourceCreateWithData(cfData, null)
+        } finally {
+            CFRelease(cfData)
+        } ?: return MediaAttachmentMetadataRequest()
+        try {
+            val cfPropertiesRef = CGImageSourceCopyPropertiesAtIndex(imageSource, 0u, null)
                 ?: return MediaAttachmentMetadataRequest()
 
-        val exifDict = properties[kCGImagePropertyExifDictionary] as? Map<Any?, Any?>
-        val tiffDict = properties[kCGImagePropertyTIFFDictionary] as? Map<Any?, Any?>
-        val gpsDict = properties[kCGImagePropertyGPSDictionary] as? Map<Any?, Any?>
+            val properties = CFBridgingRelease(cfPropertiesRef) as? Map<Any?, Any?>
+                ?: return MediaAttachmentMetadataRequest()
 
-        // GPS Logic
-        val lat = gpsDict?.get(kCGImagePropertyGPSLatitude) as? Double
-        val latRef = gpsDict?.get(kCGImagePropertyGPSLatitudeRef) as? String
-        val lon = gpsDict?.get(kCGImagePropertyGPSLongitude) as? Double
-        val lonRef = gpsDict?.get(kCGImagePropertyGPSLongitudeRef) as? String
+            val exifDict = (properties["{Exif}"]) as? Map<Any?, Any?>
+            val tiffDict = (properties["{TIFF}"]) as? Map<Any?, Any?>
+            val gpsDict  = (properties["{GPS}"]) as? Map<Any?, Any?>
 
-        val gpsData = if (lat != null && lon != null) {
-            val finalLat = if (latRef == "S") -lat else lat
-            val finalLon = if (lonRef == "W") -lon else lon
-            GPSData(lat = finalLat.toString(), long = finalLon.toString())
-        } else {
-            GPSData(lat = "", long = "")
+            // Debug - remove once working
+            println("properties keys: ${properties.keys}")
+            println("exifDict: $exifDict")
+            println("tiffDict: $tiffDict")
+
+            val lat    = gpsDict?.get("Latitude") as? Double
+            val latRef = gpsDict?.get("LatitudeRef") as? String
+            val lon    = gpsDict?.get("Longitude") as? Double
+            val lonRef = gpsDict?.get("LongitudeRef") as? String
+
+            val gpsData = if (lat != null && lon != null) {
+                val finalLat = if (latRef == "S") -lat else lat
+                val finalLon = if (lonRef == "W") -lon else lon
+                GPSData(lat = finalLat.toString(), long = finalLon.toString())
+            } else {
+                GPSData(lat = "", long = "")
+            }
+
+            val lensMake  = exifDict?.get("LensMake") as? String
+            val lensModel = exifDict?.get("LensModel") as? String
+            val lens = if (!lensMake.isNullOrBlank() && !lensModel.isNullOrBlank()) {
+                "$lensMake $lensModel"
+            } else null
+
+            MediaAttachmentMetadataRequest(
+                make        = FieldState(tiffDict?.get("Make") as? String),
+                model       = FieldState(tiffDict?.get("Model") as? String),
+                createDate  = FieldState(parseExifDateTime(exifDict?.get("DateTimeOriginal") as? String)),
+                focalLength = FieldState(exifDict?.get("FocalLength")?.toString()),
+                fNumber     = FieldState(exifDict?.get("FNumber")?.let { "f/$it" }),
+                exposureTime = FieldState(formatDecimalToExposureFraction(exifDict?.get("ExposureTime")?.toString())),
+                photographicSensitivity = FieldState((exifDict?.get("ISOSpeedRatings") as? List<*>)?.firstOrNull()?.toString()),
+                software    = FieldState(tiffDict?.get("Software") as? String),
+                flash       = FieldState(getFlashReadableString(exifDict?.get("Flash")?.toString())),
+                lens        = FieldState(lens),
+                focalLenIn35mmFilm = FieldState(exifDict?.get("FocalLenIn35mmFilm")?.toString()),
+                gpsData     = FieldState(gpsData, isIncluded = false)
+            )
+        } finally {
+            CFRelease(imageSource)
         }
-
-        // Lens Logic
-        val lensMake = exifDict?.get(kCGImagePropertyExifLensMake) as? String
-        val lensModel = exifDict?.get(kCGImagePropertyExifLensModel) as? String
-        val lens = if (!lensMake.isNullOrBlank() && !lensModel.isNullOrBlank()) {
-            "$lensMake $lensModel"
-        } else {
-            null
-        }
-
-        MediaAttachmentMetadataRequest(
-            make = FieldState(tiffDict?.get(kCGImagePropertyTIFFMake) as? String),
-            model = FieldState(tiffDict?.get(kCGImagePropertyTIFFModel) as? String),
-            createDate = FieldState(parseExifDateTime(exifDict?.get(kCGImagePropertyExifDateTimeOriginal) as? String)),
-            focalLength = FieldState(exifDict?.get(kCGImagePropertyExifFocalLength)?.toString()),
-            fNumber = FieldState(exifDict?.get(kCGImagePropertyExifFNumber)?.let { "f/$it" }),
-            exposureTime = FieldState(formatDecimalToExposureFraction(exifDict?.get(kCGImagePropertyExifExposureTime)?.toString())),
-            photographicSensitivity = FieldState((exifDict?.get(kCGImagePropertyExifISOSpeedRatings) as? List<*>)?.firstOrNull()?.toString()),
-            software = FieldState(tiffDict?.get(kCGImagePropertyTIFFSoftware) as? String),
-            flash = FieldState(getFlashReadableString(exifDict?.get(kCGImagePropertyExifFlash)?.toString())),
-            lens = FieldState(lens),
-            focalLenIn35mmFilm = FieldState(exifDict?.get(kCGImagePropertyExifFocalLenIn35mmFilm)?.toString()),
-            gpsData = FieldState(gpsData, isIncluded = false)
-        )
     } catch (e: Throwable) {
+        println("parseExifMetadata error: ${e.message}")
         MediaAttachmentMetadataRequest()
     }
 }

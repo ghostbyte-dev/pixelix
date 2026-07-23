@@ -41,7 +41,9 @@ fun AppViewController(urlCallback: IosUrlCallback): UIViewController {
             parallelRendering = true
         }
     ) {
-        App(appComponent, finishApp)
+        App(appComponent) {
+            finishApp()
+        }
     }
 
     return viewController

@@ -48,7 +48,7 @@ fun ConversationElementComposable(conversation: Conversation, navController: Nav
         )
         Spacer(modifier = Modifier.width(10.dp))
         Column {
-            Text(text = conversation.accounts.first().username, fontWeight = FontWeight.Bold)
+            Text(text = conversation.accounts.first().acct, fontWeight = FontWeight.Bold)
 
             Row {
                 Text(

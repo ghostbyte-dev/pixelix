@@ -51,7 +51,11 @@ import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
+import pixelix.app.generated.resources.app_customization
 import pixelix.app.generated.resources.close
+import pixelix.app.generated.resources.content_settings
+import pixelix.app.generated.resources.new_post_settings
+import pixelix.app.generated.resources.other
 import pixelix.app.generated.resources.settings
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -91,7 +95,7 @@ fun PreferencesComposable(
 
             Spacer(modifier = Modifier.height(12.dp))
             Text(
-                "Content settings",
+                text = stringResource(Res.string.content_settings),
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.padding(start = 6.dp)
@@ -121,7 +125,7 @@ fun PreferencesComposable(
 
             Spacer(modifier = Modifier.height(12.dp))
             Text(
-                "App customization",
+                text = stringResource(Res.string.app_customization),
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.padding(start = 6.dp)
@@ -137,7 +141,7 @@ fun PreferencesComposable(
 
             Spacer(modifier = Modifier.height(12.dp))
             Text(
-                "New post settings",
+                text = stringResource(Res.string.new_post_settings),
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.padding(start = 6.dp)
@@ -152,7 +156,7 @@ fun PreferencesComposable(
 
             Spacer(modifier = Modifier.height(12.dp))
             Text(
-                "Other",
+                text = stringResource(Res.string.other).replaceFirstChar { it.titlecase() },
                 style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.padding(start = 6.dp)

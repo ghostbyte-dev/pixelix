@@ -340,4 +340,7 @@
     <string name="add_field">Add field</string>
     <string name="key">Key</string>
     <string name="value">Value</string>
+    <string name="content_settings">Content settings</string>
+    <string name="app_customization">App customization</string>
+    <string name="new_post_settings">New post settings</string>
 </resources>

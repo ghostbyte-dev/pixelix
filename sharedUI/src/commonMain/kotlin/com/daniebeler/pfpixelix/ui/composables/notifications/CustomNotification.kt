@@ -242,9 +242,9 @@ fun CustomNotification(
             val doesMediaAttachmentExsist = (notification.post?.mediaAttachments?.size ?: 0) > 0
             if (showImage && (doesMediaAttachmentExsist || (viewModel.ancestor != null && viewModel.ancestor!!.mediaAttachments.isNotEmpty()))) {
                 val previewUrl = if (doesMediaAttachmentExsist) {
-                    notification.post?.mediaAttachments?.get(0)?.previewUrl
+                    notification.post?.mediaAttachments?.get(0)?.previewUrl ?: notification.post?.mediaAttachments?.get(0)?.url
                 } else {
-                    viewModel.ancestor?.mediaAttachments?.get(0)?.previewUrl
+                    viewModel.ancestor?.mediaAttachments?.get(0)?.previewUrl ?: notification.post?.mediaAttachments?.get(0)?.url
                 }
                 Spacer(modifier = Modifier.width(10.dp))
                 AsyncImage(

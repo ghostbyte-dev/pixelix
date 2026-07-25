@@ -126,7 +126,7 @@
     <string name="reply">Svar</string>
     <string name="post">Innlegg</string>
     <string name="pixelfed_description">Pixelfed er eit nettverk for å dele fotografi og bilde i Allheimen og har eit foto-orientert grensesnitt som inkluderer album, filter, augeblikk og meir.</string>
-    <string name="mastodon_description">Mastodon er ei fri plattform for mikroblogging, bygd med open kjeldekode.</string>
+    <string name="mastodon_description">Mastodon er ei gratis plattform for mikroblogging, bygd med open kjeldekode.</string>
     <string name="peertube_description">PeerTube er eit verktøy for å dele videoar på nett. Det er utvikla av Framasoft, ein fransk ideell organisasjon.</string>
     <string name="lemmy_description">Lemmy er ei sjølvdriven sosial plattform for å dele lenker og å diskutere. Det er heilt gratis og opent, uavhengig av noko selskap. Det betyr ingen reklame, sporing eller hemmelege algoritmar. Innhaldet er delt inn i samfunn, så det er lett å abonnere på emna du er interessert i og å ignorere andre. Dei mest interessante innlegga blir framheva gjennom røysting.</string>
     <string name="threads_description">Threads er ein app frå Meta der du kan sjå og dele offentlege samtalar. Du kan òg legge ut eigne trådar, svare andre og følge profilar du er interessert i.</string>
@@ -334,4 +334,40 @@
     <string name="compress">Komprimer</string>
     <string name="compressing">Komprimerer …</string>
     <string name="default_license">Standard lisens</string>
+    <string name="posts_title">Innlegg</string>
+    <plurals name="seconds_ago">
+        <item quantity="one">%1$d sekund sia</item>
+        <item quantity="other">%1$d sekund sia</item>
+    </plurals>
+    <plurals name="minutes_ago">
+        <item quantity="one">%1$d minutt sia</item>
+        <item quantity="other">%1$d minutt sia</item>
+    </plurals>
+    <plurals name="hours_ago">
+        <item quantity="one">%1$d time sia</item>
+        <item quantity="other">%1$d timar sia</item>
+    </plurals>
+    <plurals name="days_ago">
+        <item quantity="one">%1$d dag sia</item>
+        <item quantity="other">%1$d dagar sia</item>
+    </plurals>
+    <plurals name="weeks_ago">
+        <item quantity="one">%1$d veke sia</item>
+        <item quantity="other">%1$d veker sia</item>
+    </plurals>
+    <plurals name="months_ago">
+        <item quantity="one">%1$d månad sia</item>
+        <item quantity="other">%1$d månadar sia</item>
+    </plurals>
+    <plurals name="years_ago">
+        <item quantity="one">%1$d år sia</item>
+        <item quantity="other">%1$d år sia</item>
+    </plurals>
+    <string name="fields">Felt</string>
+    <string name="add_field">Legg til felt</string>
+    <string name="key">Nøkkel</string>
+    <string name="value">Verdi</string>
+    <string name="content_settings">Innstillingar for innhald</string>
+    <string name="app_customization">Tilpassing av appen</string>
+    <string name="new_post_settings">Innstillingar for nye innlegg</string>
 </resources>

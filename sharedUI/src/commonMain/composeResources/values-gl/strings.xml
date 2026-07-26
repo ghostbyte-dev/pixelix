@@ -368,4 +368,7 @@
         <item quantity="one">hai %1$d segundo</item>
         <item quantity="other">hai %1$d segundos</item>
     </plurals>
+    <string name="content_settings">Axustes do contido</string>
+    <string name="app_customization">Personalización da app</string>
+    <string name="new_post_settings">Axustes para novas publicacións</string>
 </resources>

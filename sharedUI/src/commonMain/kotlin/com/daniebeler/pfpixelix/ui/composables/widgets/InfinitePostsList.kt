@@ -1,6 +1,5 @@
 package com.daniebeler.pfpixelix.ui.composables.widgets
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -13,18 +12,18 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.domain.model.Post
-import com.daniebeler.pfpixelix.ui.composables.profile.postsWrapperComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.SwitchViewComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.ViewEnum
+import com.daniebeler.pfpixelix.ui.composables.profile.postsWrapperComposable
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
-import com.daniebeler.pfpixelix.ui.composables.states.EmptyStateComposable
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyStateComposableWithoutRefresh
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
@@ -62,6 +61,7 @@ fun InfinitePostsList(
     onClick: ((id: String) -> Unit)? = null,
     staggeredGridState: LazyStaggeredGridState = rememberLazyStaggeredGridState()
 ) {
+    val coordinator = remember { VideoPlaybackCoordinator() }
 
     CustomPullToRefreshBox(
         isRefreshing = isRefreshing,
@@ -71,69 +71,79 @@ fun InfinitePostsList(
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             if (error.isEmpty() || items.isNotEmpty() || before != null || isLoading) {
-                BoxWithConstraints {
-                    val gridContentWidth = maxWidth
+                CompositionLocalProvider(LocalVideoPlaybackCoordinator provides coordinator) {
+                    BoxWithConstraints {
+                        val gridContentWidth = maxWidth
 
-                    val columnCount = when (view) {
-                        ViewEnum.Grid -> maxOf(3, (maxWidth / 120.dp).toInt())
-                        ViewEnum.Masonry -> maxOf(2, (maxWidth / 150.dp).toInt())
-                        ViewEnum.LargeMasonry -> maxOf(1, (maxWidth / 350.dp).toInt())
-                        ViewEnum.Timeline -> maxOf(1, (maxWidth / 350.dp).toInt())
-                    }
+                        val columnCount = when (view) {
+                            ViewEnum.Grid -> maxOf(3, (maxWidth / 120.dp).toInt())
+                            ViewEnum.Masonry -> maxOf(2, (maxWidth / 150.dp).toInt())
+                            ViewEnum.LargeMasonry -> maxOf(1, (maxWidth / 350.dp).toInt())
+                            ViewEnum.Timeline -> maxOf(1, (maxWidth / 350.dp).toInt())
+                        }
 
-                    val columns = StaggeredGridCells.Fixed(columnCount)
+                        val columns = StaggeredGridCells.Fixed(columnCount)
 
-                    LazyVerticalStaggeredGrid(
-                        modifier = Modifier.fillMaxSize(),
-                        columns = columns,
-                        verticalItemSpacing = 4.dp,
-                        horizontalArrangement = Arrangement.spacedBy(4.dp),
-                        state = staggeredGridState,
-                        contentPadding = PaddingValues(
-                            top = contentPaddingTop, bottom = contentPaddingBottom
-                        )
-                    ) {
-                        if (before != null) {
-                            item(key = "before_list_key", span = StaggeredGridItemSpan.FullLine) {
-                                before()
+                        LazyVerticalStaggeredGrid(
+                            modifier = Modifier.fillMaxSize(),
+                            columns = columns,
+                            verticalItemSpacing = 4.dp,
+                            horizontalArrangement = Arrangement.spacedBy(4.dp),
+                            state = staggeredGridState,
+                            contentPadding = PaddingValues(
+                                top = contentPaddingTop, bottom = contentPaddingBottom
+                            )
+                        ) {
+                            if (before != null) {
+                                item(
+                                    key = "before_list_key",
+                                    span = StaggeredGridItemSpan.FullLine
+                                ) {
+                                    before()
+                                }
                             }
-                        }
 
-                        item(key = "switch_view_key", span = StaggeredGridItemSpan.FullLine) {
-                            SwitchViewComposable(
-                                postsCount = postsCount,
-                                viewType = view,
-                                onViewChange = { changeView(it) })
-                        }
-
-                        postsWrapperComposable(
-                            posts = items,
-                            isLoading = isLoading,
-                            isRefreshing = isRefreshing,
-                            endReached = endReached,
-                            view = view,
-                            postGetsDeleted = { itemGetsDeleted(it) },
-                            updatePost = { postGetsUpdated(it) },
-                            isFirstImageLarge = isFirstItemLarge,
-                            gridColumnCount = columnCount,
-                            gridContentWidth = gridContentWidth,
-                            navController = navController,
-                            edit = edit,
-                            editRemove = editRemove,
-                            onClick = onClick
-                        )
-
-                        if (items.isEmpty() && !isLoading && error.isEmpty()) {
-                            item(key = "empty_state_key", span = StaggeredGridItemSpan.FullLine) {
-                                EmptyStateComposableWithoutRefresh(
-                                    emptyMessage, modifier = Modifier.height(300.dp)
-                                )
+                            item(key = "switch_view_key", span = StaggeredGridItemSpan.FullLine) {
+                                SwitchViewComposable(
+                                    postsCount = postsCount,
+                                    viewType = view,
+                                    onViewChange = { changeView(it) })
                             }
-                        }
+                            postsWrapperComposable(
+                                posts = items,
+                                isLoading = isLoading,
+                                isRefreshing = isRefreshing,
+                                endReached = endReached,
+                                view = view,
+                                postGetsDeleted = { itemGetsDeleted(it) },
+                                updatePost = { postGetsUpdated(it) },
+                                isFirstImageLarge = isFirstItemLarge,
+                                gridColumnCount = columnCount,
+                                gridContentWidth = gridContentWidth,
+                                navController = navController,
+                                edit = edit,
+                                editRemove = editRemove,
+                                onClick = onClick
+                            )
 
-                        if (after != null) {
-                            item(key = "after_list_key", span = StaggeredGridItemSpan.FullLine) {
-                                after()
+                            if (items.isEmpty() && !isLoading && error.isEmpty()) {
+                                item(
+                                    key = "empty_state_key",
+                                    span = StaggeredGridItemSpan.FullLine
+                                ) {
+                                    EmptyStateComposableWithoutRefresh(
+                                        emptyMessage, modifier = Modifier.height(300.dp)
+                                    )
+                                }
+                            }
+
+                            if (after != null) {
+                                item(
+                                    key = "after_list_key",
+                                    span = StaggeredGridItemSpan.FullLine
+                                ) {
+                                    after()
+                                }
                             }
                         }
                     }

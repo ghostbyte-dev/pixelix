@@ -1021,7 +1021,7 @@ fun PostImage(
                     { zoomState.setContentSize(it.painter.intrinsicSize) },
                     { imageLoaded = true })
             } else {
-                VideoAttachment(mediaAttachment, viewModel, { imageLoaded = true })
+                VideoAttachment(mediaAttachment, viewModel, { imageLoaded = true }, isMasonry)
             }
         }
 
@@ -1123,7 +1123,7 @@ fun MediaDialog(
                         { zoomState.setContentSize(it.painter.intrinsicSize) },
                         {})
                 } else {
-                    VideoAttachment(mediaAttachment, postViewModel, {})
+                    VideoAttachment(mediaAttachment, postViewModel, {}, isMasonry = false)
                 }
             }
             Box(Modifier.align(Alignment.TopEnd).padding(20.dp).zIndex(2f)) {

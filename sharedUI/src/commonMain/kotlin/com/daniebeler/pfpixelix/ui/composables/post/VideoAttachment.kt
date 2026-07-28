@@ -37,6 +37,7 @@ import androidx.navigationevent.NavigationEventInfo
 import androidx.navigationevent.compose.NavigationBackHandler
 import androidx.navigationevent.compose.rememberNavigationEventState
 import com.daniebeler.pfpixelix.domain.model.MediaAttachment
+import com.daniebeler.pfpixelix.ui.composables.widgets.LocalVideoPlaybackCoordinator
 import com.daniebeler.pfpixelix.utils.KeepScreenOn
 import io.github.kdroidfilter.composemediaplayer.AudioMode
 import io.github.kdroidfilter.composemediaplayer.InterruptionMode
@@ -54,8 +55,11 @@ import pixelix.app.generated.resources.volume_mute
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun VideoAttachment(
-    attachment: MediaAttachment, viewModel: PostViewModel, onReady: () -> Unit
+    attachment: MediaAttachment, viewModel: PostViewModel, onReady: () -> Unit, isMasonry: Boolean
 ) {
+    val coordinator = LocalVideoPlaybackCoordinator.current
+    val isActive = coordinator.activeId == attachment.id
+
     val player = rememberVideoPlayerState(
         audioMode = AudioMode(interruptionMode = InterruptionMode.MixWithOthers)
     ).apply {
@@ -66,20 +70,32 @@ fun VideoAttachment(
         player.openUri(attachment.url)
     }
 
+    DisposableEffect(attachment.id) {
+        onDispose { coordinator.clear(attachment.id) }
+    }
+
     var videoFrameIsVisible by remember { mutableStateOf(false) }
 
     if (player.isPlaying) {
         KeepScreenOn()
     }
-
+    val modifier = if (!isMasonry) {
+        Modifier.clickable {
+                coordinator.requestActive(attachment.id)
+                player.toggleFullscreen()
+        }
+    } else {
+        Modifier
+    }
     Column {
-        Box(Modifier.clickable {
-            player.toggleFullscreen()
-        }) {
+        Box(modifier = modifier) {
             VideoPlayerSurface(playerState = player, modifier = Modifier.fillMaxWidth().run {
                 val aspect = attachment.aspectRatio?.toFloat()
                 if (aspect != null) aspectRatio(aspect) else this
-            }.isVisible(threshold = 50) { videoFrameIsVisible = it }) {
+            }.isVisible(threshold = 50) { visible ->
+                videoFrameIsVisible = visible
+                coordinator.setVisible(attachment.id, visible)
+            }) {
                 Box(modifier = Modifier.fillMaxSize()) {
                     if (player.isFullscreen) {
                         NavigationBackHandler(
@@ -113,6 +129,7 @@ fun VideoAttachment(
                                             if (player.isPlaying) {
                                                 player.pause()
                                             } else {
+                                                coordinator.requestActive(attachment.id)
                                                 player.play()
                                             }
                                         }, colors = IconButtonDefaults.filledTonalIconButtonColors()
@@ -196,6 +213,7 @@ fun VideoAttachment(
                         if (player.isPlaying) {
                             player.pause()
                         } else {
+                            coordinator.requestActive(attachment.id)
                             player.play()
                         }
                     }, colors = IconButtonDefaults.filledTonalIconButtonColors()
@@ -227,17 +245,16 @@ fun VideoAttachment(
         if (player.isPlaying) onReady()
     }
 
-    LaunchedEffect(viewModel.volume) {
-        player.volume = if (viewModel.volume) 1f else 0f
+    LaunchedEffect(isActive, viewModel.volume) {
+        player.volume = if (isActive && viewModel.volume) 1f else 0f
     }
 
-    val autoPlay = videoFrameIsVisible && viewModel.isAutoplayVideos
+    val autoPlay = isActive && viewModel.isAutoplayVideos
     LaunchedEffect(autoPlay) {
-        if (autoPlay) {
-            player.play()
-        } else {
-            player.pause()
-        }
+        if (autoPlay) player.play() else player.pause()
+    }
+    LaunchedEffect(coordinator.activeId) {
+        if (!isActive) player.pause()
     }
 
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -245,7 +262,7 @@ fun VideoAttachment(
         val observer = LifecycleEventObserver { _, event ->
             when (event) {
                 Lifecycle.Event.ON_RESUME -> {
-                    if (videoFrameIsVisible && viewModel.isAutoplayVideos) {
+                    if (isActive && videoFrameIsVisible && viewModel.isAutoplayVideos) {
                         player.play()
                     }
                 }
@@ -295,7 +312,7 @@ fun TimelineControls(
                 val mins = remaining / 60
                 val secs = remaining % 60
                 "${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}"
-            } catch (e: Throwable) {
+            } catch (_: Throwable) {
                 "--:--"
             }
         }

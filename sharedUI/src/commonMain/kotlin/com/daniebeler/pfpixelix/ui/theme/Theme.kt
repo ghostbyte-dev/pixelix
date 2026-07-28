@@ -360,7 +360,6 @@ private val whiteDarkScheme = darkColorScheme(
 
 @Composable
 fun PixelixTheme(
-    dynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {
     val prefs = LocalAppComponent.current.preferences
@@ -390,8 +389,8 @@ fun PixelixTheme(
         AppAccentColor.White -> whiteLightScheme
         else -> darkScheme
     }
-
-    val colorScheme = generateColorScheme(nightModeValue, dynamicColor, lightColorScheme, darkColorScheme)
+    val useDynamicColors by prefs.useDynamicColorsFlow.collectAsState(prefs.useDynamicColors)
+    val colorScheme = generateColorScheme(nightModeValue, useDynamicColors, lightColorScheme, darkColorScheme)
 
     MaterialTheme(
         colorScheme = colorScheme,

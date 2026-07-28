@@ -6,5 +6,5 @@ expect object PlatformFeatures {
     val downloadToGallery: Boolean
     val customAppIcon: Boolean
     val addCollection: Boolean
-    val customAccentColors: Boolean
+    val supportsDynamicColors: Boolean
 }

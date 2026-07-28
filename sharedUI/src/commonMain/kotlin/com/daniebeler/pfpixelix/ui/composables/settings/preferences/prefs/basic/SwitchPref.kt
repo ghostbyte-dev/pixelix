@@ -1,17 +1,14 @@
-package com.daniebeler.pfpixelix.ui.composables.settings.preferences.basic
+package com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.basic
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.ListItemShapes
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.basic.SettingPref
+import androidx.compose.ui.graphics.Color
 import org.jetbrains.compose.resources.DrawableResource
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -21,7 +18,8 @@ fun SwitchPref(
     shapes: ListItemShapes,
     icon: DrawableResource,
     desc: String? = null,
-    state: MutableState<Boolean>
+    state: MutableState<Boolean>,
+    color: Color = MaterialTheme.colorScheme.surfaceContainer
 ) {
     var value by state
 
@@ -33,6 +31,8 @@ fun SwitchPref(
         trailingContent = {
             Switch(checked = value, onCheckedChange = { value = it })
         },
-        onClick = { value = !value }
+        onClick = { value = !value },
+        containerColor = color
+
     )
 }

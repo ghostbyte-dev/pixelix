@@ -7,6 +7,7 @@ import com.daniebeler.pfpixelix.domain.model.AppAccentColor
 import com.daniebeler.pfpixelix.domain.model.AppThemeMode
 import com.daniebeler.pfpixelix.domain.model.License
 import com.daniebeler.pfpixelix.domain.model.Visibility
+import com.daniebeler.pfpixelix.domain.service.platform.PlatformFeatures
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -70,6 +71,9 @@ class UserPreferences(private val dataStore: DataStore<Preferences>) {
 
     var accentColor by long("k_accent_color", AppAccentColor.GREEN)
     val accentColorFlow = longFlow("k_accent_color", AppAccentColor.GREEN)
+
+    var useDynamicColors by boolean("k_dynamic_colors", PlatformFeatures.supportsDynamicColors)
+    val useDynamicColorsFlow = booleanFlow("k_dynamic_colors", PlatformFeatures.supportsDynamicColors)
 
     var enableSwipeBetweenTabs by boolean("k_enable_swipe_between_timelines", true)
     val enableSwipeBetweenTabsFlow = booleanFlow("k_enable_swipe_between_timelines", true)

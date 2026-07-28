@@ -10,9 +10,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SegmentedListItem
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
@@ -26,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import com.daniebeler.pfpixelix.di.LocalAppComponent
 import com.daniebeler.pfpixelix.domain.model.AppAccentColor
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun CustomAccentColorPref() {
     val prefs = LocalAppComponent.current.preferences
@@ -34,9 +36,12 @@ fun CustomAccentColorPref() {
         prefs.accentColor = state.value
     }
 
-    Card(
-        shape = MaterialTheme.shapes.medium,
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+    SegmentedListItem(
+        onClick = {},
+        shapes = ListItemDefaults.segmentedShapes(index = 6, count = 8),
+        colors = ListItemDefaults.segmentedColors(
+            containerColor = MaterialTheme.colorScheme.surfaceContainerLow
+        ),
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,

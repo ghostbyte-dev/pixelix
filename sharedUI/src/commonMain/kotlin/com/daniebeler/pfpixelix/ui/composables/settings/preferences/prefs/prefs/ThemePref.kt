@@ -1,12 +1,17 @@
 package com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.ListItemDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.daniebeler.pfpixelix.di.LocalAppComponent
@@ -16,6 +21,7 @@ import com.daniebeler.pfpixelix.domain.model.AppThemeMode.FOLLOW_SYSTEM
 import com.daniebeler.pfpixelix.domain.model.AppThemeMode.LIGHT
 import com.daniebeler.pfpixelix.domain.service.platform.PlatformFeatures
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.basic.ExpandOptionsPref
+import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.basic.SwitchPref
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.basic.ValueOption
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.basic.imageVectorIconBlock
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.basic.radioButtonBlock
@@ -32,15 +38,21 @@ import pixelix.app.generated.resources.light_theme
 import pixelix.app.generated.resources.theme_dark
 import pixelix.app.generated.resources.theme_light
 import pixelix.app.generated.resources.theme_system
+import pixelix.app.generated.resources.use_dynamic_colors
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ThemePref() {
     val pref = LocalAppComponent.current.preferences
     val appTheme by pref.appThemeModeFlow.collectAsState(pref.appThemeMode)
+    val useDynamicColors = remember { mutableStateOf(pref.useDynamicColors) }
 
     val onOptionClick = { mode: Int ->
         pref.appThemeMode = mode
+    }
+
+    LaunchedEffect(useDynamicColors.value) {
+        pref.useDynamicColors = useDynamicColors.value
     }
 
     ExpandOptionsPref(
@@ -50,7 +62,7 @@ fun ThemePref() {
         count = 2
     ) {
         ValueOption(
-            shapes = ListItemDefaults.segmentedShapes(index = 2, count = 4),
+            shapes = ListItemDefaults.segmentedShapes(index = 1, count = 8),
             leadingIcon = imageVectorIconBlock(
                 imageVector = vectorResource(Res.drawable.device_theme),
                 contentDescription = stringResource(Res.string.theme_system)
@@ -61,7 +73,7 @@ fun ThemePref() {
             onOptionClick = onOptionClick,
         )
         ValueOption(
-            shapes = ListItemDefaults.segmentedShapes(index = 2, count = 4),
+            shapes = ListItemDefaults.segmentedShapes(index = 2, count = 8),
             leadingIcon = imageVectorIconBlock(
                 imageVector = vectorResource(Res.drawable.light_theme),
                 contentDescription = stringResource(Res.string.theme_light)
@@ -72,7 +84,7 @@ fun ThemePref() {
             onOptionClick = onOptionClick,
         )
         ValueOption(
-            shapes = ListItemDefaults.segmentedShapes(index = 2, count = 4),
+            shapes = ListItemDefaults.segmentedShapes(index = 3, count = 8),
             leadingIcon = imageVectorIconBlock(
                 imageVector = vectorResource(Res.drawable.dark_theme),
                 contentDescription = stringResource(Res.string.theme_dark)
@@ -83,7 +95,7 @@ fun ThemePref() {
             onOptionClick = onOptionClick,
         )
         ValueOption(
-            shapes = ListItemDefaults.segmentedShapes(index = 2, count = 4),
+            shapes = ListItemDefaults.segmentedShapes(index = 4, count = 8),
             leadingIcon = imageVectorIconBlock(
                 imageVector = vectorResource(Res.drawable.amoled_theme),
                 contentDescription = stringResource(Res.string.amoled)
@@ -94,10 +106,21 @@ fun ThemePref() {
             onOptionClick = onOptionClick,
         )
 
-        if (PlatformFeatures.customAccentColors) {
+        if (!PlatformFeatures.supportsDynamicColors) {
             Spacer(modifier = Modifier.height(1.dp))
 
             CustomAccentColorPref()
+        } else {
+            SwitchPref(
+                icon = Res.drawable.theme,
+                title = stringResource(Res.string.use_dynamic_colors),
+                shapes = ListItemDefaults.segmentedShapes(index = 5, count = 7),
+                state = useDynamicColors,
+                color = MaterialTheme.colorScheme.surfaceContainerLow
+            )
+            AnimatedVisibility(visible = !useDynamicColors.value) {
+                CustomAccentColorPref()
+            }
         }
     }
 }

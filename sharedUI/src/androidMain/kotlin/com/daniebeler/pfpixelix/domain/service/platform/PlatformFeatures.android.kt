@@ -6,5 +6,5 @@ actual object PlatformFeatures {
     actual val downloadToGallery = true
     actual val customAppIcon = true
     actual val addCollection = true
-    actual val customAccentColors = false
+    actual val supportsDynamicColors = true
 }

@@ -15,7 +15,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import com.daniebeler.pfpixelix.di.LocalAppComponent
-import com.daniebeler.pfpixelix.ui.composables.settings.preferences.basic.SwitchPref
+import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.basic.SwitchPref
 import org.jetbrains.compose.resources.stringResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.blur

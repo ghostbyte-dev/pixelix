@@ -9,8 +9,7 @@ import androidx.compose.material3.SegmentedListItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.graphics.Color
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.vectorResource
 
@@ -20,18 +19,19 @@ fun SettingPref(
     title: String,
     shapes: ListItemShapes,
     modifier: Modifier = Modifier,
-    danger: Boolean = false,
     desc: String? = null,
     leadingContent: @Composable (() -> Unit)? = null,
     trailingContent: @Composable (() -> Unit)? = null,
-    onClick: () -> Unit = {}
+    onClick: () -> Unit = {},
+    containerColor: Color = MaterialTheme.colorScheme.surfaceContainer,
+    contentColor: Color = MaterialTheme.colorScheme.onSurface
 ) {
     SegmentedListItem(
         onClick = onClick,
         shapes = shapes,
         colors = ListItemDefaults.segmentedColors(
-            containerColor = if (danger) MaterialTheme.colorScheme.errorContainer else MaterialTheme.colorScheme.surfaceContainer,
-            contentColor = if (danger) MaterialTheme.colorScheme.onErrorContainer else MaterialTheme.colorScheme.onSurface
+            containerColor = containerColor,
+            contentColor = contentColor
         ),
         modifier = modifier,
         leadingContent = leadingContent,
@@ -56,18 +56,17 @@ fun SettingPref(
     title: String,
     shapes: ListItemShapes,
     icon: DrawableResource, // Accept the resource directly
-    danger: Boolean = false,
     modifier: Modifier = Modifier,
     desc: String? = null,
     trailingContent: @Composable (() -> Unit)? = null,
-    onClick: () -> Unit = {}
+    onClick: () -> Unit = {},
+    containerColor: Color = MaterialTheme.colorScheme.surfaceContainer,
+    contentColor: Color = MaterialTheme.colorScheme.onSurface
 ) {
-    // Call the base component and wrap the icon for the caller
     SettingPref(
         title = title,
         shapes = shapes,
         modifier = modifier,
-        danger,
         desc = desc,
         trailingContent = trailingContent,
         onClick = onClick,
@@ -75,5 +74,7 @@ fun SettingPref(
             Icon(
                 imageVector = vectorResource(icon), contentDescription = null
             )
-        })
+        }, containerColor = containerColor,
+        contentColor = contentColor
+    )
 }

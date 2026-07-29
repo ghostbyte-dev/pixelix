@@ -3,6 +3,7 @@ package com.daniebeler.pfpixelix.domain.repository.pixelfed
 import com.daniebeler.pfpixelix.domain.model.FediseaInstance
 import com.daniebeler.pfpixelix.domain.model.FediseaServersResponse
 import com.daniebeler.pfpixelix.domain.model.FediseaSoftware
+import com.daniebeler.pfpixelix.domain.model.NewMessage
 import com.daniebeler.pfpixelix.domain.model.NewReply
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedAccountDto
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedChatDto
@@ -11,6 +12,7 @@ import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedConversati
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedInstanceDto
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedMediaAttachmentDto
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedMessageDto
+import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedNewMessageDto
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.request.PixelfedNewPostRequest
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedNodeInfoDto
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedNotificationDto
@@ -310,7 +312,7 @@ interface PixelfedApi {
 
     @Headers("Content-Type: application/json")
     @POST("api/v1.1/direct/thread/send")
-    suspend fun sendMessage(@Body createMessage: String): PixelfedMessageDto
+    suspend fun sendMessage(@Body createMessage: NewMessage): PixelfedMessageDto
 
     @DELETE("api/v1.1/direct/thread/message")
     suspend fun deleteMessage(@Query("id") id: String): List<Int>

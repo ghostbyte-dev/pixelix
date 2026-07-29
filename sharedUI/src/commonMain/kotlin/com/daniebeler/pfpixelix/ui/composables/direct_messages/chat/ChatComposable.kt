@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -52,6 +53,7 @@ import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.ui.composables.states.EndOfListComposable
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
+import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposableDialog
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pfpixelix.ui.composables.widgets.CustomPullToRefreshBox
 import com.daniebeler.pfpixelix.ui.composables.widgets.InfiniteListHandler
@@ -98,12 +100,12 @@ fun ChatComposable(
                 isRefreshing = viewModel.chatState.isRefreshing,
                 onRefresh = { viewModel.getChat(accountId, true) },
                 modifier = Modifier
-                    .imeAwareInsets(60.dp)
+                    .imePadding()
             ) {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(bottom = 76.dp + navigationBarPadding, start = 8.dp, end = 8.dp)
+                        .padding(bottom = navigationBarPadding, start = 8.dp, end = 8.dp)
                 ) {
                     LazyColumn(
                         state = lazyListState,
@@ -243,6 +245,9 @@ fun ChatComposable(
                 }
             }
         }
+        ErrorComposableDialog(viewModel.newMessageState.error, {
+            viewModel.newMessageState = NewMessageState()
+        })
 
         TopAppBar(
             modifier = Modifier.clip(

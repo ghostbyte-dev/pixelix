@@ -48,6 +48,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -98,7 +99,7 @@ fun PostEditorComposable(
     uris: List<KmpUri>? = null,
     viewModel: PostEditorViewModel = injectViewModel(key = "post-editor-viewmodel-key") { newPostViewModel }
 ) {
-
+    val focusManager = LocalFocusManager.current
     var showReleaseAlert by remember {
         mutableStateOf(false)
     }
@@ -158,6 +159,7 @@ fun PostEditorComposable(
                                 if (viewModel.mediaItems.isEmpty()) {
                                     navController.navigateUp()
                                 } else {
+                                    focusManager.clearFocus()
                                     isCancelAlertOpen = true
                                 }
                             },
@@ -202,7 +204,10 @@ fun PostEditorComposable(
                                 topBarButtonSize
                             ),
                             enabled = viewModel.isEdited,
-                            onClick = { showReleaseAlert = true },
+                            onClick = {
+                                focusManager.clearFocus()
+                                showReleaseAlert = true
+                            },
                         ) {
                             Text(
                                 text = if (viewModel.mode == EditorMode.EDIT) stringResource(Res.string.save) else stringResource(
@@ -387,7 +392,10 @@ fun PostEditorComposable(
             }, confirmButton = {
                 TextButton(onClick = {
                     scope.launch {
-                        viewModel.compressImage(viewModel.mediaAdditionError.uri, viewModel.mediaAdditionError.metadata)
+                        viewModel.compressImage(
+                            viewModel.mediaAdditionError.uri,
+                            viewModel.mediaAdditionError.metadata
+                        )
                     }
                 }) {
                     Text(stringResource(Res.string.compress))

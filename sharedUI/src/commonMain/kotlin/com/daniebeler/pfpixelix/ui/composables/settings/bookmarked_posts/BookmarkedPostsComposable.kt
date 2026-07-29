@@ -31,6 +31,7 @@ import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.arrow_left
 import pixelix.app.generated.resources.bookmark
+import pixelix.app.generated.resources.bookmarked_posts
 import pixelix.app.generated.resources.liked_posts
 import pixelix.app.generated.resources.no_bookmarked_posts
 
@@ -48,7 +49,7 @@ fun BookmarkedPostsComposable(
             TopAppBar(
                 scrollBehavior = scrollBehavior,
                 modifier = Modifier.clip(RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)),
-                title = { Text(stringResource(Res.string.liked_posts), fontWeight = FontWeight.Bold, fontSize = 18.sp) },
+                title = { Text(stringResource(Res.string.bookmarked_posts), fontWeight = FontWeight.Bold, fontSize = 18.sp) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(

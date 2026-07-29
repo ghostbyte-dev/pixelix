@@ -23,7 +23,7 @@ class PixelfedDirectMessagesService(
     }
 
     override fun sendMessage(createMessageDto: NewMessage) = loadResource {
-        api.sendMessage(json.encodeToString(createMessageDto)).toDomain()
+        api.sendMessage(createMessageDto).toDomain()
     }
 
     override fun deleteMessage(id: String) = loadResource {

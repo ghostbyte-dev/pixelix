@@ -56,6 +56,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
@@ -124,11 +125,12 @@ fun EditProfileComposable(
 ) {
     val suggestionsState by viewModel.hashtagMentionsSuggestionsManager.suggestionsState.collectAsStateWithLifecycle()
     var isCancelAlertOpen by remember { mutableStateOf(false) }
-
+    val focusManager = LocalFocusManager.current
     NavigationBackHandler(
         state = rememberNavigationEventState(NavigationEventInfo.None),
         isBackEnabled = viewModel.isEdited,
         onBackCompleted = {
+            focusManager.clearFocus()
             isCancelAlertOpen = true
         })
 
@@ -451,6 +453,7 @@ fun EditProfileComposable(
             }, navigationIcon = {
                 IconButton(onClick = {
                     if (viewModel.isEdited) {
+                        focusManager.clearFocus()
                         isCancelAlertOpen = true
                     } else {
                         navController.popBackStack()

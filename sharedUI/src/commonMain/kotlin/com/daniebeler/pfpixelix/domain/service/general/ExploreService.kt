@@ -2,11 +2,13 @@ package com.daniebeler.pfpixelix.domain.service.general
 
 import com.daniebeler.pfpixelix.di.AppSingleton
 import com.daniebeler.pfpixelix.domain.model.Account
+import com.daniebeler.pfpixelix.domain.model.Camera
 import com.daniebeler.pfpixelix.domain.model.Category
 import com.daniebeler.pfpixelix.domain.model.Country
 import com.daniebeler.pfpixelix.domain.model.License
 import com.daniebeler.pfpixelix.domain.model.PaginatedResponse
 import com.daniebeler.pfpixelix.domain.model.Location
+import com.daniebeler.pfpixelix.domain.model.PagePaginatedResponse
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.model.RelatedHashtag
 import com.daniebeler.pfpixelix.domain.model.Search
@@ -42,6 +44,7 @@ interface ExploreService {
     fun unfollowHashtag(tagId: String): Flow<Resource<Unit>>
 
     fun getCategories(): Flow<Resource<List<Category>>>
+    fun getCameras(page: Int? = 1, size: Int? = 20): Flow<Resource<PagePaginatedResponse<Camera>>>
     fun getLicenses(): Flow<Resource<List<License>>>
 
     fun Flow<Resource<PaginatedResponse<List<Post>>>>.filterSensitive(hideSensitiveContent: Boolean) =
@@ -98,6 +101,9 @@ class ExploreServiceDelegate(
     override fun unfollowHashtag(tagId: String): Flow<Resource<Unit>> = current.unfollowHashtag(tagId)
 
     override fun getCategories(): Flow<Resource<List<Category>>> = current.getCategories()
+
+    override fun getCameras(page: Int?, size: Int?): Flow<Resource<PagePaginatedResponse<Camera>>> = current.getCameras(page, size)
+
 
     override fun getLicenses(): Flow<Resource<List<License>>> = current.getLicenses()
 }

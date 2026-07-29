@@ -1,9 +1,11 @@
 package com.daniebeler.pfpixelix.domain.service.vernissage
 
+import com.daniebeler.pfpixelix.domain.model.Camera
 import com.daniebeler.pfpixelix.domain.model.Category
 import com.daniebeler.pfpixelix.domain.model.Country
 import com.daniebeler.pfpixelix.domain.model.License
 import com.daniebeler.pfpixelix.domain.model.Location
+import com.daniebeler.pfpixelix.domain.model.PagePaginatedResponse
 import com.daniebeler.pfpixelix.domain.model.RelatedHashtag
 import com.daniebeler.pfpixelix.domain.model.Search
 import com.daniebeler.pfpixelix.domain.model.Tag
@@ -12,8 +14,10 @@ import com.daniebeler.pfpixelix.domain.service.general.ExploreService
 import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.domain.service.utils.loadListResources
+import com.daniebeler.pfpixelix.domain.service.utils.loadPagePaginatedListResources
 import com.daniebeler.pfpixelix.domain.service.utils.loadResource
 import com.daniebeler.pfpixelix.domain.service.utils.loadVernissagePaginatedListResources
+import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissagePagePaginatedResponse
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.toDomain
 import com.daniebeler.pfpixelix.ui.composables.explore.trending.TrendingRange
 import kotlinx.coroutines.async
@@ -72,7 +76,6 @@ class VernissageExploreService(
     }
 
     override fun getRelatedHashtags(hashtag: String) = loadListResources {
-        //api.getRelatedHashtags(hashtag).map { it.toDomain() }
         emptyList<RelatedHashtag>()
     }
 
@@ -109,6 +112,16 @@ class VernissageExploreService(
     override fun getCategories(): Flow<Resource<List<Category>>> = loadListResources {
         api.getAllCategories().map { it.toDomain() }
     }
+
+    override fun getCameras(page: Int?, size: Int?): Flow<Resource<PagePaginatedResponse<Camera>>> =
+        loadPagePaginatedListResources<Camera> {
+            VernissagePagePaginatedResponse(
+                data = emptyList(),
+                page = page ?: 1,
+                size = size ?: 10,
+                total = 0
+            )
+        }
 
     override fun getLicenses(): Flow<Resource<List<License>>> = loadListResources {
         api.getAllLicenses().data.map { it.toDomain() }

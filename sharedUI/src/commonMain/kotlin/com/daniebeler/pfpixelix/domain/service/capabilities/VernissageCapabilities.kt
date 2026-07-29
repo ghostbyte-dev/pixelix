@@ -19,7 +19,9 @@ val VernissageCapabilities = Capabilities(
         headerImage = true,
         includeFields = true
     ), trending = TrendingCapabilities(
-        supportsMultipleProfileTimeRanges = true, supportsMultipleHashtagTimeRanges = true
+        supportsMultipleProfileTimeRanges = true,
+        supportsMultipleHashtagTimeRanges = true,
+        supportsAdvancedCategories = true
     ), newPost = NewPostCapabilities(
         supportsAdvancedMediaMetadata = true,
         includeDirectVisibility = true,

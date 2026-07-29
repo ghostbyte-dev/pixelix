@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.domain.service.capabilities.Capabilities
 import com.daniebeler.pfpixelix.domain.service.general.ExploreService
 import com.daniebeler.pfpixelix.domain.service.general.Session
+import com.daniebeler.pfpixelix.domain.service.general.TimelineService
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.ui.composables.explore.trending.TrendingRange
 import kotlinx.coroutines.flow.StateFlow
@@ -17,6 +18,7 @@ import me.tatarka.inject.annotations.Inject
 
 class TrendingHashtagsViewModel @Inject constructor(
     private val exploreService: ExploreService,
+    val timelineService: TimelineService,
     session: Session
 ) : ViewModel() {
     val capabilities: StateFlow<Capabilities> = session.capabilities

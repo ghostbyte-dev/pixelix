@@ -24,11 +24,15 @@ import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pfpixelix.ui.composables.widgets.CustomPullToRefreshBox
 import com.daniebeler.pfpixelix.ui.composables.widgets.InfiniteListHandler
+import com.daniebeler.pfpixelix.ui.navigation.Destination
+import com.daniebeler.pfpixelix.utils.StringFormat
+import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.datetime
 import pixelix.app.generated.resources.no_trending_hashtags
+import pixelix.app.generated.resources.posts
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -97,7 +101,18 @@ fun TrendingHashtagsComposable(
                         it.name
                     }
                 }) {
-                    TrendingHashtagElement(hashtag = it, navController = navController)
+                    ExploreGridElement(
+                        keyId = it.name,
+                        title = "#${it.name}",
+                        subtitle = it.postsCount?.let {
+                            "${StringFormat.groupDigits(it)} ${pluralStringResource(Res.plurals.posts, it)}"
+                        },
+                        onClick = {
+                            navController.navigate(Destination.HashtagTimeline(it.name))
+                        },
+                        fetcher = { tag -> viewModel.timelineService.getHashtagTimeline(tag, limit = 39) },
+                        navController = navController
+                    )
                 }
 
                 if (viewModel.trendingHashtagsState.isLoading && viewModel.trendingHashtagsState.trendingHashtags.isNotEmpty()) {

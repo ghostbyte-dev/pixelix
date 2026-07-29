@@ -35,4 +35,12 @@ class VernissageTimelineService(
     ) = loadVernissagePaginatedListResources {
         api.getHashtagTimeline(hashtag, maxId, limit)
     }.filterSensitive(prefs.hideSensitiveContent)
+
+    override fun getCategoryTimeline(
+        category: String,
+        maxId: String?,
+        limit: Int
+    ) = loadVernissagePaginatedListResources {
+        api.getCategoryTimeline(category, maxId, limit)
+    }.filterSensitive(prefs.hideSensitiveContent)
 }

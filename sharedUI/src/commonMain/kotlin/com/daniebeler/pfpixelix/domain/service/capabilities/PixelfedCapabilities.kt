@@ -26,7 +26,8 @@ val PixelfedCapabilities = Capabilities(
     ),
     trending = TrendingCapabilities(
         supportsMultipleProfileTimeRanges = false,
-        supportsMultipleHashtagTimeRanges = false
+        supportsMultipleHashtagTimeRanges = false,
+        supportsAdvancedCategories = false
     ),
     newPost = NewPostCapabilities(
         supportsAdvancedMediaMetadata = false,

@@ -66,6 +66,13 @@ interface VernissageApi {
         @Query("limit") limit: Int = HASHTAG_TIMELINE_POSTS_LIMIT
     ): VernissagePaginatedResponse<List<VernissagePostDto>>
 
+    @GET("api/v1/timelines/category/{category}")
+    suspend fun getCategoryTimeline(
+        @Path("category") category: String,
+        @Query("maxId") maxPostId: String? = null,
+        @Query("limit") limit: Int = HASHTAG_TIMELINE_POSTS_LIMIT
+    ): VernissagePaginatedResponse<List<VernissagePostDto>>
+
     @GET("api/v1/timelines/public?onlyLocal=true")
     suspend fun getLocalTimeline(
         @Query("maxId") maxPostId: String? = null,
@@ -292,10 +299,10 @@ interface VernissageApi {
     suspend fun getInstance(): VernissageInstanceDto
 
     @GET("api/v1/user-blocked-users")
-    suspend fun getBlockedAccounts(): VernissagePagePaginatedResponse<List<VernissageBlockedAccountDto>>
+    suspend fun getBlockedAccounts(): VernissagePagePaginatedResponse<VernissageBlockedAccountDto>
 
     @GET("api/v1/user-mutes")
-    suspend fun getMutedAccounts(): VernissagePagePaginatedResponse<List<VernissageMutedAccountDto>>
+    suspend fun getMutedAccounts(): VernissagePagePaginatedResponse<VernissageMutedAccountDto>
 
     @POST("api/v1/attachments")
     suspend fun uploadMedia(
@@ -340,7 +347,7 @@ interface VernissageApi {
     ): List<VernissageCategory>
 
     @GET("api/v1/licenses?page=1&size=100")
-    suspend fun getAllLicenses(): VernissagePagePaginatedResponse<List<VernissageLicenseDto>>
+    suspend fun getAllLicenses(): VernissagePagePaginatedResponse<VernissageLicenseDto>
 
     @GET
     suspend fun getNodeInfo(@Url domain: String): PixelfedNodeInfoDto

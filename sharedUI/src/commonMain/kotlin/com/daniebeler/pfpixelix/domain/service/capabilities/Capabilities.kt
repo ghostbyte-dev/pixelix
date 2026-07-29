@@ -18,6 +18,7 @@ data class GeneralCapabilities(
 data class TrendingCapabilities(
     val supportsMultipleProfileTimeRanges: Boolean,
     val supportsMultipleHashtagTimeRanges: Boolean,
+    val supportsAdvancedCategories: Boolean
 )
 
 data class PostCapabilities(

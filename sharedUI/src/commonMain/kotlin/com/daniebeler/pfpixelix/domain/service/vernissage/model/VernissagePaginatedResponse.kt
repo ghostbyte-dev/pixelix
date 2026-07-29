@@ -11,8 +11,8 @@ data class VernissagePaginatedResponse<T>(
 
 @Serializable
 data class VernissagePagePaginatedResponse<T>(
-    @SerialName("data") val data: T,
-    @SerialName("page") val page: Int?,
-    @SerialName("size") val size: Int?,
-    @SerialName("total") val total: Int?,
+    @SerialName("data") val data: List<T>,
+    @SerialName("page") val page: Int,
+    @SerialName("size") val size: Int,
+    @SerialName("total") val total: Int,
 )

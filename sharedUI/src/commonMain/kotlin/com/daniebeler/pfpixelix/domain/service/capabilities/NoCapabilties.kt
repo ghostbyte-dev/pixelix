@@ -1,20 +1,16 @@
 package com.daniebeler.pfpixelix.domain.service.capabilities
 
 val NoCapabilities = Capabilities(
-    general = GeneralCapabilities(supportsDMs = false),
-    post = PostCapabilities(
+    general = GeneralCapabilities(supportsDMs = false), post = PostCapabilities(
         showCameraMetadata = false, showLikedBy = false
-    ),
-    profile = ProfileCapabilities(
+    ), profile = ProfileCapabilities(
         showCollectionsOwnProfile = false,
         showAdvancedMuteOptions = false,
         showRepostSettings = false,
         blockReason = false
-    ),
-    notification = NotificationCapabilities(
+    ), notification = NotificationCapabilities(
         supportsFollowRequestActions = false
-    ),
-    editProfile = EditProfileCapabilities(
+    ), editProfile = EditProfileCapabilities(
         privateAccountToggle = false,
         manuallyAcceptNewFollowersToggle = false,
         includePostsInSearchEngineToggle = false,
@@ -22,11 +18,11 @@ val NoCapabilities = Capabilities(
         websiteField = false,
         headerImage = false,
         includeFields = false
-    ),
-    trending = TrendingCapabilities(
-        supportsMultipleProfileTimeRanges = false, supportsMultipleHashtagTimeRanges = false
-    ),
-    newPost = NewPostCapabilities(
+    ), trending = TrendingCapabilities(
+        supportsMultipleProfileTimeRanges = false,
+        supportsMultipleHashtagTimeRanges = false,
+        supportsAdvancedCategories = false
+    ), newPost = NewPostCapabilities(
         supportsAdvancedMediaMetadata = false,
         includeDirectVisibility = false,
         showCountryDropdown = false,

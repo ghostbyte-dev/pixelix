@@ -14,6 +14,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.PrimaryScrollableTabRow
 import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
@@ -27,8 +28,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.ui.composables.SheetItem
+import com.daniebeler.pfpixelix.ui.composables.explore.ExploreViewModel
+import com.daniebeler.pfpixelix.ui.composables.explore.trending.categories.CategoriesComposable
 import com.daniebeler.pfpixelix.ui.composables.explore.trending.trending_accounts.TrendingAccountsComposable
 import com.daniebeler.pfpixelix.ui.composables.explore.trending.trending_hashtags.TrendingHashtagsComposable
 import com.daniebeler.pfpixelix.ui.composables.explore.trending.trending_posts.TrendingPostsComposable
@@ -39,16 +43,17 @@ import pixelix.app.generated.resources.accounts
 import pixelix.app.generated.resources.hashtags
 import pixelix.app.generated.resources.posts_title
 import pixelix.app.generated.resources.trending_account_description
+import pixelix.app.generated.resources.trending_accounts
 import pixelix.app.generated.resources.trending_hashtag_description
+import pixelix.app.generated.resources.trending_hashtags
 import pixelix.app.generated.resources.trending_post_description
+import pixelix.app.generated.resources.trending_posts
 import pixelix.app.generated.resources.what_makes_a_hashtag_trend
 import pixelix.app.generated.resources.what_makes_a_post_trend
 import pixelix.app.generated.resources.what_makes_an_account_trend
 
 enum class TrendingRange {
-    DAILY,
-    MONTHLY,
-    YEARLY;
+    DAILY, MONTHLY, YEARLY;
 
     fun toApiString() = when (this) {
         DAILY -> "daily"
@@ -59,14 +64,18 @@ enum class TrendingRange {
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun TrendingComposable(navController: NavController, initialPage: Int, isSwipeEnabled: Boolean) {
+fun TrendingComposable(
+    navController: NavController,
+    viewModel: ExploreViewModel,
+    initialPage: Int,
+    isSwipeEnabled: Boolean
+) {
 
-    val pagerState = rememberPagerState(initialPage = initialPage, pageCount = { 3 })
+    val pagerState = rememberPagerState(
+        initialPage = initialPage,
+        pageCount = { if (viewModel.capabilities.value.trending.supportsAdvancedCategories) 7 else 4 })
 
     val scope = rememberCoroutineScope()
-
-    val sheetState = rememberModalBottomSheetState()
-    var showBottomSheet by remember { mutableStateOf(false) }
 
     Box(
         Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)
@@ -75,7 +84,8 @@ fun TrendingComposable(navController: NavController, initialPage: Int, isSwipeEn
             userScrollEnabled = isSwipeEnabled,
             state = pagerState,
             beyondViewportPageCount = 3,
-            modifier = Modifier.padding(top = 24.dp).background(MaterialTheme.colorScheme.background)
+            modifier = Modifier.padding(top = 24.dp)
+                .background(MaterialTheme.colorScheme.background)
         ) { tabIndex ->
             when (tabIndex) {
                 0 -> Box(modifier = Modifier.fillMaxSize()) {
@@ -90,18 +100,34 @@ fun TrendingComposable(navController: NavController, initialPage: Int, isSwipeEn
                     TrendingHashtagsComposable(navController = navController)
                 }
 
+                3 -> Box(modifier = Modifier.fillMaxSize()) {
+                    CategoriesComposable(navController = navController)
+                }
+
+                4 -> Box(modifier = Modifier.fillMaxSize()) {
+                    TrendingHashtagsComposable(navController = navController)
+                }
+
+                5 -> Box(modifier = Modifier.fillMaxSize()) {
+                    TrendingHashtagsComposable(navController = navController)
+                }
+
+                6 -> Box(modifier = Modifier.fillMaxSize()) {
+                    TrendingHashtagsComposable(navController = navController)
+                }
+
             }
         }
 
-        PrimaryTabRow(
+        PrimaryScrollableTabRow(
             selectedTabIndex = pagerState.currentPage,
+            edgePadding = 16.dp,
             divider = {},
             containerColor = MaterialTheme.colorScheme.surfaceContainer,
-            modifier = Modifier
-                .clip(RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp))
+            modifier = Modifier.clip(RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp))
         ) {
             Tab(
-                text = { Text(stringResource(Res.string.posts_title)) },
+                text = { Text(stringResource(Res.string.trending_posts)) },
                 selected = pagerState.currentPage == 0,
                 selectedContentColor = MaterialTheme.colorScheme.primary,
                 unselectedContentColor = MaterialTheme.colorScheme.onSurface,
@@ -113,7 +139,7 @@ fun TrendingComposable(navController: NavController, initialPage: Int, isSwipeEn
                 })
 
             Tab(
-                text = { Text(stringResource(Res.string.accounts)) },
+                text = { Text(stringResource(Res.string.trending_accounts)) },
                 selected = pagerState.currentPage == 1,
                 selectedContentColor = MaterialTheme.colorScheme.primary,
                 unselectedContentColor = MaterialTheme.colorScheme.onSurface,
@@ -124,7 +150,7 @@ fun TrendingComposable(navController: NavController, initialPage: Int, isSwipeEn
                 })
 
             Tab(
-                text = { Text(stringResource(Res.string.hashtags)) },
+                text = { Text(stringResource(Res.string.trending_hashtags)) },
                 selected = pagerState.currentPage == 2,
                 selectedContentColor = MaterialTheme.colorScheme.primary,
                 unselectedContentColor = MaterialTheme.colorScheme.onSurface,
@@ -133,36 +159,51 @@ fun TrendingComposable(navController: NavController, initialPage: Int, isSwipeEn
                         pagerState.animateScrollToPage(2)
                     }
                 })
-        }
-    }
 
-    if (showBottomSheet) {
-        ModalBottomSheet(
-            onDismissRequest = {
-                showBottomSheet = false
-            }, sheetState = sheetState
-        ) {
-            Box(
-                modifier = Modifier.fillMaxSize().padding(horizontal = 12.dp)
-            ) {
-                Column {
-                    Spacer(modifier = Modifier.height(18.dp))
+            if (viewModel.capabilities.value.trending.supportsAdvancedCategories) {
+                Tab(
+                    text = { Text("Categories") },
+                    selected = pagerState.currentPage == 3,
+                    selectedContentColor = MaterialTheme.colorScheme.primary,
+                    unselectedContentColor = MaterialTheme.colorScheme.onSurface,
+                    onClick = {
+                        scope.launch {
+                            pagerState.animateScrollToPage(3)
+                        }
+                    })
 
-                    SheetItem(
-                        header = stringResource(Res.string.what_makes_a_post_trend),
-                        description = stringResource(Res.string.trending_post_description)
-                    )
+                Tab(
+                    text = { Text("Cameras") },
+                    selected = pagerState.currentPage == 4,
+                    selectedContentColor = MaterialTheme.colorScheme.primary,
+                    unselectedContentColor = MaterialTheme.colorScheme.onSurface,
+                    onClick = {
+                        scope.launch {
+                            pagerState.animateScrollToPage(4)
+                        }
+                    })
 
-                    SheetItem(
-                        header = stringResource(Res.string.what_makes_an_account_trend),
-                        description = stringResource(Res.string.trending_account_description)
-                    )
+                Tab(
+                    text = { Text("Lenses") },
+                    selected = pagerState.currentPage == 5,
+                    selectedContentColor = MaterialTheme.colorScheme.primary,
+                    unselectedContentColor = MaterialTheme.colorScheme.onSurface,
+                    onClick = {
+                        scope.launch {
+                            pagerState.animateScrollToPage(5)
+                        }
+                    })
 
-                    SheetItem(
-                        header = stringResource(Res.string.what_makes_a_hashtag_trend),
-                        description = stringResource(Res.string.trending_hashtag_description)
-                    )
-                }
+                Tab(
+                    text = { Text("Films") },
+                    selected = pagerState.currentPage == 6,
+                    selectedContentColor = MaterialTheme.colorScheme.primary,
+                    unselectedContentColor = MaterialTheme.colorScheme.onSurface,
+                    onClick = {
+                        scope.launch {
+                            pagerState.animateScrollToPage(6)
+                        }
+                    })
             }
         }
     }

@@ -1,8 +1,9 @@
 package com.daniebeler.pfpixelix.domain.model
 
-data class Category(
+data class Camera(
     override val id: String,
     val name: String,
-    val isEnabled: Boolean?,
-    val priority: Int?
+    val make: String,
+    val model: String,
+    val amount: Int
 ): Identifiable

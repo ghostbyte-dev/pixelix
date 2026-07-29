@@ -26,44 +26,48 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.di.injectViewModel
+import com.daniebeler.pfpixelix.domain.model.PaginatedResponse
+import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.model.Tag
+import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.ui.composables.widgets.CustomPost
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import com.daniebeler.pfpixelix.utils.StringFormat
+import kotlinx.coroutines.flow.Flow
 import org.jetbrains.compose.resources.pluralStringResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.posts
 
 @Composable
-fun TrendingHashtagElement(
-    hashtag: Tag,
+fun ExploreGridElement(
+    keyId: String,
+    title: String,
+    subtitle: String? = null,
+    onClick: () -> Unit,
+    fetcher: (String) -> Flow<Resource<PaginatedResponse<List<Post>>>>,
     navController: NavController,
-    viewModel: TrendingHashtagElementViewModel = injectViewModel(key = "the" + hashtag.name) { trendingHashtagElementViewModel }
+    viewModel: TrendingHashtagElementViewModel = injectViewModel(key = "explore_$keyId") { trendingHashtagElementViewModel }
 ) {
 
-    LaunchedEffect(hashtag) {
-        viewModel.loadItems(hashtag.name)
+    LaunchedEffect(keyId) {
+        viewModel.loadItems(keyId, fetcher)
     }
 
     Column(
         Modifier.clip(RoundedCornerShape(16.dp))
             .background(MaterialTheme.colorScheme.surfaceContainerLow).padding(vertical = 8.dp)
             .fillMaxWidth().clickable {
-                navController.navigate(Destination.HashtagTimeline(hashtag.name))
+                onClick()
             }) {
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(vertical = 12.dp, horizontal = 12.dp).fillMaxWidth()
         ) {
-            Text(text = "#" + hashtag.name, fontWeight = FontWeight.Bold, fontSize = 18.sp)
-            if (hashtag.postsCount != null) {
+            Text(text = title, fontWeight = FontWeight.Bold, fontSize = 18.sp)
+            if (subtitle != null) {
                 Text(
-                    text = "  • " + StringFormat.groupDigits(
-                        hashtag.postsCount
-                    ) + " " + pluralStringResource(
-                        Res.plurals.posts, hashtag.postsCount
-                    ), fontSize = 12.sp, color = MaterialTheme.colorScheme.secondary
+                    text = "  • $subtitle", fontSize = 12.sp, color = MaterialTheme.colorScheme.secondary
                 )
             }
         }

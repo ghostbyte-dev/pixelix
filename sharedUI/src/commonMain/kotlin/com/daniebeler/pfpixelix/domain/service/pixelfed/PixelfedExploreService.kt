@@ -1,16 +1,20 @@
 package com.daniebeler.pfpixelix.domain.service.pixelfed
 
+import com.daniebeler.pfpixelix.domain.model.Camera
 import com.daniebeler.pfpixelix.domain.model.Category
 import com.daniebeler.pfpixelix.domain.model.Country
 import com.daniebeler.pfpixelix.domain.model.License
+import com.daniebeler.pfpixelix.domain.model.PagePaginatedResponse
 import com.daniebeler.pfpixelix.domain.repository.pixelfed.PixelfedApi
 import com.daniebeler.pfpixelix.domain.service.general.ExploreService
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.toDomain
 import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.domain.service.utils.loadListResources
+import com.daniebeler.pfpixelix.domain.service.utils.loadPagePaginatedListResources
 import com.daniebeler.pfpixelix.domain.service.utils.loadPaginatedListResources
 import com.daniebeler.pfpixelix.domain.service.utils.loadResource
+import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissagePagePaginatedResponse
 import com.daniebeler.pfpixelix.ui.composables.explore.trending.TrendingRange
 import kotlinx.coroutines.flow.Flow
 import me.tatarka.inject.annotations.Inject
@@ -83,6 +87,16 @@ class PixelfedExploreService(
     override fun getCategories(): Flow<Resource<List<Category>>> = loadListResources {
         emptyList()
     }
+
+    override fun getCameras(page: Int?, size: Int?): Flow<Resource<PagePaginatedResponse<Camera>>> =
+        loadPagePaginatedListResources<Camera> {
+            VernissagePagePaginatedResponse(
+                data = emptyList(),
+                page = page ?: 1,
+                size = size ?: 10,
+                total = 0
+            )
+        }
 
     override fun getLicenses(): Flow<Resource<List<License>>> = loadListResources {
         emptyList()

@@ -2,7 +2,7 @@ package com.daniebeler.pfpixelix.ui.composables.explore.trending.trending_hashta
 
 import com.daniebeler.pfpixelix.domain.model.Post
 
-data class TrendingHashtagPostsState(
+data class ExploreGridPostsState(
     val isLoading: Boolean = false,
     val posts: List<Post> = emptyList(),
     val error: String = ""

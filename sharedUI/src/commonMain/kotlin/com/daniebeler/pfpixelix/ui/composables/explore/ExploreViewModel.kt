@@ -8,12 +8,15 @@ import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.model.SavedSearchItem
+import com.daniebeler.pfpixelix.domain.service.capabilities.Capabilities
 import com.daniebeler.pfpixelix.domain.service.general.AuthService
 import com.daniebeler.pfpixelix.domain.service.general.ExploreService
+import com.daniebeler.pfpixelix.domain.service.general.Session
 import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
 import com.daniebeler.pfpixelix.domain.service.search.SavedSearchesService
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -23,8 +26,10 @@ class ExploreViewModel @Inject constructor(
     private val exploreService: ExploreService,
     private val savedSearchesService: SavedSearchesService,
     private val authService: AuthService,
-    private val prefs: UserPreferences
+    private val prefs: UserPreferences,
+    session: Session
 ) : ViewModel() {
+    val capabilities: StateFlow<Capabilities> = session.capabilities
     var searchState by mutableStateOf(SearchState())
     var savedSearches by mutableStateOf<List<SavedSearchItem>>(emptyList())
         private set

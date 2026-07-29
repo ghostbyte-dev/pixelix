@@ -40,6 +40,9 @@
     <string name="share_this_post">Share this post</string>
     <string name="trending">Trending</string>
     <string name="accounts">Profiles</string>
+    <string name="trending_accounts">Trending profiles</string>
+    <string name="trending_hashtags">Trending hashtags</string>
+    <string name="trending_posts">Trending posts</string>
     <string name="rules">Rules</string>
     <string name="instance_version">Instance version</string>
     <string name="terms_of_use">Terms of use</string>

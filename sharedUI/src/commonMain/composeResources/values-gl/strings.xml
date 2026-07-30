@@ -371,4 +371,8 @@
     <string name="content_settings">Axustes do contido</string>
     <string name="app_customization">Personalización da app</string>
     <string name="new_post_settings">Axustes para novas publicacións</string>
+    <string name="trending_accounts">Perfís populares</string>
+    <string name="trending_hashtags">Cancelos populares</string>
+    <string name="trending_posts">Publicacións populares</string>
+    <string name="use_dynamic_colors">Usar cores dinámicas</string>
 </resources>

@@ -11,6 +11,7 @@ import com.daniebeler.pfpixelix.ui.composables.direct_messages.chat.ChatViewMode
 import com.daniebeler.pfpixelix.ui.composables.direct_messages.conversations.ConversationsViewModel
 import com.daniebeler.pfpixelix.ui.composables.edit_profile.EditProfileViewModel
 import com.daniebeler.pfpixelix.ui.composables.explore.ExploreViewModel
+import com.daniebeler.pfpixelix.ui.composables.explore.trending.cameras.CamerasViewModel
 import com.daniebeler.pfpixelix.ui.composables.explore.trending.categories.CategoriesViewModel
 import com.daniebeler.pfpixelix.ui.composables.explore.trending.trending_accounts.TrendingAccountElementViewModel
 import com.daniebeler.pfpixelix.ui.composables.explore.trending.trending_accounts.TrendingAccountsViewModel
@@ -88,6 +89,7 @@ abstract class ViewModelComponent(
     abstract val trendingAccountsViewModel: TrendingAccountsViewModel
     abstract val trendingHashtagElementViewModel: TrendingHashtagElementViewModel
     abstract val trendingHashtagsViewModel: TrendingHashtagsViewModel
+    abstract val camerasViewModel: CamerasViewModel
     abstract val trendingPostsViewModel: TrendingPostsViewModel
     abstract val categoriesViewModel: CategoriesViewModel
     abstract val conversationsViewModel: ConversationsViewModel

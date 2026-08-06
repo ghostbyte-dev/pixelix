@@ -45,4 +45,12 @@ class PixelfedTimelineService(
     ) = loadPaginatedListResources<Post> {
         emptyList()
     }
+
+    override fun getCameraTimeline(
+        camera: String,
+        maxId: String?,
+        limit: Int
+    ) = loadPaginatedListResources<Post> {
+        emptyList()
+    }
 }

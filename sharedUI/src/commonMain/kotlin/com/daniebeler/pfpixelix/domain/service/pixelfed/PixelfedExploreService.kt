@@ -88,7 +88,7 @@ class PixelfedExploreService(
         emptyList()
     }
 
-    override fun getCameras(page: Int?, size: Int?): Flow<Resource<PagePaginatedResponse<Camera>>> =
+    override fun getCameras(page: Int, size: Int): Flow<Resource<PagePaginatedResponse<Camera>>> =
         loadPagePaginatedListResources<Camera> {
             VernissagePagePaginatedResponse(
                 data = emptyList(),

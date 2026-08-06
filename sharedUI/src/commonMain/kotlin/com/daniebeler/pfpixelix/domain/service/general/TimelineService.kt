@@ -33,6 +33,12 @@ interface TimelineService {
         limit: Int = PixelfedApi.HASHTAG_TIMELINE_POSTS_LIMIT
     ): Flow<Resource<PaginatedResponse<List<Post>>>>
 
+    fun getCameraTimeline(
+        camera: String,
+        maxId: String? = null,
+        limit: Int = PixelfedApi.HASHTAG_TIMELINE_POSTS_LIMIT
+    ): Flow<Resource<PaginatedResponse<List<Post>>>>
+
     fun Flow<Resource<PaginatedResponse<List<Post>>>>.filterSensitive(hideSensitiveContent: Boolean) =
         this.map { event ->
             if (event is Resource.Success<PaginatedResponse<List<Post>>>) {
@@ -72,4 +78,8 @@ class TimelineServiceDelegate(
     override fun getCategoryTimeline(
         category: String, maxId: String?, limit: Int
     ) = current.getCategoryTimeline(category, maxId, limit)
+
+    override fun getCameraTimeline(
+        camera: String, maxId: String?, limit: Int
+    ) = current.getCameraTimeline(camera, maxId, limit)
 }

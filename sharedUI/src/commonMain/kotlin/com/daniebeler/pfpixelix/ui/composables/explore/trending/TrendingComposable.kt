@@ -32,6 +32,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.ui.composables.SheetItem
 import com.daniebeler.pfpixelix.ui.composables.explore.ExploreViewModel
+import com.daniebeler.pfpixelix.ui.composables.explore.trending.cameras.CamerasComposable
 import com.daniebeler.pfpixelix.ui.composables.explore.trending.categories.CategoriesComposable
 import com.daniebeler.pfpixelix.ui.composables.explore.trending.trending_accounts.TrendingAccountsComposable
 import com.daniebeler.pfpixelix.ui.composables.explore.trending.trending_hashtags.TrendingHashtagsComposable
@@ -105,7 +106,7 @@ fun TrendingComposable(
                 }
 
                 4 -> Box(modifier = Modifier.fillMaxSize()) {
-                    TrendingHashtagsComposable(navController = navController)
+                    CamerasComposable(navController = navController)
                 }
 
                 5 -> Box(modifier = Modifier.fillMaxSize()) {

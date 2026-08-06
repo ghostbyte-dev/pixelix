@@ -113,13 +113,14 @@ class VernissageExploreService(
         api.getAllCategories().map { it.toDomain() }
     }
 
-    override fun getCameras(page: Int?, size: Int?): Flow<Resource<PagePaginatedResponse<Camera>>> =
-        loadPagePaginatedListResources<Camera> {
+    override fun getCameras(page: Int, size: Int): Flow<Resource<PagePaginatedResponse<Camera>>> =
+        loadPagePaginatedListResources {
+            val response = api.getCameras(page, size)
             VernissagePagePaginatedResponse(
-                data = emptyList(),
-                page = page ?: 1,
-                size = size ?: 10,
-                total = 0
+                data = response.data.map { it.toDomain() },
+                page = response.page,
+                size = response.size,
+                total = response.total
             )
         }
 

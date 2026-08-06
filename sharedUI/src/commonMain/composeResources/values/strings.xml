@@ -112,6 +112,10 @@
     <string name="use_in_app_browser">Use in-app-browser</string>
     <string name="no_trending_profiles">No trending profiles</string>
     <string name="no_trending_hashtags">No trending Hashtags</string>
+    <string name="no_categories">No categories</string>
+    <string name="no_cameras">No cameras</string>
+    <string name="no_lenses">No lenses</string>
+    <string name="no_films">No films</string>
     <string name="no_trending_posts">No trending posts</string>
     <string name="upload_your_first_post">Upload your first post</string>
     <string name="the_profiles_you_follow_will_appear_here">The profiles you follow will appear here</string>

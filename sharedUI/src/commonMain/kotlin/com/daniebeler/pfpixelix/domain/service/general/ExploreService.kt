@@ -44,7 +44,7 @@ interface ExploreService {
     fun unfollowHashtag(tagId: String): Flow<Resource<Unit>>
 
     fun getCategories(): Flow<Resource<List<Category>>>
-    fun getCameras(page: Int? = 1, size: Int? = 20): Flow<Resource<PagePaginatedResponse<Camera>>>
+    fun getCameras(page: Int = 1, size: Int = 20): Flow<Resource<PagePaginatedResponse<Camera>>>
     fun getLicenses(): Flow<Resource<List<License>>>
 
     fun Flow<Resource<PaginatedResponse<List<Post>>>>.filterSensitive(hideSensitiveContent: Boolean) =
@@ -102,7 +102,7 @@ class ExploreServiceDelegate(
 
     override fun getCategories(): Flow<Resource<List<Category>>> = current.getCategories()
 
-    override fun getCameras(page: Int?, size: Int?): Flow<Resource<PagePaginatedResponse<Camera>>> = current.getCameras(page, size)
+    override fun getCameras(page: Int, size: Int): Flow<Resource<PagePaginatedResponse<Camera>>> = current.getCameras(page, size)
 
 
     override fun getLicenses(): Flow<Resource<List<License>>> = current.getLicenses()

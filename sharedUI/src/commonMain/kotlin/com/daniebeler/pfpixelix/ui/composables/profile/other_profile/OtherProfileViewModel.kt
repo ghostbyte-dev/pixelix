@@ -207,6 +207,7 @@ class OtherProfileViewModel(
         accountService.getAccountByUsername(username).onEach { result ->
             accountState = when (result) {
                 is Resource.Success -> {
+                    this.username = result.data.username
                     userId = result.data.id
                     loadDataExceptAccount(refreshing)
                     AccountState(account = result.data)

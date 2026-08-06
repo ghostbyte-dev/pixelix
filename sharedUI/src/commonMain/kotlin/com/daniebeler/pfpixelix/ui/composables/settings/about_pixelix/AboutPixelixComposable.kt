@@ -43,9 +43,9 @@ import pixelix.app.generated.resources.browser
 import pixelix.app.generated.resources.code
 import pixelix.app.generated.resources.developed_by
 import pixelix.app.generated.resources.mastodon_logo
-import pixelix.app.generated.resources.pixelfed_logo
 import pixelix.app.generated.resources.shield
 import pixelix.app.generated.resources.star
+import pixelix.app.generated.resources.vernissage_logo
 import pixelix.app.generated.resources.website
 
 @Composable
@@ -131,10 +131,10 @@ fun AboutPixelixComposable(
 
                 Row {
                     Image(
-                        painter = painterResource(Res.drawable.pixelfed_logo),
+                        painter = painterResource(Res.drawable.vernissage_logo),
                         contentDescription = null,
                         Modifier.width(32.dp).height(32.dp).clickable {
-                            navController.navigate(Destination.ProfileByUsername("hiebeler05@pixelix.social"))
+                            navController.navigate(Destination.ProfileByUsername("hiebeler05@vernissage.photos"))
                         })
 
                     Spacer(modifier = Modifier.width(16.dp))
@@ -168,10 +168,10 @@ fun AboutPixelixComposable(
 
                 Row {
                     Image(
-                        painter = painterResource(Res.drawable.pixelfed_logo),
+                        painter = painterResource(Res.drawable.vernissage_logo),
                         contentDescription = null,
                         Modifier.width(32.dp).height(32.dp).clickable {
-                            navController.navigate(Destination.ProfileByUsername("daniebeler@pixelix.social"))
+                            navController.navigate(Destination.ProfileByUsername("daniebeler@vernissage.photos"))
                         })
 
                     Spacer(modifier = Modifier.width(16.dp))
@@ -204,12 +204,12 @@ fun AboutPixelixComposable(
                 Text(text = "Konstantin Tskhovrebov", fontWeight = FontWeight.Bold)
 
                 Row {
-                    Image(
-                        painter = painterResource(Res.drawable.pixelfed_logo),
-                        contentDescription = null,
-                        Modifier.width(32.dp).height(32.dp).clickable {
-                            navController.navigate(Destination.ProfileByUsername("dagboek@pixey.org"))
-                        })
+//                    Image(
+//                        painter = painterResource(Res.drawable.pixelfed_logo),
+//                        contentDescription = null,
+//                        Modifier.width(32.dp).height(32.dp).clickable {
+//                            navController.navigate(Destination.ProfileByUsername("dagboek@pixey.org"))
+//                        })
 
                     Spacer(modifier = Modifier.width(16.dp))
 

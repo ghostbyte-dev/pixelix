@@ -3,6 +3,8 @@ package com.daniebeler.pfpixelix.domain.service.pixelfed
 import com.daniebeler.pfpixelix.domain.model.Camera
 import com.daniebeler.pfpixelix.domain.model.Category
 import com.daniebeler.pfpixelix.domain.model.Country
+import com.daniebeler.pfpixelix.domain.model.Film
+import com.daniebeler.pfpixelix.domain.model.Lens
 import com.daniebeler.pfpixelix.domain.model.License
 import com.daniebeler.pfpixelix.domain.model.PagePaginatedResponse
 import com.daniebeler.pfpixelix.domain.repository.pixelfed.PixelfedApi
@@ -90,6 +92,26 @@ class PixelfedExploreService(
 
     override fun getCameras(page: Int, size: Int): Flow<Resource<PagePaginatedResponse<Camera>>> =
         loadPagePaginatedListResources<Camera> {
+            VernissagePagePaginatedResponse(
+                data = emptyList(),
+                page = page ?: 1,
+                size = size ?: 10,
+                total = 0
+            )
+        }
+
+    override fun getLenses(page: Int, size: Int): Flow<Resource<PagePaginatedResponse<Lens>>> =
+        loadPagePaginatedListResources<Lens> {
+            VernissagePagePaginatedResponse(
+                data = emptyList(),
+                page = page ?: 1,
+                size = size ?: 10,
+                total = 0
+            )
+        }
+
+    override fun getFilms(page: Int, size: Int): Flow<Resource<PagePaginatedResponse<Film>>> =
+        loadPagePaginatedListResources<Film> {
             VernissagePagePaginatedResponse(
                 data = emptyList(),
                 page = page ?: 1,

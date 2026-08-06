@@ -40,8 +40,6 @@ fun CategoriesComposable(
     navController: NavController,
     viewModel: CategoriesViewModel = injectViewModel(key = "categories-key") { categoriesViewModel }
 ) {
-
-    val calendarIcon = vectorResource(Res.drawable.datetime)
     val lazyListState = rememberLazyListState()
 
     CustomPullToRefreshBox(

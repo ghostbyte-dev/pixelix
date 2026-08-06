@@ -7,7 +7,9 @@ import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageBlocke
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageCameraDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageCategory
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageCountryDto
+import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageFilmDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageInstanceDto
+import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageLensDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageLicenseDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageLocationDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageMutedAccountDto
@@ -81,6 +83,20 @@ interface VernissageApi {
         @Query("limit") limit: Int = HASHTAG_TIMELINE_POSTS_LIMIT
     ): VernissagePaginatedResponse<List<VernissagePostDto>>
 
+    @GET("api/v1/timelines/lens/{lens}")
+    suspend fun getLensTimeline(
+        @Path("lens") lens: String,
+        @Query("maxId") maxPostId: String? = null,
+        @Query("limit") limit: Int = HASHTAG_TIMELINE_POSTS_LIMIT
+    ): VernissagePaginatedResponse<List<VernissagePostDto>>
+
+    @GET("api/v1/timelines/film/{film}")
+    suspend fun getFilmTimeline(
+        @Path("film") film: String,
+        @Query("maxId") maxPostId: String? = null,
+        @Query("limit") limit: Int = HASHTAG_TIMELINE_POSTS_LIMIT
+    ): VernissagePaginatedResponse<List<VernissagePostDto>>
+
     @GET("api/v1/timelines/public?onlyLocal=true")
     suspend fun getLocalTimeline(
         @Query("maxId") maxPostId: String? = null,
@@ -119,6 +135,18 @@ interface VernissageApi {
         @Query("page") page: Int = 1,
         @Query("size") size: Int = TRENDING_TIMELINE_POSTS_LIMIT
     ): VernissagePagePaginatedResponse<VernissageCameraDto>
+
+    @GET("api/v1/lenses")
+    suspend fun getLenses(
+        @Query("page") page: Int = 1,
+        @Query("size") size: Int = TRENDING_TIMELINE_POSTS_LIMIT
+    ): VernissagePagePaginatedResponse<VernissageLensDto>
+
+    @GET("api/v1/films")
+    suspend fun getFilms(
+        @Query("page") page: Int = 1,
+        @Query("size") size: Int = TRENDING_TIMELINE_POSTS_LIMIT
+    ): VernissagePagePaginatedResponse<VernissageFilmDto>
 
     @GET("api/v1/statuses/{id}")
     suspend fun getPostById(

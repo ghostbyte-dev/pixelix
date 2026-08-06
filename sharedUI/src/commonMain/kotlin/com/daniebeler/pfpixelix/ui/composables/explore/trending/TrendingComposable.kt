@@ -34,6 +34,8 @@ import com.daniebeler.pfpixelix.ui.composables.SheetItem
 import com.daniebeler.pfpixelix.ui.composables.explore.ExploreViewModel
 import com.daniebeler.pfpixelix.ui.composables.explore.trending.cameras.CamerasComposable
 import com.daniebeler.pfpixelix.ui.composables.explore.trending.categories.CategoriesComposable
+import com.daniebeler.pfpixelix.ui.composables.explore.trending.films.FilmsComposable
+import com.daniebeler.pfpixelix.ui.composables.explore.trending.lenses.LensesComposable
 import com.daniebeler.pfpixelix.ui.composables.explore.trending.trending_accounts.TrendingAccountsComposable
 import com.daniebeler.pfpixelix.ui.composables.explore.trending.trending_hashtags.TrendingHashtagsComposable
 import com.daniebeler.pfpixelix.ui.composables.explore.trending.trending_posts.TrendingPostsComposable
@@ -110,11 +112,11 @@ fun TrendingComposable(
                 }
 
                 5 -> Box(modifier = Modifier.fillMaxSize()) {
-                    TrendingHashtagsComposable(navController = navController)
+                    LensesComposable(navController = navController)
                 }
 
                 6 -> Box(modifier = Modifier.fillMaxSize()) {
-                    TrendingHashtagsComposable(navController = navController)
+                    FilmsComposable(navController = navController)
                 }
 
             }

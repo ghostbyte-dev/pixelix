@@ -1,4 +1,4 @@
-package com.daniebeler.pfpixelix.ui.composables.explore.trending.cameras
+package com.daniebeler.pfpixelix.ui.composables.explore.trending.films
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
@@ -20,26 +20,22 @@ import com.daniebeler.pfpixelix.ui.composables.states.EmptyStateComposable
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pfpixelix.ui.composables.widgets.CustomPullToRefreshBox
-import com.daniebeler.pfpixelix.ui.composables.widgets.InfiniteListHandler
-import com.daniebeler.pfpixelix.ui.navigation.Destination
-import com.daniebeler.pfpixelix.utils.StringFormat
-import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 import pixelix.app.generated.resources.Res
-import pixelix.app.generated.resources.no_cameras
-import pixelix.app.generated.resources.posts
+import pixelix.app.generated.resources.no_categories
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun CamerasComposable(
+fun FilmsComposable(
     navController: NavController,
-    viewModel: CamerasViewModel = injectViewModel(key = "cameras-key") { camerasViewModel }
+    viewModel: FilmsViewModel = injectViewModel(key = "films-key") { filmsViewModel }
 ) {
+
     val lazyListState = rememberLazyListState()
 
     CustomPullToRefreshBox(
-        isRefreshing = viewModel.camerasState.isRefreshing,
-        onRefresh = { viewModel.getCameras(true) },
+        isRefreshing = viewModel.filmsState.isRefreshing,
+        onRefresh = { viewModel.getFilms(true) },
         animatedBox = true
     ) {
         LazyColumn(
@@ -48,57 +44,42 @@ fun CamerasComposable(
             contentPadding = PaddingValues(top = 32.dp, bottom = 72.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp),
             content = {
-                items(viewModel.camerasState.cameras, key = {
+                items(viewModel.filmsState.films, key = {
                     it.id
                 }) {
                     ExploreGridElement(
-                        keyId = it.name,
-                        title = it.name,
-                        subtitle = "${StringFormat.groupDigits(it.amount)} ${
-                            pluralStringResource(
-                                Res.plurals.posts, it.amount
+                        keyId = it.name, title = it.name, onClick = {
+                            //navController.navigate(Destination.CategoryTimeline(category.id))
+                        } as () -> Unit, fetcher = { filmName ->
+                            viewModel.timelineService.getFilmTimeline(
+                                filmName, limit = 39
                             )
-                        }",
-                        onClick = {
-                            navController.navigate(Destination.HashtagTimeline(it.name))
-                        },
-                        fetcher = { camera ->
-                            viewModel.timelineService.getCameraTimeline(
-                                camera, limit = 39
-                            )
-                        },
-                        navController = navController
+                        }, navController = navController
                     )
                 }
 
-                if (viewModel.camerasState.isLoading && viewModel.camerasState.cameras.isNotEmpty()) {
+                if (viewModel.filmsState.isLoading && viewModel.filmsState.films.isNotEmpty()) {
                     item {
                         LoadingComposable()
                     }
                 }
             })
 
-        if (viewModel.camerasState.cameras.isEmpty()) {
-            if (viewModel.camerasState.isLoading && !viewModel.camerasState.isRefreshing) {
+        if (viewModel.filmsState.films.isEmpty()) {
+            if (viewModel.filmsState.isLoading && !viewModel.filmsState.isRefreshing) {
                 LoadingComposable()
             }
 
-            if (viewModel.camerasState.error.isNotEmpty()) {
+            if (viewModel.filmsState.error.isNotEmpty()) {
                 ErrorComposable(
-                    message = viewModel.camerasState.error,
+                    message = viewModel.filmsState.error,
                     modifier = Modifier.fillMaxSize().padding(36.dp, 20.dp)
                 )
             }
 
-            if (!viewModel.camerasState.isLoading && viewModel.camerasState.error.isEmpty()) {
-                EmptyStateComposable(EmptyState(heading = stringResource(Res.string.no_cameras)))
+            if (!viewModel.filmsState.isLoading && viewModel.filmsState.error.isEmpty()) {
+                EmptyStateComposable(EmptyState(heading = stringResource(Res.string.no_categories)))
             }
         }
-    }
-
-    InfiniteListHandler(
-        lazyListState = lazyListState
-    ) {
-        viewModel.getCamerasPaginated()
     }
 }

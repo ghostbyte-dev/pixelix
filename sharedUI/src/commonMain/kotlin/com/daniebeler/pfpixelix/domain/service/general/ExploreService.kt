@@ -5,6 +5,8 @@ import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.model.Camera
 import com.daniebeler.pfpixelix.domain.model.Category
 import com.daniebeler.pfpixelix.domain.model.Country
+import com.daniebeler.pfpixelix.domain.model.Film
+import com.daniebeler.pfpixelix.domain.model.Lens
 import com.daniebeler.pfpixelix.domain.model.License
 import com.daniebeler.pfpixelix.domain.model.PaginatedResponse
 import com.daniebeler.pfpixelix.domain.model.Location
@@ -45,6 +47,8 @@ interface ExploreService {
 
     fun getCategories(): Flow<Resource<List<Category>>>
     fun getCameras(page: Int = 1, size: Int = 20): Flow<Resource<PagePaginatedResponse<Camera>>>
+    fun getLenses(page: Int = 1, size: Int = 20): Flow<Resource<PagePaginatedResponse<Lens>>>
+    fun getFilms(page: Int = 1, size: Int = 20): Flow<Resource<PagePaginatedResponse<Film>>>
     fun getLicenses(): Flow<Resource<List<License>>>
 
     fun Flow<Resource<PaginatedResponse<List<Post>>>>.filterSensitive(hideSensitiveContent: Boolean) =
@@ -104,6 +108,9 @@ class ExploreServiceDelegate(
 
     override fun getCameras(page: Int, size: Int): Flow<Resource<PagePaginatedResponse<Camera>>> = current.getCameras(page, size)
 
+    override fun getLenses(page: Int, size: Int): Flow<Resource<PagePaginatedResponse<Lens>>> = current.getLenses(page, size)
+
+    override fun getFilms(page: Int, size: Int): Flow<Resource<PagePaginatedResponse<Film>>> = current.getFilms(page, size)
 
     override fun getLicenses(): Flow<Resource<List<License>>> = current.getLicenses()
 }

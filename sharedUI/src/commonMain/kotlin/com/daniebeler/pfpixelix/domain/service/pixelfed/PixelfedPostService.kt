@@ -36,7 +36,7 @@ class PixelfedPostService(
 
     override fun getOwnPosts(
         maxPostId: String?, limit: Int
-    ): Flow<Resource<PaginatedResponse<List<Post>>>> {
+    ): Flow<Resource<PaginatedResponse<Post>>> {
         val current = authService.getCurrentSession()
         return if (current == null) {
             flowOf(Resource.Error("No account found"))
@@ -59,7 +59,7 @@ class PixelfedPostService(
         emit(Resource.Loading())
 
         try {
-            val response: PaginatedResponse<List<Post>> =
+            val response: PaginatedResponse<Post> =
                 api.getLikedPosts(maxId).executeAndParsePagination(
                     true,
                     "max_id",
@@ -121,7 +121,7 @@ class PixelfedPostService(
         emit(Resource.Loading())
 
         try {
-            val response: PaginatedResponse<List<Post>> =
+            val response: PaginatedResponse<Post> =
                 api.getBookmarkedPosts(cursor = cursor).executeAndParsePagination(
                     true,
                     "max_id",

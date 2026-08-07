@@ -5,7 +5,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class VernissagePaginatedResponse<T>(
-    @SerialName("data") val data: T,
+    @SerialName("data") val data: List<T>,
     @SerialName("maxId") val maxId: String?
 )
 

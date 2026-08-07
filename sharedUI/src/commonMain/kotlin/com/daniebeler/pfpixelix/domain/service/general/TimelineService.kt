@@ -15,45 +15,45 @@ import me.tatarka.inject.annotations.Inject
 interface TimelineService {
     fun getHomeTimeline(
         maxPostId: String? = null, enableReblogs: Boolean = false
-    ): Flow<Resource<PaginatedResponse<List<Post>>>>
+    ): Flow<Resource<PaginatedResponse<Post>>>
 
-    fun getLocalTimeline(maxPostId: String? = null): Flow<Resource<PaginatedResponse<List<Post>>>>
+    fun getLocalTimeline(maxPostId: String? = null): Flow<Resource<PaginatedResponse<Post>>>
 
-    fun getGlobalTimeline(maxPostId: String? = null): Flow<Resource<PaginatedResponse<List<Post>>>>
+    fun getGlobalTimeline(maxPostId: String? = null): Flow<Resource<PaginatedResponse<Post>>>
 
     fun getHashtagTimeline(
         hashtag: String,
         maxId: String? = null,
         limit: Int = PixelfedApi.HASHTAG_TIMELINE_POSTS_LIMIT
-    ): Flow<Resource<PaginatedResponse<List<Post>>>>
+    ): Flow<Resource<PaginatedResponse<Post>>>
 
     fun getCategoryTimeline(
         category: String,
         maxId: String? = null,
         limit: Int = PixelfedApi.HASHTAG_TIMELINE_POSTS_LIMIT
-    ): Flow<Resource<PaginatedResponse<List<Post>>>>
+    ): Flow<Resource<PaginatedResponse<Post>>>
 
     fun getCameraTimeline(
         camera: String,
         maxId: String? = null,
         limit: Int = PixelfedApi.HASHTAG_TIMELINE_POSTS_LIMIT
-    ): Flow<Resource<PaginatedResponse<List<Post>>>>
+    ): Flow<Resource<PaginatedResponse<Post>>>
 
     fun getLensTimeline(
         lens: String,
         maxId: String? = null,
         limit: Int = PixelfedApi.HASHTAG_TIMELINE_POSTS_LIMIT
-    ): Flow<Resource<PaginatedResponse<List<Post>>>>
+    ): Flow<Resource<PaginatedResponse<Post>>>
 
     fun getFilmTimeline(
         film: String,
         maxId: String? = null,
         limit: Int = PixelfedApi.HASHTAG_TIMELINE_POSTS_LIMIT
-    ): Flow<Resource<PaginatedResponse<List<Post>>>>
+    ): Flow<Resource<PaginatedResponse<Post>>>
 
-    fun Flow<Resource<PaginatedResponse<List<Post>>>>.filterSensitive(hideSensitiveContent: Boolean) =
+    fun Flow<Resource<PaginatedResponse<Post>>>.filterSensitive(hideSensitiveContent: Boolean) =
         this.map { event ->
-            if (event is Resource.Success<PaginatedResponse<List<Post>>>) {
+            if (event is Resource.Success<PaginatedResponse<Post>>) {
                 val filtered = event.data.data.filter { !(hideSensitiveContent && it.sensitive) }
                 Resource.Success(event.data.copy(data = filtered))
             } else {

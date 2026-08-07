@@ -44,7 +44,7 @@ fun ExploreGridElement(
     title: String,
     subtitle: String? = null,
     onClick: () -> Unit,
-    fetcher: (String) -> Flow<Resource<PaginatedResponse<List<Post>>>>,
+    fetcher: (String) -> Flow<Resource<PaginatedResponse<Post>>>,
     navController: NavController,
     viewModel: TrendingHashtagElementViewModel = injectViewModel(key = "explore_$keyId") { trendingHashtagElementViewModel }
 ) {

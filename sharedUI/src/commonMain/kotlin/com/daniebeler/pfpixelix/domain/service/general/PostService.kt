@@ -20,7 +20,7 @@ interface PostService {
 
     fun getOwnPosts(
         maxPostId: String? = null, limit: Int = PixelfedApi.PROFILE_POSTS_LIMIT
-    ): Flow<Resource<PaginatedResponse<List<Post>>>>
+    ): Flow<Resource<PaginatedResponse<Post>>>
 
     /**
      * Fetches a paginated list of posts belonging to a specific account.
@@ -37,9 +37,9 @@ interface PostService {
      */
     fun getPostsOfAccount(
         accountId: String, username: String, maxPostId: String? = null, limit: Int = PixelfedApi.PROFILE_POSTS_LIMIT
-    ): Flow<Resource<PaginatedResponse<List<Post>>>>
+    ): Flow<Resource<PaginatedResponse<Post>>>
 
-    fun getLikedPosts(maxId: String? = null): Flow<Resource<PaginatedResponse<List<Post>>>>
+    fun getLikedPosts(maxId: String? = null): Flow<Resource<PaginatedResponse<Post>>>
 
     fun createReply(postId: String, content: String): Flow<Resource<Post>>
 
@@ -59,15 +59,15 @@ interface PostService {
     fun unBookmarkPost(postId: String): Flow<Resource<Post>>
 
 
-    fun getBookmarkedPosts(cursor: String? = null): Flow<Resource<PaginatedResponse<List<Post>>>>
+    fun getBookmarkedPosts(cursor: String? = null): Flow<Resource<PaginatedResponse<Post>>>
 
     fun reportPost(reportBody: NewReport): Flow<Resource<ReportResponse>>
 
-    fun getLikedBy(postId: String): Flow<Resource<PaginatedResponse<List<Account>>>>
+    fun getLikedBy(postId: String): Flow<Resource<PaginatedResponse<Account>>>
 
-    fun Flow<Resource<PaginatedResponse<List<Post>>>>.filterSensitive(hideSensitiveContent: Boolean) =
+    fun Flow<Resource<PaginatedResponse<Post>>>.filterSensitive(hideSensitiveContent: Boolean) =
         this.map { event ->
-            if (event is Resource.Success<PaginatedResponse<List<Post>>>) {
+            if (event is Resource.Success<PaginatedResponse<Post>>) {
                 val filtered = event.data.data.filter { !(hideSensitiveContent && it.sensitive) }
                 Resource.Success(event.data.copy(data = filtered))
             } else {
@@ -177,13 +177,13 @@ class PostServiceDelegate(
 
     override fun getOwnPosts(
         maxPostId: String?, limit: Int
-    ): Flow<Resource<PaginatedResponse<List<Post>>>> = current.getOwnPosts(maxPostId, limit)
+    ): Flow<Resource<PaginatedResponse<Post>>> = current.getOwnPosts(maxPostId, limit)
 
     override fun getPostsOfAccount(
         accountId: String, username: String, maxPostId: String?, limit: Int
-    ): Flow<Resource<PaginatedResponse<List<Post>>>> = current.getPostsOfAccount(accountId, username, maxPostId, limit)
+    ): Flow<Resource<PaginatedResponse<Post>>> = current.getPostsOfAccount(accountId, username, maxPostId, limit)
 
-    override fun getLikedPosts(maxId: String?): Flow<Resource<PaginatedResponse<List<Post>>>> =
+    override fun getLikedPosts(maxId: String?): Flow<Resource<PaginatedResponse<Post>>> =
         current.getLikedPosts(maxId)
 
     override fun createReply(
@@ -208,11 +208,11 @@ class PostServiceDelegate(
     override fun unBookmarkPost(postId: String): Flow<Resource<Post>> =
         current.unBookmarkPost(postId)
 
-    override fun getBookmarkedPosts(cursor: String?): Flow<Resource<PaginatedResponse<List<Post>>>> =
+    override fun getBookmarkedPosts(cursor: String?): Flow<Resource<PaginatedResponse<Post>>> =
         current.getBookmarkedPosts(cursor)
 
     override fun reportPost(reportBody: NewReport): Flow<Resource<ReportResponse>> =
         current.reportPost(reportBody)
 
-    override fun getLikedBy(postId: String): Flow<Resource<PaginatedResponse<List<Account>>>> = current.getLikedBy(postId)
+    override fun getLikedBy(postId: String): Flow<Resource<PaginatedResponse<Account>>> = current.getLikedBy(postId)
 }

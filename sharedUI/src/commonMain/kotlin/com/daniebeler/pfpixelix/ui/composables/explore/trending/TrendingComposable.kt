@@ -127,7 +127,6 @@ fun TrendingComposable(
             edgePadding = 16.dp,
             divider = {},
             containerColor = MaterialTheme.colorScheme.surfaceContainer,
-            modifier = Modifier.clip(RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp))
         ) {
             Tab(
                 text = { Text(stringResource(Res.string.trending_posts)) },

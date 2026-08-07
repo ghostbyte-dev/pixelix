@@ -40,6 +40,7 @@ import com.daniebeler.pfpixelix.ui.composables.settings.icon_selection.IconSelec
 import com.daniebeler.pfpixelix.ui.composables.settings.liked_posts.LikedPostsComposable
 import com.daniebeler.pfpixelix.ui.composables.settings.muted_accounts.MutedAccountsComposable
 import com.daniebeler.pfpixelix.ui.composables.single_post.SinglePostComposable
+import com.daniebeler.pfpixelix.ui.composables.timelines.camera_timeline.CameraTimelineComposable
 import com.daniebeler.pfpixelix.ui.composables.timelines.hashtag_timeline.HashtagTimelineComposable
 import com.daniebeler.pfpixelix.utils.KmpUri
 import com.daniebeler.pfpixelix.utils.toKmpUri
@@ -51,6 +52,10 @@ sealed interface Destination {
 
     @Serializable
     data class HashtagTimeline(val hashtag: String) : Destination
+
+    @Serializable
+    data class CameraTimeline(val camera: String) : Destination
+
 
     @Serializable
     data class Post(
@@ -237,6 +242,11 @@ private fun NavGraphBuilder.tabGraph(
     composable<Destination.HashtagTimeline> { navBackStackEntry ->
         val args = navBackStackEntry.toRoute<Destination.HashtagTimeline>()
         HashtagTimelineComposable(navController, args.hashtag)
+    }
+
+    composable<Destination.CameraTimeline> { navBackStackEntry ->
+        val args = navBackStackEntry.toRoute<Destination.CameraTimeline>()
+        CameraTimelineComposable(navController, args.camera)
     }
 
     composable<Destination.Profile> { navBackStackEntry ->

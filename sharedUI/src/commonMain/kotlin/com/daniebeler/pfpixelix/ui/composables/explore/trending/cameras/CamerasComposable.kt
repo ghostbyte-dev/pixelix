@@ -60,7 +60,7 @@ fun CamerasComposable(
                             )
                         }",
                         onClick = {
-                            navController.navigate(Destination.HashtagTimeline(it.name))
+                            navController.navigate(Destination.CameraTimeline(it.name))
                         },
                         fetcher = { camera ->
                             viewModel.timelineService.getCameraTimeline(

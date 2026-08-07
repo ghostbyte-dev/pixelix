@@ -375,4 +375,8 @@
     <string name="trending_hashtags">Cancelos populares</string>
     <string name="trending_posts">Publicacións populares</string>
     <string name="use_dynamic_colors">Usar cores dinámicas</string>
+    <string name="no_categories">Sen categorías</string>
+    <string name="no_cameras">Sen cámaras</string>
+    <string name="no_lenses">Sen lentes</string>
+    <string name="no_films">Sen películas</string>
 </resources>

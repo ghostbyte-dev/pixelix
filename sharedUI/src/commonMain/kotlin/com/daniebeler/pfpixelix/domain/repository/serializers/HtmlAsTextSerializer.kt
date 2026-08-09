@@ -15,7 +15,8 @@ internal object HtmlAsTextSerializer : KSerializer<String> {
     override fun deserialize(decoder: Decoder): String {
         val html = decoder.decodeString()
 
-        val document = Ksoup.parse(html)
+        val withoutDoubleBreaks = html.replace("<br />\n", "\n")
+        val document = Ksoup.parse(withoutDoubleBreaks)
         document.outputSettings(Document.OutputSettings().prettyPrint(false))
 
         document.select("br").forEach { it.replaceWith(TextNode("\n")) }

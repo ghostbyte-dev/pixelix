@@ -5,6 +5,8 @@ import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.model.Camera
 import com.daniebeler.pfpixelix.domain.model.Category
 import com.daniebeler.pfpixelix.domain.model.Country
+import com.daniebeler.pfpixelix.domain.model.Film
+import com.daniebeler.pfpixelix.domain.model.Lens
 import com.daniebeler.pfpixelix.domain.model.License
 import com.daniebeler.pfpixelix.domain.model.PaginatedResponse
 import com.daniebeler.pfpixelix.domain.model.Location
@@ -23,15 +25,15 @@ import me.tatarka.inject.annotations.Inject
 
 
 interface ExploreService {
-    fun getTrendingAccounts(range: TrendingRange, maxId: String? = null): Flow<Resource<PaginatedResponse<List<Account>>>>
-    fun getTrendingPosts(range: TrendingRange, maxId: String? = null): Flow<Resource<PaginatedResponse<List<Post>>>>
+    fun getTrendingAccounts(range: TrendingRange, maxId: String? = null): Flow<Resource<PaginatedResponse<Account>>>
+    fun getTrendingPosts(range: TrendingRange, maxId: String? = null): Flow<Resource<PaginatedResponse<Post>>>
 
     fun search(searchText: String, type: String? = null, limit: Int = 5): Flow<Resource<Search>>
 
     fun searchLocations(searchText: String, countryCode: String?): Flow<Resource<List<Location>>>
     fun getAllCountries(): Flow<Resource<List<Country>>>
 
-    fun getTrendingHashtags(range: TrendingRange, maxId: String? = null): Flow<Resource<PaginatedResponse<List<Tag>>>>
+    fun getTrendingHashtags(range: TrendingRange, maxId: String? = null): Flow<Resource<PaginatedResponse<Tag>>>
 
     fun getFollowedHashtags(): Flow<Resource<List<Tag>>>
 
@@ -44,12 +46,14 @@ interface ExploreService {
     fun unfollowHashtag(tagId: String): Flow<Resource<Unit>>
 
     fun getCategories(): Flow<Resource<List<Category>>>
-    fun getCameras(page: Int? = 1, size: Int? = 20): Flow<Resource<PagePaginatedResponse<Camera>>>
+    fun getCameras(page: Int = 1, size: Int = 20): Flow<Resource<PagePaginatedResponse<Camera>>>
+    fun getLenses(page: Int = 1, size: Int = 20): Flow<Resource<PagePaginatedResponse<Lens>>>
+    fun getFilms(page: Int = 1, size: Int = 20): Flow<Resource<PagePaginatedResponse<Film>>>
     fun getLicenses(): Flow<Resource<List<License>>>
 
-    fun Flow<Resource<PaginatedResponse<List<Post>>>>.filterSensitive(hideSensitiveContent: Boolean) =
+    fun Flow<Resource<PaginatedResponse<Post>>>.filterSensitive(hideSensitiveContent: Boolean) =
         this.map { event ->
-            if (event is Resource.Success<PaginatedResponse<List<Post>>>) {
+            if (event is Resource.Success<PaginatedResponse<Post>>) {
                 val filtered = event.data.data.filter { !(hideSensitiveContent && it.sensitive) }
                 Resource.Success(event.data.copy(data = filtered))
             } else {
@@ -73,9 +77,9 @@ class ExploreServiceDelegate(
             else -> pixelfed
         }
 
-    override fun getTrendingAccounts(range: TrendingRange, maxId: String?): Flow<Resource<PaginatedResponse<List<Account>>>> = current.getTrendingAccounts(range, maxId)
+    override fun getTrendingAccounts(range: TrendingRange, maxId: String?): Flow<Resource<PaginatedResponse<Account>>> = current.getTrendingAccounts(range, maxId)
 
-    override fun getTrendingPosts(range: TrendingRange, maxId: String?): Flow<Resource<PaginatedResponse<List<Post>>>> =
+    override fun getTrendingPosts(range: TrendingRange, maxId: String?): Flow<Resource<PaginatedResponse<Post>>> =
         current.getTrendingPosts(range, maxId)
 
     override fun search(
@@ -88,7 +92,7 @@ class ExploreServiceDelegate(
 
     override fun getAllCountries(): Flow<Resource<List<Country>>> = current.getAllCountries()
 
-    override fun getTrendingHashtags(range: TrendingRange, maxId: String?): Flow<Resource<PaginatedResponse<List<Tag>>>> = current.getTrendingHashtags(range, maxId)
+    override fun getTrendingHashtags(range: TrendingRange, maxId: String?): Flow<Resource<PaginatedResponse<Tag>>> = current.getTrendingHashtags(range, maxId)
 
     override fun getFollowedHashtags(): Flow<Resource<List<Tag>>> = current.getFollowedHashtags()
 
@@ -102,8 +106,11 @@ class ExploreServiceDelegate(
 
     override fun getCategories(): Flow<Resource<List<Category>>> = current.getCategories()
 
-    override fun getCameras(page: Int?, size: Int?): Flow<Resource<PagePaginatedResponse<Camera>>> = current.getCameras(page, size)
+    override fun getCameras(page: Int, size: Int): Flow<Resource<PagePaginatedResponse<Camera>>> = current.getCameras(page, size)
 
+    override fun getLenses(page: Int, size: Int): Flow<Resource<PagePaginatedResponse<Lens>>> = current.getLenses(page, size)
+
+    override fun getFilms(page: Int, size: Int): Flow<Resource<PagePaginatedResponse<Film>>> = current.getFilms(page, size)
 
     override fun getLicenses(): Flow<Resource<List<License>>> = current.getLicenses()
 }

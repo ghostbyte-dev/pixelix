@@ -1,9 +1,7 @@
 package com.daniebeler.pfpixelix.domain.model
 
-data class Camera(
+data class Lens(
     override val id: String,
     val name: String,
-    val make: String?,
-    val model: String?,
     val amount: Int
 ): Identifiable

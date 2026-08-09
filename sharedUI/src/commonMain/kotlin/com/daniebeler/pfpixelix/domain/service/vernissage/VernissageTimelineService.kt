@@ -43,4 +43,28 @@ class VernissageTimelineService(
     ) = loadVernissagePaginatedListResources {
         api.getCategoryTimeline(category, maxId, limit)
     }.filterSensitive(prefs.hideSensitiveContent)
+
+    override fun getCameraTimeline(
+        camera: String,
+        maxId: String?,
+        limit: Int
+    ) = loadVernissagePaginatedListResources {
+        api.getCameraTimeline(camera, maxId, limit)
+    }.filterSensitive(prefs.hideSensitiveContent)
+
+    override fun getLensTimeline(
+        lens: String,
+        maxId: String?,
+        limit: Int
+    ) = loadVernissagePaginatedListResources {
+        api.getLensTimeline(lens, maxId, limit)
+    }.filterSensitive(prefs.hideSensitiveContent)
+
+    override fun getFilmTimeline(
+        film: String,
+        maxId: String?,
+        limit: Int
+    ) = loadVernissagePaginatedListResources {
+        api.getFilmTimeline(film, maxId, limit)
+    }.filterSensitive(prefs.hideSensitiveContent)
 }

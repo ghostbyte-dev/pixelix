@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.Flow
 import me.tatarka.inject.annotations.Inject
 
 interface NotificationService {
-    fun getNotifications(maxNotificationId: String? = null): Flow<Resource<PaginatedResponse<List<Notification>>>>
+    fun getNotifications(maxNotificationId: String? = null): Flow<Resource<PaginatedResponse<Notification>>>
     fun getUnreadCount(): Flow<Resource<Int>>
     fun markNotifications(notificationId: String): Flow<Resource<Unit>>
 }
@@ -29,7 +29,7 @@ class NotificationServiceDelegate(
             else -> pixelfed
         }
 
-    override fun getNotifications(maxNotificationId: String?): Flow<Resource<PaginatedResponse<List<Notification>>>> =
+    override fun getNotifications(maxNotificationId: String?): Flow<Resource<PaginatedResponse<Notification>>> =
         current.getNotifications(maxNotificationId)
 
     override fun getUnreadCount(): Flow<Resource<Int>> = current.getUnreadCount()

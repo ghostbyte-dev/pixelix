@@ -21,7 +21,7 @@ import kotlin.coroutines.resumeWithException
 suspend fun <T, R> Call<T>.executeAndParsePagination(
     directionNext: Boolean,
     paginationName: String,
-    transform: (T) -> R
+    transform: (T) -> List<R>
 ): PaginatedResponse<R> {
     val (response, dtoData) = this.executeWithResponse()
     val data = transform(dtoData)

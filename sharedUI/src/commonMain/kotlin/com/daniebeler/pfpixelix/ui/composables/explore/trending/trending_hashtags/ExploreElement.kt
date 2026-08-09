@@ -44,7 +44,7 @@ fun ExploreGridElement(
     title: String,
     subtitle: String? = null,
     onClick: () -> Unit,
-    fetcher: (String) -> Flow<Resource<PaginatedResponse<List<Post>>>>,
+    fetcher: (String) -> Flow<Resource<PaginatedResponse<Post>>>,
     navController: NavController,
     viewModel: TrendingHashtagElementViewModel = injectViewModel(key = "explore_$keyId") { trendingHashtagElementViewModel }
 ) {
@@ -87,37 +87,32 @@ fun ExploreGridElement(
                 itemsIndexed(viewModel.postsState.posts) { index, post ->
 
                     val postsCount = viewModel.postsState.posts.size
+                    val cornerRadius = 12.dp
 
-                    val baseModifier = Modifier
+                    // Calculate row position (0 = top, 1 = middle, 2 = bottom)
+                    val row = index % 3
+                    // Calculate column position
+                    val col = index / 3
+                    val totalCols = (postsCount + 2) / 3
 
-                    val customModifier = when {
-                        // Case for a single row
-                        postsCount <= 3 -> {
-                            when (index) {
-                                0 -> baseModifier.clip(
-                                    RoundedCornerShape(
-                                        topStart = 12.dp, topEnd = 12.dp
-                                    )
-                                ) // Top-left corner
-                                2 -> baseModifier.clip(
-                                    RoundedCornerShape(
-                                        bottomStart = 12.dp, bottomEnd = 12.dp
-                                    )
-                                ) // Bottom-left corner
-                                else -> baseModifier // Fallback for safety
-                            }
-                        }
-                        // Cases for multiple rows
-                        index == 0 -> baseModifier.clip(RoundedCornerShape(topStart = 12.dp)) // Top-left corner
-                        index == 2 -> baseModifier.clip(RoundedCornerShape(bottomStart = 12.dp)) // Bottom-start corner
-                        index == postsCount - 1 && postsCount % 3 == 0 -> baseModifier.clip(
-                            RoundedCornerShape(bottomEnd = 12.dp)
-                        ) // Bottom-right corner
-                        index >= postsCount - 3 && index % 3 == 0 -> baseModifier.clip(
-                            RoundedCornerShape(topEnd = 12.dp)
-                        ) // Top-right corner
-                        else -> baseModifier
-                    }
+                    val isFirstColumn = col == 0
+                    val isLastColumn = col == totalCols - 1
+
+                    val isTopRow = row == 0
+                    val isBottomRow = row == 2 || index == postsCount - 1
+
+                    // Determine individual corner radii based on boundary position
+                    val topStart = if (isFirstColumn && isTopRow) cornerRadius else 0.dp
+                    val bottomStart = if (isFirstColumn && isBottomRow) cornerRadius else 0.dp
+                    val topEnd = if (isLastColumn && isTopRow) cornerRadius else 0.dp
+                    val bottomEnd = if (isLastColumn && isBottomRow) cornerRadius else 0.dp
+
+                    val itemShape = RoundedCornerShape(
+                        topStart = topStart,
+                        topEnd = topEnd,
+                        bottomStart = bottomStart,
+                        bottomEnd = bottomEnd
+                    )
 
                     Box(
                         modifier = Modifier.width(140.dp).height(140.dp)
@@ -125,8 +120,7 @@ fun ExploreGridElement(
                         CustomPost(
                             post = post,
                             navController = navController,
-                            roundedCornerShape = RoundedCornerShape(8.dp),
-                            modifier = customModifier
+                            roundedCornerShape = itemShape,
                         )
                     }
                 }

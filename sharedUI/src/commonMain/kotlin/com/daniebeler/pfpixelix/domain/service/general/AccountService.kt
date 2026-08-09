@@ -52,11 +52,11 @@ interface AccountService {
     fun getBlockedAccounts(): Flow<Resource<List<Account>>>
     fun getAccountsFollowers(
         accountId: String, username: String, cursor: String? = null
-    ): Flow<Resource<PaginatedResponse<List<Account>>>>
+    ): Flow<Resource<PaginatedResponse<Account>>>
 
     fun getAccountsFollowing(
         accountId: String, username: String, cursor: String? = null
-    ): Flow<Resource<PaginatedResponse<List<Account>>>>
+    ): Flow<Resource<PaginatedResponse<Account>>>
 
     fun acceptFollowRequest(accountId: String): Flow<Resource<Relationship>>
     fun rejectFollowRequest(accountId: String): Flow<Resource<Relationship>>
@@ -129,12 +129,12 @@ class AccountServiceDelegate(
 
     override fun getAccountsFollowers(
         accountId: String, username: String, cursor: String?
-    ): Flow<Resource<PaginatedResponse<List<Account>>>> =
+    ): Flow<Resource<PaginatedResponse<Account>>> =
         current.getAccountsFollowers(accountId, username, cursor)
 
     override fun getAccountsFollowing(
         accountId: String, username: String, cursor: String?
-    ): Flow<Resource<PaginatedResponse<List<Account>>>> =
+    ): Flow<Resource<PaginatedResponse<Account>>> =
         current.getAccountsFollowing(accountId, username, cursor)
 
     override fun acceptFollowRequest(accountId: String): Flow<Resource<Relationship>> =

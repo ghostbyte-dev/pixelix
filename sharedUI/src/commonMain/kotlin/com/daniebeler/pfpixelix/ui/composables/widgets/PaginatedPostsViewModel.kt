@@ -35,7 +35,7 @@ abstract class PaginatedPostsViewModel(
         }
     }
 
-    protected abstract fun fetchPage(maxId: String?): Flow<Resource<PaginatedResponse<List<Post>>>>
+    protected abstract fun fetchPage(maxId: String?): Flow<Resource<PaginatedResponse<Post>>>
 
     protected fun loadItems(refreshing: Boolean) {
         if (timelineState.posts.isNotEmpty() && !refreshing) return

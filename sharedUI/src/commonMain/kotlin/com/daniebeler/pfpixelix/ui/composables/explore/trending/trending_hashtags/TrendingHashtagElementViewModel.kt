@@ -19,7 +19,7 @@ import me.tatarka.inject.annotations.Inject
 class TrendingHashtagElementViewModel @Inject constructor() : ViewModel() {
 
     var postsState by mutableStateOf(ExploreGridPostsState())
-    fun loadItems(key: String, fetcher: (String) -> Flow<Resource<PaginatedResponse<List<Post>>>>) {
+    fun loadItems(key: String, fetcher: (String) -> Flow<Resource<PaginatedResponse<Post>>>) {
         if (postsState.posts.isEmpty()) {
             fetcher(key).onEach { result ->
                 postsState = when (result) {

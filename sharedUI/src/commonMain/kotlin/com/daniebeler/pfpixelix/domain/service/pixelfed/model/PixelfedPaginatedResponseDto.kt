@@ -6,14 +6,14 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class PixelfedPaginatedResponseDto<T>(
-    @SerialName("data") val data: T,
+    @SerialName("data") val data: List<T>,
     @SerialName("next") val next: String? = null
 )
 
 
 inline fun <T, R> PixelfedPaginatedResponseDto<T>.toDomain(transform: (T) -> R): PaginatedResponse<R> {
     return PaginatedResponse(
-        data = transform(this.data),
+        data = this.data.map(transform),
         next = this.next
     )
 }
@@ -21,7 +21,7 @@ inline fun <T, R> PixelfedPaginatedResponseDto<T>.toDomain(transform: (T) -> R):
 
 inline fun <T, R> PaginatedResponse<T>.toDto(transform: (T) -> R): PixelfedPaginatedResponseDto<R> {
     return PixelfedPaginatedResponseDto(
-        data = transform(this.data),
+        data = this.data.map(transform),
         next = this.next
     )
 }

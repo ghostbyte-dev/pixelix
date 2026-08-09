@@ -3,6 +3,8 @@ package com.daniebeler.pfpixelix.domain.service.vernissage
 import com.daniebeler.pfpixelix.domain.model.Camera
 import com.daniebeler.pfpixelix.domain.model.Category
 import com.daniebeler.pfpixelix.domain.model.Country
+import com.daniebeler.pfpixelix.domain.model.Film
+import com.daniebeler.pfpixelix.domain.model.Lens
 import com.daniebeler.pfpixelix.domain.model.License
 import com.daniebeler.pfpixelix.domain.model.Location
 import com.daniebeler.pfpixelix.domain.model.PagePaginatedResponse
@@ -113,13 +115,36 @@ class VernissageExploreService(
         api.getAllCategories().map { it.toDomain() }
     }
 
-    override fun getCameras(page: Int?, size: Int?): Flow<Resource<PagePaginatedResponse<Camera>>> =
-        loadPagePaginatedListResources<Camera> {
+    override fun getCameras(page: Int, size: Int): Flow<Resource<PagePaginatedResponse<Camera>>> =
+        loadPagePaginatedListResources {
+            val response = api.getCameras(page, size)
             VernissagePagePaginatedResponse(
-                data = emptyList(),
-                page = page ?: 1,
-                size = size ?: 10,
-                total = 0
+                data = response.data.map { it.toDomain() },
+                page = response.page,
+                size = response.size,
+                total = response.total
+            )
+        }
+
+    override fun getLenses(page: Int, size: Int): Flow<Resource<PagePaginatedResponse<Lens>>> =
+        loadPagePaginatedListResources {
+            val response = api.getLenses(page, size)
+            VernissagePagePaginatedResponse(
+                data = response.data.map { it.toDomain() },
+                page = response.page,
+                size = response.size,
+                total = response.total
+            )
+        }
+
+    override fun getFilms(page: Int, size: Int): Flow<Resource<PagePaginatedResponse<Film>>> =
+        loadPagePaginatedListResources {
+            val response = api.getFilms(page, size)
+            VernissagePagePaginatedResponse(
+                data = response.data.map { it.toDomain() },
+                page = response.page,
+                size = response.size,
+                total = response.total
             )
         }
 

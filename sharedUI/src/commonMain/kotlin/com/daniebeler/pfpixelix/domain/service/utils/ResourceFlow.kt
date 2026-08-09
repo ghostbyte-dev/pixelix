@@ -48,7 +48,7 @@ internal inline fun <reified T> loadListResources(
 
 internal inline fun <reified T: Identifiable> loadPaginatedListResources(
     crossinline call: suspend () -> List<T>
-): Flow<Resource<PaginatedResponse<List<T>>>> = flow {
+): Flow<Resource<PaginatedResponse<T>>> = flow {
     emit(Resource.Loading())
     try {
         val data = call()
@@ -63,8 +63,8 @@ internal inline fun <reified T: Identifiable> loadPaginatedListResources(
 }
 
 internal inline fun <reified DTO : DtoMappable<DOM>, reified DOM> loadVernissagePaginatedListResources(
-    crossinline call: suspend () -> VernissagePaginatedResponse<List<DTO>>
-): Flow<Resource<PaginatedResponse<List<DOM>>>> = flow {
+    crossinline call: suspend () -> VernissagePaginatedResponse<DTO>
+): Flow<Resource<PaginatedResponse<DOM>>> = flow {
     emit(Resource.Loading())
     try {
         val data = call()

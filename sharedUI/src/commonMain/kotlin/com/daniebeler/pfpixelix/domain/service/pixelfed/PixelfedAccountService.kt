@@ -4,6 +4,7 @@ import androidx.compose.ui.graphics.ImageBitmap
 import co.touchlab.kermit.Logger
 import com.daniebeler.pfpixelix.di.AppSingleton
 import com.daniebeler.pfpixelix.domain.model.Account
+import com.daniebeler.pfpixelix.domain.model.PaginatedResponse
 import com.daniebeler.pfpixelix.domain.model.Relationship
 import com.daniebeler.pfpixelix.domain.model.request.UpdateUserRequest
 import com.daniebeler.pfpixelix.domain.model.request.UserBlockRequest
@@ -51,20 +52,19 @@ class PixelfedAccountService(
         val current =
             authService.getCurrentSession() ?: return flowOf(Resource.Error("No account found"))
 
-        return refreshSignal
-            .onStart { emit(Unit) }
-            .flatMapLatest {
-                getAccount(current.accountId, current.username).onEach { resource ->
-                    if (resource is Resource.Success) {
-                        authService.updateSessionAvatar(resource.data.id, resource.data.avatar ?: "")
-                    }
+        return refreshSignal.onStart { emit(Unit) }.flatMapLatest {
+            getAccount(current.accountId, current.username).onEach { resource ->
+                if (resource is Resource.Success) {
+                    authService.updateSessionAvatar(
+                        resource.data.id, resource.data.avatar ?: ""
+                    )
                 }
             }
+        }
     }
 
     override fun updateAccount(
-        username: String,
-        updateUserRequest: UpdateUserRequest
+        username: String, updateUserRequest: UpdateUserRequest
     ) = loadResource {
 
         val result = api.updateAccount(updateUserRequest.toPixelfed()).toDomain()
@@ -72,41 +72,41 @@ class PixelfedAccountService(
         result
     }
 
-    override fun updateAvatar(username: String, avatar: ImageBitmap?): Flow<Resource<Unit>> = loadResource {
-        val bytes = withContext(Dispatchers.Default) {
-            avatar?.encodeToPngBytes()
-        }
-        if (bytes == null) {
-            return@loadResource
-        }
-        val compressedAvatar = fileService.compressImage(
-            bytes = bytes,
-            quality = 80,
-            maxWidth = 1000,
-            maxHeight = 1000,
-            imageFormat = ImageFormat.PNG
-        )
-        val body = MultiPartFormDataContent(formData {
-            try {
-                val fileName = "filename=avatar"
-                val fileType = "image/png"
-                append("avatar", compressedAvatar, Headers.Companion.build {
-                    append(HttpHeaders.ContentType, fileType)
-                    append(HttpHeaders.ContentDisposition, fileName)
-                })
-            } catch (e: Throwable) {
-                Logger.Companion.e("AccountService.updateAccount error", e)
+    override fun updateAvatar(username: String, avatar: ImageBitmap?): Flow<Resource<Unit>> =
+        loadResource {
+            val bytes = withContext(Dispatchers.Default) {
+                avatar?.encodeToPngBytes()
             }
-        })
-        api.updateAvatar(body).toDomain()
-        refreshSignal.emit(Unit)
-    }
+            if (bytes == null) {
+                return@loadResource
+            }
+            val compressedAvatar = fileService.compressImage(
+                bytes = bytes,
+                quality = 80,
+                maxWidth = 1000,
+                maxHeight = 1000,
+                imageFormat = ImageFormat.PNG
+            )
+            val body = MultiPartFormDataContent(formData {
+                try {
+                    val fileName = "filename=avatar"
+                    val fileType = "image/png"
+                    append("avatar", compressedAvatar, Headers.Companion.build {
+                        append(HttpHeaders.ContentType, fileType)
+                        append(HttpHeaders.ContentDisposition, fileName)
+                    })
+                } catch (e: Throwable) {
+                    Logger.Companion.e("AccountService.updateAccount error", e)
+                }
+            })
+            api.updateAvatar(body).toDomain()
+            refreshSignal.emit(Unit)
+        }
 
     override fun updateHeader(
-        username: String,
-        header: ImageBitmap?
+        username: String, header: ImageBitmap?
     ): Flow<Resource<Unit>> = flow {
-       emit(Resource.Loading())
+        emit(Resource.Loading())
     }
 
 
@@ -130,15 +130,17 @@ class PixelfedAccountService(
     override fun unfollowAccount(accountId: String, username: String) =
         loadResource { api.unfollowAccount(accountId).toDomain() }
 
-    override fun muteAccount(accountId: String, username: String, userMuteRequest: UserMuteRequest) =
-        if (userMuteRequest.mute == true) {
-            loadResource { api.muteAccount(accountId).toDomain() }
-        } else {
-            loadResource { api.unmuteAccount(accountId).toDomain() }
-        }
+    override fun muteAccount(
+        accountId: String, username: String, userMuteRequest: UserMuteRequest
+    ) = if (userMuteRequest.mute == true) {
+        loadResource { api.muteAccount(accountId).toDomain() }
+    } else {
+        loadResource { api.unmuteAccount(accountId).toDomain() }
+    }
 
-    override fun blockAccount(accountId: String, username: String, userBlockRequest: UserBlockRequest) =
-        loadResource { api.blockAccount(accountId).toDomain() }
+    override fun blockAccount(
+        accountId: String, username: String, userBlockRequest: UserBlockRequest
+    ) = loadResource { api.blockAccount(accountId).toDomain() }
 
     override fun unblockAccount(accountId: String, username: String) =
         loadResource { api.unblockAccount(accountId).toDomain() }
@@ -153,12 +155,10 @@ class PixelfedAccountService(
         emit(Resource.Loading())
 
         try {
-            val response = api.getAccountsFollowers(accountId, cursor)
-                .executeAndParsePagination(
-                    directionNext = false,
-                    paginationName = "cursor",
-                    transform = { dtoList -> dtoList.map { it.toDomain() } }
-                )
+            val response = api.getAccountsFollowers(accountId, cursor).executeAndParsePagination(
+                directionNext = false,
+                paginationName = "cursor",
+                transform = { dtoList -> dtoList.map { it.toDomain() } })
             emit(Resource.Success(response))
         } catch (e: Throwable) {
             emit(Resource.Error(e.message ?: "Unknown error"))
@@ -169,12 +169,10 @@ class PixelfedAccountService(
         emit(Resource.Loading())
 
         try {
-            val response = api.getAccountsFollowing(accountId, cursor)
-                .executeAndParsePagination(
-                    directionNext = false,
-                    paginationName = "cursor",
-                    transform = { dtoList -> dtoList.map { it.toDomain() } }
-                )
+            val response = api.getAccountsFollowing(accountId, cursor).executeAndParsePagination(
+                directionNext = false,
+                paginationName = "cursor",
+                transform = { dtoList -> dtoList.map { it.toDomain() } })
 
             emit(Resource.Success(response))
         } catch (e: Throwable) {

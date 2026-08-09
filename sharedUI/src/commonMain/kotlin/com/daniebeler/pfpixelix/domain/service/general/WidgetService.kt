@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
 import me.tatarka.inject.annotations.Inject
 
 interface WidgetService {
-    fun getNotifications(maxNotificationId: String? = null): Flow<Resource<PaginatedResponse<List<Notification>>>>
+    fun getNotifications(maxNotificationId: String? = null): Flow<Resource<PaginatedResponse<Notification>>>
 
     fun getLatestImage(): Flow<Resource<Post>>
 }
@@ -30,7 +30,7 @@ class WidgetServiceDelegate(
             else -> pixelfed
         }
 
-    override fun getNotifications(maxNotificationId: String?): Flow<Resource<PaginatedResponse<List<Notification>>>> =
+    override fun getNotifications(maxNotificationId: String?): Flow<Resource<PaginatedResponse<Notification>>> =
         current.getNotifications(maxNotificationId)
 
     override fun getLatestImage(): Flow<Resource<Post>> = current.getLatestImage()

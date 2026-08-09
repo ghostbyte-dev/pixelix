@@ -34,7 +34,7 @@ class VernissagePostService(
 
     override fun getOwnPosts(
         maxPostId: String?, limit: Int
-    ): Flow<Resource<PaginatedResponse<List<Post>>>> {
+    ): Flow<Resource<PaginatedResponse<Post>>> {
         val current = authService.getCurrentSession()
         return if (current == null) {
             flowOf(Resource.Error("No account found"))

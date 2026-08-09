@@ -11,7 +11,10 @@ import com.daniebeler.pfpixelix.ui.composables.direct_messages.chat.ChatViewMode
 import com.daniebeler.pfpixelix.ui.composables.direct_messages.conversations.ConversationsViewModel
 import com.daniebeler.pfpixelix.ui.composables.edit_profile.EditProfileViewModel
 import com.daniebeler.pfpixelix.ui.composables.explore.ExploreViewModel
+import com.daniebeler.pfpixelix.ui.composables.explore.trending.cameras.CamerasViewModel
 import com.daniebeler.pfpixelix.ui.composables.explore.trending.categories.CategoriesViewModel
+import com.daniebeler.pfpixelix.ui.composables.explore.trending.films.FilmsViewModel
+import com.daniebeler.pfpixelix.ui.composables.explore.trending.lenses.LensesViewModel
 import com.daniebeler.pfpixelix.ui.composables.explore.trending.trending_accounts.TrendingAccountElementViewModel
 import com.daniebeler.pfpixelix.ui.composables.explore.trending.trending_accounts.TrendingAccountsViewModel
 import com.daniebeler.pfpixelix.ui.composables.explore.trending.trending_hashtags.TrendingHashtagElementViewModel
@@ -42,6 +45,7 @@ import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.DefaultLicenseViewModel
 import com.daniebeler.pfpixelix.ui.composables.single_post.SinglePostViewModel
 import com.daniebeler.pfpixelix.ui.composables.textfield_location.TextFieldLocationsViewModel
+import com.daniebeler.pfpixelix.ui.composables.timelines.camera_timeline.CameraTimelineViewModel
 import com.daniebeler.pfpixelix.ui.composables.timelines.global_timeline.GlobalTimelineViewModel
 import com.daniebeler.pfpixelix.ui.composables.timelines.hashtag_timeline.HashtagTimelineViewModel
 import com.daniebeler.pfpixelix.ui.composables.timelines.home_timeline.HomeTimelineViewModel
@@ -69,6 +73,7 @@ abstract class ViewModelComponent(
     abstract val followersViewModel: FollowersViewModel
     abstract val globalTimelineViewModel: GlobalTimelineViewModel
     abstract val hashtagTimelineViewModel: HashtagTimelineViewModel
+    abstract val cameraTimelineViewModel: CameraTimelineViewModel
     abstract val homeTimelineViewModel: HomeTimelineViewModel
     abstract val iconSelectionViewModel: IconSelectionViewModel
     abstract val likedPostsViewModel: LikedPostsViewModel
@@ -88,8 +93,11 @@ abstract class ViewModelComponent(
     abstract val trendingAccountsViewModel: TrendingAccountsViewModel
     abstract val trendingHashtagElementViewModel: TrendingHashtagElementViewModel
     abstract val trendingHashtagsViewModel: TrendingHashtagsViewModel
+    abstract val camerasViewModel: CamerasViewModel
     abstract val trendingPostsViewModel: TrendingPostsViewModel
     abstract val categoriesViewModel: CategoriesViewModel
+    abstract val lensesViewModel: LensesViewModel
+    abstract val filmsViewModel: FilmsViewModel
     abstract val conversationsViewModel: ConversationsViewModel
     abstract val textFieldLocationsViewModel: TextFieldLocationsViewModel
     abstract val clearCacheViewModel: ClearCacheViewModel

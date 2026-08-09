@@ -4,9 +4,12 @@ import com.daniebeler.pfpixelix.domain.service.vernissage.model.request.Vernissa
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedNodeInfoDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageAccountDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageBlockedAccountDto
+import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageCameraDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageCategory
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageCountryDto
+import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageFilmDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageInstanceDto
+import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageLensDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageLicenseDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageLocationDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageMutedAccountDto
@@ -56,7 +59,7 @@ interface VernissageApi {
     suspend fun getHomeTimeline(
         @Query("maxId") maxPostId: String? = null,
         @Query("limit") limit: Int = HOME_TIMELINE_POSTS_LIMIT
-    ): VernissagePaginatedResponse<List<VernissagePostDto>>
+    ): VernissagePaginatedResponse<VernissagePostDto>
 
     // Timelines
     @GET("api/v1/timelines/hashtag/{tag}")
@@ -64,47 +67,86 @@ interface VernissageApi {
         @Path("tag") tag: String,
         @Query("maxId") maxPostId: String? = null,
         @Query("limit") limit: Int = HASHTAG_TIMELINE_POSTS_LIMIT
-    ): VernissagePaginatedResponse<List<VernissagePostDto>>
+    ): VernissagePaginatedResponse<VernissagePostDto>
 
     @GET("api/v1/timelines/category/{category}")
     suspend fun getCategoryTimeline(
         @Path("category") category: String,
         @Query("maxId") maxPostId: String? = null,
         @Query("limit") limit: Int = HASHTAG_TIMELINE_POSTS_LIMIT
-    ): VernissagePaginatedResponse<List<VernissagePostDto>>
+    ): VernissagePaginatedResponse<VernissagePostDto>
+
+    @GET("api/v1/timelines/camera/{camera}")
+    suspend fun getCameraTimeline(
+        @Path("camera") camera: String,
+        @Query("maxId") maxPostId: String? = null,
+        @Query("limit") limit: Int = HASHTAG_TIMELINE_POSTS_LIMIT
+    ): VernissagePaginatedResponse<VernissagePostDto>
+
+    @GET("api/v1/timelines/lens/{lens}")
+    suspend fun getLensTimeline(
+        @Path("lens") lens: String,
+        @Query("maxId") maxPostId: String? = null,
+        @Query("limit") limit: Int = HASHTAG_TIMELINE_POSTS_LIMIT
+    ): VernissagePaginatedResponse<VernissagePostDto>
+
+    @GET("api/v1/timelines/film/{film}")
+    suspend fun getFilmTimeline(
+        @Path("film") film: String,
+        @Query("maxId") maxPostId: String? = null,
+        @Query("limit") limit: Int = HASHTAG_TIMELINE_POSTS_LIMIT
+    ): VernissagePaginatedResponse<VernissagePostDto>
 
     @GET("api/v1/timelines/public?onlyLocal=true")
     suspend fun getLocalTimeline(
         @Query("maxId") maxPostId: String? = null,
         @Query("limit") limit: Int = LOCAL_TIMELINE_POSTS_LIMIT
-    ): VernissagePaginatedResponse<List<VernissagePostDto>>
+    ): VernissagePaginatedResponse<VernissagePostDto>
 
     @GET("api/v1/timelines/public?onlyLocal=false")
     suspend fun getGlobalTimeline(
         @Query("maxId") maxPostId: String? = null,
         @Query("limit") limit: Int = GLOBAL_TIMELINE_POSTS_LIMIT
-    ): VernissagePaginatedResponse<List<VernissagePostDto>>
+    ): VernissagePaginatedResponse<VernissagePostDto>
 
     @GET("api/v1/trending/statuses")
     suspend fun getTrendingPosts(
         @Query("period") period: String,
         @Query("maxId") maxId: String? = null,
         @Query("limit") limit: Int = TRENDING_TIMELINE_POSTS_LIMIT
-    ): VernissagePaginatedResponse<List<VernissagePostDto>>
+    ): VernissagePaginatedResponse<VernissagePostDto>
 
     @GET("api/v1/trending/users")
     suspend fun getTrendingUsers(
         @Query("period") period: String,
         @Query("maxId") maxId: String? = null,
         @Query("limit") limit: Int = TRENDING_TIMELINE_POSTS_LIMIT
-    ): VernissagePaginatedResponse<List<VernissageAccountDto>>
+    ): VernissagePaginatedResponse<VernissageAccountDto>
 
     @GET("api/v1/trending/hashtags")
     suspend fun getTrendingHashtags(
         @Query("period") period: String,
         @Query("maxId") maxId: String? = null,
         @Query("limit") limit: Int = TRENDING_TIMELINE_POSTS_LIMIT
-    ): VernissagePaginatedResponse<List<VernissageTagDto>>
+    ): VernissagePaginatedResponse<VernissageTagDto>
+
+    @GET("api/v1/cameras")
+    suspend fun getCameras(
+        @Query("page") page: Int = 1,
+        @Query("size") size: Int = TRENDING_TIMELINE_POSTS_LIMIT
+    ): VernissagePagePaginatedResponse<VernissageCameraDto>
+
+    @GET("api/v1/lenses")
+    suspend fun getLenses(
+        @Query("page") page: Int = 1,
+        @Query("size") size: Int = TRENDING_TIMELINE_POSTS_LIMIT
+    ): VernissagePagePaginatedResponse<VernissageLensDto>
+
+    @GET("api/v1/films")
+    suspend fun getFilms(
+        @Query("page") page: Int = 1,
+        @Query("size") size: Int = TRENDING_TIMELINE_POSTS_LIMIT
+    ): VernissagePagePaginatedResponse<VernissageFilmDto>
 
     @GET("api/v1/statuses/{id}")
     suspend fun getPostById(
@@ -119,12 +161,12 @@ interface VernissageApi {
     @GET("api/v1/favourites")
     suspend fun getLikedPosts(
         @Query("maxId") maxId: String? = null, @Query("limit") limit: Int = LIKED_POSTS_LIMIT
-    ): VernissagePaginatedResponse<List<VernissagePostDto>>
+    ): VernissagePaginatedResponse<VernissagePostDto>
 
     @GET("api/v1/bookmarks")
     suspend fun getBookmarkedPosts(
         @Query("maxId") maxId: String? = null, @Query("limit") limit: Int = BOOKMARKED_LIMIT
-    ): VernissagePaginatedResponse<List<VernissagePostDto>>
+    ): VernissagePaginatedResponse<VernissagePostDto>
 
     @POST("api/v1/statuses/{id}/favourite")
     suspend fun likePost(@Path("id") userId: String): VernissagePostDto
@@ -163,14 +205,14 @@ interface VernissageApi {
         @Path("userName") userName: String,
         @Query("maxId") maxPostId: String? = null,
         @Query("limit") limit: Int = PROFILE_POSTS_LIMIT
-    ): VernissagePaginatedResponse<List<VernissagePostDto>>
+    ): VernissagePaginatedResponse<VernissagePostDto>
 
     @GET("api/v1/statuses/{id}/favourited")
     suspend fun getFavourited(
         @Path("id") postId: String,
         @Query("maxId") maxPostId: String? = null,
         @Query("limit") limit: Int = PROFILE_POSTS_LIMIT
-    ): VernissagePaginatedResponse<List<VernissageAccountDto>>
+    ): VernissagePaginatedResponse<VernissageAccountDto>
 
     @Headers("Content-Type: application/json")
     @POST("api/v1/statuses")
@@ -183,14 +225,14 @@ interface VernissageApi {
         @Path("userName") userName: String,
         @Query("maxId") maxId: String? = null,
         @Query("limit") limit: Int = FOLLOWERS_LIMIT
-    ): VernissagePaginatedResponse<List<VernissageAccountDto>>
+    ): VernissagePaginatedResponse<VernissageAccountDto>
 
     @GET("api/v1/users/{userName}/following")
     suspend fun getAccountsFollowing(
         @Path("userName") userName: String,
         @Query("maxId") maxId: String? = null,
         @Query("limit") limit: Int = FOLLOWERS_LIMIT
-    ): VernissagePaginatedResponse<List<VernissageAccountDto>>
+    ): VernissagePaginatedResponse<VernissageAccountDto>
 
     @GET("api/v1/users/{username}")
     suspend fun getUser(
@@ -270,7 +312,7 @@ interface VernissageApi {
     @GET("api/v1/notifications")
     suspend fun getNotifications(
         @Query("maxId") maxId: String? = null, @Query("limit") limit: Int = NOTIFICATIONS_LIMIT
-    ): VernissagePaginatedResponse<List<VernissageNotificationDto>>
+    ): VernissagePaginatedResponse<VernissageNotificationDto>
 
     @GET("api/v1/notifications/count")
     suspend fun unreadNotificationsCount(): VernissageUnreadNotificationsCountDto

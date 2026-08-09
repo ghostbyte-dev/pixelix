@@ -1,4 +1,4 @@
-package com.daniebeler.pfpixelix.ui.composables.explore.trending.cameras
+package com.daniebeler.pfpixelix.ui.composables.explore.trending.lenses
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -15,47 +15,47 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import me.tatarka.inject.annotations.Inject
 
-class CamerasViewModel @Inject constructor(
+class LensesViewModel @Inject constructor(
     private val exploreService: ExploreService,
     val timelineService: TimelineService,
     session: Session
 ) : ViewModel() {
     val capabilities: StateFlow<Capabilities> = session.capabilities
 
-    var camerasState by mutableStateOf(CamerasState())
+    var lensesState by mutableStateOf(LensesState())
 
     init {
-        getCameras()
+        getLenses()
     }
 
-    fun getCameras(refreshing: Boolean = false) {
-        if (!refreshing && camerasState.cameras.isNotEmpty()) return
+    fun getLenses(refreshing: Boolean = false) {
+        if (!refreshing && lensesState.lenses.isNotEmpty()) return
 
-        fetchCameras(page = 1, isRefreshing = refreshing)
+        fetchLenses(page = 1, isRefreshing = refreshing)
     }
 
     fun getCamerasPaginated() {
-        if (camerasState.isLoading ||
-            camerasState.endReached ||
-            camerasState.page == 1 ||
-            camerasState.cameras.isEmpty()) {
+        if (lensesState.isLoading ||
+            lensesState.endReached ||
+            lensesState.page == 1 ||
+            lensesState.lenses.isEmpty()) {
             return
         }
 
-        fetchCameras(page = camerasState.page, isRefreshing = false)
+        fetchLenses(page = lensesState.page, isRefreshing = false)
     }
 
-    private fun fetchCameras(page: Int, isRefreshing: Boolean) {
-        exploreService.getCameras(page).onEach { result ->
-            camerasState = when (result) {
+    private fun fetchLenses(page: Int, isRefreshing: Boolean) {
+        exploreService.getLenses(page).onEach { result ->
+            lensesState = when (result) {
                 is Resource.Success -> {
                     val newCategories = result.data.data
-                    val updatedCategories = if (page == 1) newCategories else camerasState.cameras + newCategories
+                    val updatedCategories = if (page == 1) newCategories else lensesState.lenses + newCategories
 
-                    camerasState.copy(
+                    lensesState.copy(
                         isLoading = false,
                         isRefreshing = false,
-                        cameras = updatedCategories,
+                        lenses = updatedCategories,
                         page = result.data.currentPage,
                         endReached = result.data.isEndReached,
                         error = ""
@@ -63,7 +63,7 @@ class CamerasViewModel @Inject constructor(
                 }
 
                 is Resource.Error -> {
-                    camerasState.copy(
+                    lensesState.copy(
                         isLoading = false,
                         isRefreshing = false,
                         error = result.message
@@ -71,7 +71,7 @@ class CamerasViewModel @Inject constructor(
                 }
 
                 is Resource.Loading -> {
-                    camerasState.copy(
+                    lensesState.copy(
                         isLoading = true,
                         isRefreshing = isRefreshing
                     )

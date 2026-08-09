@@ -1,9 +1,6 @@
 package com.daniebeler.pfpixelix.domain.service.pixelfed
 
-import com.daniebeler.pfpixelix.domain.model.Category
-import com.daniebeler.pfpixelix.domain.model.PaginatedResponse
 import com.daniebeler.pfpixelix.domain.model.Post
-import com.daniebeler.pfpixelix.domain.model.RelatedHashtag
 import com.daniebeler.pfpixelix.domain.repository.pixelfed.PixelfedApi
 import com.daniebeler.pfpixelix.domain.service.general.TimelineService
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.toDomain
@@ -40,6 +37,30 @@ class PixelfedTimelineService(
 
     override fun getCategoryTimeline(
         category: String,
+        maxId: String?,
+        limit: Int
+    ) = loadPaginatedListResources<Post> {
+        emptyList()
+    }
+
+    override fun getCameraTimeline(
+        camera: String,
+        maxId: String?,
+        limit: Int
+    ) = loadPaginatedListResources<Post> {
+        emptyList()
+    }
+
+    override fun getFilmTimeline(
+        film: String,
+        maxId: String?,
+        limit: Int
+    ) = loadPaginatedListResources<Post> {
+        emptyList()
+    }
+
+    override fun getLensTimeline(
+        lens: String,
         maxId: String?,
         limit: Int
     ) = loadPaginatedListResources<Post> {

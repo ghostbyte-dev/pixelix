@@ -20,6 +20,7 @@
     <string name="followers">Följare</string>
     <plurals name="following">
         <item quantity="one">Följer</item>
+        <item quantity="other">Följer</item>
     </plurals>
     <plurals name="posts">
         <item quantity="one">Inlägg</item>

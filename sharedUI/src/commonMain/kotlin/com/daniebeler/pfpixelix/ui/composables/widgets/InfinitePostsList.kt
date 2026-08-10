@@ -49,8 +49,9 @@ fun InfinitePostsList(
     itemGetsDeleted: (postId: String) -> Unit,
     postGetsUpdated: (post: Post) -> Unit,
     view: ViewEnum = ViewEnum.Timeline,
+    showViewSwitcher: Boolean = true,
     changeView: (view: ViewEnum) -> Unit = {},
-    isFirstItemLarge: Boolean = false,
+    isFirstItemLarge: Boolean = true,
     postsCount: Int? = null,
     contentPaddingTop: Dp = 0.dp,
     contentPaddingBottom: Dp = 60.dp,
@@ -103,11 +104,13 @@ fun InfinitePostsList(
                                 }
                             }
 
-                            item(key = "switch_view_key", span = StaggeredGridItemSpan.FullLine) {
-                                SwitchViewComposable(
-                                    postsCount = postsCount,
-                                    viewType = view,
-                                    onViewChange = { changeView(it) })
+                            if (showViewSwitcher) {
+                                item(key = "switch_view_key", span = StaggeredGridItemSpan.FullLine) {
+                                    SwitchViewComposable(
+                                        postsCount = postsCount,
+                                        viewType = view,
+                                        onViewChange = { changeView(it) })
+                                }
                             }
                             postsWrapperComposable(
                                 posts = items,

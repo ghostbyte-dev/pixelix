@@ -189,6 +189,7 @@ fun CollectionComposable(
                         onRefresh = {},
                         onClick = { viewModel.addPostToCollection(it) },
                         view = ViewEnum.Grid,
+                        showViewSwitcher = false,
                         refreshable = false
                     )
                 }

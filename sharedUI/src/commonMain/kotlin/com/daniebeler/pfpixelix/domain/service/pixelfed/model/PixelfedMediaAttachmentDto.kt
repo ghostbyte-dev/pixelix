@@ -31,7 +31,7 @@ fun PixelfedMediaAttachmentDto.toDomain(): MediaAttachment {
     return MediaAttachment(
         id = this.id,
         url = this.url ?: "",
-        previewUrl = this.optimizedUrl,
+        previewUrl = this.optimizedUrl ?: this.previewUrl ?: this.url,
         metadata = null,
         blurHash = this.blurHash,
         type = this.type,

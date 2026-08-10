@@ -56,7 +56,7 @@
     <string name="delete_post">Slett innlegget?</string>
     <string name="this_action_cannot_be_undone">Denne handlinga kan ikkje gjerast om</string>
     <string name="delete">Slett</string>
-    <string name="this_is_the_end">Det var slutten!</string>
+    <string name="this_is_the_end">Det var alt!</string>
     <string name="and">og</string>
     <string name="followed_by">Følgd av</string>
     <string name="other">andre</string>
@@ -370,4 +370,9 @@
     <string name="content_settings">Innstillingar for innhald</string>
     <string name="app_customization">Tilpassing av appen</string>
     <string name="new_post_settings">Innstillingar for nye innlegg</string>
+    <string name="no_categories">Ingen kategoriar</string>
+    <string name="no_cameras">Ingen kamera</string>
+    <string name="no_lenses">Ingen objektiv</string>
+    <string name="no_films">Ingen filmar</string>
+    <string name="use_dynamic_colors">Bruk dynamiske farger</string>
 </resources>

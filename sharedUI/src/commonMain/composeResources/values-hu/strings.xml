@@ -335,4 +335,48 @@
     <string name="compressing">Tömörítés…</string>
     <string name="default_license">Alapértelmezett licenc</string>
     <string name="optional_end_date">Választható befejezési dátum</string>
+    <string name="trending_accounts">Felkapott fiókok</string>
+    <string name="trending_hashtags">Felkapott hashtagek</string>
+    <string name="trending_posts">Felkapott bejegyzések</string>
+    <string name="no_categories">Nincs kategória</string>
+    <string name="no_cameras">Nincs fényképezőgép</string>
+    <string name="no_lenses">Nincs objektív</string>
+    <string name="no_films">Nincs film</string>
+    <plurals name="seconds_ago">
+        <item quantity="one">%1$d másodperccel ezelőtt</item>
+        <item quantity="other">%1$d másodperccel ezelőtt</item>
+    </plurals>
+    <plurals name="minutes_ago">
+        <item quantity="one">%1$d perccel ezelőtt</item>
+        <item quantity="other">%1$d perccel ezelőtt</item>
+    </plurals>
+    <plurals name="hours_ago">
+        <item quantity="one">%1$d órával ezelőtt</item>
+        <item quantity="other">%1$d órával ezelőtt</item>
+    </plurals>
+    <plurals name="days_ago">
+        <item quantity="one">%1$d nappal ezelőtt</item>
+        <item quantity="other">%1$d nappal ezelőtt</item>
+    </plurals>
+    <plurals name="weeks_ago">
+        <item quantity="one">%1$d héttel ezelőtt</item>
+        <item quantity="other">%1$d héttel ezelőtt</item>
+    </plurals>
+    <plurals name="months_ago">
+        <item quantity="one">%1$d hónappal ezelőtt</item>
+        <item quantity="other">%1$d hónappal ezelőtt</item>
+    </plurals>
+    <plurals name="years_ago">
+        <item quantity="one">%1$d évvel ezelőtt</item>
+        <item quantity="other">%1$d évvel ezelőtt</item>
+    </plurals>
+    <string name="fields">Mezők</string>
+    <string name="add_field">Mező hozzáadása</string>
+    <string name="key">Kulcs</string>
+    <string name="value">Érték</string>
+    <string name="content_settings">Tartalom beállítása</string>
+    <string name="app_customization">Alkalmazás testreszabása</string>
+    <string name="new_post_settings">Új bejegyzés beállításai</string>
+    <string name="use_dynamic_colors">Dinamikus színek használata</string>
+    <string name="posts_title">Bejegyzések</string>
 </resources>

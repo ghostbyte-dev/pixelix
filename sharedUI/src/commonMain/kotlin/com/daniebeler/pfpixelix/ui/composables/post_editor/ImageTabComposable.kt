@@ -166,7 +166,9 @@ fun ImageTab(
                         image.metadata.copy(description = it)
                     )
                 },
-                singleLine = true,
+                singleLine = false,
+                minLines = 2,
+                maxLines = 6,
                 modifier = Modifier.fillMaxWidth().padding(top = 20.dp),
                 shape = RoundedCornerShape(16.dp),
                 colors = TextFieldDefaults.colors(

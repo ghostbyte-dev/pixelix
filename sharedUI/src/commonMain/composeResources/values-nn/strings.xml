@@ -375,4 +375,7 @@
     <string name="no_lenses">Ingen objektiv</string>
     <string name="no_films">Ingen filmar</string>
     <string name="use_dynamic_colors">Bruk dynamiske farger</string>
+    <string name="trending_accounts">Dagsaktuelle profilar</string>
+    <string name="trending_hashtags">Dagsaktuelle emneknaggar</string>
+    <string name="trending_posts">Dagsaktuelle innlegg</string>
 </resources>

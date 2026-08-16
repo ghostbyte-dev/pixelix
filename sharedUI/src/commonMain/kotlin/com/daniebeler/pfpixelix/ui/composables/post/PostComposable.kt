@@ -97,6 +97,7 @@ import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.and
 import pixelix.app.generated.resources.bookmark
 import pixelix.app.generated.resources.bookmark_filled
+import pixelix.app.generated.resources.browser
 import pixelix.app.generated.resources.camera
 import pixelix.app.generated.resources.cancel
 import pixelix.app.generated.resources.chatbubble
@@ -820,6 +821,11 @@ private fun PostActionBar(
                 MetadataItem(Res.drawable.license, label, license.url) {
                     viewModel.openUrl(it)
                 }
+            }
+        }
+        if (!hideMetadataPref) {
+            post.application?.let {
+                MetadataItem(Res.drawable.browser, it)
             }
         }
     }

@@ -38,7 +38,8 @@ data class VernissagePostDto @OptIn(ExperimentalSerializationApi::class) constru
     @SerialName("bookmarked") val bookmarked: Boolean = false,
  //   @SerialName("emojis") val emojis: List<PixelfedEmojiDto> = emptyList()
     @SerialName("commentsDisabled") val commentsDisabled: Boolean = false,
-    @SerialName("category") val category: VernissageCategoryDto?
+    @SerialName("category") val category: VernissageCategoryDto?,
+    @SerialName("application") val application: String?
 ): DtoMappable<Post> {
     override fun toDomain(): Post {
         val activePost = this.reblog ?: this
@@ -81,7 +82,8 @@ data class VernissagePostDto @OptIn(ExperimentalSerializationApi::class) constru
             likedBy = null,
             visibility = activePost.visibility.toDomain(),
             commentsDisabled = activePost.commentsDisabled,
-            category = activePost.category?.toDomain()
+            category = activePost.category?.toDomain(),
+            application = activePost.application
         )
     }
 }

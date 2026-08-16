@@ -25,7 +25,8 @@ data class Post(
     val reblogCount: Int,
     val emojis: List<Emoji>,
     val commentsDisabled: Boolean,
-    val category: Category?
+    val category: Category?,
+    val application: String? = null
 ): Identifiable
 
 val Post.uiKey: String

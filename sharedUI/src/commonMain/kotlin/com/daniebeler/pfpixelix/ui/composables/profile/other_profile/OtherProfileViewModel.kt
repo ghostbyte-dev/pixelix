@@ -7,6 +7,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import com.daniebeler.pfpixelix.domain.model.MutedAccount
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.model.request.UserBlockRequest
@@ -96,8 +97,14 @@ class OtherProfileViewModel(
         val myUsername = credentials?.username
 
         if (userId == myAccountId || userId == myUsername) {
-            navController.popBackStack()
-            navController.navigate(Destination.OwnProfile)
+            navController.navigate(Destination.HomeTabOwnProfile) {
+                launchSingleTop = true
+                restoreState = true
+                popUpTo(navController.graph.findStartDestination().id) {
+                    inclusive = true
+                    saveState = true
+                }
+            }
         }
 
         this.userId = userId

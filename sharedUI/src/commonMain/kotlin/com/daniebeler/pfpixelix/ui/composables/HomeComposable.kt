@@ -22,12 +22,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberBottomSheetState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -43,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.ui.composables.contribute.ContributeBottomSheet
 import com.daniebeler.pfpixelix.ui.composables.timelines.global_timeline.GlobalTimelineComposable
@@ -106,7 +105,14 @@ fun HomeComposable(
                         }
 
                         IconButton(onClick = {
-                            navController.navigate(Destination.HomeTabNewPost)
+                            navController.navigate(Destination.HomeTabNewPost) {
+                                launchSingleTop = true
+                                restoreState = false
+                                popUpTo(navController.graph.findStartDestination().id) {
+                                    inclusive = false
+                                    saveState = true
+                                }
+                            }
                         }) {
                             Icon(
                                 imageVector = vectorResource(Res.drawable.add_circle),

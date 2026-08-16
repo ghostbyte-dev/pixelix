@@ -10,6 +10,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import co.touchlab.kermit.Logger
 import com.daniebeler.pfpixelix.domain.model.Instance
 import com.daniebeler.pfpixelix.domain.model.License
@@ -691,9 +692,11 @@ class PostEditorViewModel @Inject constructor(
             postSubmissionState = when (result) {
                 is Resource.Success -> {
                     navController.navigate(Destination.HomeTabOwnProfile) {
-                        restoreState = false
-                        popUpTo<Destination.HomeTabNewPost> {
-                            inclusive = true
+                        launchSingleTop = true
+                        restoreState = true
+                        popUpTo(navController.graph.findStartDestination().id) {
+                            inclusive = false
+                            saveState = true
                         }
                     }
                     PostSubmissionState()

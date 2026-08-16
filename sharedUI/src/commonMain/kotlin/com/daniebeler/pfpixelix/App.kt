@@ -1,7 +1,5 @@
 package com.daniebeler.pfpixelix
 
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
@@ -60,9 +58,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hasRoute
-import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
-import androidx.navigation.Navigation
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -77,7 +73,6 @@ import com.daniebeler.pfpixelix.ui.navigation.Destination
 import com.daniebeler.pfpixelix.ui.navigation.appGraph
 import com.daniebeler.pfpixelix.ui.theme.PixelixTheme
 import com.daniebeler.pfpixelix.utils.end
-import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -355,7 +350,6 @@ private fun BottomBarFloating(
 
     val navBackStackEntry = navController.currentBackStackEntryAsState().value
     val currentDestination = navBackStackEntry?.destination ?: return
-    val tabContainer = currentDestination.parent ?: return
 
     val systemNavigationBarHeight =
         WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
@@ -371,9 +365,10 @@ private fun BottomBarFloating(
         )
     ) {
         HomeTab.entries.forEachIndexed { _, tab ->
-            val isSelected = currentDestination.hierarchy.any {
-                it.hasRoute(tab.destination::class)
-            }
+            val isSelected =
+                currentDestination.hasRoute(tab.destination::class) || currentDestination.parent?.hasRoute(
+                    tab.destination::class
+                ) == true
 
             var isLongPress by remember { mutableStateOf(false) }
 
@@ -398,13 +393,7 @@ private fun BottomBarFloating(
                                     }
                                 }
                             } else {
-                                val tabRoot = tabContainer.findStartDestination()
-                                val isOnRoot = currentDestination == tabRoot
-                                if (!isOnRoot) {
-                                    navController.popBackStack(
-                                        route = tabRoot.route ?: Destination.HomeTabFeeds, inclusive = false
-                                    )
-                                } else if (currentDestination.hasRoute<Destination.Search>()) {
+                                if (currentDestination.hasRoute<Destination.Search>()) {
                                     appComponent.searchFieldFocus.focus()
                                 } else if (currentDestination.hasRoute<Destination.Feeds>()) {
                                     appComponent.backToTopTrigger.scrollToTop()

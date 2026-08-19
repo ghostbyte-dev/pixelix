@@ -20,6 +20,7 @@ import com.daniebeler.pfpixelix.ui.composables.states.EmptyStateComposable
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pfpixelix.ui.composables.widgets.CustomPullToRefreshBox
+import com.daniebeler.pfpixelix.ui.navigation.Destination
 import org.jetbrains.compose.resources.stringResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.no_categories
@@ -49,8 +50,8 @@ fun FilmsComposable(
                 }) {
                     ExploreGridElement(
                         keyId = it.name, title = it.name, onClick = {
-                            //navController.navigate(Destination.CategoryTimeline(category.id))
-                        } as () -> Unit, fetcher = { filmName ->
+                            navController.navigate(Destination.FilmTimeline(it.name))
+                        }, fetcher = { filmName ->
                             viewModel.timelineService.getFilmTimeline(
                                 filmName, limit = 39
                             )

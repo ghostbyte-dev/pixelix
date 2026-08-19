@@ -20,6 +20,7 @@ import com.daniebeler.pfpixelix.ui.composables.states.EmptyStateComposable
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pfpixelix.ui.composables.widgets.CustomPullToRefreshBox
+import com.daniebeler.pfpixelix.ui.navigation.Destination
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
@@ -50,14 +51,15 @@ fun LensesComposable(
                     it.id
                 }) {
                     ExploreGridElement(
-                        keyId = it.name,
-                        title = it.name,
-                        onClick = {
-                            //navController.navigate(Destination.CategoryTimeline(category.id))
-                        } as () -> Unit,
-                        fetcher = { lensName -> viewModel.timelineService.getLensTimeline(lensName, limit = 39) },
-                        navController = navController
-                    )                }
+                        keyId = it.name, title = it.name, onClick = {
+                            navController.navigate(Destination.LensTimeline(it.name))
+                        }, fetcher = { lensName ->
+                            viewModel.timelineService.getLensTimeline(
+                                lensName, limit = 39
+                            )
+                        }, navController = navController
+                    )
+                }
 
                 if (viewModel.lensesState.isLoading && viewModel.lensesState.lenses.isNotEmpty()) {
                     item {

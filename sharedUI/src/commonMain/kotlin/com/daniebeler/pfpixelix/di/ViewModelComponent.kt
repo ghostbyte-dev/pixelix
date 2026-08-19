@@ -45,7 +45,7 @@ import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.DefaultLicenseViewModel
 import com.daniebeler.pfpixelix.ui.composables.single_post.SinglePostViewModel
 import com.daniebeler.pfpixelix.ui.composables.textfield_location.TextFieldLocationsViewModel
-import com.daniebeler.pfpixelix.ui.composables.timelines.camera_timeline.CameraTimelineViewModel
+import com.daniebeler.pfpixelix.ui.composables.timelines.parametric_timeline_screens.ParametricTimelineViewModel
 import com.daniebeler.pfpixelix.ui.composables.timelines.global_timeline.GlobalTimelineViewModel
 import com.daniebeler.pfpixelix.ui.composables.timelines.hashtag_timeline.HashtagTimelineViewModel
 import com.daniebeler.pfpixelix.ui.composables.timelines.home_timeline.HomeTimelineViewModel
@@ -73,7 +73,7 @@ abstract class ViewModelComponent(
     abstract val followersViewModel: FollowersViewModel
     abstract val globalTimelineViewModel: GlobalTimelineViewModel
     abstract val hashtagTimelineViewModel: HashtagTimelineViewModel
-    abstract val cameraTimelineViewModel: CameraTimelineViewModel
+    abstract val parametricTimelineViewModel: ParametricTimelineViewModel
     abstract val homeTimelineViewModel: HomeTimelineViewModel
     abstract val iconSelectionViewModel: IconSelectionViewModel
     abstract val likedPostsViewModel: LikedPostsViewModel

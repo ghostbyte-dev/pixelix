@@ -5,6 +5,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.height
@@ -46,55 +47,82 @@ fun CustomAccentColorPref() {
             containerColor = MaterialTheme.colorScheme.surfaceContainerLow
         ),
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .defaultMinSize(minHeight = 48.dp)
-                .padding(start = 12.dp, top = 8.dp, end = 12.dp, bottom = 8.dp)
-        ) {
-            Row(Modifier.weight(1f), horizontalArrangement = Arrangement.SpaceEvenly) {
-                CustomAccentColorPrefItem(
-                    AppAccentColor.GREEN,
-                    isDarkTheme = dark,
-                    state = state
-                )
-                CustomAccentColorPrefItem(
-                    AppAccentColor.RED,
-                    isDarkTheme = dark,
-                    state = state
-                )
-                CustomAccentColorPrefItem(
-                    AppAccentColor.BLUE,
-                    isDarkTheme = dark,
-                    state = state
-                )
-                CustomAccentColorPrefItem(
-                    AppAccentColor.YELLOW,
-                    isDarkTheme = dark,
-                    state = state
-                )
-                CustomAccentColorPrefItem(
-                    AppAccentColor.PINK,
-                    isDarkTheme = dark,
-                    state = state
-                )
-                CustomAccentColorPrefItem(
-                    AppAccentColor.WHITE,
-                    isDarkTheme = dark,
-                    state = state
-                )
+        Column {
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .defaultMinSize(minHeight = 48.dp)
+                    .padding(start = 12.dp, top = 8.dp, end = 12.dp, bottom = 8.dp)
+            ) {
+                Row(Modifier.weight(1f), horizontalArrangement = Arrangement.SpaceEvenly) {
+                    CustomAccentColorPrefItem(
+                        AppAccentColor.GREEN,
+                        isDarkTheme = dark,
+                        state = state
+                    )
+                    CustomAccentColorPrefItem(
+                        AppAccentColor.RED,
+                        isDarkTheme = dark,
+                        state = state
+                    )
+                    CustomAccentColorPrefItem(
+                        AppAccentColor.BLUE,
+                        isDarkTheme = dark,
+                        state = state
+                    )
+                    CustomAccentColorPrefItem(
+                        AppAccentColor.YELLOW,
+                        isDarkTheme = dark,
+                        state = state
+                    )
+                }
+            }
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .defaultMinSize(minHeight = 48.dp)
+                    .padding(start = 12.dp, top = 8.dp, end = 12.dp, bottom = 8.dp)
+            ) {
+                Row(Modifier.weight(1f), horizontalArrangement = Arrangement.SpaceEvenly) {
+                    CustomAccentColorPrefItem(
+                        AppAccentColor.PINK,
+                        isDarkTheme = dark,
+                        state = state
+                    )
+                    CustomAccentColorPrefItem(
+                        AppAccentColor.PURPLE,
+                        isDarkTheme = dark,
+                        state = state
+                    )
+                    CustomAccentColorPrefItem(
+                        AppAccentColor.TURQUOISE,
+                        isDarkTheme = dark,
+                        state = state
+                    )
+                    CustomAccentColorPrefItem(
+                        AppAccentColor.WHITE,
+                        isDarkTheme = dark,
+                        state = state
+                    )
+                }
             }
         }
     }
 }
 
 @Composable
-fun CustomAccentColorPrefItem(color: AppAccentColor, isDarkTheme: Boolean, state: MutableState<String>) {
+fun CustomAccentColorPrefItem(
+    color: AppAccentColor,
+    isDarkTheme: Boolean,
+    state: MutableState<String>
+) {
     if (color.name == state.value) {
         Box(contentAlignment = Alignment.Center) {
             Box(
                 Modifier.height(20.dp).width(20.dp).clip(CircleShape)
-                    .background(color.getColor(isDarkTheme = isDarkTheme)))
+                    .background(color.getColor(isDarkTheme = isDarkTheme))
+            )
             Box(
                 modifier = Modifier
                     .size(32.dp)

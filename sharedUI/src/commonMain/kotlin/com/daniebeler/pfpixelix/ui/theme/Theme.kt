@@ -433,6 +433,159 @@ private val pinkDarkScheme = darkColorScheme(
     surfaceContainerHighest = pinkSurfaceContainerHighestDark,
 )
 
+
+private val purpleLightScheme = lightColorScheme(
+    primary = purplePrimaryLight,
+    onPrimary = purpleOnPrimaryLight,
+    primaryContainer = purplePrimaryContainerLight,
+    onPrimaryContainer = purpleOnPrimaryContainerLight,
+    secondary = purpleSecondaryLight,
+    onSecondary = purpleOnSecondaryLight,
+    secondaryContainer = purpleSecondaryContainerLight,
+    onSecondaryContainer = purpleOnSecondaryContainerLight,
+    tertiary = purpleTertiaryLight,
+    onTertiary = purpleOnTertiaryLight,
+    tertiaryContainer = purpleTertiaryContainerLight,
+    onTertiaryContainer = purpleOnTertiaryContainerLight,
+    error = purpleErrorLight,
+    onError = purpleOnErrorLight,
+    errorContainer = purpleErrorContainerLight,
+    onErrorContainer = purpleOnErrorContainerLight,
+    background = purpleBackgroundLight,
+    onBackground = purpleOnBackgroundLight,
+    surface = purpleSurfaceLight,
+    onSurface = purpleOnSurfaceLight,
+    surfaceVariant = purpleSurfaceVariantLight,
+    onSurfaceVariant = purpleOnSurfaceVariantLight,
+    outline = purpleOutlineLight,
+    outlineVariant = purpleOutlineVariantLight,
+    scrim = purpleScrimLight,
+    inverseSurface = purpleInverseSurfaceLight,
+    inverseOnSurface = purpleInverseOnSurfaceLight,
+    inversePrimary = purpleInversePrimaryLight,
+    surfaceDim = purpleSurfaceDimLight,
+    surfaceBright = purpleSurfaceBrightLight,
+    surfaceContainerLowest = purpleSurfaceContainerLowestLight,
+    surfaceContainerLow = purpleSurfaceContainerLowLight,
+    surfaceContainer = purpleSurfaceContainerLight,
+    surfaceContainerHigh = purpleSurfaceContainerHighLight,
+    surfaceContainerHighest = purpleSurfaceContainerHighestLight,
+)
+
+private val purpleDarkScheme = darkColorScheme(
+    primary = purplePrimaryDark,
+    onPrimary = purpleOnPrimaryDark,
+    primaryContainer = purplePrimaryContainerDark,
+    onPrimaryContainer = purpleOnPrimaryContainerDark,
+    secondary = purpleSecondaryDark,
+    onSecondary = purpleOnSecondaryDark,
+    secondaryContainer = purpleSecondaryContainerDark,
+    onSecondaryContainer = purpleOnSecondaryContainerDark,
+    tertiary = purpleTertiaryDark,
+    onTertiary = purpleOnTertiaryDark,
+    tertiaryContainer = purpleTertiaryContainerDark,
+    onTertiaryContainer = purpleOnTertiaryContainerDark,
+    error = purpleErrorDark,
+    onError = purpleOnErrorDark,
+    errorContainer = purpleErrorContainerDark,
+    onErrorContainer = purpleOnErrorContainerDark,
+    background = purpleBackgroundDark,
+    onBackground = purpleOnBackgroundDark,
+    surface = purpleSurfaceDark,
+    onSurface = purpleOnSurfaceDark,
+    surfaceVariant = purpleSurfaceVariantDark,
+    onSurfaceVariant = purpleOnSurfaceVariantDark,
+    outline = purpleOutlineDark,
+    outlineVariant = purpleOutlineVariantDark,
+    scrim = purpleScrimDark,
+    inverseSurface = purpleInverseSurfaceDark,
+    inverseOnSurface = purpleInverseOnSurfaceDark,
+    inversePrimary = purpleInversePrimaryDark,
+    surfaceDim = purpleSurfaceDimDark,
+    surfaceBright = purpleSurfaceBrightDark,
+    surfaceContainerLowest = purpleSurfaceContainerLowestDark,
+    surfaceContainerLow = purpleSurfaceContainerLowDark,
+    surfaceContainer = purpleSurfaceContainerDark,
+    surfaceContainerHigh = purpleSurfaceContainerHighDark,
+    surfaceContainerHighest = purpleSurfaceContainerHighestDark,
+)
+
+private val turquoiseLightScheme = lightColorScheme(
+    primary = turquoisePrimaryLight,
+    onPrimary = turquoiseOnPrimaryLight,
+    primaryContainer = turquoisePrimaryContainerLight,
+    onPrimaryContainer = turquoiseOnPrimaryContainerLight,
+    secondary = turquoiseSecondaryLight,
+    onSecondary = turquoiseOnSecondaryLight,
+    secondaryContainer = turquoiseSecondaryContainerLight,
+    onSecondaryContainer = turquoiseOnSecondaryContainerLight,
+    tertiary = turquoiseTertiaryLight,
+    onTertiary = turquoiseOnTertiaryLight,
+    tertiaryContainer = turquoiseTertiaryContainerLight,
+    onTertiaryContainer = turquoiseOnTertiaryContainerLight,
+    error = turquoiseErrorLight,
+    onError = turquoiseOnErrorLight,
+    errorContainer = turquoiseErrorContainerLight,
+    onErrorContainer = turquoiseOnErrorContainerLight,
+    background = turquoiseBackgroundLight,
+    onBackground = turquoiseOnBackgroundLight,
+    surface = turquoiseSurfaceLight,
+    onSurface = turquoiseOnSurfaceLight,
+    surfaceVariant = turquoiseSurfaceVariantLight,
+    onSurfaceVariant = turquoiseOnSurfaceVariantLight,
+    outline = turquoiseOutlineLight,
+    outlineVariant = turquoiseOutlineVariantLight,
+    scrim = turquoiseScrimLight,
+    inverseSurface = turquoiseInverseSurfaceLight,
+    inverseOnSurface = turquoiseInverseOnSurfaceLight,
+    inversePrimary = turquoiseInversePrimaryLight,
+    surfaceDim = turquoiseSurfaceDimLight,
+    surfaceBright = turquoiseSurfaceBrightLight,
+    surfaceContainerLowest = turquoiseSurfaceContainerLowestLight,
+    surfaceContainerLow = turquoiseSurfaceContainerLowLight,
+    surfaceContainer = turquoiseSurfaceContainerLight,
+    surfaceContainerHigh = turquoiseSurfaceContainerHighLight,
+    surfaceContainerHighest = turquoiseSurfaceContainerHighestLight,
+)
+
+private val turquoiseDarkScheme = darkColorScheme(
+    primary = turquoisePrimaryDark,
+    onPrimary = turquoiseOnPrimaryDark,
+    primaryContainer = turquoisePrimaryContainerDark,
+    onPrimaryContainer = turquoiseOnPrimaryContainerDark,
+    secondary = turquoiseSecondaryDark,
+    onSecondary = turquoiseOnSecondaryDark,
+    secondaryContainer = turquoiseSecondaryContainerDark,
+    onSecondaryContainer = turquoiseOnSecondaryContainerDark,
+    tertiary = turquoiseTertiaryDark,
+    onTertiary = turquoiseOnTertiaryDark,
+    tertiaryContainer = turquoiseTertiaryContainerDark,
+    onTertiaryContainer = turquoiseOnTertiaryContainerDark,
+    error = turquoiseErrorDark,
+    onError = turquoiseOnErrorDark,
+    errorContainer = turquoiseErrorContainerDark,
+    onErrorContainer = turquoiseOnErrorContainerDark,
+    background = turquoiseBackgroundDark,
+    onBackground = turquoiseOnBackgroundDark,
+    surface = turquoiseSurfaceDark,
+    onSurface = turquoiseOnSurfaceDark,
+    surfaceVariant = turquoiseSurfaceVariantDark,
+    onSurfaceVariant = turquoiseOnSurfaceVariantDark,
+    outline = turquoiseOutlineDark,
+    outlineVariant = turquoiseOutlineVariantDark,
+    scrim = turquoiseScrimDark,
+    inverseSurface = turquoiseInverseSurfaceDark,
+    inverseOnSurface = turquoiseInverseOnSurfaceDark,
+    inversePrimary = turquoiseInversePrimaryDark,
+    surfaceDim = turquoiseSurfaceDimDark,
+    surfaceBright = turquoiseSurfaceBrightDark,
+    surfaceContainerLowest = turquoiseSurfaceContainerLowestDark,
+    surfaceContainerLow = turquoiseSurfaceContainerLowDark,
+    surfaceContainer = turquoiseSurfaceContainerDark,
+    surfaceContainerHigh = turquoiseSurfaceContainerHighDark,
+    surfaceContainerHighest = turquoiseSurfaceContainerHighestDark,
+)
+
 private val whiteLightScheme = lightColorScheme(
     primary = whitePrimaryLight,
     onPrimary = whiteOnPrimaryLight,
@@ -534,6 +687,8 @@ fun PixelixTheme(
         AppAccentColor.WHITE.name -> whiteDarkScheme
         AppAccentColor.YELLOW.name -> yellowDarkScheme
         AppAccentColor.PINK.name -> pinkDarkScheme
+        AppAccentColor.PURPLE.name -> purpleDarkScheme
+        AppAccentColor.TURQUOISE.name -> turquoiseDarkScheme
         else -> darkScheme
     }
 
@@ -544,7 +699,9 @@ fun PixelixTheme(
         AppAccentColor.WHITE.name -> whiteLightScheme
         AppAccentColor.YELLOW.name -> yellowLightScheme
         AppAccentColor.PINK.name -> pinkLightScheme
-        else -> darkScheme
+        AppAccentColor.PURPLE.name -> purpleLightScheme
+        AppAccentColor.TURQUOISE.name -> turquoiseLightScheme
+        else -> lightScheme
     }
     val useDynamicColors by prefs.useDynamicColorsFlow.collectAsState(prefs.useDynamicColors)
     val colorScheme = generateColorScheme(nightModeValue, useDynamicColors, lightColorScheme, darkColorScheme)

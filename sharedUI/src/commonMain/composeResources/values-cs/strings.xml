@@ -2,7 +2,7 @@
 <resources>
     <string name="notifications">Oznámení</string>
     <string name="settings">Nastavení</string>
-    <string name="liked_posts">Olikované příspěvky</string>
+    <string name="liked_posts">Olajkované příspěvky</string>
     <string name="bookmarked_posts">Uložené příspěvky</string>
     <string name="followed_hashtags">Hashtagy které sledujete</string>
     <string name="blocked_accounts">Zablokované účty</string>
@@ -24,10 +24,15 @@
         <item quantity="many">Sleduje</item>
         <item quantity="other">Sleduje</item>
     </plurals>
-    <string name="posts">Příspěvky</string>
+    <plurals name="posts">
+        <item quantity="one">Příspěvek</item>
+        <item quantity="few">Příspěvky</item>
+        <item quantity="many">Příspěvků</item>
+        <item quantity="other">Příspěvků</item>
+    </plurals>
     <string name="hashtags">Hashtagy</string>
     <string name="reblogged_your_post">reblogoval tvůj příspěvek</string>
-    <string name="liked_your_post">olikoval tvůj příspěvek</string>
+    <string name="liked_your_post">olajkoval tvůj příspěvek</string>
     <string name="followed_you">tě sleduje</string>
     <string name="share_this_post">Sdílet tento příspěvek</string>
     <string name="trending">Trendy</string>
@@ -45,7 +50,7 @@
     <string name="no_blocked_accounts">žádné zablokované účty</string>
     <string name="cancel">Zrušit</string>
     <string name="post_by">Příspěvek od</string>
-    <string name="liked_by">Olikováno</string>
+    <string name="liked_by">Olajkováno</string>
     <string name="delete_this_post">Odstranit tento příspěvek</string>
     <string name="delete_post">Odstranit příspěvek?</string>
     <string name="this_action_cannot_be_undone">Tuto akci nelze vzít zpět</string>
@@ -65,12 +70,12 @@
     <string name="view_comments">Zobrazit %1$s komentářů</string>
     <string name="comment">Zanechat komentář</string>
     <string name="no_comments_yet">Zatím žádné komentáře</string>
-    <string name="no_likes_yet">Zatím žádné liky</string>
-    <string name="no_liked_posts">žádné olikované příspěvky</string>
+    <string name="no_likes_yet">Zatím žádné lajky</string>
+    <string name="no_liked_posts">žádné olajkované příspěvky</string>
     <string name="local">Lokální</string>
     <string name="global">Globální</string>
     <string name="home">Domov</string>
-    <string name="likes">%1$s liků</string>
+    <string name="likes">%1$s lajků</string>
     <string name="search">Vyhledat</string>
     <string name="unmute_caps">Zrušit ztlumení</string>
     <string name="unmute">zrušit ztlumení</string>
@@ -93,7 +98,7 @@
     <string name="no_muted_accounts">Žádné ztlumené účty</string>
     <string name="visibility_x">Viditelnost: %1$s</string>
     <string name="clear_cache">Vyčistit mezipaměť</string>
-    <string name="preferences">Nastavení</string>
+    <string name="preferences">Preference</string>
     <string name="hide_sensitive_content">Skrýt citlivý obsah</string>
     <string name="about_x">O %1$s</string>
     <string name="more_settings">Více nastavení</string>
@@ -126,7 +131,7 @@
     <string name="threads_description">Threads je aplikace od Meta, kde můžete prohlížet a sdílet veřejné konverzace. Můžete také zveřejňovat vlákna, odpovídat ostatním a sledovat profily, které vás zajímají.</string>
     <string name="more_information">Více informací</string>
     <string name="what_makes_a_post_trend">Co dělá post trendy?</string>
-    <string name="trending_post_description">Trendy příspěvků, pokud byly zveřejněny ve vybraném časovém rámci a mají mnoho liků.</string>
+    <string name="trending_post_description">Trendy příspěvků, pokud byly zveřejněny ve vybraném časovém rámci a mají mnoho lajků.</string>
     <string name="trending_account_description">Sekce trendy účtů obsahuje účty na vaší instanci s nejvíce sledujícími. Účty, které již sledujete, se zde neukazují.</string>
     <string name="what_makes_an_account_trend">Co dělá účet trendy?</string>
     <string name="what_makes_a_hashtag_trend">Co dělá hashtag trendy?</string>
@@ -179,7 +184,7 @@
     <string name="blocked">zablokováno</string>
     <string name="message">Poslat zprávu</string>
     <string name="all">Vše</string>
-    <string name="likes_">Liky</string>
+    <string name="likes_">Lajky</string>
     <string name="reposts">Reposty</string>
     <string name="edit_post">Upravit tento příspěvek</string>
     <string name="notification_widget_description">Zůstaňte informováni o nejnovějších oznámeních z Pixelfed přímo na domovské obrazovce</string>
@@ -215,7 +220,7 @@
     <string name="explore">Prozkoumat</string>
     <string name="reblogged_by">rebloggováno %1$s</string>
     <string name="focus_mode">Režim soustředění</string>
-    <string name="focus_mode_description">Schová popisky, liky a tlačítka u příspěvků.</string>
+    <string name="focus_mode_description">Schová popisky, lajky a tlačítka u příspěvků.</string>
     <string name="repost_settings">Nastavení repostu</string>
     <plurals name="follower">
         <item quantity="one">Květina</item>
@@ -303,7 +308,7 @@
     <string name="include_profile_in_search_engines">Zahrnout profil do vyhledávačů</string>
     <string name="new_comment">Napsat nový komentář</string>
     <string name="new_status">Vytvořit nový příspěvek</string>
-    <string name="notification">Oznámení</string>
+    <string name="notification">oznámení</string>
     <string name="send">Odeslat</string>
     <string name="default_visibility">Výchozí viditelnost</string>
     <string name="brand">Značka</string>
@@ -332,4 +337,15 @@
     <string name="app_customization">Přizpůsobení aplikace</string>
     <string name="new_post_settings">Nastavení nového příspěvku</string>
     <string name="use_dynamic_colors">Použít dynamické barvy</string>
+    <string name="no_cameras">Bez foťáků</string>
+    <string name="displayname">Zobrazované jméno</string>
+    <string name="bio">O mně</string>
+    <string name="adult_or_sensitive_content">Pro dospělé nebo citlivý obsah</string>
+    <string name="scam"></string>
+    <string name="terrorism">Terorismus</string>
+    <string name="swipe_between_tabs">Posuň pro přepnutí stran</string>
+    <string name="requested">Navrhnuto</string>
+    <string name="accept_follow_request">Schválit žádost o sledování</string>
+    <string name="reject_follow_request">Zamítnout žádost o sledování</string>
+    <string name="reason">Důvod</string>
 </resources>

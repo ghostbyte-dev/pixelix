@@ -2,6 +2,7 @@ package com.daniebeler.pfpixelix.ui.composables.timelines.parametric_timeline_sc
 
 import com.daniebeler.pfpixelix.domain.model.PaginatedResponse
 import com.daniebeler.pfpixelix.domain.model.Post
+import com.daniebeler.pfpixelix.domain.service.general.PostService
 import com.daniebeler.pfpixelix.domain.service.general.TimelineService
 import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
@@ -10,6 +11,7 @@ import kotlinx.coroutines.flow.Flow
 import me.tatarka.inject.annotations.Inject
 
 class ParametricTimelineViewModel @Inject constructor(
+    private val postService: PostService,
     private val timelineService: TimelineService,
     userPreferences: UserPreferences
 ) : PaginatedPostsViewModel(userPreferences) {
@@ -18,14 +20,16 @@ class ParametricTimelineViewModel @Inject constructor(
     private var fetchType: FetchType = FetchType.CAMERA
 
     enum class FetchType {
-        CAMERA, CATEGORY, LENS, FILM
+        CAMERA, CATEGORY, LENS, FILM, LIKED_POSTS, BOOKMARKED_POSTS
     }
 
-    fun init(param: String, fetchType: FetchType) {
+    fun init(fetchType: FetchType, param: String = "") {
         if (this.param != param || this.fetchType != fetchType) {
-            this.param = param
-            this.fetchType = fetchType
-            loadItems(refreshing = false)
+            if (this.fetchType != fetchType || this.param != param) {
+                this.fetchType = fetchType
+                this.param = param
+                loadItems(refreshing = false)
+            }
         }
     }
 
@@ -35,6 +39,8 @@ class ParametricTimelineViewModel @Inject constructor(
             FetchType.CATEGORY -> timelineService.getCategoryTimeline(param, maxId)
             FetchType.LENS -> timelineService.getLensTimeline(param, maxId)
             FetchType.FILM -> timelineService.getFilmTimeline(param, maxId)
+            FetchType.LIKED_POSTS -> postService.getLikedPosts(maxId)
+            FetchType.BOOKMARKED_POSTS -> postService.getBookmarkedPosts(maxId)
         }
     }
 }

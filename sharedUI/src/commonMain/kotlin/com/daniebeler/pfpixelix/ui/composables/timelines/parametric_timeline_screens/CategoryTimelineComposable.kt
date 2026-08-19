@@ -9,11 +9,12 @@ fun CategoryTimelineComposable(
     navController: NavController,
     category: String,
     viewModel: ParametricTimelineViewModel = injectViewModel(key = "category-$category") {
-        parametricTimelineViewModel.apply { init(category, ParametricTimelineViewModel.FetchType.CATEGORY) }
+        parametricTimelineViewModel.apply { init(ParametricTimelineViewModel.FetchType.CATEGORY, category) }
     }
 ) {
     TimelineScreen(
         title = category,
+        subtitle = "Category",
         navController = navController,
         viewModel = viewModel,
         isFirstItemLarge = true

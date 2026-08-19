@@ -19,6 +19,7 @@ import pixelix.app.generated.resources.photo
 @Composable
 fun TimelineScreen(
     title: String,
+    subtitle: String? = null,
     navController: NavController,
     viewModel: PaginatedPostsViewModel,
     contentPaddingTop: Dp = 24.dp,
@@ -32,6 +33,7 @@ fun TimelineScreen(
 ) {
     ScreenScaffold(
         title = title,
+        subtitle = subtitle,
         navController = navController,
     ) {
         InfinitePostsList(

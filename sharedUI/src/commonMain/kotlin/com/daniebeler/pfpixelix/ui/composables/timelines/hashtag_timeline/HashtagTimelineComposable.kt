@@ -25,6 +25,7 @@ fun HashtagTimelineComposable(
 
     ScreenScaffold(
         title = "#$hashtag",
+        subtitle = "Hashtag",
         navController = navController,
         actions = {
             FollowButton(

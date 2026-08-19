@@ -1,13 +1,13 @@
 [versions]
 kotlin = "2.4.10"
 ksp = "2.3.6"
-agp = "9.3.0"
+agp = "9.3.1"
 
 #https://github.com/JetBrains/compose-multiplatform/releases
-composeMultiplatform = "1.12.0-beta02"
+composeMultiplatform = "1.12.0-rc01"
 lifecycleMultiplatform = "2.11.0"
 material3 = "1.12.0-alpha03"
-materialVersion = "1.12.0-beta02"
+materialVersion = "1.12.0-rc01"
 navigationMultiplatform = "2.10.0-alpha02"
 composeNavigationEvent = "1.1.0"
 
@@ -15,7 +15,7 @@ composeNavigationEvent = "1.1.0"
 kotlinx-coroutines = "1.11.0"
 kotlinxCollectionsImmutable = "0.5.1"
 kotlinxSerializationJson = "1.11.0"
-ktor = "3.5.1"
+ktor = "3.5.2"
 kotlinx-datetime = "0.8.0"
 
 #multiplatform
@@ -25,10 +25,10 @@ ktorfit = "2.7.5"
 kotlinInject = "0.9.0"
 androidx-annotation = "1.10.0"
 coil = "3.5.0"
-datastorePreferences = "1.3.0-alpha09"
-filekitCompose = "0.14.2"
+datastorePreferences = "1.3.0-alpha10"
+filekitCompose = "0.15.0"
 krop = "0.2.0"
-composemediaplayer = "0.11.2"
+composemediaplayer = "0.11.4"
 
 #android
 activityCompose = "1.13.0"
@@ -36,7 +36,7 @@ browser = "1.10.0"
 coreKtx = "1.19.0"
 glance = "1.1.1"
 material = "1.14.0"
-okio = "3.17.0"
+okio = "3.18.1"
 workRuntimeKtx = "2.11.2"
 
 #desktop

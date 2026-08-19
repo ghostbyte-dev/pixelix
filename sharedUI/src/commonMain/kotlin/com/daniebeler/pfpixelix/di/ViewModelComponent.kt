@@ -35,10 +35,8 @@ import com.daniebeler.pfpixelix.ui.composables.session.LoginViewModel
 import com.daniebeler.pfpixelix.ui.composables.settings.about_instance.AboutInstanceViewModel
 import com.daniebeler.pfpixelix.ui.composables.settings.about_pixelix.AboutPixelixViewModel
 import com.daniebeler.pfpixelix.ui.composables.settings.blocked_accounts.BlockedAccountsViewModel
-import com.daniebeler.pfpixelix.ui.composables.settings.bookmarked_posts.BookmarkedPostsViewModel
 import com.daniebeler.pfpixelix.ui.composables.settings.followed_hashtags.FollowedHashtagsViewModel
 import com.daniebeler.pfpixelix.ui.composables.settings.icon_selection.IconSelectionViewModel
-import com.daniebeler.pfpixelix.ui.composables.settings.liked_posts.LikedPostsViewModel
 import com.daniebeler.pfpixelix.ui.composables.settings.muted_accounts.MutedAccountsViewModel
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.PreferencesViewModel
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.ClearCacheViewModel
@@ -65,7 +63,6 @@ abstract class ViewModelComponent(
     abstract val aboutPixelixViewModel: AboutPixelixViewModel
     abstract val accountSwitchViewModel: AccountSwitchViewModel
     abstract val blockedAccountsViewModel: BlockedAccountsViewModel
-    abstract val bookmarkedPostsViewModel: BookmarkedPostsViewModel
     abstract val customNotificationViewModel: CustomNotificationViewModel
     abstract val editProfileViewModel: EditProfileViewModel
     abstract val exploreViewModel: ExploreViewModel
@@ -76,7 +73,6 @@ abstract class ViewModelComponent(
     abstract val parametricTimelineViewModel: ParametricTimelineViewModel
     abstract val homeTimelineViewModel: HomeTimelineViewModel
     abstract val iconSelectionViewModel: IconSelectionViewModel
-    abstract val likedPostsViewModel: LikedPostsViewModel
     abstract val localTimelineViewModel: LocalTimelineViewModel
     abstract val mentionViewModel: MentionViewModel
     abstract val mutedAccountsViewModel: MutedAccountsViewModel

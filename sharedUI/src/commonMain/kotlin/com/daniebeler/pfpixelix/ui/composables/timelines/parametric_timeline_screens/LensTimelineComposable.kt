@@ -9,11 +9,12 @@ fun LensTimelineComposable(
     navController: NavController,
     lens: String,
     viewModel: ParametricTimelineViewModel = injectViewModel(key = "lens-$lens") {
-        parametricTimelineViewModel.apply { init(lens, ParametricTimelineViewModel.FetchType.LENS) }
+        parametricTimelineViewModel.apply { init(ParametricTimelineViewModel.FetchType.LENS, lens) }
     }
 ) {
     TimelineScreen(
         title = lens,
+        subtitle = "Lens",
         navController = navController,
         viewModel = viewModel,
         isFirstItemLarge = true

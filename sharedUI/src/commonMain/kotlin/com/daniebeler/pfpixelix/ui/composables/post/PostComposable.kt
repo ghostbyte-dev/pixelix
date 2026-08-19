@@ -751,7 +751,12 @@ private fun PostActionBar(
             Spacer(Modifier.height(12.dp))
         }
 
-        post.category?.let { MetadataItem(Res.drawable.tag, it.name) }
+        post.category?.let {
+            MetadataItem(
+                Res.drawable.tag,
+                it.name,
+                onClick = { navController.navigate(Destination.CategoryTimeline(it.name)) })
+        }
 
         displayLocation?.let { loc ->
             val label = when {
@@ -840,7 +845,7 @@ private fun PostActionBar(
         }
         if (!hideMetadataPref) {
             post.application?.let {
-                MetadataItem(Res.drawable.browser, it)
+                MetadataItem(Res.drawable.browser, "Posted via $it")
             }
         }
     }

@@ -9,11 +9,12 @@ fun FilmTimelineComposable(
     navController: NavController,
     film: String,
     viewModel: ParametricTimelineViewModel = injectViewModel(key = "film-$film") {
-        parametricTimelineViewModel.apply { init(film, ParametricTimelineViewModel.FetchType.FILM) }
+        parametricTimelineViewModel.apply { init(ParametricTimelineViewModel.FetchType.FILM, film) }
     }
 ) {
     TimelineScreen(
         title = film,
+        subtitle = "Film",
         navController = navController,
         viewModel = viewModel,
         isFirstItemLarge = true

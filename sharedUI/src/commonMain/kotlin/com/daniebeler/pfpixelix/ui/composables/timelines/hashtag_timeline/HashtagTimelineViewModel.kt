@@ -3,214 +3,73 @@ package com.daniebeler.pfpixelix.ui.composables.timelines.hashtag_timeline
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import co.touchlab.kermit.Logger
-import com.daniebeler.pfpixelix.domain.model.Post
-import com.daniebeler.pfpixelix.domain.model.RelatedHashtag
-import com.daniebeler.pfpixelix.domain.repository.pixelfed.PixelfedApi
+import com.daniebeler.pfpixelix.domain.model.Tag
 import com.daniebeler.pfpixelix.domain.service.general.ExploreService
 import com.daniebeler.pfpixelix.domain.service.general.TimelineService
 import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
-import com.daniebeler.pfpixelix.ui.composables.profile.ViewEnum
-import com.daniebeler.pfpixelix.ui.composables.timelines.TimelineState
+import com.daniebeler.pfpixelix.ui.composables.widgets.PaginatedPostsViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
+
+data class HashtagState(
+    val isLoading: Boolean = false,
+    val hashtag: Tag? = null,
+    val error: String = ""
+)
 
 class HashtagTimelineViewModel @Inject constructor(
     private val exploreService: ExploreService,
     private val timelineService: TimelineService,
-    private val prefs: UserPreferences
-) : ViewModel() {
+    userPreferences: UserPreferences
+) : PaginatedPostsViewModel(userPreferences) {
 
-    var timelineState by mutableStateOf(TimelineState())
     var hashtagState by mutableStateOf(HashtagState())
-    var view by mutableStateOf(ViewEnum.Grid)
+        private set
 
-    init {
-        viewModelScope.launch {
-            prefs.showUserGridTimelineFlow.collect { res ->
-                view = ViewEnum.getView(res)
-            }
+    private var currentHashtag: String = ""
+
+    fun init(hashtag: String) {
+        if (currentHashtag != hashtag) {
+            currentHashtag = hashtag
+            getHashtagInfo(hashtag)
+            loadItems(refreshing = false)
         }
     }
 
-    fun refresh() {
-        timelineState = timelineState.copy(isRefreshing = true)
-        if (hashtagState.hashtag != null) {
-            getItemsFirstLoad(hashtagState.hashtag!!.name, true)
-        }
-    }
-
-    fun changeView(newView: ViewEnum) {
-        view = newView
-        prefs.showUserGridTimeline = newView.ordinal
-    }
-
-    fun getItemsFirstLoad(hashtag: String, refreshing: Boolean = false) {
-        if (timelineState.posts.isNotEmpty() && !refreshing) {
-            return
-        }
-        timelineService.getHashtagTimeline(hashtag).onEach { result ->
-            timelineState = when (result) {
-                is Resource.Success -> {
-                    val endReached =
-                        (result.data.data.size) < PixelfedApi.HASHTAG_TIMELINE_POSTS_LIMIT
-                    TimelineState(
-                        posts = result.data.data,
-                        nextId = result.data.next,
-                        error = "",
-                        isLoading = false,
-                        isRefreshing = false,
-                        endReached = endReached
-                    )
-                }
-
-                is Resource.Error -> {
-                    TimelineState(
-                        posts = timelineState.posts,
-                        nextId = timelineState.nextId,
-                        error = result.message,
-                        isLoading = false,
-                        isRefreshing = false
-                    )
-                }
-
-                is Resource.Loading -> {
-                    TimelineState(
-                        posts = timelineState.posts,
-                        nextId = timelineState.nextId,
-                        error = "",
-                        isLoading = true,
-                        isRefreshing = refreshing
-                    )
-                }
-            }
-        }.launchIn(viewModelScope)
-
-    }
-
-    fun getItemsPaginated(hashtag: String) {
-        if (timelineState.posts.isNotEmpty() && !timelineState.isLoading && !timelineState.endReached) {
-            timelineService.getHashtagTimeline(
-                hashtag, timelineState.posts.last().id
-            ).onEach { result ->
-                timelineState = when (result) {
-                    is Resource.Success -> {
-                        val endReached = (result.data.data.size ?: 0) == 0
-                        TimelineState(
-                            posts = timelineState.posts + (result.data.data),
-                            nextId = result.data.next,
-                            error = "",
-                            isLoading = false,
-                            isRefreshing = false,
-                            endReached = endReached
-                        )
-                    }
-
-                    is Resource.Error -> {
-                        TimelineState(
-                            posts = timelineState.posts,
-                            nextId = timelineState.nextId,
-                            error = result.message ?: "An unexpected error occurred",
-                            isLoading = false,
-                            isRefreshing = false
-                        )
-                    }
-
-                    is Resource.Loading -> {
-                        TimelineState(
-                            posts = timelineState.posts,
-                            nextId = timelineState.nextId,
-                            error = "",
-                            isLoading = true,
-                            isRefreshing = false
-                        )
-                    }
-                }
-            }.launchIn(viewModelScope)
-        }
-    }
-
-    fun postGetsDeleted(postId: String) {
-        timelineState =
-            timelineState.copy(posts = timelineState.posts.filter { post -> post.id != postId })
-    }
+    override fun fetchPage(maxId: String?) = timelineService.getHashtagTimeline(currentHashtag, maxId)
 
     fun getHashtagInfo(hashtag: String) {
         exploreService.getHashtag(hashtag).onEach { result ->
             hashtagState = when (result) {
-                is Resource.Success -> {
-                    HashtagState(hashtag = result.data)
-                }
-
-                is Resource.Error -> {
-                    HashtagState(error = result.message ?: "An unexpected error occurred")
-                }
-
-                is Resource.Loading -> {
-                    HashtagState(isLoading = true)
-                }
+                is Resource.Success -> HashtagState(hashtag = result.data)
+                is Resource.Error -> HashtagState(error = result.message ?: "An unexpected error occurred")
+                is Resource.Loading -> HashtagState(isLoading = true)
             }
         }.launchIn(viewModelScope)
     }
 
-    fun followHashtag(hashtag: String) {
+    fun followHashtag() {
+        val hashtag = currentHashtag
         exploreService.followHashtag(hashtag).onEach { result ->
             hashtagState = when (result) {
-                is Resource.Success -> {
-                    val newHashtag = hashtagState.hashtag
-                    if (newHashtag != null) {
-                        HashtagState(hashtag = newHashtag.copy(following = true), isLoading = false)
-                    } else {
-                        HashtagState(hashtag = result.data)
-                    }
-                }
-
-                is Resource.Error -> {
-                    HashtagState(error = result.message ?: "An unexpected error occurred")
-                }
-
-                is Resource.Loading -> {
-                    HashtagState(isLoading = true, hashtag = hashtagState.hashtag)
-                }
+                is Resource.Success -> HashtagState(hashtag = result.data.copy(following = true), isLoading = false)
+                is Resource.Error -> HashtagState(error = result.message ?: "An unexpected error occurred", hashtag = hashtagState.hashtag)
+                is Resource.Loading -> HashtagState(isLoading = true, hashtag = hashtagState.hashtag)
             }
         }.launchIn(viewModelScope)
     }
 
-    fun unfollowHashtag(hashtag: String) {
+    fun unfollowHashtag() {
+        val hashtag = currentHashtag
         exploreService.unfollowHashtag(hashtag).onEach { result ->
             hashtagState = when (result) {
-                is Resource.Success -> {
-                    val newHashtag = hashtagState.hashtag
-                    if (newHashtag != null) {
-                        HashtagState(hashtag = newHashtag.copy(following = false), isLoading = false)
-                    } else {
-                        hashtagState
-                    }
-                }
-
-                is Resource.Error -> {
-                    HashtagState(error = result.message)
-                }
-
-                is Resource.Loading -> {
-                    HashtagState(isLoading = true, hashtag = hashtagState.hashtag)
-                }
+                is Resource.Success -> HashtagState(hashtag = hashtagState.hashtag?.copy(following = false), isLoading = false)
+                is Resource.Error -> HashtagState(error = result.message, hashtag = hashtagState.hashtag)
+                is Resource.Loading -> HashtagState(isLoading = true, hashtag = hashtagState.hashtag)
             }
         }.launchIn(viewModelScope)
-    }
-
-    fun postGetsUpdated(post: Post) {
-        timelineState = timelineState.copy(posts = timelineState.posts.map {
-            if (it.id == post.id) {
-                post
-            } else {
-                it
-            }
-        })
     }
 }

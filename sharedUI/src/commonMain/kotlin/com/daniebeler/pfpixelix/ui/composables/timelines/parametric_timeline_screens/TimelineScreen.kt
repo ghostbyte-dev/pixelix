@@ -1,5 +1,6 @@
 package com.daniebeler.pfpixelix.ui.composables.timelines.parametric_timeline_screens
 
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.Dp
@@ -22,6 +23,7 @@ fun TimelineScreen(
     subtitle: String? = null,
     navController: NavController,
     viewModel: PaginatedPostsViewModel,
+    actions: @Composable RowScope.() -> Unit = {},
     contentPaddingTop: Dp = 24.dp,
     isFirstItemLarge: Boolean = false,
     emptyState: EmptyState = EmptyState(
@@ -34,6 +36,7 @@ fun TimelineScreen(
     ScreenScaffold(
         title = title,
         subtitle = subtitle,
+        actions = actions,
         navController = navController,
     ) {
         InfinitePostsList(

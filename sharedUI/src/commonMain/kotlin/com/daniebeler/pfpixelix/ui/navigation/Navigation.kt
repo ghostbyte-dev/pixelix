@@ -40,8 +40,11 @@ import com.daniebeler.pfpixelix.ui.composables.settings.icon_selection.IconSelec
 import com.daniebeler.pfpixelix.ui.composables.settings.liked_posts.LikedPostsComposable
 import com.daniebeler.pfpixelix.ui.composables.settings.muted_accounts.MutedAccountsComposable
 import com.daniebeler.pfpixelix.ui.composables.single_post.SinglePostComposable
-import com.daniebeler.pfpixelix.ui.composables.timelines.camera_timeline.CameraTimelineComposable
+import com.daniebeler.pfpixelix.ui.composables.timelines.parametric_timeline_screens.CameraTimelineComposable
 import com.daniebeler.pfpixelix.ui.composables.timelines.hashtag_timeline.HashtagTimelineComposable
+import com.daniebeler.pfpixelix.ui.composables.timelines.parametric_timeline_screens.CategoryTimelineComposable
+import com.daniebeler.pfpixelix.ui.composables.timelines.parametric_timeline_screens.FilmTimelineComposable
+import com.daniebeler.pfpixelix.ui.composables.timelines.parametric_timeline_screens.LensTimelineComposable
 import com.daniebeler.pfpixelix.utils.KmpUri
 import com.daniebeler.pfpixelix.utils.toKmpUri
 import kotlinx.serialization.Serializable
@@ -55,6 +58,17 @@ sealed interface Destination {
 
     @Serializable
     data class CameraTimeline(val camera: String) : Destination
+
+    @Serializable
+    data class CategoryTimeline(val category: String) : Destination
+
+    @Serializable
+    data class LensTimeline(val lens: String) : Destination
+
+    @Serializable
+    data class FilmTimeline(val film: String) : Destination
+
+
 
 
     @Serializable
@@ -247,6 +261,21 @@ private fun NavGraphBuilder.tabGraph(
     composable<Destination.CameraTimeline> { navBackStackEntry ->
         val args = navBackStackEntry.toRoute<Destination.CameraTimeline>()
         CameraTimelineComposable(navController, args.camera)
+    }
+
+    composable<Destination.CategoryTimeline> { navBackStackEntry ->
+        val args = navBackStackEntry.toRoute<Destination.CategoryTimeline>()
+        CategoryTimelineComposable(navController, args.category)
+    }
+
+    composable<Destination.FilmTimeline> { navBackStackEntry ->
+        val args = navBackStackEntry.toRoute<Destination.FilmTimeline>()
+        FilmTimelineComposable(navController, args.film)
+    }
+
+    composable<Destination.LensTimeline> { navBackStackEntry ->
+        val args = navBackStackEntry.toRoute<Destination.LensTimeline>()
+        LensTimelineComposable(navController, args.lens)
     }
 
     composable<Destination.Profile> { navBackStackEntry ->

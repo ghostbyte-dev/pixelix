@@ -60,8 +60,8 @@ fun CategoriesComposable(
                         keyId = it.name,
                         title = it.name,
                         onClick = {
-                            //navController.navigate(Destination.CategoryTimeline(category.id))
-                        } as () -> Unit,
+                            navController.navigate(Destination.CategoryTimeline(it.name))
+                        },
                         fetcher = { categoryName -> viewModel.timelineService.getCategoryTimeline(categoryName, limit = 39) },
                         navController = navController
                     )                }

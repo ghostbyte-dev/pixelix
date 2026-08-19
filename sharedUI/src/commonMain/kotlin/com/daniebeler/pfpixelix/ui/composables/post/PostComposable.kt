@@ -763,19 +763,15 @@ private fun PostActionBar(
             if (label != null) {
                 if (currentAttachment?.metadata?.longitude != null && currentAttachment.metadata.latitude != null) {
                     MetadataItem(
-                        Res.drawable.location,
-                        label,
-                        url = "https://www.openstreetmap.org/?mlat=${currentAttachment.metadata.latitude}&mlon=${currentAttachment.metadata.longitude}"
+                        Res.drawable.location, label
                     ) {
-                        viewModel.openUrl(it)
+                        viewModel.openUrl("https://www.openstreetmap.org/?mlat=${currentAttachment.metadata.latitude}&mlon=${currentAttachment.metadata.longitude}")
                     }
                 } else if (loc.longitude != null && loc.latitude != null) {
                     MetadataItem(
-                        Res.drawable.location,
-                        label,
-                        url = "https://www.openstreetmap.org/?mlat=${loc.latitude}&mlon=${loc.longitude}"
+                        Res.drawable.location, label
                     ) {
-                        viewModel.openUrl(it)
+                        viewModel.openUrl("https://www.openstreetmap.org/?mlat=${loc.latitude}&mlon=${loc.longitude}")
                     }
                 } else {
                     MetadataItem(Res.drawable.location, label)
@@ -785,9 +781,22 @@ private fun PostActionBar(
 
         if (viewModel.capabilities.value.post.showCameraMetadata && !hideMetadataPref) {
             currentAttachment?.metadata?.let { metadata ->
+
                 listOfNotNull(metadata.make, metadata.model).takeIf { it.isNotEmpty() }
-                    ?.let { MetadataItem(Res.drawable.camera, it.joinToString(" ")) }
-                metadata.lens?.let { MetadataItem(Res.drawable.lens, it) }
+                    ?.joinToString(" ")?.let { cameraName ->
+                        MetadataItem(
+                            icon = Res.drawable.camera,
+                            value = cameraName,
+                            onClick = { navController.navigate(Destination.CameraTimeline(cameraName)) })
+                    }
+
+
+                metadata.lens?.let {
+                    MetadataItem(
+                        icon = Res.drawable.lens,
+                        value = it,
+                        onClick = { navController.navigate(Destination.LensTimeline(it)) })
+                }
                 listOfNotNull(
                     metadata.focalLength?.let { "${it}mm" },
                     metadata.fNumber,
@@ -798,7 +807,12 @@ private fun PostActionBar(
                 metadata.flash?.let { MetadataItem(Res.drawable.flash, it) }
                 metadata.software?.let { MetadataItem(Res.drawable.software, it) }
 
-                metadata.film?.let { MetadataItem(Res.drawable.film, it) }
+                metadata.film?.let {
+                    MetadataItem(
+                        icon = Res.drawable.film,
+                        value = it,
+                        onClick = { navController.navigate(Destination.FilmTimeline(it)) })
+                }
                 metadata.chemistry?.let { MetadataItem(Res.drawable.chemistry, it) }
                 metadata.scanner?.let { MetadataItem(Res.drawable.scan, it) }
 
@@ -818,9 +832,10 @@ private fun PostActionBar(
                 else -> "${license.name} (${license.code})"
             }
             if (label != null) {
-                MetadataItem(Res.drawable.license, label, license.url) {
-                    viewModel.openUrl(it)
-                }
+                MetadataItem(
+                    Res.drawable.license,
+                    label,
+                    onClick = license.url?.let { url -> { viewModel.openUrl(url) } })
             }
         }
         if (!hideMetadataPref) {
@@ -833,32 +848,31 @@ private fun PostActionBar(
 
 @Composable
 private fun MetadataItem(
-    icon: DrawableResource,
-    value: String,
-    url: String? = null,
-    openUrl: ((url: String) -> Unit)? = null
+    icon: DrawableResource, value: String, onClick: (() -> Unit)? = null
 ) {
+    val isClickable = onClick != null
+
     Row(
-        verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(vertical = 4.dp)
-    ) {
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.padding(vertical = 4.dp).then(
+            if (isClickable) {
+                Modifier.clickable { onClick() }
+            } else Modifier)) {
         Icon(
             imageVector = vectorResource(icon),
             tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            contentDescription = "bookmark post",
+            contentDescription = null,
             modifier = Modifier.size(22.dp)
         )
 
         Spacer(Modifier.width(8.dp))
-        if (url != null) {
-            Text(
-                text = value,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.primary,
-                textDecoration = TextDecoration.Underline,
-                modifier = Modifier.clickable { openUrl?.invoke(url) })
-        } else {
-            Text(text = value, style = MaterialTheme.typography.bodySmall)
-        }
+
+        Text(
+            text = value,
+            style = MaterialTheme.typography.bodySmall,
+            color = if (isClickable) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
+            textDecoration = if (isClickable) TextDecoration.Underline else TextDecoration.None
+        )
     }
 }
 
@@ -932,10 +946,10 @@ private fun PostDeleteDialog(viewModel: PostViewModel) {
 
     AlertDialog(
         icon = {
-        Icon(
-            imageVector = vectorResource(Res.drawable.trash), contentDescription = null
-        )
-    },
+            Icon(
+                imageVector = vectorResource(Res.drawable.trash), contentDescription = null
+            )
+        },
         title = { Text(text = stringResource(Res.string.delete_post)) },
         text = { Text(text = stringResource(Res.string.this_action_cannot_be_undone)) },
         onDismissRequest = { viewModel.deleteDialog = null },

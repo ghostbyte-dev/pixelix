@@ -19,7 +19,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
@@ -28,6 +27,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.ui.composables.post.PostComposable
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
@@ -39,7 +39,6 @@ import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.arrow_left
 import pixelix.app.generated.resources.by
-import pixelix.app.generated.resources.hash
 import pixelix.app.generated.resources.post
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -83,8 +82,13 @@ fun SinglePostComposable(
                     if (viewModel.postState.post != null) {
                         PostComposable(
                             viewModel.postState.post!!, navController, postGetsDeleted = {
-                                navController.navigate(Destination.OwnProfile) {
-                                    popUpTo(0) { inclusive = true }
+                                navController.navigate(Destination.HomeTabOwnProfile) {
+                                    launchSingleTop = true
+                                    restoreState = true
+                                    popUpTo(navController.graph.findStartDestination().id) {
+                                        inclusive = false
+                                        saveState = false
+                                    }
                                 }
                             }, setZindex = { }, openReplies
                         )

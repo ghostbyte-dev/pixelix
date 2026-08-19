@@ -5,11 +5,11 @@ meta {
 }
 
 get {
-  url: {{baseUrl}}/api/v1.1/discover/posts/network/trending
+  url: {{baseUrl}}/api/v1.1/discover/posts/network/trending?range=daily
   body: none
   auth: inherit
 }
 
 params:query {
-  ~range: daily
+  range: daily
 }

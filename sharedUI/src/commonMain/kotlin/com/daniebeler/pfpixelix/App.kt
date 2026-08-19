@@ -62,6 +62,7 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import co.touchlab.kermit.Logger
 import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.di.AppComponent
 import com.daniebeler.pfpixelix.di.LocalAppComponent
@@ -384,6 +385,8 @@ private fun BottomBarFloating(
 
                         if (!isLongPress) {
                             if (!isSelected) {
+                                Logger.d("navigation") { "navigation" }
+                                Logger.d("navigation") {navController.currentBackStack.value.joinToString { it.destination.route ?: "" }}
                                 navController.navigate(tab.destination) {
                                     launchSingleTop = true
                                     restoreState = true
@@ -392,7 +395,9 @@ private fun BottomBarFloating(
                                         saveState = true
                                     }
                                 }
+                                Logger.d("navigation") {navController.currentBackStack.value.joinToString { it.destination.route ?: "" }}
                             } else {
+                                Logger.d("navigation") {"isSelected"}
                                 if (currentDestination.hasRoute<Destination.Search>()) {
                                     appComponent.searchFieldFocus.focus()
                                 } else if (currentDestination.hasRoute<Destination.Feeds>()) {

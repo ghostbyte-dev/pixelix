@@ -23,7 +23,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
@@ -36,6 +35,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.ui.composables.post.PostComposable
@@ -146,8 +146,13 @@ private fun SubPosts(posts: List<Post>, navController: NavController) {
                     ancestor,
                     navController,
                     postGetsDeleted = {
-                        navController.navigate(Destination.OwnProfile) {
-                            popUpTo(0) { inclusive = true }
+                        navController.navigate(Destination.HomeTabOwnProfile) {
+                            launchSingleTop = true
+                            restoreState = true
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                inclusive = false
+                                saveState = false
+                            }
                         }
                     },
                     setZindex = { },

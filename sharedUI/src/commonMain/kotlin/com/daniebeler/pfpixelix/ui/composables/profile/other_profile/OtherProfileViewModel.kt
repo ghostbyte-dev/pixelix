@@ -101,8 +101,8 @@ class OtherProfileViewModel(
                 launchSingleTop = true
                 restoreState = true
                 popUpTo(navController.graph.findStartDestination().id) {
-                    inclusive = true
-                    saveState = true
+                    inclusive = false
+                    saveState = false
                 }
             }
         }

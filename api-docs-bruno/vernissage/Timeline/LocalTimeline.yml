@@ -5,11 +5,21 @@ info:
 
 http:
   method: GET
+<<<<<<< HEAD
   url: "{{baseUrl}}/api/v1/timelines/public?onlyLocal=true"
+=======
+  url: "{{baseUrl}}/api/v1/timelines/public?onlyLocal=true&maxId=7673953956233480935"
+>>>>>>> cb90235d7c9f7cfb438e8092d025518fcd6027db
   params:
     - name: onlyLocal
       value: "true"
       type: query
+<<<<<<< HEAD
+=======
+    - name: maxId
+      value: "7673953956233480935"
+      type: query
+>>>>>>> cb90235d7c9f7cfb438e8092d025518fcd6027db
   auth: inherit
 
 settings:

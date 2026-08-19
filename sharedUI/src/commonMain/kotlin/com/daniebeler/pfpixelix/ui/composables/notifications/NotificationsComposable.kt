@@ -5,7 +5,6 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -18,20 +17,13 @@ import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
-import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.foundation.lazy.staggeredgrid.itemsIndexed
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ButtonGroup
 import androidx.compose.material3.ButtonGroupDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
@@ -43,10 +35,8 @@ import androidx.compose.material3.ToggleButton
 import androidx.compose.material3.ToggleButtonDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.font.FontWeight
@@ -56,26 +46,24 @@ import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.model.NotificationType
 import com.daniebeler.pfpixelix.domain.service.platform.PlatformFeatures
-import com.daniebeler.pfpixelix.ui.composables.explore.trending.TrendingRange
-import com.daniebeler.pfpixelix.ui.composables.widgets.InfiniteStaggeredGridHandler
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
+import com.daniebeler.pfpixelix.ui.composables.states.EmptyStateComposable
 import com.daniebeler.pfpixelix.ui.composables.states.EndOfListComposable
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
-import com.daniebeler.pfpixelix.ui.composables.states.EmptyStateComposable
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pfpixelix.ui.composables.widgets.CustomPullToRefreshBox
-import io.ktor.client.request.invoke
+import com.daniebeler.pfpixelix.ui.composables.widgets.InfiniteStaggeredGridHandler
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.all
-import pixelix.app.generated.resources.widget
 import pixelix.app.generated.resources.followers
 import pixelix.app.generated.resources.likes_
 import pixelix.app.generated.resources.mail
 import pixelix.app.generated.resources.mentions
 import pixelix.app.generated.resources.notifications
 import pixelix.app.generated.resources.reposts
+import pixelix.app.generated.resources.widget
 import pixelix.app.generated.resources.you_don_t_have_any_notifications
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
@@ -89,18 +77,18 @@ fun NotificationsComposable(
     val scrollState = rememberScrollState()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
-    val filteredNotifications = remember(viewModel.notificationsState.notifications, viewModel.filter) {
-        viewModel.notificationsState.notifications.filter {
-            when (viewModel.filter) {
-                NotificationsFilterEnum.All -> true
-                NotificationsFilterEnum.Likes -> it.type == NotificationType.FAVOURITE
-                NotificationsFilterEnum.Followers -> it.type == NotificationType.FOLLOW
-                NotificationsFilterEnum.Reposts -> it.type == NotificationType.REBLOG
-                NotificationsFilterEnum.Mentions -> it.type == NotificationType.MENTION
-                else -> false
+    val filteredNotifications =
+        remember(viewModel.notificationsState.notifications, viewModel.filter) {
+            viewModel.notificationsState.notifications.filter {
+                when (viewModel.filter) {
+                    NotificationsFilterEnum.All -> true
+                    NotificationsFilterEnum.Likes -> it.type == NotificationType.FAVOURITE
+                    NotificationsFilterEnum.Followers -> it.type == NotificationType.FOLLOW || it.type == NotificationType.FOLLOW_REQUEST
+                    NotificationsFilterEnum.Reposts -> it.type == NotificationType.REBLOG || it.type == NotificationType.UPDATE
+                    NotificationsFilterEnum.Mentions -> it.type == NotificationType.MENTION || it.type == NotificationType.NEW_COMMENT
+                }
             }
         }
-    }
 
     Scaffold(
         contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top),
@@ -141,8 +129,10 @@ fun NotificationsComposable(
 
                 Row(
                     modifier = Modifier.background(MaterialTheme.colorScheme.surfaceContainer)
-                        .horizontalScroll(scrollState),horizontalArrangement = Arrangement.spacedBy(
-                        ButtonGroupDefaults.ConnectedSpaceBetween)
+                        .horizontalScroll(scrollState),
+                    horizontalArrangement = Arrangement.spacedBy(
+                        ButtonGroupDefaults.ConnectedSpaceBetween
+                    )
                 ) {
 
                     Spacer(modifier = Modifier.width(12.dp))
@@ -175,6 +165,20 @@ fun NotificationsComposable(
                     Spacer(modifier = Modifier.width(12.dp))
 
                     ToggleButton(
+                        checked = viewModel.filter == NotificationsFilterEnum.Mentions,
+                        onCheckedChange = {
+                            viewModel.changeFilter(NotificationsFilterEnum.Mentions)
+                        },
+                        colors = ToggleButtonDefaults.toggleButtonColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
+                        ),
+                        content = {
+                            Text(mentionsText)
+                        })
+
+                    Spacer(modifier = Modifier.width(12.dp))
+
+                    ToggleButton(
                         checked = viewModel.filter == NotificationsFilterEnum.Likes,
                         onCheckedChange = {
                             viewModel.changeFilter(NotificationsFilterEnum.Likes)
@@ -200,21 +204,6 @@ fun NotificationsComposable(
                             Text(repostsText)
                         })
 
-
-                    Spacer(modifier = Modifier.width(12.dp))
-
-                    ToggleButton(
-                        checked = viewModel.filter == NotificationsFilterEnum.Mentions,
-                        onCheckedChange = {
-                            viewModel.changeFilter(NotificationsFilterEnum.Mentions)
-                        },
-                        colors = ToggleButtonDefaults.toggleButtonColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
-                        ),
-                        content = {
-                            Text(mentionsText)
-                        })
-
                     Spacer(modifier = Modifier.width(12.dp))
                 }
 
@@ -237,7 +226,9 @@ fun NotificationsComposable(
                         modifier = Modifier.fillMaxSize()
                     ) {
                         if (viewModel.notificationsState.notifications.isNotEmpty()) {
-                            itemsIndexed(filteredNotifications, key = { _, it -> it.id }) { index, notification ->
+                            itemsIndexed(
+                                filteredNotifications,
+                                key = { _, it -> it.id }) { index, notification ->
                                 CustomNotification(
                                     notification = notification,
                                     navController = navController,

@@ -59,6 +59,12 @@ fun CustomAccentColorPref() {
                 Box(Modifier.height(32.dp).width(32.dp).clip(CircleShape).background(Color(AppAccentColor.BLUE)).clickable {
                     state.value = AppAccentColor.BLUE
                 })
+                Box(Modifier.height(32.dp).width(32.dp).clip(CircleShape).background(Color(AppAccentColor.YELLOW)).clickable {
+                    state.value = AppAccentColor.YELLOW
+                })
+                Box(Modifier.height(32.dp).width(32.dp).clip(CircleShape).background(Color(AppAccentColor.PINK)).clickable {
+                    state.value = AppAccentColor.PINK
+                })
                 val dark = MaterialTheme.colorScheme.background.luminance() < 0.5
                 Box(Modifier.height(32.dp).width(32.dp).clip(CircleShape).background(if (dark) {Color(AppAccentColor.White)} else {Color(0xFF5D5F5F)}).clickable {
                     state.value = AppAccentColor.White

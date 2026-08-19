@@ -280,6 +280,159 @@ private val redDarkScheme = darkColorScheme(
     surfaceContainerHighest = redSurfaceContainerHighestDark,
 )
 
+private val yellowLightScheme = lightColorScheme(
+    primary = yellowPrimaryLight,
+    onPrimary = yellowOnPrimaryLight,
+    primaryContainer = yellowPrimaryContainerLight,
+    onPrimaryContainer = yellowOnPrimaryContainerLight,
+    secondary = yellowSecondaryLight,
+    onSecondary = yellowOnSecondaryLight,
+    secondaryContainer = yellowSecondaryContainerLight,
+    onSecondaryContainer = yellowOnSecondaryContainerLight,
+    tertiary = yellowTertiaryLight,
+    onTertiary = yellowOnTertiaryLight,
+    tertiaryContainer = yellowTertiaryContainerLight,
+    onTertiaryContainer = yellowOnTertiaryContainerLight,
+    error = yellowErrorLight,
+    onError = yellowOnErrorLight,
+    errorContainer = yellowErrorContainerLight,
+    onErrorContainer = yellowOnErrorContainerLight,
+    background = yellowBackgroundLight,
+    onBackground = yellowOnBackgroundLight,
+    surface = yellowSurfaceLight,
+    onSurface = yellowOnSurfaceLight,
+    surfaceVariant = yellowSurfaceVariantLight,
+    onSurfaceVariant = yellowOnSurfaceVariantLight,
+    outline = yellowOutlineLight,
+    outlineVariant = yellowOutlineVariantLight,
+    scrim = yellowScrimLight,
+    inverseSurface = yellowInverseSurfaceLight,
+    inverseOnSurface = yellowInverseOnSurfaceLight,
+    inversePrimary = yellowInversePrimaryLight,
+    surfaceDim = yellowSurfaceDimLight,
+    surfaceBright = yellowSurfaceBrightLight,
+    surfaceContainerLowest = yellowSurfaceContainerLowestLight,
+    surfaceContainerLow = yellowSurfaceContainerLowLight,
+    surfaceContainer = yellowSurfaceContainerLight,
+    surfaceContainerHigh = yellowSurfaceContainerHighLight,
+    surfaceContainerHighest = yellowSurfaceContainerHighestLight,
+)
+
+private val yellowDarkScheme = darkColorScheme(
+    primary = yellowPrimaryDark,
+    onPrimary = yellowOnPrimaryDark,
+    primaryContainer = yellowPrimaryContainerDark,
+    onPrimaryContainer = yellowOnPrimaryContainerDark,
+    secondary = yellowSecondaryDark,
+    onSecondary = yellowOnSecondaryDark,
+    secondaryContainer = yellowSecondaryContainerDark,
+    onSecondaryContainer = yellowOnSecondaryContainerDark,
+    tertiary = yellowTertiaryDark,
+    onTertiary = yellowOnTertiaryDark,
+    tertiaryContainer = yellowTertiaryContainerDark,
+    onTertiaryContainer = yellowOnTertiaryContainerDark,
+    error = yellowErrorDark,
+    onError = yellowOnErrorDark,
+    errorContainer = yellowErrorContainerDark,
+    onErrorContainer = yellowOnErrorContainerDark,
+    background = yellowBackgroundDark,
+    onBackground = yellowOnBackgroundDark,
+    surface = yellowSurfaceDark,
+    onSurface = yellowOnSurfaceDark,
+    surfaceVariant = yellowSurfaceVariantDark,
+    onSurfaceVariant = yellowOnSurfaceVariantDark,
+    outline = yellowOutlineDark,
+    outlineVariant = yellowOutlineVariantDark,
+    scrim = yellowScrimDark,
+    inverseSurface = yellowInverseSurfaceDark,
+    inverseOnSurface = yellowInverseOnSurfaceDark,
+    inversePrimary = yellowInversePrimaryDark,
+    surfaceDim = yellowSurfaceDimDark,
+    surfaceBright = yellowSurfaceBrightDark,
+    surfaceContainerLowest = yellowSurfaceContainerLowestDark,
+    surfaceContainerLow = yellowSurfaceContainerLowDark,
+    surfaceContainer = yellowSurfaceContainerDark,
+    surfaceContainerHigh = yellowSurfaceContainerHighDark,
+    surfaceContainerHighest = yellowSurfaceContainerHighestDark,
+)
+
+
+private val pinkLightScheme = lightColorScheme(
+    primary = pinkPrimaryLight,
+    onPrimary = pinkOnPrimaryLight,
+    primaryContainer = pinkPrimaryContainerLight,
+    onPrimaryContainer = pinkOnPrimaryContainerLight,
+    secondary = pinkSecondaryLight,
+    onSecondary = pinkOnSecondaryLight,
+    secondaryContainer = pinkSecondaryContainerLight,
+    onSecondaryContainer = pinkOnSecondaryContainerLight,
+    tertiary = pinkTertiaryLight,
+    onTertiary = pinkOnTertiaryLight,
+    tertiaryContainer = pinkTertiaryContainerLight,
+    onTertiaryContainer = pinkOnTertiaryContainerLight,
+    error = pinkErrorLight,
+    onError = pinkOnErrorLight,
+    errorContainer = pinkErrorContainerLight,
+    onErrorContainer = pinkOnErrorContainerLight,
+    background = pinkBackgroundLight,
+    onBackground = pinkOnBackgroundLight,
+    surface = pinkSurfaceLight,
+    onSurface = pinkOnSurfaceLight,
+    surfaceVariant = pinkSurfaceVariantLight,
+    onSurfaceVariant = pinkOnSurfaceVariantLight,
+    outline = pinkOutlineLight,
+    outlineVariant = pinkOutlineVariantLight,
+    scrim = pinkScrimLight,
+    inverseSurface = pinkInverseSurfaceLight,
+    inverseOnSurface = pinkInverseOnSurfaceLight,
+    inversePrimary = pinkInversePrimaryLight,
+    surfaceDim = pinkSurfaceDimLight,
+    surfaceBright = pinkSurfaceBrightLight,
+    surfaceContainerLowest = pinkSurfaceContainerLowestLight,
+    surfaceContainerLow = pinkSurfaceContainerLowLight,
+    surfaceContainer = pinkSurfaceContainerLight,
+    surfaceContainerHigh = pinkSurfaceContainerHighLight,
+    surfaceContainerHighest = pinkSurfaceContainerHighestLight,
+)
+
+private val pinkDarkScheme = darkColorScheme(
+    primary = pinkPrimaryDark,
+    onPrimary = pinkOnPrimaryDark,
+    primaryContainer = pinkPrimaryContainerDark,
+    onPrimaryContainer = pinkOnPrimaryContainerDark,
+    secondary = pinkSecondaryDark,
+    onSecondary = pinkOnSecondaryDark,
+    secondaryContainer = pinkSecondaryContainerDark,
+    onSecondaryContainer = pinkOnSecondaryContainerDark,
+    tertiary = pinkTertiaryDark,
+    onTertiary = pinkOnTertiaryDark,
+    tertiaryContainer = pinkTertiaryContainerDark,
+    onTertiaryContainer = pinkOnTertiaryContainerDark,
+    error = pinkErrorDark,
+    onError = pinkOnErrorDark,
+    errorContainer = pinkErrorContainerDark,
+    onErrorContainer = pinkOnErrorContainerDark,
+    background = pinkBackgroundDark,
+    onBackground = pinkOnBackgroundDark,
+    surface = pinkSurfaceDark,
+    onSurface = pinkOnSurfaceDark,
+    surfaceVariant = pinkSurfaceVariantDark,
+    onSurfaceVariant = pinkOnSurfaceVariantDark,
+    outline = pinkOutlineDark,
+    outlineVariant = pinkOutlineVariantDark,
+    scrim = pinkScrimDark,
+    inverseSurface = pinkInverseSurfaceDark,
+    inverseOnSurface = pinkInverseOnSurfaceDark,
+    inversePrimary = pinkInversePrimaryDark,
+    surfaceDim = pinkSurfaceDimDark,
+    surfaceBright = pinkSurfaceBrightDark,
+    surfaceContainerLowest = pinkSurfaceContainerLowestDark,
+    surfaceContainerLow = pinkSurfaceContainerLowDark,
+    surfaceContainer = pinkSurfaceContainerDark,
+    surfaceContainerHigh = pinkSurfaceContainerHighDark,
+    surfaceContainerHighest = pinkSurfaceContainerHighestDark,
+)
+
 private val whiteLightScheme = lightColorScheme(
     primary = whitePrimaryLight,
     onPrimary = whiteOnPrimaryLight,
@@ -379,6 +532,8 @@ fun PixelixTheme(
         AppAccentColor.RED -> redDarkScheme
         AppAccentColor.BLUE -> blueDarkScheme
         AppAccentColor.White -> whiteDarkScheme
+        AppAccentColor.YELLOW -> yellowDarkScheme
+        AppAccentColor.PINK -> pinkDarkScheme
         else -> darkScheme
     }
 
@@ -387,6 +542,8 @@ fun PixelixTheme(
         AppAccentColor.RED -> redLightScheme
         AppAccentColor.BLUE -> blueLightScheme
         AppAccentColor.White -> whiteLightScheme
+        AppAccentColor.YELLOW -> yellowLightScheme
+        AppAccentColor.PINK -> pinkLightScheme
         else -> darkScheme
     }
     val useDynamicColors by prefs.useDynamicColorsFlow.collectAsState(prefs.useDynamicColors)

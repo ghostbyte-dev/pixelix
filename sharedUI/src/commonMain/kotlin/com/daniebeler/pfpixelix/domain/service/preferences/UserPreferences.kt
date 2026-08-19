@@ -69,8 +69,8 @@ class UserPreferences(private val dataStore: DataStore<Preferences>) {
     var appThemeMode by int("k_theme_mode", AppThemeMode.FOLLOW_SYSTEM)
     val appThemeModeFlow = intFlow("k_theme_mode", AppThemeMode.FOLLOW_SYSTEM)
 
-    var accentColor by long("k_accent_color", AppAccentColor.GREEN)
-    val accentColorFlow = longFlow("k_accent_color", AppAccentColor.GREEN)
+    var accentColor by string("k_accent_color_enum", AppAccentColor.GREEN.name)
+    val accentColorFlow = stringFlow("k_accent_color_enum", AppAccentColor.GREEN.name)
 
     var useDynamicColors by boolean("k_dynamic_colors", PlatformFeatures.supportsDynamicColors)
     val useDynamicColorsFlow = booleanFlow("k_dynamic_colors", PlatformFeatures.supportsDynamicColors)

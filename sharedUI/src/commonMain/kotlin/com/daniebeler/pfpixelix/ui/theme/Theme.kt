@@ -528,22 +528,22 @@ fun PixelixTheme(
     val accentColor by prefs.accentColorFlow.collectAsState(prefs.accentColor)
 
     val darkColorScheme = when (accentColor) {
-        AppAccentColor.GREEN -> darkScheme
-        AppAccentColor.RED -> redDarkScheme
-        AppAccentColor.BLUE -> blueDarkScheme
-        AppAccentColor.White -> whiteDarkScheme
-        AppAccentColor.YELLOW -> yellowDarkScheme
-        AppAccentColor.PINK -> pinkDarkScheme
+        AppAccentColor.GREEN.name -> darkScheme
+        AppAccentColor.RED.name -> redDarkScheme
+        AppAccentColor.BLUE.name -> blueDarkScheme
+        AppAccentColor.WHITE.name -> whiteDarkScheme
+        AppAccentColor.YELLOW.name -> yellowDarkScheme
+        AppAccentColor.PINK.name -> pinkDarkScheme
         else -> darkScheme
     }
 
     val lightColorScheme = when (accentColor) {
-        AppAccentColor.GREEN -> lightScheme
-        AppAccentColor.RED -> redLightScheme
-        AppAccentColor.BLUE -> blueLightScheme
-        AppAccentColor.White -> whiteLightScheme
-        AppAccentColor.YELLOW -> yellowLightScheme
-        AppAccentColor.PINK -> pinkLightScheme
+        AppAccentColor.GREEN.name -> lightScheme
+        AppAccentColor.RED.name -> redLightScheme
+        AppAccentColor.BLUE.name -> blueLightScheme
+        AppAccentColor.WHITE.name -> whiteLightScheme
+        AppAccentColor.YELLOW.name -> yellowLightScheme
+        AppAccentColor.PINK.name -> pinkLightScheme
         else -> darkScheme
     }
     val useDynamicColors by prefs.useDynamicColorsFlow.collectAsState(prefs.useDynamicColors)

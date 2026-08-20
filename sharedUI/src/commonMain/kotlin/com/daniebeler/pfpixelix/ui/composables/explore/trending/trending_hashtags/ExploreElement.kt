@@ -64,10 +64,19 @@ fun ExploreGridElement(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(vertical = 12.dp, horizontal = 12.dp).fillMaxWidth()
         ) {
-            Text(text = title, fontWeight = FontWeight.Bold, fontSize = 18.sp)
+            Text(
+                text = title,
+                fontWeight = FontWeight.Bold,
+                fontSize = 18.sp,
+                modifier = Modifier.weight(1f, fill = false)
+            )
             if (subtitle != null) {
                 Text(
-                    text = "  • $subtitle", fontSize = 12.sp, color = MaterialTheme.colorScheme.secondary
+                    text = "  • $subtitle",
+                    fontSize = 12.sp,
+                    color = MaterialTheme.colorScheme.secondary,
+                    maxLines = 1,
+                    softWrap = false
                 )
             }
         }

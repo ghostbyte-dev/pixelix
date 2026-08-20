@@ -1,26 +1,12 @@
 package com.daniebeler.pfpixelix.ui.composables.explore.trending.cameras
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.di.injectViewModel
+import com.daniebeler.pfpixelix.ui.composables.explore.trending.PagePaginatedListScreen
 import com.daniebeler.pfpixelix.ui.composables.explore.trending.trending_hashtags.ExploreGridElement
-import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
-import com.daniebeler.pfpixelix.ui.composables.states.EmptyStateComposable
-import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
-import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
-import com.daniebeler.pfpixelix.ui.composables.widgets.CustomPullToRefreshBox
-import com.daniebeler.pfpixelix.ui.composables.widgets.InfiniteListHandler
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import com.daniebeler.pfpixelix.utils.StringFormat
 import org.jetbrains.compose.resources.pluralStringResource
@@ -35,70 +21,20 @@ fun CamerasComposable(
     navController: NavController,
     viewModel: CamerasViewModel = injectViewModel(key = "cameras-key") { camerasViewModel }
 ) {
-    val lazyListState = rememberLazyListState()
-
-    CustomPullToRefreshBox(
-        isRefreshing = viewModel.camerasState.isRefreshing,
-        onRefresh = { viewModel.getCameras(true) },
-        animatedBox = true
-    ) {
-        LazyColumn(
-            state = lazyListState,
-            modifier = Modifier.fillMaxSize().padding(horizontal = 4.dp),
-            contentPadding = PaddingValues(top = 32.dp, bottom = 72.dp),
-            verticalArrangement = Arrangement.spacedBy(20.dp),
-            content = {
-                items(viewModel.camerasState.cameras, key = {
-                    it.id
-                }) {
-                    ExploreGridElement(
-                        keyId = it.name,
-                        title = it.name,
-                        subtitle = "${StringFormat.groupDigits(it.amount)} ${
-                            pluralStringResource(
-                                Res.plurals.posts, it.amount
-                            )
-                        }",
-                        onClick = {
-                            navController.navigate(Destination.CameraTimeline(it.name))
-                        },
-                        fetcher = { camera ->
-                            viewModel.timelineService.getCameraTimeline(
-                                camera, limit = 39
-                            )
-                        },
-                        navController = navController
-                    )
-                }
-
-                if (viewModel.camerasState.isLoading && viewModel.camerasState.cameras.isNotEmpty()) {
-                    item {
-                        LoadingComposable()
-                    }
-                }
-            })
-
-        if (viewModel.camerasState.cameras.isEmpty()) {
-            if (viewModel.camerasState.isLoading && !viewModel.camerasState.isRefreshing) {
-                LoadingComposable()
-            }
-
-            if (viewModel.camerasState.error.isNotEmpty()) {
-                ErrorComposable(
-                    message = viewModel.camerasState.error,
-                    modifier = Modifier.fillMaxSize().padding(36.dp, 20.dp)
-                )
-            }
-
-            if (!viewModel.camerasState.isLoading && viewModel.camerasState.error.isEmpty()) {
-                EmptyStateComposable(EmptyState(heading = stringResource(Res.string.no_cameras)))
-            }
-        }
-    }
-
-    InfiniteListHandler(
-        lazyListState = lazyListState
-    ) {
-        viewModel.getCamerasPaginated()
+    PagePaginatedListScreen(
+        state = viewModel.pagePaginatedState,
+        onRefresh = { viewModel.getItems(true) },
+        onLoadMore = { viewModel.getItemsPaginated() },
+        emptyMessage = stringResource(Res.string.no_cameras),
+        itemKey = { it.id }
+    ) { camera ->
+        ExploreGridElement(
+            keyId = camera.name,
+            title = camera.name,
+            subtitle = "${StringFormat.groupDigits(camera.amount)} ${pluralStringResource(Res.plurals.posts, camera.amount)}",
+            onClick = { navController.navigate(Destination.CameraTimeline(camera.name)) },
+            fetcher = { viewModel.timelineService.getCameraTimeline(it, limit = 39) },
+            navController = navController
+        )
     }
 }

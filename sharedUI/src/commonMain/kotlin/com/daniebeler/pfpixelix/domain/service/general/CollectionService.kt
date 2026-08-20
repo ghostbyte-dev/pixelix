@@ -3,7 +3,6 @@ package com.daniebeler.pfpixelix.domain.service.general
 import com.daniebeler.pfpixelix.di.AppSingleton
 import com.daniebeler.pfpixelix.domain.model.Collection
 import com.daniebeler.pfpixelix.domain.model.Post
-import com.daniebeler.pfpixelix.domain.service.pixelfed.PixelfedAccountService
 import com.daniebeler.pfpixelix.domain.service.pixelfed.PixelfedCollectionService
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import kotlinx.coroutines.flow.Flow

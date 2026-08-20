@@ -4,6 +4,7 @@ import com.daniebeler.pfpixelix.domain.repository.vernissage.VernissageApi
 import com.daniebeler.pfpixelix.domain.service.general.TimelineService
 import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
 import com.daniebeler.pfpixelix.domain.service.utils.loadVernissagePaginatedListResources
+import io.ktor.http.encodeURLPath
 import me.tatarka.inject.annotations.Inject
 
 @Inject
@@ -46,7 +47,7 @@ class VernissageTimelineService(
         maxId: String?,
         limit: Int
     ) = loadVernissagePaginatedListResources {
-        api.getCameraTimeline(camera, maxId, limit)
+        api.getCameraTimeline(camera.encodeURLPath(encodeSlash = true), maxId, limit)
     }.filterSensitive(prefs.hideSensitiveContent)
 
     override fun getLensTimeline(
@@ -54,7 +55,8 @@ class VernissageTimelineService(
         maxId: String?,
         limit: Int
     ) = loadVernissagePaginatedListResources {
-        api.getLensTimeline(lens, maxId, limit)
+
+        api.getLensTimeline(lens.encodeURLPath(encodeSlash = true), maxId, limit)
     }.filterSensitive(prefs.hideSensitiveContent)
 
     override fun getFilmTimeline(
@@ -62,6 +64,6 @@ class VernissageTimelineService(
         maxId: String?,
         limit: Int
     ) = loadVernissagePaginatedListResources {
-        api.getFilmTimeline(film, maxId, limit)
+        api.getFilmTimeline(film.encodeURLPath(encodeSlash = true), maxId, limit)
     }.filterSensitive(prefs.hideSensitiveContent)
 }

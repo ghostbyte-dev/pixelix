@@ -78,21 +78,21 @@ interface VernissageApi {
 
     @GET("api/v1/timelines/camera/{camera}")
     suspend fun getCameraTimeline(
-        @Path("camera") camera: String,
+        @Path("camera", encoded = true) camera: String,
         @Query("maxId") maxPostId: String? = null,
         @Query("limit") limit: Int = HASHTAG_TIMELINE_POSTS_LIMIT
     ): VernissagePaginatedResponse<VernissagePostDto>
 
     @GET("api/v1/timelines/lens/{lens}")
     suspend fun getLensTimeline(
-        @Path("lens") lens: String,
+        @Path("lens", encoded = true) lens: String,
         @Query("maxId") maxPostId: String? = null,
         @Query("limit") limit: Int = HASHTAG_TIMELINE_POSTS_LIMIT
     ): VernissagePaginatedResponse<VernissagePostDto>
 
     @GET("api/v1/timelines/film/{film}")
     suspend fun getFilmTimeline(
-        @Path("film") film: String,
+        @Path("film", encoded = true) film: String,
         @Query("maxId") maxPostId: String? = null,
         @Query("limit") limit: Int = HASHTAG_TIMELINE_POSTS_LIMIT
     ): VernissagePaginatedResponse<VernissagePostDto>

@@ -1,0 +1,19 @@
+info:
+  name: Lens timeline
+  type: http
+  seq: 3
+
+http:
+  method: GET
+  url: https://vernissage.photos/api/v1/timelines/lens/Google%20Pixel%207%20back%20camera%206.81mm%20f/1.85?limit=20
+  params:
+    - name: limit
+      value: "20"
+      type: query
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5

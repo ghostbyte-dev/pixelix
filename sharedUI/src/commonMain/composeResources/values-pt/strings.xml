@@ -18,7 +18,9 @@
     <string name="follow">Seguir</string>
     <string name="unfollow">Deixar de seguir</string>
     <string name="followers">Seguidores</string>
-    <string name="following">Seguindo</string>
+    <plurals name="following">
+        <item quantity="one">Seguindo</item>
+    </plurals>
     <string name="posts">Publicações</string>
     <string name="hashtags">Etiquetas</string>
     <string name="reblogged_your_post">impulsionou a tua publicação</string>

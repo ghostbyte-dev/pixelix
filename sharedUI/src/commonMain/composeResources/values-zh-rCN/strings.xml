@@ -268,4 +268,5 @@
     <string name="terrorism">恐怖主义</string>
     <string name="reported">已举报</string>
     <string name="delete_account">删除帐户</string>
+    <string name="posts_title">帖子</string>
 </resources>

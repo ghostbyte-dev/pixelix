@@ -16,7 +16,9 @@
     <string name="follow">Seuraa</string>
     <string name="unfollow">Lopeta seuraaminen</string>
     <string name="followers">Seuraajat</string>
-    <string name="following">Seurataan</string>
+    <plurals name="following">
+        <item quantity="one">Seurataan</item>
+    </plurals>
     <plurals name="posts">
         <item quantity="one">Julkaisu</item>
         <item quantity="other">Julkaisua</item>

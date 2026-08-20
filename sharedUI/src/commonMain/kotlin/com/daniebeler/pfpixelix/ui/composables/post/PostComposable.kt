@@ -798,9 +798,9 @@ private fun PostActionBar(
 
                 metadata.lens?.let {
                     MetadataItem(
-                        icon = Res.drawable.lens,
-                        value = it,
-                        onClick = { navController.navigate(Destination.LensTimeline(it)) })
+                        icon = Res.drawable.lens, value = it, onClick = {
+                            navController.navigate(Destination.LensTimeline(it))
+                        })
                 }
                 listOfNotNull(
                     metadata.focalLength?.let { "${it}mm" },

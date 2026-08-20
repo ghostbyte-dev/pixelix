@@ -18,7 +18,9 @@
     <string name="follow">Подписаться</string>
     <string name="unfollow">Отписаться</string>
     <string name="followers">Подписчиков</string>
-    <string name="following">В читаемых</string>
+    <plurals name="following">
+        <item quantity="one">В читаемых</item>
+    </plurals>
     <string name="posts">Записей</string>
     <string name="hashtags">Хештеги</string>
     <string name="reblogged_your_post">переопубликовал вашу запись</string>

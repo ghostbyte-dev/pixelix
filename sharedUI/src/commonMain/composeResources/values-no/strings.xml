@@ -17,7 +17,9 @@
     <string name="follow">Følg</string>
     <string name="unfollow">Avfølg</string>
     <string name="followers">Følgere</string>
-    <string name="following">Følger</string>
+    <plurals name="following">
+        <item quantity="one">Følger</item>
+    </plurals>
     <string name="posts">Innlegg</string>
     <string name="hashtags">Emneknagger</string>
     <string name="accounts">Accounts</string>

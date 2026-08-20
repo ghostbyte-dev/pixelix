@@ -22,7 +22,9 @@
         <item quantity="one">Volger</item>
         <item quantity="other">Volgers</item>
     </plurals>
-    <string name="following">Gevolgd</string>
+    <plurals name="following">
+        <item quantity="one">Gevolgd</item>
+    </plurals>
     <string name="posts">Berichten</string>
     <string name="reblogged_your_post">deelde je bericht</string>
     <string name="liked_your_post">vond je bericht leuk</string>

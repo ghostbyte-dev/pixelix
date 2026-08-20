@@ -18,7 +18,10 @@
     <string name="follow">Följ</string>
     <string name="unfollow">Sluta följa</string>
     <string name="followers">Följare</string>
-    <string name="following">Följer</string>
+    <plurals name="following">
+        <item quantity="one">Följer</item>
+        <item quantity="other">Följer</item>
+    </plurals>
     <plurals name="posts">
         <item quantity="one">Inlägg</item>
         <item quantity="other">Inlägg</item>

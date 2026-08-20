@@ -18,7 +18,9 @@
     <string name="follow">متابعة</string>
     <string name="unfollow">إلغاء المُتابعة</string>
     <string name="followers">متابِعون</string>
-    <string name="following">يتابع</string>
+    <plurals name="following">
+        <item quantity="zero">يتابع</item>
+    </plurals>
     <string name="posts">المنشورات</string>
     <string name="hashtags">الوسوم</string>
     <string name="followed_you">قد تابعك</string>

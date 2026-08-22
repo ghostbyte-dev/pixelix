@@ -310,4 +310,12 @@
     <string name="caption_template">Modelo de legenda</string>
     <string name="send">Enviar</string>
     <string name="default_visibility">Visibilidade padrão</string>
+    <string name="posts_title">Publicações</string>
+    <string name="trending_accounts">Perfis em destaque</string>
+    <string name="trending_hashtags">Hashtags em alta</string>
+    <string name="no_categories">Nenhuma categoria</string>
+    <string name="no_cameras">Nenhuma câmera</string>
+    <string name="no_lenses">Nenhuma lente</string>
+    <string name="no_films">Nenhum filme</string>
+    <string name="joined_date">Entrou %1$s</string>
 </resources>

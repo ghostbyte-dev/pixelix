@@ -2,11 +2,11 @@
 <resources>
     <string name="notifications">Notifiche</string>
     <string name="settings">Impostazioni</string>
-    <string name="liked_posts">Post Piaciuti</string>
-    <string name="bookmarked_posts">Post Salvati</string>
-    <string name="followed_hashtags">Hashtag Seguiti</string>
-    <string name="blocked_accounts">Account Bloccati</string>
-    <string name="muted_accounts">Account Silenziati</string>
+    <string name="liked_posts">Post piaciuti</string>
+    <string name="bookmarked_posts">Post salvati</string>
+    <string name="followed_hashtags">Hashtag seguiti</string>
+    <string name="blocked_accounts">Account bloccati</string>
+    <string name="muted_accounts">Account silenziati</string>
     <string name="logout">Esci</string>
     <string name="open_in_browser">Apri nel browser</string>
     <string name="share_this_profile">Condividi questo profilo</string>
@@ -26,6 +26,7 @@
     <string name="following">Seguiti</string>
     <plurals name="following">
         <item quantity="one">Seguito</item>
+        <item quantity="many">Seguiti</item>
         <item quantity="other">Seguiti</item>
     </plurals>
     <plurals name="posts">
@@ -36,7 +37,7 @@
     <string name="hashtags">Hashtag</string>
     <string name="reblogged_your_post">ha ricondiviso il tuo post</string>
     <string name="liked_your_post">ha messo mi piace al tuo post</string>
-    <string name="followed_you">ti ha iniziato a seguire</string>
+    <string name="followed_you">ha iniziato a seguirti</string>
     <string name="share_this_post">Condividi questo post</string>
     <string name="trending">In tendenza</string>
     <string name="accounts">Account</string>
@@ -132,7 +133,7 @@
     <string name="mastodon_description">Mastodon è una piattaforma di microblogging libera e open source</string>
     <string name="peertube_description">PeerTube è uno strumento per condividere video online sviluppato da Framasoft, una non-profit francese.</string>
     <string name="lemmy_description">Lemmy è un aggregatore social di link e di discussioni autogestito. È completamente libero e aperto, e non è controllato da nessuna azienda. Questo vuol dire che non ci sono pubblicità, tracciamento o algoritmi segreti. Il contenuto è organizzato in comunità, quindi è facile iscriversi ad argomenti ai quali sei interessato e ignorarne gli altri. La votazione viene usata per portare gli elementi più interessanti in alto.</string>
-    <string name="threads_description">Threads è un'app di Meta dove puoi vedere e condividere conversazioni pubbliche. Puoi anche pubblicare "threads" rispondere agli altri e seguire i profili ai quali sei interessato.</string>
+    <string name="threads_description">Threads è un'app di Meta dove puoi vedere e condividere conversazioni pubbliche. Puoi anche pubblicare post, rispondere agli altri e seguire i profili ai quali sei interessato.</string>
     <string name="more_information">Più informazioni</string>
     <string name="what_makes_a_post_trend">Cosa fa andare in tendenza un post?</string>
     <string name="trending_post_description">I post vanno in tendenza se sono stati pubblicati durante il periodo di tempo selezionato e se hanno molti mi piace.</string>
@@ -344,4 +345,55 @@
     <string name="compress">Comprimi</string>
     <string name="compressing">Compressione...</string>
     <string name="default_license">Licenza predefinita</string>
+    <string name="posts_title">Post</string>
+    <string name="trending_accounts">Profili di tendenza</string>
+    <string name="trending_hashtags">Hashtag di tendenza</string>
+    <string name="trending_posts">Post di tendenza</string>
+    <string name="no_categories">Nessuna categoria</string>
+    <string name="no_cameras">Nessuna fotocamera</string>
+    <string name="no_lenses">Nessuna lente</string>
+    <string name="no_films">Nessuna pellicola</string>
+    <plurals name="seconds_ago">
+        <item quantity="one">%1$d secondo fa</item>
+        <item quantity="many">%1$d secondi fa</item>
+        <item quantity="other">%1$d secondi fa</item>
+    </plurals>
+    <plurals name="minutes_ago">
+        <item quantity="one">%1$d minuto fa</item>
+        <item quantity="many">%1$d minuti fa</item>
+        <item quantity="other">%1$d minuti fa</item>
+    </plurals>
+    <plurals name="hours_ago">
+        <item quantity="one">%1$d ora fa</item>
+        <item quantity="many">%1$d ore fa</item>
+        <item quantity="other">%1$d ore fa</item>
+    </plurals>
+    <plurals name="days_ago">
+        <item quantity="one">%1$d giorno fa</item>
+        <item quantity="many">%1$d giorni fa</item>
+        <item quantity="other">%1$d giorni fa</item>
+    </plurals>
+    <plurals name="weeks_ago">
+        <item quantity="one">%1$d settimana fa</item>
+        <item quantity="many">%1$d settimane fa</item>
+        <item quantity="other">%1$d settimane fa</item>
+    </plurals>
+    <plurals name="months_ago">
+        <item quantity="one">%1$d mese fa</item>
+        <item quantity="many">%1$d mesi fa</item>
+        <item quantity="other">%1$d mesi fa</item>
+    </plurals>
+    <plurals name="years_ago">
+        <item quantity="one">%1$d anno fa</item>
+        <item quantity="many">%1$d anni fa</item>
+        <item quantity="other">%1$d anni fa</item>
+    </plurals>
+    <string name="fields">Campi</string>
+    <string name="add_field">Aggiungi campo</string>
+    <string name="key">Chiave</string>
+    <string name="value">Valore</string>
+    <string name="content_settings">Preferenze contenuto</string>
+    <string name="app_customization">Personalizzazione app</string>
+    <string name="new_post_settings">Impostazioni nuovo post</string>
+    <string name="use_dynamic_colors">Usa colori dinamici</string>
 </resources>

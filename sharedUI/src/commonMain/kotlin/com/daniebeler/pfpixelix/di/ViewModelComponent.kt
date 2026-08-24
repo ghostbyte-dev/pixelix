@@ -13,6 +13,7 @@ import com.daniebeler.pfpixelix.ui.composables.edit_profile.EditProfileViewModel
 import com.daniebeler.pfpixelix.ui.composables.explore.ExploreViewModel
 import com.daniebeler.pfpixelix.ui.composables.explore.trending.cameras.CamerasViewModel
 import com.daniebeler.pfpixelix.ui.composables.explore.trending.categories.CategoriesViewModel
+import com.daniebeler.pfpixelix.ui.composables.explore.trending.editors_choice_accounts.EditorsChoiceAccountsViewModel
 import com.daniebeler.pfpixelix.ui.composables.explore.trending.films.FilmsViewModel
 import com.daniebeler.pfpixelix.ui.composables.explore.trending.lenses.LensesViewModel
 import com.daniebeler.pfpixelix.ui.composables.explore.trending.trending_accounts.TrendingAccountElementViewModel
@@ -89,6 +90,7 @@ abstract class ViewModelComponent(
     abstract val trendingAccountsViewModel: TrendingAccountsViewModel
     abstract val trendingHashtagElementViewModel: TrendingHashtagElementViewModel
     abstract val trendingHashtagsViewModel: TrendingHashtagsViewModel
+    abstract val editorsChoiceAccountsViewModel: EditorsChoiceAccountsViewModel
     abstract val camerasViewModel: CamerasViewModel
     abstract val trendingPostsViewModel: TrendingPostsViewModel
     abstract val categoriesViewModel: CategoriesViewModel

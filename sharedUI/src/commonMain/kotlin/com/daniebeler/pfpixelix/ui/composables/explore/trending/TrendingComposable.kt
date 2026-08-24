@@ -34,6 +34,7 @@ import com.daniebeler.pfpixelix.ui.composables.SheetItem
 import com.daniebeler.pfpixelix.ui.composables.explore.ExploreViewModel
 import com.daniebeler.pfpixelix.ui.composables.explore.trending.cameras.CamerasComposable
 import com.daniebeler.pfpixelix.ui.composables.explore.trending.categories.CategoriesComposable
+import com.daniebeler.pfpixelix.ui.composables.explore.trending.editors_choice_accounts.EditorsChoiceAccountsComposable
 import com.daniebeler.pfpixelix.ui.composables.explore.trending.editors_choice_posts.EditorsChoicePostsComposable
 import com.daniebeler.pfpixelix.ui.composables.explore.trending.films.FilmsComposable
 import com.daniebeler.pfpixelix.ui.composables.explore.trending.lenses.LensesComposable
@@ -109,7 +110,7 @@ fun TrendingComposable(
                 }
 
                 4 -> Box(modifier = Modifier.fillMaxSize()) {
-                    EditorsChoicePostsComposable(navController = navController)
+                    EditorsChoiceAccountsComposable(navController = navController)
                 }
 
                 5 -> Box(modifier = Modifier.fillMaxSize()) {

@@ -34,6 +34,7 @@ import com.daniebeler.pfpixelix.ui.composables.SheetItem
 import com.daniebeler.pfpixelix.ui.composables.explore.ExploreViewModel
 import com.daniebeler.pfpixelix.ui.composables.explore.trending.cameras.CamerasComposable
 import com.daniebeler.pfpixelix.ui.composables.explore.trending.categories.CategoriesComposable
+import com.daniebeler.pfpixelix.ui.composables.explore.trending.editors_choice_posts.EditorsChoicePostsComposable
 import com.daniebeler.pfpixelix.ui.composables.explore.trending.films.FilmsComposable
 import com.daniebeler.pfpixelix.ui.composables.explore.trending.lenses.LensesComposable
 import com.daniebeler.pfpixelix.ui.composables.explore.trending.trending_accounts.TrendingAccountsComposable
@@ -76,7 +77,7 @@ fun TrendingComposable(
 
     val pagerState = rememberPagerState(
         initialPage = initialPage,
-        pageCount = { if (viewModel.capabilities.value.trending.supportsAdvancedCategories) 7 else 4 })
+        pageCount = { if (viewModel.capabilities.value.trending.supportsAdvancedCategories) 9 else 4 })
 
     val scope = rememberCoroutineScope()
 
@@ -104,18 +105,26 @@ fun TrendingComposable(
                 }
 
                 3 -> Box(modifier = Modifier.fillMaxSize()) {
-                    CategoriesComposable(navController = navController)
+                    EditorsChoicePostsComposable(navController = navController)
                 }
 
                 4 -> Box(modifier = Modifier.fillMaxSize()) {
-                    CamerasComposable(navController = navController)
+                    EditorsChoicePostsComposable(navController = navController)
                 }
 
                 5 -> Box(modifier = Modifier.fillMaxSize()) {
-                    LensesComposable(navController = navController)
+                    CategoriesComposable(navController = navController)
                 }
 
                 6 -> Box(modifier = Modifier.fillMaxSize()) {
+                    CamerasComposable(navController = navController)
+                }
+
+                7 -> Box(modifier = Modifier.fillMaxSize()) {
+                    LensesComposable(navController = navController)
+                }
+
+                8 -> Box(modifier = Modifier.fillMaxSize()) {
                     FilmsComposable(navController = navController)
                 }
 
@@ -164,7 +173,7 @@ fun TrendingComposable(
 
             if (viewModel.capabilities.value.trending.supportsAdvancedCategories) {
                 Tab(
-                    text = { Text("Categories") },
+                    text = { Text("Editor's choice: Posts") },
                     selected = pagerState.currentPage == 3,
                     selectedContentColor = MaterialTheme.colorScheme.primary,
                     unselectedContentColor = MaterialTheme.colorScheme.onSurface,
@@ -175,7 +184,7 @@ fun TrendingComposable(
                     })
 
                 Tab(
-                    text = { Text("Cameras") },
+                    text = { Text("Editor's choice: Accounts") },
                     selected = pagerState.currentPage == 4,
                     selectedContentColor = MaterialTheme.colorScheme.primary,
                     unselectedContentColor = MaterialTheme.colorScheme.onSurface,
@@ -186,7 +195,7 @@ fun TrendingComposable(
                     })
 
                 Tab(
-                    text = { Text("Lenses") },
+                    text = { Text("Categories") },
                     selected = pagerState.currentPage == 5,
                     selectedContentColor = MaterialTheme.colorScheme.primary,
                     unselectedContentColor = MaterialTheme.colorScheme.onSurface,
@@ -197,13 +206,35 @@ fun TrendingComposable(
                     })
 
                 Tab(
-                    text = { Text("Films") },
+                    text = { Text("Cameras") },
                     selected = pagerState.currentPage == 6,
                     selectedContentColor = MaterialTheme.colorScheme.primary,
                     unselectedContentColor = MaterialTheme.colorScheme.onSurface,
                     onClick = {
                         scope.launch {
                             pagerState.animateScrollToPage(6)
+                        }
+                    })
+
+                Tab(
+                    text = { Text("Lenses") },
+                    selected = pagerState.currentPage == 7,
+                    selectedContentColor = MaterialTheme.colorScheme.primary,
+                    unselectedContentColor = MaterialTheme.colorScheme.onSurface,
+                    onClick = {
+                        scope.launch {
+                            pagerState.animateScrollToPage(7)
+                        }
+                    })
+
+                Tab(
+                    text = { Text("Films") },
+                    selected = pagerState.currentPage == 8,
+                    selectedContentColor = MaterialTheme.colorScheme.primary,
+                    unselectedContentColor = MaterialTheme.colorScheme.onSurface,
+                    onClick = {
+                        scope.launch {
+                            pagerState.animateScrollToPage(8)
                         }
                     })
             }

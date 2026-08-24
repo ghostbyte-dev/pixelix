@@ -45,6 +45,8 @@ interface ExploreService {
 
     fun unfollowHashtag(tagId: String): Flow<Resource<Unit>>
 
+    fun getEditorsChoicePosts(maxId: String? = null): Flow<Resource<PaginatedResponse<Post>>>
+    fun getEditorsChoiceAccounts(maxId: String? = null): Flow<Resource<PaginatedResponse<Account>>>
     fun getCategories(): Flow<Resource<List<Category>>>
     fun getCameras(page: Int = 1, size: Int = 20): Flow<Resource<PagePaginatedResponse<Camera>>>
     fun getLenses(page: Int = 1, size: Int = 20): Flow<Resource<PagePaginatedResponse<Lens>>>
@@ -103,6 +105,12 @@ class ExploreServiceDelegate(
     override fun followHashtag(tagId: String): Flow<Resource<Tag>> = current.followHashtag(tagId)
 
     override fun unfollowHashtag(tagId: String): Flow<Resource<Unit>> = current.unfollowHashtag(tagId)
+
+    override fun getEditorsChoicePosts(maxId: String?): Flow<Resource<PaginatedResponse<Post>>> =
+        current.getEditorsChoicePosts(maxId)
+
+    override fun getEditorsChoiceAccounts(maxId: String?): Flow<Resource<PaginatedResponse<Account>>> =
+        current.getEditorsChoiceAccounts(maxId)
 
     override fun getCategories(): Flow<Resource<List<Category>>> = current.getCategories()
 

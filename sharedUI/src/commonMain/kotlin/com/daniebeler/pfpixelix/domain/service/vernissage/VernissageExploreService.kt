@@ -32,9 +32,10 @@ import kotlin.collections.emptyList
 class VernissageExploreService(
     private val prefs: UserPreferences, private val api: VernissageApi
 ) : ExploreService {
-    override fun getTrendingAccounts(range: TrendingRange, maxId: String?) = loadVernissagePaginatedListResources {
-        api.getTrendingUsers(range.toApiString(), maxId = maxId)
-    }
+    override fun getTrendingAccounts(range: TrendingRange, maxId: String?) =
+        loadVernissagePaginatedListResources {
+            api.getTrendingUsers(range.toApiString(), maxId = maxId)
+        }
 
     override fun getTrendingPosts(range: TrendingRange, maxId: String?) =
         loadVernissagePaginatedListResources {
@@ -62,16 +63,17 @@ class VernissageExploreService(
     }
 
     override fun searchLocations(searchText: String, countryCode: String?) = loadListResources {
-        api.getLocations(countryCode,searchText).map { it.toDomain() }
+        api.getLocations(countryCode, searchText).map { it.toDomain() }
     }
 
     override fun getAllCountries(): Flow<Resource<List<Country>>> = loadResource {
         api.getCountries().map { it.toDomain() }
     }
 
-    override fun getTrendingHashtags(range: TrendingRange, maxId: String?) = loadVernissagePaginatedListResources {
-        api.getTrendingHashtags(range.toApiString(), maxId)
-    }
+    override fun getTrendingHashtags(range: TrendingRange, maxId: String?) =
+        loadVernissagePaginatedListResources {
+            api.getTrendingHashtags(range.toApiString(), maxId)
+        }
 
     override fun getFollowedHashtags() = loadListResources {
         api.getFollowedHashtags().map { it.toDomain() }.map { it.copy(following = true) }
@@ -109,6 +111,14 @@ class VernissageExploreService(
 
     override fun unfollowHashtag(tagId: String) = loadResource {
         api.unfollowHashtag(tagId)
+    }
+
+    override fun getEditorsChoicePosts(maxId: String?) = loadVernissagePaginatedListResources {
+        api.getEditorsChoicePosts(maxId)
+    }.filterSensitive(prefs.hideSensitiveContent)
+
+    override fun getEditorsChoiceAccounts(maxId: String?) = loadVernissagePaginatedListResources {
+        api.getEditorsChoiceAccounts(maxId)
     }
 
     override fun getCategories(): Flow<Resource<List<Category>>> = loadListResources {

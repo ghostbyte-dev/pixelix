@@ -1,5 +1,6 @@
 package com.daniebeler.pfpixelix.domain.service.pixelfed
 
+import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.model.Camera
 import com.daniebeler.pfpixelix.domain.model.Category
 import com.daniebeler.pfpixelix.domain.model.Country
@@ -7,6 +8,7 @@ import com.daniebeler.pfpixelix.domain.model.Film
 import com.daniebeler.pfpixelix.domain.model.Lens
 import com.daniebeler.pfpixelix.domain.model.License
 import com.daniebeler.pfpixelix.domain.model.PagePaginatedResponse
+import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.repository.pixelfed.PixelfedApi
 import com.daniebeler.pfpixelix.domain.service.general.ExploreService
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.toDomain
@@ -84,6 +86,18 @@ class PixelfedExploreService(
     override fun unfollowHashtag(tagId: String) = loadResource {
         api.unfollowHashtag(tagId)
         Unit
+    }
+
+    override fun getEditorsChoicePosts(
+        maxId: String?,
+    ) = loadPaginatedListResources<Post> {
+        emptyList()
+    }
+
+    override fun getEditorsChoiceAccounts(
+        maxId: String?,
+    ) = loadPaginatedListResources<Account> {
+        emptyList()
     }
 
     override fun getCategories(): Flow<Resource<List<Category>>> = loadListResources {

@@ -130,6 +130,18 @@ interface VernissageApi {
         @Query("limit") limit: Int = TRENDING_TIMELINE_POSTS_LIMIT
     ): VernissagePaginatedResponse<VernissageTagDto>
 
+    @GET("api/v1/timelines/featured-statuses")
+    suspend fun getEditorsChoicePosts(
+        @Query("maxId") maxId: String? = null,
+        @Query("limit") limit: Int = TRENDING_TIMELINE_POSTS_LIMIT
+    ): VernissagePaginatedResponse<VernissagePostDto>
+
+    @GET("api/v1/timelines/featured-users")
+    suspend fun getEditorsChoiceAccounts(
+        @Query("maxId") maxId: String? = null,
+        @Query("limit") limit: Int = TRENDING_TIMELINE_POSTS_LIMIT
+    ): VernissagePaginatedResponse<VernissageAccountDto>
+
     @GET("api/v1/cameras")
     suspend fun getCameras(
         @Query("page") page: Int = 1,

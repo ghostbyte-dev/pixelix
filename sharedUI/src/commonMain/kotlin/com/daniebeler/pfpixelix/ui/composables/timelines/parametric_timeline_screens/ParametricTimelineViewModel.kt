@@ -2,6 +2,7 @@ package com.daniebeler.pfpixelix.ui.composables.timelines.parametric_timeline_sc
 
 import com.daniebeler.pfpixelix.domain.model.PaginatedResponse
 import com.daniebeler.pfpixelix.domain.model.Post
+import com.daniebeler.pfpixelix.domain.service.general.ExploreService
 import com.daniebeler.pfpixelix.domain.service.general.PostService
 import com.daniebeler.pfpixelix.domain.service.general.TimelineService
 import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
@@ -13,6 +14,7 @@ import me.tatarka.inject.annotations.Inject
 class ParametricTimelineViewModel @Inject constructor(
     private val postService: PostService,
     private val timelineService: TimelineService,
+    private val exploreService: ExploreService,
     userPreferences: UserPreferences
 ) : PaginatedPostsViewModel(userPreferences) {
 
@@ -20,7 +22,7 @@ class ParametricTimelineViewModel @Inject constructor(
     private var fetchType: FetchType = FetchType.CAMERA
 
     enum class FetchType {
-        CAMERA, CATEGORY, LENS, FILM, LIKED_POSTS, BOOKMARKED_POSTS
+        CAMERA, CATEGORY, LENS, FILM, LIKED_POSTS, BOOKMARKED_POSTS, EDITORS_CHOICE_POSTS
     }
 
     fun init(fetchType: FetchType, param: String = "") {
@@ -41,6 +43,7 @@ class ParametricTimelineViewModel @Inject constructor(
             FetchType.FILM -> timelineService.getFilmTimeline(param, maxId)
             FetchType.LIKED_POSTS -> postService.getLikedPosts(maxId)
             FetchType.BOOKMARKED_POSTS -> postService.getBookmarkedPosts(maxId)
+            FetchType.EDITORS_CHOICE_POSTS -> exploreService.getEditorsChoicePosts(maxId)
         }
     }
 }

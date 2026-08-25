@@ -19,10 +19,10 @@
     <string name="unfollow">Zrušit sledování</string>
     <string name="followers">Sledující</string>
     <plurals name="following">
-        <item quantity="one">Sleduje</item>
-        <item quantity="few">Sledují</item>
-        <item quantity="many">Sleduje</item>
-        <item quantity="other">Sleduje</item>
+        <item quantity="one">Sledovaný</item>
+        <item quantity="few">Sledovaní</item>
+        <item quantity="many">Sledovaných</item>
+        <item quantity="other">Sledovaných</item>
     </plurals>
     <plurals name="posts">
         <item quantity="one">Příspěvek</item>
@@ -223,10 +223,10 @@
     <string name="focus_mode_description">Schová popisky, lajky a tlačítka u příspěvků.</string>
     <string name="repost_settings">Nastavení repostu</string>
     <plurals name="follower">
-        <item quantity="one">Květina</item>
-        <item quantity="few">Květiny</item>
-        <item quantity="many">Květin</item>
-        <item quantity="other">Květin</item>
+        <item quantity="one">Sledující</item>
+        <item quantity="few">Sledující</item>
+        <item quantity="many">Sledujících</item>
+        <item quantity="other">Sledujících</item>
     </plurals>
     <string name="posts_title">Příspěvky</string>
     <string name="trending_accounts">Populární profily</string>
@@ -259,7 +259,7 @@
     </plurals>
     <plurals name="hours_ago">
         <item quantity="one">před %1$d hodinou</item>
-        <item quantity="few">před %1$d hodinama</item>
+        <item quantity="few">před %1$d hodinami</item>
         <item quantity="many">před %1$d hodinami</item>
         <item quantity="other">před %1$d hodinami</item>
     </plurals>
@@ -337,7 +337,7 @@
     <string name="app_customization">Přizpůsobení aplikace</string>
     <string name="new_post_settings">Nastavení nového příspěvku</string>
     <string name="use_dynamic_colors">Použít dynamické barvy</string>
-    <string name="no_cameras">Bez foťáků</string>
+    <string name="no_cameras">Žádné fotoaparáty</string>
     <string name="displayname">Zobrazované jméno</string>
     <string name="bio">O mně</string>
     <string name="adult_or_sensitive_content">Pro dospělé nebo citlivý obsah</string>
@@ -347,4 +347,5 @@
     <string name="accept_follow_request">Schválit žádost o sledování</string>
     <string name="reject_follow_request">Zamítnout žádost o sledování</string>
     <string name="reason">Důvod</string>
+    <string name="no_lenses">Žádné čočky</string>
 </resources>

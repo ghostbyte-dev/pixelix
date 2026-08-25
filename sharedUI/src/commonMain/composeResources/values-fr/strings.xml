@@ -24,7 +24,8 @@
     </plurals>
     <string name="following">Abonnements</string>
     <plurals name="following">
-        <item quantity="one">Abonnements</item>
+        <item quantity="one">Abonnement</item>
+        <item quantity="many">Abonnements</item>
         <item quantity="other">Abonnements</item>
     </plurals>
     <plurals name="posts">
@@ -277,4 +278,5 @@
     <string name="terrorism">Terrorisme</string>
     <string name="reported">Signalé</string>
     <string name="delete_account">Supprimer le compte</string>
+    <string name="posts_title">Publications</string>
 </resources>

@@ -96,7 +96,7 @@
     <string name="audience">Visibilité</string>
     <string name="unlisted">non répertorié</string>
     <string name="followers_only">abonné·e·s seulement</string>
-    <string name="audience_public">public</string>
+    <string name="audience_public">publique</string>
     <string name="no_followed_hashtags">Aucun hashtag suivi</string>
     <string name="no_muted_accounts">Aucun compte masqué</string>
     <string name="visibility_x">Visibilité : %1$s</string>

@@ -352,7 +352,7 @@ private fun PostHeader(
         )
         Column(modifier = Modifier.padding(start = 8.dp).weight(1f)) {
             Text(
-                text = post.account.acct,
+                text = post.account.displayname.orEmpty().ifBlank { post.account.acct },
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
                 lineHeight = 8.sp,

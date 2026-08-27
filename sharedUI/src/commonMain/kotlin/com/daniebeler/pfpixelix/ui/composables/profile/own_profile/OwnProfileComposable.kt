@@ -164,7 +164,10 @@ fun OwnProfileComposable(
                             ProfileTopSection(
                                 account = viewModel.accountState.account,
                                 relationship = null,
-                                navController,
+                                postsLabel = viewModel.postsLabel,
+                                followingLabel = viewModel.followingLabel,
+                                followerLabel = viewModel.followerLabel,
+                                navController = navController,
                                 openUrl = { url -> viewModel.openUrl(url) })
 
                             Row(

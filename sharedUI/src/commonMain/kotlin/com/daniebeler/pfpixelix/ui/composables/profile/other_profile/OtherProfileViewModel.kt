@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.model.MutedAccount
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.model.request.UserBlockRequest
@@ -34,6 +35,11 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
+import org.jetbrains.compose.resources.getPluralString
+import pixelix.app.generated.resources.Res
+import pixelix.app.generated.resources.follower
+import pixelix.app.generated.resources.following
+import pixelix.app.generated.resources.posts
 
 @Inject
 class OtherProfileViewModel(
@@ -59,6 +65,9 @@ class OtherProfileViewModel(
 
     var domain by mutableStateOf("")
     var view by mutableStateOf(ViewEnum.Grid)
+    var postsLabel by mutableStateOf("")
+    var followerLabel by mutableStateOf("")
+    var followingLabel by mutableStateOf("")
 
     val mutedAccount: MutedAccount?
         get() {
@@ -112,6 +121,22 @@ class OtherProfileViewModel(
         getAccount(userId, username, refreshing)
         loadDataExceptAccount(refreshing)
 
+    }
+
+    private fun resolvePluralLabels(account: Account) {
+        viewModelScope.launch {
+            postsLabel = getPluralString(Res.plurals.posts, account.postsCount, account.postsCount)
+            followerLabel = getPluralString(
+                Res.plurals.follower,
+                account.followersCount,
+                account.followersCount
+            )
+            followingLabel = getPluralString(
+                Res.plurals.following,
+                account.followingCount,
+                account.followingCount
+            )
+        }
     }
 
     private fun loadDataExceptAccount(refreshing: Boolean) {
@@ -189,6 +214,7 @@ class OtherProfileViewModel(
         accountService.getAccount(userId, username).onEach { result ->
             accountState = when (result) {
                 is Resource.Success -> {
+                    resolvePluralLabels(result.data)
                     AccountState(account = result.data)
                 }
 
@@ -217,6 +243,7 @@ class OtherProfileViewModel(
                     this.username = result.data.username
                     userId = result.data.id
                     loadDataExceptAccount(refreshing)
+                    resolvePluralLabels(result.data)
                     AccountState(account = result.data)
                 }
 

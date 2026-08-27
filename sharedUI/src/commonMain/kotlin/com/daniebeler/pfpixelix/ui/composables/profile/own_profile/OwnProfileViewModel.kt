@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.repository.pixelfed.PixelfedApi
 import com.daniebeler.pfpixelix.domain.service.general.AccountService
@@ -26,6 +27,11 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
+import org.jetbrains.compose.resources.getPluralString
+import pixelix.app.generated.resources.Res
+import pixelix.app.generated.resources.follower
+import pixelix.app.generated.resources.following
+import pixelix.app.generated.resources.posts
 
 class OwnProfileViewModel @Inject constructor(
     private val accountService: AccountService,
@@ -48,6 +54,10 @@ class OwnProfileViewModel @Inject constructor(
 
     var collectionsState by mutableStateOf(CollectionsState())
 
+    var postsLabel by mutableStateOf("")
+    var followerLabel by mutableStateOf("")
+    var followingLabel by mutableStateOf("")
+
     init {
         loadData(false)
 
@@ -57,6 +67,22 @@ class OwnProfileViewModel @Inject constructor(
             }
         }
         ownDomain = authService.getCurrentSession()?.serverUrl.orEmpty()
+    }
+
+    private fun resolvePluralLabels(account: Account) {
+        viewModelScope.launch {
+            postsLabel = getPluralString(Res.plurals.posts, account.postsCount, account.postsCount)
+            followerLabel = getPluralString(
+                Res.plurals.follower,
+                account.followersCount,
+                account.followersCount
+            )
+            followingLabel = getPluralString(
+                Res.plurals.following,
+                account.followingCount,
+                account.followingCount
+            )
+        }
     }
 
     fun dismissError() {
@@ -87,6 +113,7 @@ class OwnProfileViewModel @Inject constructor(
         accountService.getOwnAccount().onEach { result ->
             accountState = when (result) {
                 is Resource.Success -> {
+                    resolvePluralLabels(result.data)
                     AccountState(account = result.data)
                 }
 

@@ -40,41 +40,36 @@ import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.model.Relationship
-import com.daniebeler.pfpixelix.domain.service.capabilities.Capabilities
 import com.daniebeler.pfpixelix.ui.composables.hashtagMentionText.HashtagsMentionsTextView
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import com.daniebeler.pfpixelix.utils.DomainFormat
 import com.daniebeler.pfpixelix.utils.StringFormat
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.format.MonthNames
+import kotlinx.datetime.format.Padding
 import kotlinx.datetime.format.char
 import org.jetbrains.compose.resources.painterResource
-import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.admin
-import pixelix.app.generated.resources.are_you_sure
 import pixelix.app.generated.resources.blocked
-import pixelix.app.generated.resources.cancel
-import pixelix.app.generated.resources.cancel_post_warning
 import pixelix.app.generated.resources.confirm
 import pixelix.app.generated.resources.default_avatar
-import pixelix.app.generated.resources.discard
-import pixelix.app.generated.resources.follower
-import pixelix.app.generated.resources.following
 import pixelix.app.generated.resources.follows_you
 import pixelix.app.generated.resources.joined_date
 import pixelix.app.generated.resources.lock
 import pixelix.app.generated.resources.muted
 import pixelix.app.generated.resources.ok
-import pixelix.app.generated.resources.posts
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ProfileTopSection(
     account: Account?,
     relationship: Relationship?,
+    postsLabel: String,
+    followerLabel: String,
+    followingLabel: String,
     navController: NavController,
     openUrl: (url: String) -> Unit
 ) {
@@ -112,7 +107,7 @@ fun ProfileTopSection(
                                 fontSize = 18.sp
                             )
                             Text(
-                                text = pluralStringResource(Res.plurals.posts, account.postsCount),
+                                text = postsLabel,
                                 fontSize = 12.sp
                             )
                         }
@@ -132,9 +127,7 @@ fun ProfileTopSection(
                                 fontSize = 18.sp
                             )
                             Text(
-                                text = pluralStringResource(
-                                    Res.plurals.follower, account.followersCount
-                                ), fontSize = 12.sp
+                                text = followerLabel, fontSize = 12.sp
                             )
                         }
 
@@ -153,9 +146,7 @@ fun ProfileTopSection(
                                 fontSize = 18.sp
                             )
                             Text(
-                                text = pluralStringResource(
-                                    Res.plurals.following, account.followingCount
-                                ), fontSize = 12.sp
+                                text = followingLabel, fontSize = 12.sp
                             )
                         }
                     }
@@ -238,7 +229,7 @@ fun ProfileTopSection(
                     val formatter = LocalDate.Format {
                         monthName(MonthNames.ENGLISH_ABBREVIATED)
                         char(' ')
-                        dayOfMonth()
+                        this@Format.day(padding = Padding.ZERO)
                         chars(", ")
                         year()
                     }

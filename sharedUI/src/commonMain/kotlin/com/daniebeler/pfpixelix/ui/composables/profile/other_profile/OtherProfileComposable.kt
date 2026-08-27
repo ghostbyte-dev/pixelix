@@ -222,6 +222,9 @@ fun OtherProfileComposable(
                             ProfileTopSection(
                                 account = viewModel.accountState.account,
                                 relationship = viewModel.relationshipState.accountRelationship,
+                                postsLabel = viewModel.postsLabel,
+                                followerLabel = viewModel.followerLabel,
+                                followingLabel = viewModel.followingLabel,
                                 navController,
                                 openUrl = { url ->
                                     viewModel.openUrl(url)

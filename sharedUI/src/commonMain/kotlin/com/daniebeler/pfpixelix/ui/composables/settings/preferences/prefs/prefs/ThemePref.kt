@@ -58,11 +58,11 @@ fun ThemePref() {
     ExpandOptionsPref(
         leadingIcon = Res.drawable.theme,
         title = stringResource(Res.string.app_theme),
-        index = 0,
-        count = 2
+        index = 1,
+        count = 5
     ) {
         ValueOption(
-            shapes = ListItemDefaults.segmentedShapes(index = 1, count = 8),
+            shapes = ListItemDefaults.segmentedShapes(index = 2, count = 9),
             leadingIcon = imageVectorIconBlock(
                 imageVector = vectorResource(Res.drawable.device_theme),
                 contentDescription = stringResource(Res.string.theme_system)
@@ -73,7 +73,7 @@ fun ThemePref() {
             onOptionClick = onOptionClick,
         )
         ValueOption(
-            shapes = ListItemDefaults.segmentedShapes(index = 2, count = 8),
+            shapes = ListItemDefaults.segmentedShapes(index = 2, count = 9),
             leadingIcon = imageVectorIconBlock(
                 imageVector = vectorResource(Res.drawable.light_theme),
                 contentDescription = stringResource(Res.string.theme_light)
@@ -84,7 +84,7 @@ fun ThemePref() {
             onOptionClick = onOptionClick,
         )
         ValueOption(
-            shapes = ListItemDefaults.segmentedShapes(index = 3, count = 8),
+            shapes = ListItemDefaults.segmentedShapes(index = 3, count = 9),
             leadingIcon = imageVectorIconBlock(
                 imageVector = vectorResource(Res.drawable.dark_theme),
                 contentDescription = stringResource(Res.string.theme_dark)
@@ -95,7 +95,7 @@ fun ThemePref() {
             onOptionClick = onOptionClick,
         )
         ValueOption(
-            shapes = ListItemDefaults.segmentedShapes(index = 4, count = 8),
+            shapes = ListItemDefaults.segmentedShapes(index = 4, count = 9),
             leadingIcon = imageVectorIconBlock(
                 imageVector = vectorResource(Res.drawable.amoled_theme),
                 contentDescription = stringResource(Res.string.amoled)
@@ -114,7 +114,7 @@ fun ThemePref() {
             SwitchPref(
                 icon = Res.drawable.theme,
                 title = stringResource(Res.string.use_dynamic_colors),
-                shapes = ListItemDefaults.segmentedShapes(index = 5, count = 7),
+                shapes = ListItemDefaults.segmentedShapes(index = 5, count = 9),
                 state = useDynamicColors,
                 color = MaterialTheme.colorScheme.surfaceContainerLow
             )

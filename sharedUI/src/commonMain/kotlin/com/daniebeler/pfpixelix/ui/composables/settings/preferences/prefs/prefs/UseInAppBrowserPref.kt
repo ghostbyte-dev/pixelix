@@ -24,7 +24,7 @@ fun UseInAppBrowserPref() {
     SwitchPref(
         icon = Res.drawable.browser,
         title = stringResource(Res.string.use_in_app_browser),
-        shapes = ListItemDefaults.segmentedShapes(index = 2, count = 7),
+        shapes = ListItemDefaults.segmentedShapes(index = 3, count = 5),
         state = state
     )
 }

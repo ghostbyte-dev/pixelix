@@ -40,7 +40,7 @@ fun CustomizeAppIconPref(
             imageVector = vectorResource(Res.drawable.chevron_right),
             contentDescription = null,
         )
-    }, shapes = ListItemDefaults.segmentedShapes(index = 1, count = 2), onClick = {
+    }, shapes = ListItemDefaults.segmentedShapes(index = 0, count = 5), onClick = {
         closePreferenceDrawer()
         navController.navigate(Destination.IconSelection)
     })

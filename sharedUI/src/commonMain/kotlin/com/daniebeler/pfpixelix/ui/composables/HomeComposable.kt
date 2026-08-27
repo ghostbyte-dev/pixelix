@@ -71,7 +71,7 @@ fun HomeComposable(
     openPreferencesDrawer: () -> Unit,
     viewModel: HomeViewModel = injectViewModel("homeViewModel") { homeViewModel },
 ) {
-    val pagerState = rememberPagerState { 3 }
+    val pagerState = rememberPagerState(viewModel.defaultTab) { 3 }
     val scope = rememberCoroutineScope()
 
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)

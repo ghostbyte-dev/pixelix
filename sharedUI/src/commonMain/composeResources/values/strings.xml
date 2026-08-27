@@ -351,4 +351,5 @@
     <string name="app_customization">App customization</string>
     <string name="new_post_settings">New post settings</string>
     <string name="use_dynamic_colors">Use dynamic colors</string>
+    <string name="default_timeline_tab">Default timeline tab</string>
 </resources>

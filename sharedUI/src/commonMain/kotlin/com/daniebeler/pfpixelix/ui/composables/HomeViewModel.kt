@@ -18,6 +18,7 @@ class HomeViewModel @Inject constructor(
 ) : ViewModel() {
 
     val capabilities = session.capabilities
+    val defaultTab = prefs.defaultHomeTab
     var isSwipeBetweenTabsEnabled by mutableStateOf(true)
     init {
         viewModelScope.launch {

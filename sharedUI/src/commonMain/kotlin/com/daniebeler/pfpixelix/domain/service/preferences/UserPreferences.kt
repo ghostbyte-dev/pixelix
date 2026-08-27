@@ -1,7 +1,13 @@
 package com.daniebeler.pfpixelix.domain.service.preferences
 
 import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.*
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.emptyPreferences
+import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.longPreferencesKey
+import androidx.datastore.preferences.core.stringPreferencesKey
 import com.daniebeler.pfpixelix.di.AppSingleton
 import com.daniebeler.pfpixelix.domain.model.AppAccentColor
 import com.daniebeler.pfpixelix.domain.model.AppThemeMode
@@ -11,7 +17,12 @@ import com.daniebeler.pfpixelix.domain.service.platform.PlatformFeatures
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import me.tatarka.inject.annotations.Inject
@@ -92,6 +103,9 @@ class UserPreferences(private val dataStore: DataStore<Preferences>) {
 
     var hideMetadata by boolean("k_hide_metadata", false)
     val hideMetadataFlow = booleanFlow("k_hide_metadata", false)
+
+    var defaultHomeTab by int("k_default_home_tab", 1)
+    val defaultHomeTabFlow = intFlow("k_default_home_tab", 1)
 
     private var _defaultVisibility: Int by Prop(intPreferencesKey("k_default_visibility"), Visibility.PUBLIC.ordinal)
     var defaultVisibility: Visibility

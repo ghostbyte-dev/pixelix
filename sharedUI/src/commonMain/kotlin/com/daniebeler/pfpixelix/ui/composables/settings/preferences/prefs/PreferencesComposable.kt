@@ -36,6 +36,7 @@ import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.CaptionTemplate
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.ClearCachePref
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.CustomizeAppIconPref
+import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.DefaultHomeTab
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.DefaultLicensePref
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.DefaultVisibilityPref
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.DeleteAccountPref
@@ -110,14 +111,7 @@ fun PreferencesComposable(
                 HideMetadataPref()
             }
 
-            if (PlatformFeatures.inAppBrowser) {
-                UseInAppBrowserPref()
-            }
-
             AutoplayVideoPref()
-
-            SwipeBetweenTimelines()
-
 
             if (viewModel.capabilities.value.profile.showRepostSettings) {
                 RepostSettingsPref { viewModel.openRepostSettings() }
@@ -132,14 +126,23 @@ fun PreferencesComposable(
             )
             Spacer(modifier = Modifier.height(6.dp))
 
-            ThemePref()
 
             if (PlatformFeatures.customAppIcon) {
                 val icon = viewModel.appIcon.collectAsState()
                 CustomizeAppIconPref(navController, closePreferencesDrawer, icon.value)
             }
 
+            ThemePref()
+            DefaultHomeTab()
+
+            if (PlatformFeatures.inAppBrowser) {
+                UseInAppBrowserPref()
+            }
+
+            SwipeBetweenTimelines()
+
             Spacer(modifier = Modifier.height(12.dp))
+
             Text(
                 text = stringResource(Res.string.new_post_settings),
                 style = MaterialTheme.typography.labelLarge,

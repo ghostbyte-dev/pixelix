@@ -119,7 +119,8 @@ fun MentionComposable(
                             },
                             setZindex = { },
                             openReplies = false,
-                            showReplies = false
+                            showReplies = false,
+                            fullQuality = false
                         )
                     }
                 }
@@ -160,7 +161,8 @@ private fun SubPosts(posts: List<Post>, navController: NavController) {
                     showReplies = false,
                     modifier = Modifier.clickable {
                         navController.navigate(Destination.Mention(ancestor.id))
-                    }
+                    },
+                    fullQuality = false
                 )
             }
         }

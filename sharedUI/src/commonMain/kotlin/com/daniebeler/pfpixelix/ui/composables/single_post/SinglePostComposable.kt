@@ -90,7 +90,10 @@ fun SinglePostComposable(
                                         saveState = false
                                     }
                                 }
-                            }, setZindex = { }, openReplies
+                            },
+                            setZindex = { },
+                            openReplies,
+                            fullQuality = true
                         )
                     }
                 }
@@ -123,7 +126,8 @@ fun SinglePostComposable(
                     navController.popBackStack()
                 }) {
                     Icon(
-                        imageVector = vectorResource(Res.drawable.arrow_left), contentDescription = ""
+                        imageVector = vectorResource(Res.drawable.arrow_left),
+                        contentDescription = ""
                     )
                 }
             }, colors = TopAppBarDefaults.mediumTopAppBarColors(

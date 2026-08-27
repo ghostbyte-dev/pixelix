@@ -236,7 +236,11 @@ private fun LazyStaggeredGridScope.postsGridInScope(
         }
     } else {
         items(filteredPosts, key = { it.uiKey }) { post ->
-            val shape = calculateOuterGridShape(filteredPosts.indexOf(post), filteredPosts.size, columnCount)
+            val shape = calculateOuterGridShape(
+                filteredPosts.indexOf(post),
+                filteredPosts.size,
+                columnCount
+            )
             CustomPost(
                 post = post,
                 navController = navController,
@@ -250,7 +254,10 @@ private fun LazyStaggeredGridScope.postsGridInScope(
     }
 
     if (endReached && filteredPosts.size > 10) {
-        item(key = "end_of_list_key", span = StaggeredGridItemSpan.FullLine) { EndOfListComposable() }
+        item(
+            key = "end_of_list_key",
+            span = StaggeredGridItemSpan.FullLine
+        ) { EndOfListComposable() }
     }
 
     if (!isRefreshing && isLoading && filteredPosts.isNotEmpty()) {
@@ -285,7 +292,9 @@ private fun LazyStaggeredGridScope.postsListInScope(
                     updatePost = updatePost,
                     setZindex = {
                         zIndex.floatValue = it
-                    })
+                    },
+                    fullQuality = false
+                )
             }
             Spacer(Modifier.height(spacedBy))
         }
@@ -321,7 +330,11 @@ private fun LazyStaggeredGridScope.postsMasonryInScope(
             }
 
             val shape = remember(posts.size) {
-                calculateOuterGridShape(index = posts.indexOf(post), totalCount = posts.size, columnCount = columnCount)
+                calculateOuterGridShape(
+                    index = posts.indexOf(post),
+                    totalCount = posts.size,
+                    columnCount = columnCount
+                )
             }
 
             Box(modifier = Modifier.zIndex(zIndex.floatValue)) {
@@ -364,7 +377,11 @@ private fun LazyStaggeredGridScope.postsLargeMasonryInScope(
             }
 
             val shape = remember(posts.size) {
-                calculateOuterGridShape(index = posts.indexOf(post), totalCount = posts.size, columnCount = columnCount)
+                calculateOuterGridShape(
+                    index = posts.indexOf(post),
+                    totalCount = posts.size,
+                    columnCount = columnCount
+                )
             }
 
             Box(modifier = Modifier.zIndex(zIndex.floatValue)) {
@@ -408,9 +425,11 @@ fun calculateOuterGridShape(
     val isBottomRow = index >= lastRowStartIndex
 
     val topLeft = if (isTopRow && column == 0) cornerRadius else 0.dp
-    val topRight = if (isTopRow && (column == columnCount - 1 || index == totalCount - 1)) cornerRadius else 0.dp
+    val topRight =
+        if (isTopRow && (column == columnCount - 1 || index == totalCount - 1)) cornerRadius else 0.dp
     val bottomLeft = if (isBottomRow && column == 0) cornerRadius else 0.dp
-    val bottomRight = if (isBottomRow && (column == columnCount - 1 || index == totalCount - 1)) cornerRadius else 0.dp
+    val bottomRight =
+        if (isBottomRow && (column == columnCount - 1 || index == totalCount - 1)) cornerRadius else 0.dp
 
     return RoundedCornerShape(
         topStart = topLeft,

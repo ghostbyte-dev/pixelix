@@ -71,6 +71,10 @@ import androidx.navigation.NavController
 import co.touchlab.kermit.Logger
 import coil3.compose.AsyncImage
 import coil3.compose.AsyncImagePainter
+import coil3.compose.LocalPlatformContext
+import coil3.request.ImageRequest
+import coil3.size.Precision
+import coil3.size.Size
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.model.MediaAttachment
 import com.daniebeler.pfpixelix.domain.model.Post
@@ -146,6 +150,7 @@ fun PostComposable(
     showReplies: Boolean = true,
     modifier: Modifier = Modifier,
     updatePost: (post: Post) -> Unit = {},
+    fullQuality: Boolean,
     viewModel: PostViewModel = injectViewModel(key = "post" + post.id) { postViewModel }
 ) {
     var postId by remember { mutableStateOf(post.id) }
@@ -225,6 +230,7 @@ fun PostComposable(
                 roundedCornerShape = RoundedCornerShape(16.dp),
                 onLikeAnimation = { animateHeart = true },
                 updatePost = updatePost,
+                fullQuality = fullQuality,
                 navController = navController
             )
         }
@@ -308,7 +314,9 @@ fun MasonryPost(
         onLikeAnimation = {},
         navController = navController,
         setZindex = {},
-        updatePost = {})
+        updatePost = {},
+        fullQuality = false
+    )
 }
 
 @Composable
@@ -388,6 +396,7 @@ private fun PostMediaSection(
     setZindex: (zIndex: Float) -> Unit,
     onLikeAnimation: () -> Unit,
     updatePost: (post: Post) -> Unit,
+    fullQuality: Boolean,
     navController: NavController
 ) {
     if (post.mediaAttachments.isNotEmpty()) {
@@ -404,6 +413,7 @@ private fun PostMediaSection(
                 setZindex = setZindex,
                 onLikeAnimation = onLikeAnimation,
                 updatePost = updatePost,
+                fullQuality = fullQuality,
                 navController = navController
             )
         }
@@ -483,6 +493,7 @@ private fun PostMediaContent(
     setZindex: (zIndex: Float) -> Unit,
     onLikeAnimation: () -> Unit,
     updatePost: (post: Post) -> Unit,
+    fullQuality: Boolean,
     navController: NavController
 ) {
     if (post.mediaAttachments.count() > 1) {
@@ -509,6 +520,7 @@ private fun PostMediaContent(
                         updatePost = updatePost,
                         isMasonry = isMasonry,
                         roundedCornerShape = roundedCornerShape,
+                        fullQuality = fullQuality,
                         navController = navController
                     )
                 }
@@ -560,6 +572,7 @@ private fun PostMediaContent(
                 updatePost = updatePost,
                 isMasonry = isMasonry,
                 roundedCornerShape = roundedCornerShape,
+                fullQuality = fullQuality,
                 navController = navController
             )
         }
@@ -982,6 +995,7 @@ fun PostImage(
     updatePost: (post: Post) -> Unit,
     isMasonry: Boolean,
     roundedCornerShape: RoundedCornerShape,
+    fullQuality: Boolean,
     navController: NavController
 ) {
     var showHeart by remember { mutableStateOf(false) }
@@ -1043,6 +1057,7 @@ fun PostImage(
             if (mediaAttachment.type != "video") {
                 ImageWrapper(
                     mediaAttachment,
+                    fullQuality,
                     { zoomState.setContentSize(it.painter.intrinsicSize) },
                     { imageLoaded = true })
             } else {
@@ -1093,11 +1108,22 @@ fun PostImage(
 @Composable
 private fun ImageWrapper(
     mediaAttachment: MediaAttachment,
+    fullQuality: Boolean,
     setContentSize: (painter: AsyncImagePainter.State.Success) -> Unit,
     onSuccess: () -> Unit
 ) {
     AsyncImage(
-        model = mediaAttachment.previewUrl ?: mediaAttachment.url,
+        model = ImageRequest.Builder(LocalPlatformContext.current)
+            .data(
+                if (fullQuality) {
+                    mediaAttachment.url
+                } else {
+                    mediaAttachment.previewUrl ?: mediaAttachment.url
+                }
+            )
+            .size(Size.ORIGINAL)
+            .precision(Precision.EXACT)
+            .build(),
         contentDescription = null,
         modifier = Modifier.fillMaxWidth(),
         contentScale = ContentScale.FillWidth,
@@ -1133,6 +1159,7 @@ fun MediaDialog(
 ) {
     val zoomState = rememberZoomState()
 
+    var isLoading by remember { mutableStateOf(true) }
     Dialog(
         onDismissRequest = closeDialog,
         properties = DialogProperties(usePlatformDefaultWidth = false)
@@ -1141,14 +1168,16 @@ fun MediaDialog(
             modifier = Modifier.fillMaxSize().background(Color.Black.copy(alpha = 0.8f))
                 .clickable { closeDialog() }, contentAlignment = Alignment.Center
         ) {
+            LoadingComposable(isLoading)
             Box(modifier = Modifier.zIndex(2f).zoomable(zoomState).clickable { }) {
                 if (mediaAttachment.type != "video") {
                     ImageWrapper(
                         mediaAttachment,
+                        true,
                         { zoomState.setContentSize(it.painter.intrinsicSize) },
-                        {})
+                        {isLoading = false})
                 } else {
-                    VideoAttachment(mediaAttachment, postViewModel, {}, isMasonry = false)
+                    VideoAttachment(mediaAttachment, postViewModel, {isLoading = false}, isMasonry = false)
                 }
             }
             Box(Modifier.align(Alignment.TopEnd).padding(20.dp).zIndex(2f)) {

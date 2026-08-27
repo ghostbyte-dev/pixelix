@@ -32,8 +32,6 @@ class EditorsChoiceAccountsViewModel @Inject constructor(
     val capabilities: StateFlow<Capabilities> = session.capabilities
     var accountsState by mutableStateOf(AccountsState())
 
-    var timeRange by mutableStateOf(TrendingRange.DAILY)
-
     init {
         getAccountsState()
     }

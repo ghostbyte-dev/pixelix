@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import com.daniebeler.pfpixelix.di.LocalAppComponent
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.ui.composables.contribute.ContributeBottomSheet
 import com.daniebeler.pfpixelix.ui.composables.timelines.global_timeline.GlobalTimelineComposable
@@ -81,6 +82,7 @@ fun HomeComposable(
     var showDonationBottomSheet by remember { mutableStateOf(false) }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
+    val appComponent = LocalAppComponent.current
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -166,8 +168,12 @@ fun HomeComposable(
                     selectedContentColor = MaterialTheme.colorScheme.primary,
                     unselectedContentColor = MaterialTheme.colorScheme.onBackground,
                     onClick = {
-                        scope.launch {
-                            pagerState.animateScrollToPage(0)
+                        if (pagerState.currentPage == 0) {
+                            appComponent.backToTopTrigger.scrollToTop()
+                        } else {
+                            scope.launch {
+                                pagerState.animateScrollToPage(0)
+                            }
                         }
                     })
 
@@ -178,7 +184,11 @@ fun HomeComposable(
                     unselectedContentColor = MaterialTheme.colorScheme.onBackground,
                     onClick = {
                         scope.launch {
-                            pagerState.animateScrollToPage(1)
+                            if (pagerState.currentPage == 1) {
+                                appComponent.backToTopTrigger.scrollToTop()
+                            } else {
+                                pagerState.animateScrollToPage(1)
+                            }
                         }
                     })
 
@@ -188,8 +198,12 @@ fun HomeComposable(
                     selectedContentColor = MaterialTheme.colorScheme.primary,
                     unselectedContentColor = MaterialTheme.colorScheme.onBackground,
                     onClick = {
-                        scope.launch {
-                            pagerState.animateScrollToPage(2)
+                        if (pagerState.currentPage == 2) {
+                            appComponent.backToTopTrigger.scrollToTop()
+                        } else {
+                            scope.launch {
+                                pagerState.animateScrollToPage(2)
+                            }
                         }
                     })
             }
@@ -207,7 +221,7 @@ fun HomeComposable(
                     }
 
                     1 -> Box(modifier = Modifier.fillMaxSize()) {
-                        LocalTimelineComposable(pagerState, tabIndex,  navController)
+                        LocalTimelineComposable(pagerState, tabIndex, navController)
                     }
 
                     2 -> Box(modifier = Modifier.fillMaxSize()) {

@@ -10,6 +10,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -18,7 +19,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import androidx.compose.runtime.collectAsState
 import androidx.navigation.NavController
 import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.di.LocalAppComponent
@@ -28,8 +28,6 @@ import com.daniebeler.pfpixelix.utils.BlurHashDecoder
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.eye_off
-import pixelix.app.generated.resources.blocked
-import pixelix.app.generated.resources.remove
 import pixelix.app.generated.resources.remove_circle
 import pixelix.app.generated.resources.stack
 
@@ -92,7 +90,7 @@ fun CustomPost(
                 if (post.mediaAttachments.isNotEmpty()) {
                     AsyncImage(
                         model = if (isFullQuality) post.mediaAttachments[0].url
-                        else post.mediaAttachments[0].previewUrl,
+                        else post.mediaAttachments[0].thumbnail ?: post.mediaAttachments[0].url,
                         contentScale = ContentScale.Crop,
                         contentDescription = null,
                         modifier = Modifier.aspectRatio(1f)

@@ -347,7 +347,7 @@
     <string name="value">Valor</string>
     <string name="content_settings">Configurações de conteúdo</string>
     <string name="app_customization">Personalização do aplicativo</string>
-    <string name="new_post_settings">Novas configurações de publicação</string>
+    <string name="new_post_settings">Configurações da nova publicação</string>
     <string name="use_dynamic_colors">Usar cores dinâmicas</string>
     <string name="trending_posts">Publicações em destaque</string>
     <string name="manually_accept_new_followers">Aceitar manualmente novos seguidores</string>

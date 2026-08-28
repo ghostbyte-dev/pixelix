@@ -15,6 +15,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.di.injectViewModel
@@ -35,11 +37,15 @@ fun TrendingAccountElement(
     }
 
     Column(
-        Modifier.clip(RoundedCornerShape(16.dp))
-            .background(MaterialTheme.colorScheme.surfaceContainerLow).padding(8.dp).fillMaxWidth()
+        Modifier
+            .clip(RoundedCornerShape(16.dp))
+            .background(MaterialTheme.colorScheme.surfaceContainerLow)
+            .padding(8.dp)
+            .fillMaxWidth()
             .clickable {
                 navController.navigate(Destination.Profile(account.id, account.username))
-            }) {
+            }
+    ) {
 
         CustomAccount(account = account)
 
@@ -49,16 +55,17 @@ fun TrendingAccountElement(
                 mentions = null,
                 navController = navController,
                 modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
-                openUrl = { url -> viewModel.openUrl(url) })
+                openUrl = { url -> viewModel.openUrl(url) }
+            )
         }
 
-        NonlazyGrid(itemCount = minOf(9, viewModel.postsState.posts.size)) {
+        NonlazyGrid(itemCount = minOf(9, viewModel.postsState.posts.size)) { index, itemShape ->
             Box(
                 modifier = Modifier
             ) {
                 CustomPost(
-                    post = viewModel.postsState.posts[it],
-                    roundedCornerShape = RoundedCornerShape(8.dp),
+                    post = viewModel.postsState.posts[index],
+                    roundedCornerShape = itemShape,
                     navController = navController
                 )
             }
@@ -68,13 +75,13 @@ fun TrendingAccountElement(
 
 @Composable
 private fun NonlazyGrid(
-    itemCount: Int, content: @Composable (Int) -> Unit
+    itemCount: Int,
+    outerCornerRadius: Dp = 8.dp,
+    content: @Composable (index: Int, shape: RoundedCornerShape) -> Unit
 ) {
-
     val columns = 3
 
     Column(
-        modifier = Modifier.clip(RoundedCornerShape(12.dp)),
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         var rows = (itemCount / columns)
@@ -89,10 +96,25 @@ private fun NonlazyGrid(
                 for (columnId in 0 until columns) {
                     val index = firstIndex + columnId
                     Box(
-                        modifier = Modifier.fillMaxWidth().aspectRatio(1f).weight(1f)
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .aspectRatio(1f)
+                            .weight(1f)
                     ) {
                         if (index < itemCount) {
-                            content(index)
+                            val isTopRow = rowId == 0
+                            val isBottomRow = rowId == rows - 1
+                            val isLeftColumn = columnId == 0
+                            val isRightColumn = columnId == columns - 1
+
+                            val shape = RoundedCornerShape(
+                                topStart = if (isTopRow && isLeftColumn) outerCornerRadius else 0.dp,
+                                topEnd = if (isTopRow && isRightColumn) outerCornerRadius else 0.dp,
+                                bottomStart = if (isBottomRow && isLeftColumn) outerCornerRadius else 0.dp,
+                                bottomEnd = if (isBottomRow && isRightColumn) outerCornerRadius else 0.dp
+                            )
+
+                            content(index, shape)
                         }
                     }
                 }

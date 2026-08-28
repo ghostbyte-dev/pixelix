@@ -104,8 +104,8 @@ class UserPreferences(private val dataStore: DataStore<Preferences>) {
     var hideMetadata by boolean("k_hide_metadata", false)
     val hideMetadataFlow = booleanFlow("k_hide_metadata", false)
 
-    var defaultHomeTab by int("k_default_home_tab", 1)
-    val defaultHomeTabFlow = intFlow("k_default_home_tab", 1)
+    var defaultHomeTab by int("k_default_home_tab", 0)
+    val defaultHomeTabFlow = intFlow("k_default_home_tab", 0)
 
     private var _defaultVisibility: Int by Prop(intPreferencesKey("k_default_visibility"), Visibility.PUBLIC.ordinal)
     var defaultVisibility: Visibility

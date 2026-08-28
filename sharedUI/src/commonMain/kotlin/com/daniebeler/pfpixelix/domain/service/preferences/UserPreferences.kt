@@ -98,6 +98,12 @@ class UserPreferences(private val dataStore: DataStore<Preferences>) {
     var showGlobalTimelineHelp by boolean("k_show_global_timeline_help", true)
     val showGlobalTimelineHelpFlow = booleanFlow("k_show_global_timeline_help", true)
 
+    var showEditorsChoicePostsHelp by boolean("k_show_editors_choice_posts_help", true)
+    val showEditorsChoicePostsHelpFlow = booleanFlow("k_show_editors_choice_posts_help", true)
+
+    var showEditorsChoiceAccountsHelp by boolean("k_show_editors_choice_accounts_help", true)
+    val showEditorsChoiceAccountsHelpFlow = booleanFlow("k_show_editors_choice_accounts_help", true)
+
     var captionTemplate by string("k_caption_template", "")
     val captionTemplateFlow = stringFlow("k_caption_template", "")
 

@@ -9,12 +9,12 @@ import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.service.capabilities.Capabilities
 import com.daniebeler.pfpixelix.domain.service.general.ExploreService
 import com.daniebeler.pfpixelix.domain.service.general.Session
+import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
-import com.daniebeler.pfpixelix.ui.composables.explore.trending.TrendingRange
-import com.daniebeler.pfpixelix.ui.composables.explore.trending.trending_accounts.TrendingAccountsState
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 
 data class AccountsState(
@@ -27,13 +27,21 @@ data class AccountsState(
 )
 
 class EditorsChoiceAccountsViewModel @Inject constructor(
-    private val exploreService: ExploreService, session: Session
+    private val exploreService: ExploreService,
+    session: Session,
+    private val userPreferences: UserPreferences
 ) : ViewModel() {
     val capabilities: StateFlow<Capabilities> = session.capabilities
     var accountsState by mutableStateOf(AccountsState())
+    var showHelp by mutableStateOf(false)
 
     init {
         getAccountsState()
+        viewModelScope.launch {
+            userPreferences.showEditorsChoiceAccountsHelpFlow.collect {
+                showHelp = it
+            }
+        }
     }
 
     fun getAccountsState(refreshing: Boolean = false) {
@@ -80,5 +88,11 @@ class EditorsChoiceAccountsViewModel @Inject constructor(
                 }
             }
         }.launchIn(viewModelScope)
+    }
+
+    fun discardHelp() {
+        viewModelScope.launch {
+            userPreferences.showEditorsChoiceAccountsHelp = false
+        }
     }
 }

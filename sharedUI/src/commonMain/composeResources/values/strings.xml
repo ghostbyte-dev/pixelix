@@ -352,4 +352,12 @@
     <string name="new_post_settings">New post settings</string>
     <string name="use_dynamic_colors">Use dynamic colors</string>
     <string name="default_timeline_tab">Default timeline tab</string>
+    <string name="editors_choice_accounts">Editors choice: Accounts</string>
+    <string name="editors_choice_accounts_explained">A collection of artists who have been featured by curators on this server.</string>
+    <string name="editors_choice_posts">Editors choice: Posts</string>
+    <string name="editors_choice_posts_explained">A collection of photos that have been featured by curators on this server.</string>
+    <string name="categories">Categories</string>
+    <string name="cameras">Cameras</string>
+    <string name="lenses">Lenses</string>
+    <string name="films">Films</string>
 </resources>

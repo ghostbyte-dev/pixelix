@@ -8,8 +8,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.daniebeler.pfpixelix.di.injectViewModel
+import com.daniebeler.pfpixelix.ui.composables.timelines.TimelineHelpCard
 import com.daniebeler.pfpixelix.ui.composables.timelines.parametric_timeline_screens.ParametricTimelineViewModel
 import com.daniebeler.pfpixelix.ui.composables.widgets.InfinitePostsList
+import org.jetbrains.compose.resources.stringResource
+import pixelix.app.generated.resources.Res
+import pixelix.app.generated.resources.editors_choice_posts
+import pixelix.app.generated.resources.editors_choice_posts_explained
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -35,6 +40,20 @@ fun EditorsChoicePostsComposable(
             navController = navController,
             postGetsUpdated = { },
             contentPaddingTop = 32.dp,
-            contentPaddingBottom = 80.dp)
+            contentPaddingBottom = 80.dp,
+            before = if (!viewModel.showHelp) {
+                null
+            } else {
+                {
+                    TimelineHelpCard(
+                        title = stringResource(Res.string.editors_choice_posts),
+                        description = stringResource(Res.string.editors_choice_posts_explained),
+                        onDiscard = {
+                            viewModel.discardHelp()
+                        }
+                    )
+                }
+
+            })
     }
 }

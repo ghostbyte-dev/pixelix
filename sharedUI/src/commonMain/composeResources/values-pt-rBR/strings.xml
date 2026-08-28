@@ -20,6 +20,8 @@
     <string name="followers">Seguidores</string>
     <plurals name="following">
         <item quantity="one">Seguindo</item>
+        <item quantity="many">Seguindo</item>
+        <item quantity="other">Seguindo</item>
     </plurals>
     <plurals name="posts">
         <item quantity="one">Postagem</item>
@@ -299,9 +301,9 @@
     <string name="manually_accept_new_followers">Aceitar manualmente novos seguidores</string>
     <string name="include_public_posts_in_search_engines">Incluir publicações públicas nos mecanismos de busca</string>
     <string name="include_profile_in_search_engines">Incluir o perfil nos mecanismos de busca</string>
-    <string name="new_comment">escreveu um novo comentário</string>
-    <string name="follow_request">recebeu um pedido para seguir você</string>
-    <string name="new_status">criou uma nova publicação</string>
+    <string name="new_comment">Escreveu um novo comentário</string>
+    <string name="follow_request">Pediu para te seguir</string>
+    <string name="new_status">Criou uma nova publicação</string>
     <string name="boosted_status_updated">A publicação impulsionada foi atualizada</string>
     <string name="notification">Notificação</string>
     <string name="accept_follow_request">Aceitar pedido de seguir</string>
@@ -318,4 +320,88 @@
     <string name="no_lenses">Nenhuma lente</string>
     <string name="no_films">Nenhum filme</string>
     <string name="joined_date">Entrou %1$s</string>
+    <string name="trending_posts">Publicações em destaque</string>
+    <plurals name="seconds_ago">
+        <item quantity="one">%1$d segundo atrás</item>
+        <item quantity="many">%1$d segundos atrás</item>
+        <item quantity="other">%1$d segundos atrás</item>
+    </plurals>
+    <plurals name="minutes_ago">
+        <item quantity="one">%1$d minuto atrás</item>
+        <item quantity="many">%1$d minutos atrás</item>
+        <item quantity="other">%1$d minutos atrás</item>
+    </plurals>
+    <plurals name="hours_ago">
+        <item quantity="one">%1$d hora atrás</item>
+        <item quantity="many">%1$d horas atrás</item>
+        <item quantity="other">%1$d horas atrás</item>
+    </plurals>
+    <plurals name="days_ago">
+        <item quantity="one">%1$d dia atrás</item>
+        <item quantity="many">%1$d dias atrás</item>
+        <item quantity="other">%1$d dias atrás</item>
+    </plurals>
+    <plurals name="weeks_ago">
+        <item quantity="one">%1$d semana atrás</item>
+        <item quantity="many">%1$d semanas atrás</item>
+        <item quantity="other">%1$d semanas atrás</item>
+    </plurals>
+    <plurals name="months_ago">
+        <item quantity="one">%1$d mês atrás</item>
+        <item quantity="many">%1$d meses atrás</item>
+        <item quantity="other">%1$d meses atrás</item>
+    </plurals>
+    <plurals name="years_ago">
+        <item quantity="one">%1$d ano atrás</item>
+        <item quantity="many">%1$d anos atrás</item>
+        <item quantity="other">%1$d anos atrás</item>
+    </plurals>
+    <string name="optional_end_date">Data final opcional</string>
+    <string name="brand">Marca</string>
+    <string name="model">Modelo</string>
+    <string name="flash">Flash</string>
+    <string name="lens">Lente</string>
+    <string name="focal_length">Distância focal</string>
+    <string name="focal_length_35mm">Distância focal 35 mm</string>
+    <string name="aperture">Abertura</string>
+    <string name="exposure_time">Tempo de exposição</string>
+    <string name="iso">ISO</string>
+    <string name="software">Software</string>
+    <string name="creation_date">Data de criação</string>
+    <string name="creation_time">Hora de criação</string>
+    <string name="disable_comments">Desativar comentários</string>
+    <string name="category">Categoria</string>
+    <string name="next">Próximo</string>
+    <string name="publish">Publicar</string>
+    <string name="gps_coordinates">Coordenadas GPS</string>
+    <string name="latitude">Latitude</string>
+    <string name="longitude">Longitude</string>
+    <string name="film">Filme</string>
+    <string name="chemistry">Química</string>
+    <string name="scanner">Scanner</string>
+    <string name="hide_camera_metadata">Ocultar metadados da câmera</string>
+    <string name="back">Voltar</string>
+    <string name="edit_images">Editar imagens</string>
+    <string name="compress">Compactar</string>
+    <string name="compressing">Compactando...</string>
+    <string name="default_license">Licença padrão</string>
+    <string name="fields">Campos</string>
+    <string name="add_field">Adicionar campo</string>
+    <string name="key">Chave</string>
+    <string name="value">Valor</string>
+    <string name="content_settings">Configurações de conteúdo</string>
+    <string name="app_customization">Personalização do aplicativo</string>
+    <string name="new_post_settings">Configurações da nova publicação</string>
+    <string name="use_dynamic_colors">Usar cores dinâmicas</string>
+    <string name="editors_choice_accounts">Escolha do editor: Contas</string>
+    <string name="editors_choice_accounts_explained">Uma seleção de artistas recomendados pelos curadores deste servidor.</string>
+    <string name="editors_choice_posts">Escolha do editor: Publicações</string>
+    <string name="editors_choice_posts_explained">Uma coleção de fotos escolhidas pelos curadores deste servidor.</string>
+    <string name="categories">Categorias</string>
+    <string name="cameras">Câmeras</string>
+    <string name="lenses">Lentes</string>
+    <string name="films">Filmes</string>
+    <string name="requested">Solicitado</string>
+    <string name="mentioned_only">Apenas mencionado</string>
+    <string name="default_timeline_tab">Aba da linha do tempo padrão</string>
 </resources>

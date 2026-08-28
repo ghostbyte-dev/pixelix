@@ -360,7 +360,7 @@ private fun PostHeader(
         )
         Column(modifier = Modifier.padding(start = 8.dp).weight(1f)) {
             Text(
-                text = post.account.displayname.orEmpty().ifBlank { post.account.acct },
+                text = post.account.displayname.orEmpty().ifBlank { post.account.username },
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
                 lineHeight = 8.sp,
@@ -834,10 +834,10 @@ private fun PostActionBar(
                 metadata.chemistry?.let { MetadataItem(Res.drawable.chemistry, it) }
                 metadata.scanner?.let { MetadataItem(Res.drawable.scan, it) }
 
-                metadata.createDate?.let {
-                    MetadataItem(
-                        Res.drawable.datetime, formatLocalized(it)
-                    )
+                metadata.createDate?.let { date ->
+                    formatLocalized(date).takeIf { it.isNotBlank() }?.let { formattedDate ->
+                        MetadataItem(Res.drawable.datetime, formattedDate)
+                    }
                 }
             }
         }

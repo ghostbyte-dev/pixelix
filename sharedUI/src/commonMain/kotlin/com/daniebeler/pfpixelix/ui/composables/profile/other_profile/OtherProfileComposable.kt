@@ -139,17 +139,16 @@ fun OtherProfileComposable(
                     Row {
                         Column {
                             Text(
-                                text = viewModel.accountState.account?.username ?: "",
+                                text = viewModel.accountState.account?.displayname.orEmpty()
+                                    .ifBlank { viewModel.accountState.account?.username } ?: "",
                                 fontWeight = FontWeight.Bold,
-                                fontSize = 18.sp
-                            )
+                                fontSize = 18.sp)
                             Text(
-                                text = DomainFormat.formatDomain(viewModel.domain),
+                                text = viewModel.accountState.account?.acct ?: "",
                                 fontSize = 12.sp,
                                 lineHeight = 6.sp
                             )
                         }
-
                     }
                 }, navigationIcon = {
                     IconButton(onClick = {

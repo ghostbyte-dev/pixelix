@@ -6,15 +6,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import co.touchlab.kermit.Logger
 import com.daniebeler.pfpixelix.di.LocalAppComponent
 import com.daniebeler.pfpixelix.di.injectViewModel
-import com.daniebeler.pfpixelix.ui.composables.widgets.InfinitePostsList
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 import com.daniebeler.pfpixelix.ui.composables.timelines.TimelineHelpCard
+import com.daniebeler.pfpixelix.ui.composables.widgets.InfinitePostsList
 import com.daniebeler.pfpixelix.ui.navigation.Destination
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.receiveAsFlow
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
@@ -24,7 +21,6 @@ import pixelix.app.generated.resources.home
 import pixelix.app.generated.resources.home_timeline_explained
 import pixelix.app.generated.resources.no_posts
 import pixelix.app.generated.resources.photo
-import kotlin.coroutines.cancellation.CancellationException
 
 @Composable
 fun HomeTimelineComposable(
@@ -36,25 +32,11 @@ fun HomeTimelineComposable(
     val staggeredGridState = rememberLazyStaggeredGridState()
     val appComponent = LocalAppComponent.current
     LaunchedEffect(Unit) {
-        try {
         appComponent.backToTopTrigger.event.collect {
-            Logger.d("BackToTop") {
-                "collected on tab $tabIndex, current=${pagerState.currentPage}"
-            }
-            if (pagerState.currentPage == tabIndex) { try { staggeredGridState.animateScrollToItem(0, 0) } catch (e: CancellationException) {
-                    Logger.d("BackToTop") {
-                        "scroll cancelled on tab $tabIndex"
-                    }
-                    // don't rethrow — keep the collector alive
-                }
+            if (pagerState.currentPage == tabIndex) {
+                staggeredGridState.animateScrollToItem(0, 0)
                 viewModel.refresh()
             }
-        }
-        } catch (e: CancellationException) {
-            Logger.d("BackToTop") {"collector cancelled on tab $tabIndex"}
-            throw e  // this one we rethrow — it means the LaunchedEffect itself was cancelled
-        } catch (e: Throwable) {
-            Logger.d("BackToTop") {"collector error on tab $tabIndex: ${e.message}"}
         }
     }
 

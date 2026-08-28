@@ -371,7 +371,6 @@ private fun BottomBarFloating(
                     tab.destination::class
                 ) == true
 
-            var isLongPress by remember { mutableStateOf(false) }
 
             val containerColor =
                 if (isSelected) MaterialTheme.colorScheme.primary else Color.Transparent
@@ -382,11 +381,7 @@ private fun BottomBarFloating(
                     colors = IconButtonDefaults.iconButtonColors(
                         containerColor = containerColor, contentColor = contentColor
                     ), onClick = {
-
-                        if (!isLongPress) {
                             if (!isSelected) {
-                                Logger.d("navigation") { "navigation" }
-                                Logger.d("navigation") {navController.currentBackStack.value.joinToString { it.destination.route ?: "" }}
                                 navController.navigate(tab.destination) {
                                     launchSingleTop = true
                                     restoreState = true
@@ -395,16 +390,13 @@ private fun BottomBarFloating(
                                         saveState = true
                                     }
                                 }
-                                Logger.d("navigation") {navController.currentBackStack.value.joinToString { it.destination.route ?: "" }}
                             } else {
-                                Logger.d("navigation") {"isSelected"}
                                 if (currentDestination.hasRoute<Destination.Search>()) {
                                     appComponent.searchFieldFocus.focus()
                                 } else if (currentDestination.hasRoute<Destination.Feeds>()) {
                                     appComponent.backToTopTrigger.scrollToTop()
                                 }
                             }
-                        }
                     }) {
                     if (tab == HomeTab.OwnProfile && avatar != null) {
                         AsyncImage(

@@ -77,29 +77,30 @@ fun FollowersMainComposable(
         topBar = {
             TopAppBar(
                 title = {
-                Column {
-                    Text(
-                        text = viewModel.accountState.account?.username ?: "",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp
-                    )
-                    Text(
-                        text = viewModel.accountState.account?.url?.substringAfter("https://")
-                            ?.substringBefore("/") ?: "", fontSize = 12.sp, lineHeight = 6.sp
-                    )
-                }
-            }, navigationIcon = {
-                IconButton(onClick = {
-                    navController.popBackStack()
-                }) {
-                    Icon(
-                        imageVector = vectorResource(Res.drawable.arrow_left),
-                        contentDescription = ""
-                    )
-                }
-            }, colors = TopAppBarDefaults.mediumTopAppBarColors(
-                containerColor = MaterialTheme.colorScheme.surfaceContainer
-            )
+                    Column {
+                        Text(
+                            text = viewModel.accountState.account?.displayname.orEmpty()
+                                .ifBlank { viewModel.accountState.account?.shortUsername } ?: "",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 18.sp)
+                        Text(
+                            text = viewModel.accountState.account?.acct ?: "",
+                            fontSize = 12.sp,
+                            lineHeight = 6.sp
+                        )
+                    }
+                }, navigationIcon = {
+                    IconButton(onClick = {
+                        navController.popBackStack()
+                    }) {
+                        Icon(
+                            imageVector = vectorResource(Res.drawable.arrow_left),
+                            contentDescription = ""
+                        )
+                    }
+                }, colors = TopAppBarDefaults.mediumTopAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceContainer
+                )
             )
 
         }) { paddingValues ->
@@ -122,7 +123,8 @@ fun FollowersMainComposable(
                         if (viewModel.accountState.account != null) {
                             Text(
                                 viewModel.accountState.account?.followersCount.toString() + " " + pluralStringResource(
-                                    Res.plurals.follower, viewModel.accountState.account?.followersCount ?: 0
+                                    Res.plurals.follower,
+                                    viewModel.accountState.account?.followersCount ?: 0
                                 )
                             )
                         } else {
@@ -143,7 +145,8 @@ fun FollowersMainComposable(
                         if (viewModel.accountState.account != null) {
                             Text(
                                 viewModel.accountState.account?.followingCount.toString() + " " + pluralStringResource(
-                                    Res.plurals.following, viewModel.accountState.account?.followingCount ?: 0
+                                    Res.plurals.following,
+                                    viewModel.accountState.account?.followingCount ?: 0
                                 )
                             )
                         } else {

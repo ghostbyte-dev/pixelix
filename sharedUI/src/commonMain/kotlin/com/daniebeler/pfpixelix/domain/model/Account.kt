@@ -3,6 +3,7 @@ package com.daniebeler.pfpixelix.domain.model
 data class Account(
     override val id: String = "",
     val username: String = "",
+    val shortUsername: String = "",
     val acct: String = "",
     val displayname: String? = null,
     val avatar: String? = null,

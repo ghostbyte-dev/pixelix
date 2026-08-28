@@ -32,6 +32,7 @@ data class VernissageAccountDto(
         return Account(
             id = this.id,
             username = this.username,
+            shortUsername = this.username.substringBefore("@"),
             acct = this.account,
             displayname = this.displayname,
             avatar = this.avatar ?: "",

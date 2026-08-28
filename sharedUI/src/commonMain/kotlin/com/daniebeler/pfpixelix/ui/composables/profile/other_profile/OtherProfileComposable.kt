@@ -140,7 +140,7 @@ fun OtherProfileComposable(
                         Column {
                             Text(
                                 text = viewModel.accountState.account?.displayname.orEmpty()
-                                    .ifBlank { viewModel.accountState.account?.username } ?: "",
+                                    .ifBlank { viewModel.accountState.account?.shortUsername } ?: "",
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 18.sp)
                             Text(

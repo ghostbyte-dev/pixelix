@@ -105,7 +105,7 @@ fun AccountListItem(
         supportingContent = {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    text = account.username,
+                    text = account.shortUsername,
                     fontSize = 12.sp,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis

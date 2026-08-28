@@ -19,7 +19,9 @@ import pixelix.app.generated.resources.globe
 import pixelix.app.generated.resources.home
 import pixelix.app.generated.resources.house
 import pixelix.app.generated.resources.local
+import pixelix.app.generated.resources.local_timeline
 import pixelix.app.generated.resources.share
+import pixelix.app.generated.resources.timeline
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -40,7 +42,7 @@ fun DefaultHomeTab() {
 
     val openCount = 8
     ExpandOptionsPref(
-        leadingIcon = Res.drawable.globe,
+        leadingIcon = Res.drawable.timeline,
         title = stringResource(Res.string.default_timeline_tab),
         desc = visibilityDesc,
         index = 2,
@@ -60,7 +62,7 @@ fun DefaultHomeTab() {
         ValueOption(
             shapes = ListItemDefaults.segmentedShapes(index = 4, count = openCount),
             leadingIcon = imageVectorIconBlock(
-                imageVector = vectorResource(Res.drawable.share),
+                imageVector = vectorResource(Res.drawable.local_timeline),
                 contentDescription = stringResource(Res.string.local)
             ),
             title = stringResource(Res.string.local),

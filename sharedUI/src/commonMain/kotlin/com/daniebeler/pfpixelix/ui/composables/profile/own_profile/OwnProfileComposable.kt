@@ -56,10 +56,9 @@ import com.daniebeler.pfpixelix.utils.DomainFormat
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
-import pixelix.app.generated.resources.arrow_down
 import pixelix.app.generated.resources.edit_profile
 import pixelix.app.generated.resources.more_menu
-import pixelix.app.generated.resources.photo
+import pixelix.app.generated.resources.user_switch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -71,8 +70,6 @@ fun OwnProfileComposable(
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showBottomSheet by remember { mutableStateOf(0) }
 
-    val photoIcon = vectorResource(Res.drawable.photo)
-
     val lazyGridState = rememberLazyStaggeredGridState()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
@@ -82,45 +79,46 @@ fun OwnProfileComposable(
         topBar = {
             TopAppBar(
                 scrollBehavior = scrollBehavior, title = {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    modifier = Modifier.clickable { showBottomSheet = 2 }) {
-                    Column {
-                        Text(
-                            text = viewModel.accountState.account?.username ?: "",
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 18.sp
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        modifier = Modifier.clickable { showBottomSheet = 2 }) {
+                        Icon(
+                            imageVector = vectorResource(Res.drawable.user_switch),
+                            contentDescription = "Switch account"
                         )
-                        Text(
-                            text = DomainFormat.formatDomain(viewModel.ownDomain),
-                            fontSize = 12.sp,
-                            lineHeight = 6.sp
+                        Column {
+                            Text(
+                                text = viewModel.accountState.account?.displayname.orEmpty()
+                                    .ifBlank { viewModel.accountState.account?.shortUsername }
+                                    ?: "",
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 18.sp)
+                            Text(
+                                text = viewModel.accountState.account?.acct ?: "",
+                                fontSize = 12.sp,
+                                lineHeight = 6.sp
+                            )
+                        }
+                    }
+                }, actions = {
+                    if (viewModel.ownDomain.isNotEmpty()) {
+                        DomainSoftwareComposable(
+                            domain = viewModel.ownDomain
                         )
                     }
-                    Icon(
-                        imageVector = vectorResource(Res.drawable.arrow_down),
-                        contentDescription = "Switch account"
-                    )
-                }
-            }, actions = {
-                if (viewModel.ownDomain.isNotEmpty()) {
-                    DomainSoftwareComposable(
-                        domain = viewModel.ownDomain
-                    )
-                }
 
-                IconButton(onClick = {
-                    showBottomSheet = 1
-                }) {
-                    Icon(
-                        imageVector = vectorResource(Res.drawable.more_menu),
-                        contentDescription = "preferences"
-                    )
-                }
-            }, colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = MaterialTheme.colorScheme.surfaceContainer
-            )
+                    IconButton(onClick = {
+                        showBottomSheet = 1
+                    }) {
+                        Icon(
+                            imageVector = vectorResource(Res.drawable.more_menu),
+                            contentDescription = "preferences"
+                        )
+                    }
+                }, colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceContainer
+                )
             )
         }) { paddingValues ->
         Box(modifier = Modifier.fillMaxSize().padding(paddingValues)) {

@@ -348,4 +348,20 @@
     <string name="reject_follow_request">Zamítnout žádost o sledování</string>
     <string name="reason">Důvod</string>
     <string name="no_lenses">Žádné čočky</string>
+    <string name="abusive_or_harmful">Surový nebo škodlivý</string>
+    <string name="underage_account">Účet nezletilého</string>
+    <string name="violence">Násilí</string>
+    <string name="copyright_infringement">Porušení autorských práv</string>
+    <string name="impersonation">Ztělesnění jiné osoby</string>
+    <string name="scam">Podvod</string>
+    <string name="optional_end_date">Volitelné datum konce</string>
+    <string name="boosted_status_updated">Boostovaný příspěvek byl změněn</string>
+    <string name="caption_template">Šablona popisku</string>
+    <string name="lens">Objektiv</string>
+    <string name="focal_length">Ohnisková vzdálenost</string>
+    <string name="focal_length_35mm">Ohnisková vzdálenost 35 mm</string>
+    <string name="aperture">Clona</string>
+    <string name="exposure_time">Doba expozice</string>
+    <string name="gps_coordinates">GPS souřadnice</string>
+    <string name="default_timeline_tab">Výchozí záložka časové osy</string>
 </resources>

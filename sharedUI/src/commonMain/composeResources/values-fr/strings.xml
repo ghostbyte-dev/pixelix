@@ -24,7 +24,8 @@
     </plurals>
     <string name="following">Abonnements</string>
     <plurals name="following">
-        <item quantity="one">Abonnements</item>
+        <item quantity="one">Abonnement</item>
+        <item quantity="many">Abonnements</item>
         <item quantity="other">Abonnements</item>
     </plurals>
     <plurals name="posts">
@@ -95,7 +96,7 @@
     <string name="audience">Visibilité</string>
     <string name="unlisted">non répertorié</string>
     <string name="followers_only">abonné·e·s seulement</string>
-    <string name="audience_public">public</string>
+    <string name="audience_public">publique</string>
     <string name="no_followed_hashtags">Aucun hashtag suivi</string>
     <string name="no_muted_accounts">Aucun compte masqué</string>
     <string name="visibility_x">Visibilité : %1$s</string>
@@ -277,4 +278,37 @@
     <string name="terrorism">Terrorisme</string>
     <string name="reported">Signalé</string>
     <string name="delete_account">Supprimer le compte</string>
+    <string name="posts_title">Publications</string>
+    <string name="character_count">%1$d / %2$d caractères</string>
+    <string name="registration">Inscription</string>
+    <string name="closed">fermé</string>
+    <string name="manually_accept_new_followers">Accepter manuellement les nouveaux abonnés</string>
+    <string name="optional_end_date">Date de fin facultative</string>
+    <string name="requested">Demandé</string>
+    <string name="new_comment">Publié un nouveau commentaire</string>
+    <string name="notification">Notification</string>
+    <string name="accept_follow_request">Accepter la demande de suivi</string>
+    <string name="reject_follow_request">Refuser la demande de suivi</string>
+    <string name="send">Envoyer</string>
+    <string name="default_visibility">Visibilité par défaut</string>
+    <string name="model">Modèle</string>
+    <string name="flash">Flash</string>
+    <string name="focal_length">Distance focale</string>
+    <string name="focal_length_35mm">Distance focale 35 mm</string>
+    <string name="iso">ISO</string>
+    <string name="software">Software</string>
+    <string name="creation_date">Date de création</string>
+    <string name="disable_comments">Désactiver les commentaires</string>
+    <string name="category">Catégorie</string>
+    <string name="publish">Publier</string>
+    <string name="gps_coordinates">Coordonnées GPS</string>
+    <string name="latitude">Latitude</string>
+    <string name="longitude">Longitude</string>
+    <string name="hide_camera_metadata">Masquer les métadonnées de la caméra</string>
+    <string name="back">Retour</string>
+    <string name="default_license">Licence par défaut</string>
+    <string name="fields">Champs</string>
+    <string name="add_field">Ajouter un champ</string>
+    <string name="key">Clé</string>
+    <string name="use_dynamic_colors">Utilisez des couleurs dynamiques</string>
 </resources>

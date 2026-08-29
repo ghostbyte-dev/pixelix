@@ -269,4 +269,7 @@
     <string name="reported">已举报</string>
     <string name="delete_account">删除帐户</string>
     <string name="posts_title">帖子</string>
+    <string name="trending_accounts">热门账户</string>
+    <string name="trending_hashtags">热门标签</string>
+    <string name="trending_posts">热门帖子</string>
 </resources>

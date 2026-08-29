@@ -590,12 +590,7 @@ class PostEditorViewModel @Inject constructor(
                 }
 
                 is Resource.Error -> {
-                    val index = mediaItems.indexOfFirst { it.imageUri == uri }
-                    if (index != -1) {
-                        mediaItems[index] = mediaItems[index].copy(
-                            isLoading = false, isError = true
-                        )
-                    }
+                    mediaItems.removeAll { it.imageUri == uri }
                     mediaUploadState.copy(error = result.message, isLoading = false)
                 }
 
@@ -632,13 +627,11 @@ class PostEditorViewModel @Inject constructor(
     }
 
     private fun sortMediaUploadState(mediaUploadState: MediaUploadState): MediaUploadState {
-        var newMediaUploadState = MediaUploadState()
-        mediaItems.forEach { image ->
-            newMediaUploadState =
-                newMediaUploadState.copy(mediaAttachments = newMediaUploadState.mediaAttachments + mediaUploadState.mediaAttachments.find { it.id == image.id }!!)
+        val sortedAttachments = mediaItems.mapNotNull { image ->
+            mediaUploadState.mediaAttachments.find { it.id == image.id && it.id != null }
         }
 
-        return newMediaUploadState
+        return mediaUploadState.copy(mediaAttachments = sortedAttachments)
     }
 
     private fun updateMetadata(index: Int) {

@@ -32,6 +32,8 @@ class LoginViewModel(
     var selectedPlatform by mutableStateOf<BackendType?>(null)
         private set
 
+    var originalPlatform: BackendType = session.backendType.value
+
     var serverHost by mutableStateOf(TextFieldValue())
         private set
 
@@ -43,8 +45,11 @@ class LoginViewModel(
     var error by mutableStateOf<String?>(null)
         private set
 
+    fun onClose() {
+        session.setBackendType(originalPlatform)
+    }
+
     fun selectPlatform(type: BackendType) {
-        session.setBackendType(type)
         selectedPlatform = type
         currentStep = LoginStep.SERVER_INPUT
     }
@@ -70,6 +75,7 @@ class LoginViewModel(
     }
 
     fun auth() {
+        session.setBackendType(selectedPlatform ?: BackendType.PIXELFED)
         viewModelScope.launch {
             try {
                 isLoading = true

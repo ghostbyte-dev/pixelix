@@ -2,7 +2,6 @@ package com.daniebeler.pfpixelix.ui.composables.session
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,7 +13,6 @@ import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
@@ -94,9 +92,14 @@ fun LoginComposable(
 
     NavigationBackHandler(
         state = rememberNavigationEventState(NavigationEventInfo.None),
-        isBackEnabled = viewModel.currentStep == LoginStep.SERVER_INPUT,
+        isBackEnabled = true,
         onBackCompleted = {
-            viewModel.goBackToPlatformSelection()
+            if (viewModel.currentStep == LoginStep.SERVER_INPUT) {
+                viewModel.goBackToPlatformSelection()
+            } else {
+                viewModel.onClose()
+                navController.popBackStack()
+            }
         })
     Box(Modifier.imePadding().fillMaxSize()) {
         Scaffold(contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top)) { innerPadding ->
@@ -113,6 +116,7 @@ fun LoginComposable(
                         if (isCloseable) {
                             IconButton(
                                 onClick = {
+                                    viewModel.onClose()
                                     navController.popBackStack()
                                 },
                                 modifier = Modifier.clip(CircleShape)

@@ -20,6 +20,7 @@
     <string name="followers">متابِعون</string>
     <plurals name="following">
         <item quantity="zero">يتابع</item>
+        <item quantity="other">يتابع</item>
     </plurals>
     <string name="posts">المنشورات</string>
     <string name="hashtags">الوسوم</string>

@@ -24,6 +24,7 @@
     </plurals>
     <plurals name="following">
         <item quantity="one">Gevolgd</item>
+        <item quantity="other">Gevolgd</item>
     </plurals>
     <string name="posts">Berichten</string>
     <string name="reblogged_your_post">deelde je bericht</string>

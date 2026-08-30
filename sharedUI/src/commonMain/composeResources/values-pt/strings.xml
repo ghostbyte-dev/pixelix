@@ -20,6 +20,7 @@
     <string name="followers">Seguidores</string>
     <plurals name="following">
         <item quantity="one">Seguindo</item>
+        <item quantity="other">Seguindo</item>
     </plurals>
     <string name="posts">Publicações</string>
     <string name="hashtags">Etiquetas</string>
@@ -308,7 +309,7 @@
     <string name="no_lenses">Nenhuma lente</string>
     <plurals name="hours_ago">
         <item quantity="one">%1$d hora atrás</item>
-        <item quantity="many">%1$d horas atrás</item>
+        <item quantity="other">%1$d horas atrás</item>
     </plurals>
     <string name="include_public_posts_in_search_engines">Mostrar publicações públicas nos motores de busca</string>
     <string name="include_profile_in_search_engines">Incluir o perfil nos motores de busca</string>

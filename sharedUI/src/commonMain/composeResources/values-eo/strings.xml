@@ -15,6 +15,7 @@
     </plurals>
     <plurals name="following">
         <item quantity="one">Sekvas</item>
+        <item quantity="other">Sekvas</item>
     </plurals>
     <plurals name="posts">
         <item quantity="one">Afiŝo</item>

@@ -20,6 +20,7 @@
     <string name="followers">Seguidors</string>
     <plurals name="following">
         <item quantity="one">Següent</item>
+        <item quantity="other">Següent</item>
     </plurals>
     <string name="posts">Entrades</string>
     <string name="hashtags">Etiquetes</string>

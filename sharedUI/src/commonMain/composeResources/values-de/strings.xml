@@ -328,4 +328,12 @@
     <string name="compress">Komprimieren</string>
     <string name="compressing">Wird komprimiert...</string>
     <string name="default_license">Standard Lizenz</string>
+    <string name="posts_title">Beiträge</string>
+    <string name="trending_accounts">Trending Benutzer</string>
+    <string name="trending_hashtags">Trending Hashtags</string>
+    <string name="trending_posts">Trending Beiträge</string>
+    <string name="no_categories">Keine Kategorien</string>
+    <string name="no_cameras">Keine Kameras</string>
+    <string name="no_lenses">Keine Objektive</string>
+    <string name="no_films">Keine Filme</string>
 </resources>

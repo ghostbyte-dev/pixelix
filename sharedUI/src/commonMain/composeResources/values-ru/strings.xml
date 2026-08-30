@@ -20,6 +20,7 @@
     <string name="followers">Подписчиков</string>
     <plurals name="following">
         <item quantity="one">В читаемых</item>
+        <item quantity="other">В читаемых</item>
     </plurals>
     <string name="posts">Записей</string>
     <string name="hashtags">Хештеги</string>

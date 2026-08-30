@@ -12,6 +12,7 @@
     </plurals>
     <plurals name="following">
         <item quantity="one">Sinu jälgitavad</item>
+        <item quantity="other">Sinu jälgitavad</item>
     </plurals>
     <plurals name="posts">
         <item quantity="one">Postitus</item>

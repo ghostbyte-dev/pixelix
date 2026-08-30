@@ -1,7 +1,8 @@
-@file:OptIn(ExperimentalKotlinGradlePluginApi::class)
+@file:OptIn(ExperimentalKotlinGradlePluginApi::class, ExperimentalWasmDsl::class)
 
 import com.google.devtools.ksp.gradle.KspAATask
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -27,13 +28,14 @@ kotlin {
 
         androidResources { enable = true }
         compilerOptions { jvmTarget = JvmTarget.JVM_17 }
+
+        withHostTest {}
     }
 
     jvm()
 
     listOf(
-        iosArm64(),
-        iosSimulatorArm64()
+        iosArm64(), iosSimulatorArm64()
     ).forEach {
         it.binaries.framework {
             baseName = "ComposeApp"
@@ -41,7 +43,11 @@ kotlin {
         }
     }
 
-    wasmJs { browser() }
+    wasmJs {
+        browser()
+
+        binaries.executable()
+    }
 
     sourceSets {
         applyDefaultHierarchyTemplate()
@@ -174,6 +180,9 @@ kotlin {
     compilerOptions {
         freeCompilerArgs.add("-Xexpect-actual-classes")
     }
+    sourceSets.commonTest.dependencies {
+        implementation(kotlin("test"))
+    }
 }
 
 compose.resources {
@@ -182,17 +191,13 @@ compose.resources {
 
 dependencies {
     listOf(
-        "kspAndroid",
-        "kspJvm",
-        "kspIosArm64",
-        "kspIosSimulatorArm64",
-        "kspWasmJs"
+        "kspAndroid", "kspJvm", "kspIosArm64", "kspIosSimulatorArm64", "kspWasmJs"
     ).forEach {
         add(it, libs.kotlin.inject.compiler.ksp)
     }
-    androidRuntimeClasspath(libs.ui.tooling)}
+    androidRuntimeClasspath(libs.ui.tooling)
+}
 
 tasks.configureEach {
-    if (this is KspAATask && name != "kspCommonMainKotlinMetadata")
-        dependsOn("kspCommonMainKotlinMetadata")
+    if (this is KspAATask && name != "kspCommonMainKotlinMetadata") dependsOn("kspCommonMainKotlinMetadata")
 }

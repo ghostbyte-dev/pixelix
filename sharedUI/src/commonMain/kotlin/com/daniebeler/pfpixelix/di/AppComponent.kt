@@ -36,6 +36,8 @@ import com.daniebeler.pfpixelix.domain.service.general.PostEditorService
 import com.daniebeler.pfpixelix.domain.service.general.PostEditorServiceDelegate
 import com.daniebeler.pfpixelix.domain.service.general.PostService
 import com.daniebeler.pfpixelix.domain.service.general.PostServiceDelegate
+import com.daniebeler.pfpixelix.domain.service.general.PushSubscriptionService
+import com.daniebeler.pfpixelix.domain.service.general.PushSubscriptionServiceDelegate
 import com.daniebeler.pfpixelix.domain.service.general.Session
 import com.daniebeler.pfpixelix.domain.service.general.TimelineService
 import com.daniebeler.pfpixelix.domain.service.general.TimelineServiceDelegate
@@ -99,6 +101,7 @@ abstract class AppComponent(
     abstract val backToTopTrigger: BackToTopTrigger
     abstract val globalNavigator: GlobalNavigator
     abstract val notificationBadgeState: NotificationBadgeState
+    abstract val pushSubscriptionService: PushSubscriptionService
 
     @Provides
     fun bindGlobalNavigator(impl: GlobalNavigatorImpl): GlobalNavigator = impl
@@ -135,6 +138,8 @@ abstract class AppComponent(
     fun provideCollectionService(delegate: CollectionServiceDelegate): CollectionService = delegate
     @Provides
     fun provideDirectMessagesService(delegate: DirectMessagesServiceDelegate): DirectMessagesService = delegate
+    @Provides
+    fun providePushSubscriptionService(delegate: PushSubscriptionServiceDelegate): PushSubscriptionService = delegate
 
     @get:Provides
     @get:AppSingleton
@@ -239,7 +244,7 @@ abstract class AppComponent(
                         }
                     }
                 }
-                level = LogLevel.NONE
+                level = LogLevel.ALL
             }
             install(HttpTimeout) {
                 requestTimeoutMillis = 60000

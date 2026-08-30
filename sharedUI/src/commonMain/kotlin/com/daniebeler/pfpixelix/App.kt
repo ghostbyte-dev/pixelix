@@ -74,6 +74,7 @@ import com.daniebeler.pfpixelix.ui.navigation.Destination
 import com.daniebeler.pfpixelix.ui.navigation.appGraph
 import com.daniebeler.pfpixelix.ui.theme.PixelixTheme
 import com.daniebeler.pfpixelix.utils.end
+import com.daniebeler.pfpixelix.utils.initializePushNotifications
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -181,6 +182,9 @@ fun App(
                     navController.clearBackStack<Destination.HomeTabNewPost>()
                     navController.clearBackStack<Destination.HomeTabNotifications>()
                     navController.clearBackStack<Destination.HomeTabOwnProfile>()
+
+
+                    initializePushNotifications(appComponent.context)
                 }
 
                 LaunchedEffect(appComponent.globalNavigator) {

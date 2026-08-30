@@ -17,7 +17,13 @@
         android:theme="@style/Theme.Pixelix"
         tools:ignore="Instantiatable"
         tools:targetApi="31">
-
+        <service
+            android:name="com.daniebeler.pfpixelix.domain.service.pushNotifications.PixelixPushService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="org.unifiedpush.android.connector.PUSH_EVENT"/>
+            </intent-filter>
+        </service>
         <provider
             android:name="androidx.startup.InitializationProvider"
             android:authorities="${applicationId}.androidx-startup"

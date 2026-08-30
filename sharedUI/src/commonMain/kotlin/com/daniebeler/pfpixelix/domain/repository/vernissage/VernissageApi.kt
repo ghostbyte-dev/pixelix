@@ -25,6 +25,7 @@ import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageTagDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageUnreadNotificationsCountDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageUploadedAttachment
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageVisibilityDto
+import com.daniebeler.pfpixelix.domain.service.vernissage.model.request.SubscribePushNotificationRequest
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.request.VernissageReblogRequest
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.request.VernissageUpdateUserRequest
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.request.VernissageUserBlockRequest
@@ -402,6 +403,12 @@ interface VernissageApi {
 
     @GET("api/v1/licenses?page=1&size=100")
     suspend fun getAllLicenses(): VernissagePagePaginatedResponse<VernissageLicenseDto>
+
+    @Headers("Content-Type: application/json")
+    @POST("api/v1/push-subscriptions")
+    suspend fun subscribePushNotifications(
+        @Body subscribeDto: SubscribePushNotificationRequest
+    )
 
     @GET
     suspend fun getNodeInfo(@Url domain: String): PixelfedNodeInfoDto

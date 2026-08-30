@@ -18,6 +18,7 @@
     <string name="followers">Seuraajat</string>
     <plurals name="following">
         <item quantity="one">Seurataan</item>
+        <item quantity="other">Seurataan</item>
     </plurals>
     <plurals name="posts">
         <item quantity="one">Julkaisu</item>

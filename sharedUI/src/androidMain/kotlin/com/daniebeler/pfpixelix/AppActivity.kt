@@ -2,22 +2,17 @@ package com.daniebeler.pfpixelix
 
 import android.content.ContentResolver
 import android.content.Intent
-import android.graphics.Color
-import android.graphics.Color.TRANSPARENT
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
-import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.annotation.RequiresApi
 import androidx.compose.ui.window.DialogProperties
 import androidx.core.content.FileProvider
-import androidx.core.view.WindowCompat
+import co.touchlab.kermit.Logger
 import io.github.vinceglb.filekit.FileKit
 import io.github.vinceglb.filekit.dialogs.init
-import io.ktor.util.logging.Logger
 import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
@@ -29,6 +24,7 @@ class AppActivity : ComponentActivity() {
         MyApplication.currentActivity = WeakReference(this)
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
 
         setContent {
             App(MyApplication.appComponent) { finish() }
@@ -70,6 +66,11 @@ class AppActivity : ComponentActivity() {
         val username = intent.getStringExtra("username")
         if (destination == "profile" && accountId != null && username != null) {
             onExternalNotification(accountId, username)
+        } else if (destination == "notifications") {
+            Logger.d("pushNotifications") {
+                "new intent"
+            }
+            this.intent = intent
         }
     }
 

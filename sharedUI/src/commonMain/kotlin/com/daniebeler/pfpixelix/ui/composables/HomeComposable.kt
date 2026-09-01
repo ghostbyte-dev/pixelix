@@ -49,6 +49,7 @@ import com.daniebeler.pfpixelix.ui.composables.timelines.global_timeline.GlobalT
 import com.daniebeler.pfpixelix.ui.composables.timelines.home_timeline.HomeTimelineComposable
 import com.daniebeler.pfpixelix.ui.composables.timelines.local_timeline.LocalTimelineComposable
 import com.daniebeler.pfpixelix.ui.navigation.Destination
+import com.daniebeler.pfpixelix.utils.PushPermissionRequester
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
@@ -84,6 +85,11 @@ fun HomeComposable(
 
     val appComponent = LocalAppComponent.current
 
+    if (!viewModel.hasRequestedPushPermission) {
+        PushPermissionRequester {
+            viewModel.hasRequestedPushPermission = true
+        }
+    }
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top),

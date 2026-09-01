@@ -1,4 +1,4 @@
 package com.daniebeler.pfpixelix.utils
 
-actual fun initializePushNotifications(context: Any?) {
+actual fun initializePushNotifications(context: Any?, activeUser: String) {
 }

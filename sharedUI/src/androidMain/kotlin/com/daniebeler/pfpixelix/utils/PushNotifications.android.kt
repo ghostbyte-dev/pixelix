@@ -5,10 +5,9 @@ import co.touchlab.kermit.Logger
 import org.unifiedpush.android.connector.UnifiedPush
 import org.unifiedpush.android.connector.keys.DefaultKeyManager
 
-actual fun initializePushNotifications(context: Any?) {
+actual fun initializePushNotifications(context: Any?, activeUser: String) {
     val ctx = context as Context
     val keyManager = DefaultKeyManager(ctx)
-    val instance = "default"
 
     val distributors = UnifiedPush.getDistributors(ctx)
     if (distributors.isNotEmpty()) {
@@ -16,11 +15,8 @@ actual fun initializePushNotifications(context: Any?) {
             "distributors found: " + distributors.size
         }
         UnifiedPush.saveDistributor(ctx, distributors.first())
-        UnifiedPush.register(ctx, instance, keyManager = keyManager)
-        // key generation happens internally as part of this call —
-        // don't call keyManager.generate() yourself beforehand
+        UnifiedPush.register(ctx, activeUser, keyManager = keyManager)
     } else {
-        // no distributor — embedded FCM fallback or prompt to install one
         Logger.d("pushNotification") { "no distributor found" }
     }
 }

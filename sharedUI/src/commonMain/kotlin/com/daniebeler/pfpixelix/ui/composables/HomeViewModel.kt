@@ -19,6 +19,7 @@ class HomeViewModel @Inject constructor(
 
     val capabilities = session.capabilities
     val defaultTab = prefs.defaultHomeTab
+    var hasRequestedPushPermission = prefs.hasRequestedPushPermission
     var isSwipeBetweenTabsEnabled by mutableStateOf(true)
     init {
         viewModelScope.launch {

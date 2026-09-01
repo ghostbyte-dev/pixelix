@@ -3,6 +3,7 @@ package com.daniebeler.pfpixelix.domain.service.general
 import com.daniebeler.pfpixelix.di.AppSingleton
 import com.daniebeler.pfpixelix.domain.model.Credentials
 import com.daniebeler.pfpixelix.domain.model.SessionStorage
+import com.daniebeler.pfpixelix.domain.service.capabilities.Capabilities
 import com.daniebeler.pfpixelix.domain.service.pixelfed.PixelfedAuthService
 import com.daniebeler.pfpixelix.domain.service.vernissage.VernissageAuthService
 import io.ktor.http.Url
@@ -32,6 +33,7 @@ interface AuthService {
     suspend fun updateSessionAvatar(accountId: String, avatarUrl: String)
 
     fun getCurrentSession(): Credentials?
+    fun getCurrentCapabilities(): Capabilities
 
     fun getServerUrl(host: String): Url {
         require(isValidHost(host)) { "The host is invalid '$host'" }
@@ -66,4 +68,5 @@ class AuthServiceDelegate(
         current.updateSessionAvatar(accountId, avatarUrl)
 
     override fun getCurrentSession(): Credentials? = current.getCurrentSession()
+    override fun getCurrentCapabilities(): Capabilities = current.getCurrentCapabilities()
 }

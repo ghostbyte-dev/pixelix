@@ -1,7 +1,10 @@
 package com.daniebeler.pfpixelix.domain.service.capabilities
 
 val VernissageCapabilities = Capabilities(
-    general = GeneralCapabilities(supportsDMs = false), post = PostCapabilities(
+    general = GeneralCapabilities(
+        supportsDMs = false,
+        supportsPushNotifications = true
+    ), post = PostCapabilities(
         showCameraMetadata = true, showLikedBy = false
     ), profile = ProfileCapabilities(
         showCollectionsOwnProfile = false,

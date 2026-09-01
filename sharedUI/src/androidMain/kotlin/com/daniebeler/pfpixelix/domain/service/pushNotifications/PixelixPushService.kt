@@ -3,9 +3,11 @@ package com.daniebeler.pfpixelix.domain.service.pushNotifications
 import android.content.Context
 import co.touchlab.kermit.Logger
 import com.daniebeler.pfpixelix.MyApplication.Companion.appComponent
+import com.daniebeler.pfpixelix.domain.model.PushNotification
 import com.daniebeler.pfpixelix.domain.service.general.PushSubscriptionService
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.request.SubscribePushNotificationRequest
+import com.daniebeler.pfpixelix.utils.Notifier
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -30,7 +32,7 @@ class PixelixPushService : PushService() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 Logger.d(tag = "PixelixPush") { "About to subscribe" }
-                appComponent.pushSubscriptionService.subscribe(
+                pushSubscriptionRepository.subscribe(
                     SubscribePushNotificationRequest(
                         endpoint = endpoint.url,
                         userAgentPublicKey = publicKeySet.pubKey,
@@ -51,8 +53,12 @@ class PixelixPushService : PushService() {
 
     override fun onMessage(message: PushMessage, instance: String) {
         Logger.d("PixelixPush") { "message"  }
-//        val params = decodeMessage(message.content.toString(Charsets.UTF_8))
-//        notify(context, params)
+        Logger.d("PixelixPush") { message.content.toString(Charsets.UTF_8)  }
+        val message = message.content.toString(Charsets.UTF_8)
+        val notification = pushSubscriptionRepository.decodeMessage(message)
+        if (notification != null) {
+            Notifier(context).showNotification(notification)
+        }
     }
 
     override fun onRegistrationFailed(
@@ -67,12 +73,5 @@ class PixelixPushService : PushService() {
 
     override fun onUnregistered(instance: String) {
         TODO("Not yet implemented")
-    }
-
-    private fun notify(context: Context, params: Map<String, String>) {
-        val text = params["message"] ?: "Internal error"
-        val priority = params["priority"]?.toInt() ?: 8
-//        val title = params["title"] ?: context.getString(R.string.app_name)
-//        Notifier(context).showNotification(title, text, priority)
     }
 }

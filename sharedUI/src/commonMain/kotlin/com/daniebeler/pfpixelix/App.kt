@@ -183,8 +183,11 @@ fun App(
                     navController.clearBackStack<Destination.HomeTabNotifications>()
                     navController.clearBackStack<Destination.HomeTabOwnProfile>()
 
+                    val capabilities = appComponent.authService.getCurrentCapabilities()
 
-                    initializePushNotifications(appComponent.context)
+                    if (capabilities.general.supportsPushNotifications) {
+                        activeUser?.let { initializePushNotifications(appComponent.context, it) }
+                    }
                 }
 
                 LaunchedEffect(appComponent.globalNavigator) {

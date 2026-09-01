@@ -5,6 +5,7 @@ import com.daniebeler.pfpixelix.di.AppSingleton
 import com.daniebeler.pfpixelix.domain.model.Credentials
 import com.daniebeler.pfpixelix.domain.model.SessionStorage
 import com.daniebeler.pfpixelix.domain.repository.pixelfed.PixelfedAuthApi.Companion.createPixelfedAuthApi
+import com.daniebeler.pfpixelix.domain.service.capabilities.Capabilities
 import com.daniebeler.pfpixelix.domain.service.general.AuthService
 import com.daniebeler.pfpixelix.domain.service.general.AuthService.Companion.clientName
 import com.daniebeler.pfpixelix.domain.service.general.AuthService.Companion.grantType
@@ -151,5 +152,9 @@ class PixelfedAuthService(
 
     override fun getCurrentSession(): Credentials? {
         return session.credentials.value
+    }
+
+    override fun getCurrentCapabilities(): Capabilities {
+        return session.capabilities.value
     }
 }

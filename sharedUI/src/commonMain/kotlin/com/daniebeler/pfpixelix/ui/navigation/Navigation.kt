@@ -14,6 +14,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.dialog
 import androidx.navigation.compose.navigation
+import androidx.navigation.navDeepLink
 import androidx.navigation.toRoute
 import com.daniebeler.pfpixelix.EdgeToEdgeDialogProperties
 import com.daniebeler.pfpixelix.di.injectViewModel
@@ -212,6 +213,9 @@ internal fun NavGraphBuilder.appGraph(
     }
 
     navigation<Destination.HomeTabNotifications>(
+        deepLinks = listOf(
+            navDeepLink { uriPattern = "pixelix://notifications" }
+        ),
         startDestination = Destination.Notifications,
         enterTransition = { tabEnterTransition<Destination.HomeTabNotifications>() },
         exitTransition = { tabExitTransition<Destination.HomeTabNotifications>() }) {

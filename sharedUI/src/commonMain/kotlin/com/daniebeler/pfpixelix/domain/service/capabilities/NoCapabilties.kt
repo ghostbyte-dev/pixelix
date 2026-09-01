@@ -1,7 +1,10 @@
 package com.daniebeler.pfpixelix.domain.service.capabilities
 
 val NoCapabilities = Capabilities(
-    general = GeneralCapabilities(supportsDMs = false), post = PostCapabilities(
+    general = GeneralCapabilities(
+        supportsDMs = false,
+        supportsPushNotifications = false
+    ), post = PostCapabilities(
         showCameraMetadata = false, showLikedBy = false
     ), profile = ProfileCapabilities(
         showCollectionsOwnProfile = false,

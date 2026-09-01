@@ -5,6 +5,7 @@ import com.daniebeler.pfpixelix.di.AppSingleton
 import com.daniebeler.pfpixelix.domain.model.Credentials
 import com.daniebeler.pfpixelix.domain.model.SessionStorage
 import com.daniebeler.pfpixelix.domain.repository.vernissage.VernissageAuthApi.Companion.createVernissageAuthApi
+import com.daniebeler.pfpixelix.domain.service.capabilities.Capabilities
 import com.daniebeler.pfpixelix.domain.service.general.AuthService
 import com.daniebeler.pfpixelix.domain.service.general.BackendType
 import com.daniebeler.pfpixelix.domain.service.general.Session
@@ -177,6 +178,10 @@ class VernissageAuthService(
 
     override fun getCurrentSession(): Credentials? {
         return session.credentials.value
+    }
+
+    override fun getCurrentCapabilities(): Capabilities {
+        return session.capabilities.value
     }
 
 

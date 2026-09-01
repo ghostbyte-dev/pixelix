@@ -113,6 +113,8 @@ class UserPreferences(private val dataStore: DataStore<Preferences>) {
     var defaultHomeTab by int("k_default_home_tab", 0)
     val defaultHomeTabFlow = intFlow("k_default_home_tab", 0)
 
+    var hasRequestedPushPermission by boolean("k_has_requested_push_permission", false)
+
     private var _defaultVisibility: Int by Prop(intPreferencesKey("k_default_visibility"), Visibility.PUBLIC.ordinal)
     var defaultVisibility: Visibility
         get() = Visibility.entries.getOrElse(_defaultVisibility) { Visibility.PUBLIC }

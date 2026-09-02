@@ -25,6 +25,10 @@ If you want to support what we do, you can sponsor us on GitHub:
 Bug reports, feature ideas, and feedback are also always welcome.  
 If something does not work properly, or if there is a feature you would like to see in Pixelix, feel free to open an issue on GitHub.
 
+On our Website we wrote a blog post about all the easy ways you can support/contribute to the project:
+
+[ghostbyte.dev/blog/support-pixelix](https://ghostbyte.dev/blog/support-pixelix)
+
 ## Availability
 
 Pixelix is available on multiple platforms and distribution channels.

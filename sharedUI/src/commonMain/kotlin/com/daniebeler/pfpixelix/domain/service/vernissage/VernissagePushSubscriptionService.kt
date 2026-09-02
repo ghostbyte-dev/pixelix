@@ -20,14 +20,4 @@ class VernissagePushSubscriptionService(
     ) = loadResource {
         api.subscribePushNotifications(subscriptionDto)
     }
-
-    override fun decodeMessage(message: String): PushNotification? {
-        val payload = try {
-            Json.decodeFromString<VernissagePushPayloadDto>(message)
-        } catch (e: Exception) {
-            Logger.e(tag = "PixelixPush", throwable = e) { "Failed to parse push payload" }
-            return null
-        }
-        return payload.toDomain()
-    }
 }

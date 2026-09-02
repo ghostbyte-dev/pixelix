@@ -7,18 +7,9 @@ import com.daniebeler.pfpixelix.domain.service.vernissage.model.request.Subscrib
 import me.tatarka.inject.annotations.Inject
 
 @Inject
-class PixelfedPushSubscriptionService: PushSubscriptionService {
+class PixelfedPushSubscriptionService : PushSubscriptionService {
     override fun subscribe(
         subscriptionDto: SubscribePushNotificationRequest
     ) = loadResource {
     }
-
-    override fun decodeMessage(message: String): PushNotification? {
-        return PushNotification(
-            title = "Pixelfed",
-            body = "none",
-            icon = "hola"
-        )
-    }
-
 }

@@ -6,11 +6,13 @@ import com.daniebeler.pfpixelix.MyApplication.Companion.appComponent
 import com.daniebeler.pfpixelix.domain.model.PushNotification
 import com.daniebeler.pfpixelix.domain.service.general.PushSubscriptionService
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
+import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissagePushPayloadDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.request.SubscribePushNotificationRequest
 import com.daniebeler.pfpixelix.utils.Notifier
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.Json
 import org.unifiedpush.android.connector.FailedReason
 import org.unifiedpush.android.connector.PushService
 import org.unifiedpush.android.connector.data.PushEndpoint
@@ -52,10 +54,10 @@ class PixelixPushService : PushService() {
     }
 
     override fun onMessage(message: PushMessage, instance: String) {
-        Logger.d("PixelixPush") { "message"  }
-        Logger.d("PixelixPush") { message.content.toString(Charsets.UTF_8)  }
+        Logger.d("PixelixPush") { "message" }
+        Logger.d("PixelixPush") { message.content.toString(Charsets.UTF_8) }
         val message = message.content.toString(Charsets.UTF_8)
-        val notification = pushSubscriptionRepository.decodeMessage(message)
+        val notification = decodeMessage(message)
         if (notification != null) {
             Notifier(context).showNotification(notification)
         }
@@ -73,5 +75,15 @@ class PixelixPushService : PushService() {
 
     override fun onUnregistered(instance: String) {
         TODO("Not yet implemented")
+    }
+
+    fun decodeMessage(message: String): PushNotification? {
+        val payload = try {
+            Json.decodeFromString<VernissagePushPayloadDto>(message)
+        } catch (e: Exception) {
+            Logger.e(tag = "PixelixPush", throwable = e) { "Failed to parse push payload" }
+            return null
+        }
+        return payload.toDomain()
     }
 }

@@ -11,7 +11,6 @@ import me.tatarka.inject.annotations.Inject
 
 interface PushSubscriptionService {
     fun subscribe(subscriptionDto: SubscribePushNotificationRequest): Flow<Resource<Unit>>
-    fun decodeMessage(message: String): PushNotification?
 }
 
 @Inject
@@ -29,5 +28,4 @@ class PushSubscriptionServiceDelegate(
         }
 
     override fun subscribe(subscriptionDto: SubscribePushNotificationRequest) = current.subscribe(subscriptionDto)
-    override fun decodeMessage(message: String): PushNotification? = current.decodeMessage(message)
 }

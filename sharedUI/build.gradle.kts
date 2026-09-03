@@ -114,7 +114,6 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodel.savedstate)
 
             //navigation
-            implementation(libs.androidx.navigation.compose)
             implementation(libs.jetbrains.navigation3.ui)
             implementation(libs.jetbrains.lifecycle.viewmodel.navigation3)
 

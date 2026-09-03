@@ -7,4 +7,5 @@ actual object PlatformFeatures {
     actual val customAppIcon = true
     actual val addCollection = false
     actual val supportsDynamicColors = false
+    actual val supportsSponsorship = false
 }

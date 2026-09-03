@@ -19,6 +19,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.daniebeler.pfpixelix.domain.service.platform.PlatformFeatures
 import com.daniebeler.pfpixelix.ui.composables.widgets.CardButton
 import org.jetbrains.compose.resources.DrawableResource
 import pixelix.app.generated.resources.Res
@@ -46,14 +47,17 @@ fun ContributeBottomSheet(openUrl: (url: String) -> Unit) {
                 modifier = Modifier
                     .padding(start = 16.dp, bottom = 12.dp)
             )
-            ContributeCard(
-                title = "Sponsor",
-                desc = "Pixelix is built and maintained in our free time. If you enjoy using it, you can help support ongoing development and infrastructure costs.",
-                onClick = { openUrl("https://github.com/ghostbyte-dev/pixelix/wiki/Sponsor") },
-                buttonTitle = "Sponsor",
-                buttonDesc = "Support the creators with a coffee",
-                buttonIcon = Res.drawable.coffee
-            )
+
+            if (PlatformFeatures.supportsSponsorship) {
+                ContributeCard(
+                    title = "Sponsor",
+                    desc = "Pixelix is built and maintained in our free time. If you enjoy using it, you can help support ongoing development and infrastructure costs.",
+                    onClick = { openUrl("https://github.com/ghostbyte-dev/pixelix/wiki/Sponsor") },
+                    buttonTitle = "Sponsor",
+                    buttonDesc = "Support the creators with a coffee",
+                    buttonIcon = Res.drawable.coffee
+                )
+            }
 
             ContributeCard(
                 title = "Report a bug",

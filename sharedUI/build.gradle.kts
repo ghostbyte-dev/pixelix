@@ -115,6 +115,8 @@ kotlin {
 
             //navigation
             implementation(libs.androidx.navigation.compose)
+            implementation(libs.jetbrains.navigation3.ui)
+            implementation(libs.jetbrains.lifecycle.viewmodel.navigation3)
 
             //annotation
             implementation(libs.androidx.annotation)
@@ -132,6 +134,10 @@ kotlin {
 
             //video player
             implementation(libs.composemediaplayer)
+        }
+
+        webMain.dependencies {
+            implementation(libs.navigation3.browser)
         }
 
         androidMain.dependencies {

@@ -1,21 +1,9 @@
 package com.daniebeler.pfpixelix.ui.navigation
 
-import androidx.compose.animation.AnimatedContentTransitionScope
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExitTransition
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.window.Dialog
-import androidx.navigation.NavBackStackEntry
-import androidx.navigation.NavDestination.Companion.hasRoute
-import androidx.navigation.NavDestination.Companion.hierarchy
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.dialog
-import androidx.navigation.compose.navigation
-import androidx.navigation.toRoute
 import androidx.navigation3.runtime.NavKey
+import androidx.navigation3.runtime.entryProvider
 import com.daniebeler.pfpixelix.EdgeToEdgeDialogProperties
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.ui.composables.HomeComposable
@@ -26,8 +14,8 @@ import com.daniebeler.pfpixelix.ui.composables.edit_profile.EditProfileComposabl
 import com.daniebeler.pfpixelix.ui.composables.explore.ExploreComposable
 import com.daniebeler.pfpixelix.ui.composables.followers.FollowersMainComposable
 import com.daniebeler.pfpixelix.ui.composables.mention.MentionComposable
-import com.daniebeler.pfpixelix.ui.composables.post_editor.PostEditorComposable
 import com.daniebeler.pfpixelix.ui.composables.notifications.NotificationsComposable
+import com.daniebeler.pfpixelix.ui.composables.post_editor.PostEditorComposable
 import com.daniebeler.pfpixelix.ui.composables.post_editor.PostEditorViewModel
 import com.daniebeler.pfpixelix.ui.composables.profile.other_profile.OtherProfileComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.own_profile.OwnProfileComposable
@@ -41,8 +29,8 @@ import com.daniebeler.pfpixelix.ui.composables.settings.icon_selection.IconSelec
 import com.daniebeler.pfpixelix.ui.composables.settings.liked_posts.LikedPostsComposable
 import com.daniebeler.pfpixelix.ui.composables.settings.muted_accounts.MutedAccountsComposable
 import com.daniebeler.pfpixelix.ui.composables.single_post.SinglePostComposable
-import com.daniebeler.pfpixelix.ui.composables.timelines.parametric_timeline_screens.CameraTimelineComposable
 import com.daniebeler.pfpixelix.ui.composables.timelines.hashtag_timeline.HashtagTimelineComposable
+import com.daniebeler.pfpixelix.ui.composables.timelines.parametric_timeline_screens.CameraTimelineComposable
 import com.daniebeler.pfpixelix.ui.composables.timelines.parametric_timeline_screens.CategoryTimelineComposable
 import com.daniebeler.pfpixelix.ui.composables.timelines.parametric_timeline_screens.FilmTimelineComposable
 import com.daniebeler.pfpixelix.ui.composables.timelines.parametric_timeline_screens.LensTimelineComposable
@@ -167,144 +155,95 @@ sealed interface Destination : NavKey {
     data object HomeTabOwnProfile : Destination
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-internal fun NavGraphBuilder.appGraph(
-    navController: NavHostController,
+internal fun appEntryProvider(
+    navigator: AppNavigator,
     openPreferencesDrawer: () -> Unit,
     exitApp: () -> Unit,
-) {
-    composable<Destination.FirstLogin>(
-        enterTransition = { EnterTransition.None },
-        exitTransition = { ExitTransition.None }) {
-        Dialog(
-            onDismissRequest = exitApp, properties = EdgeToEdgeDialogProperties()
-        ) {
-            LoginComposable(navController = navController)
+) = entryProvider<NavKey> {
+    entry<Destination.FirstLogin> {
+        Dialog(onDismissRequest = exitApp, properties = EdgeToEdgeDialogProperties()) {
+            LoginComposable(navController = navigator)
         }
     }
 
-    //home tabs (with no transition animations)
-    //more info: https://issuetracker.google.com/408010634
-    navigation<Destination.HomeTabFeeds>(
-        startDestination = Destination.Feeds,
-        enterTransition = { tabEnterTransition<Destination.HomeTabFeeds>() },
-        exitTransition = { tabExitTransition<Destination.HomeTabFeeds>() }) {
-        tabGraph(navController, openPreferencesDrawer)
+    entry<Destination.NewPost> { args ->
+        val imageUris: List<KmpUri>? = args.uris.map { it.toKmpUri() }
+        PostEditorComposable(navigator, imageUris)
     }
 
-    navigation<Destination.HomeTabSearch>(
-        startDestination = Destination.Search(),
-        enterTransition = { tabEnterTransition<Destination.HomeTabSearch>() },
-        exitTransition = { tabExitTransition<Destination.HomeTabSearch>() }) {
-        tabGraph(navController, openPreferencesDrawer)
+    entry<Destination.NewLogin> {
+        LoginComposable(true, navigator)
     }
 
-    navigation<Destination.HomeTabNewPost>(
-        startDestination = Destination.NewPost(),
-        enterTransition = { tabEnterTransition<Destination.HomeTabNewPost>() },
-        exitTransition = { tabExitTransition<Destination.HomeTabNewPost>() }) {
-
-        composable<Destination.NewPost> { navBackStackEntry ->
-            val args = navBackStackEntry.toRoute<Destination.NewPost>()
-            val imageUris: List<KmpUri>? = args.uris.map { it.toKmpUri() }
-            PostEditorComposable(navController, imageUris)
-        }
-
-        tabGraph(navController, openPreferencesDrawer)
+    entry<Destination.HomeTabFeeds> {
+        HomeComposable(navigator, openPreferencesDrawer)
     }
 
-    navigation<Destination.HomeTabNotifications>(
-        startDestination = Destination.Notifications,
-        enterTransition = { tabEnterTransition<Destination.HomeTabNotifications>() },
-        exitTransition = { tabExitTransition<Destination.HomeTabNotifications>() }) {
-        tabGraph(navController, openPreferencesDrawer)
+    entry<Destination.HomeTabSearch> {
+        ExploreComposable(navigator, 0)
     }
 
-    navigation<Destination.HomeTabOwnProfile>(
-        startDestination = Destination.OwnProfile,
-        enterTransition = { tabEnterTransition<Destination.HomeTabOwnProfile>() },
-        exitTransition = { tabExitTransition<Destination.HomeTabOwnProfile>() }) {
-        tabGraph(navController, openPreferencesDrawer)
-    }
-}
-
-private inline fun <reified T : Any> AnimatedContentTransitionScope<NavBackStackEntry>.tabEnterTransition(): EnterTransition? {
-    val initialHierarchy = initialState.destination.hierarchy
-    return if (initialHierarchy.none { it.hasRoute<T>() }) EnterTransition.None else null
-}
-
-private inline fun <reified T : Any> AnimatedContentTransitionScope<NavBackStackEntry>.tabExitTransition(): ExitTransition? {
-    val targetHierarchy = targetState.destination.hierarchy
-    return if (targetHierarchy.none { it.hasRoute<T>() }) ExitTransition.None else null
-}
-
-private fun NavGraphBuilder.tabGraph(
-    navController: NavHostController, openPreferencesDrawer: () -> Unit
-) {
-    dialog<Destination.NewLogin>(
-        dialogProperties = EdgeToEdgeDialogProperties()
-    ) {
-        LoginComposable(true, navController)
+    entry<Destination.HomeTabNewPost> {
+        PostEditorComposable(navigator, emptyList())
     }
 
-    composable<Destination.Feeds> {
-        HomeComposable(navController, openPreferencesDrawer)
+    entry<Destination.HomeTabNotifications> {
+        NotificationsComposable(navigator)
     }
 
-    composable<Destination.Notifications> {
-        NotificationsComposable(navController)
+    entry<Destination.HomeTabOwnProfile> {
+        OwnProfileComposable(navigator, openPreferencesDrawer)
     }
 
-    composable<Destination.HashtagTimeline> { navBackStackEntry ->
-        val args = navBackStackEntry.toRoute<Destination.HashtagTimeline>()
-        HashtagTimelineComposable(navController, args.hashtag)
+    entry<Destination.Feeds> {
+        HomeComposable(navigator, openPreferencesDrawer)
     }
 
-    composable<Destination.CameraTimeline> { navBackStackEntry ->
-        val args = navBackStackEntry.toRoute<Destination.CameraTimeline>()
-        CameraTimelineComposable(navController, args.camera)
+    entry<Destination.Notifications> {
+        NotificationsComposable(navigator)
     }
 
-    composable<Destination.CategoryTimeline> { navBackStackEntry ->
-        val args = navBackStackEntry.toRoute<Destination.CategoryTimeline>()
-        CategoryTimelineComposable(navController, args.category)
+    entry<Destination.HashtagTimeline> { args ->
+        HashtagTimelineComposable(navigator, args.hashtag)
     }
 
-    composable<Destination.FilmTimeline> { navBackStackEntry ->
-        val args = navBackStackEntry.toRoute<Destination.FilmTimeline>()
-        FilmTimelineComposable(navController, args.film)
+    entry<Destination.CameraTimeline> { args ->
+        CameraTimelineComposable(navigator, args.camera)
     }
 
-    composable<Destination.LensTimeline> { navBackStackEntry ->
-        val args = navBackStackEntry.toRoute<Destination.LensTimeline>()
-        LensTimelineComposable(navController, args.lens)
+    entry<Destination.CategoryTimeline> { args ->
+        CategoryTimelineComposable(navigator, args.category)
     }
 
-    composable<Destination.Profile> { navBackStackEntry ->
-        val args = navBackStackEntry.toRoute<Destination.Profile>()
-        OtherProfileComposable(navController, userId = args.userId, username = args.username)
+    entry<Destination.FilmTimeline> { args ->
+        FilmTimelineComposable(navigator, args.film)
     }
 
-    composable<Destination.ProfileByUsername> { navBackStackEntry ->
-        val args = navBackStackEntry.toRoute<Destination.ProfileByUsername>()
-        OtherProfileComposable(navController, userId = null, username = args.userName)
+    entry<Destination.LensTimeline> { args ->
+        LensTimelineComposable(navigator, args.lens)
     }
 
-    composable<Destination.Hashtag> { navBackStackEntry ->
-        val args = navBackStackEntry.toRoute<Destination.Hashtag>()
-        HashtagTimelineComposable(navController, args.hashtag)
+    entry<Destination.Profile> { args ->
+        OtherProfileComposable(navigator, userId = args.userId, username = args.username)
     }
 
-    composable<Destination.EditProfile> {
-        EditProfileComposable(navController)
+    entry<Destination.ProfileByUsername> { args ->
+        OtherProfileComposable(navigator, userId = null, username = args.userName)
     }
 
-    composable<Destination.IconSelection> {
-        IconSelectionComposable(navController)
+    entry<Destination.Hashtag> { args ->
+        HashtagTimelineComposable(navigator, args.hashtag)
     }
 
-    composable<Destination.EditPost> { navBackStackEntry ->
-        val args = navBackStackEntry.toRoute<Destination.EditPost>()
+    entry<Destination.EditProfile> {
+        EditProfileComposable(navigator)
+    }
+
+    entry<Destination.IconSelection> {
+        IconSelectionComposable(navigator)
+    }
+
+    entry<Destination.EditPost> { args ->
         val viewModel: PostEditorViewModel =
             injectViewModel(key = "edit-post-${args.id}") { newPostViewModel }
 
@@ -313,78 +252,72 @@ private fun NavGraphBuilder.tabGraph(
         }
 
         PostEditorComposable(
-            navController = navController, uris = null, viewModel = viewModel
+            navController = navigator, uris = null, viewModel = viewModel
         )
     }
 
-    composable<Destination.MutedAccounts> {
-        MutedAccountsComposable(navController)
+    entry<Destination.MutedAccounts> {
+        MutedAccountsComposable(navigator)
     }
 
-    composable<Destination.BlockedAccounts> {
-        BlockedAccountsComposable(navController)
+    entry<Destination.BlockedAccounts> {
+        BlockedAccountsComposable(navigator)
     }
 
-    composable<Destination.LikedPosts> {
-        LikedPostsComposable(navController)
+    entry<Destination.LikedPosts> {
+        LikedPostsComposable(navigator)
     }
 
-    composable<Destination.BookmarkedPosts> {
-        BookmarkedPostsComposable(navController)
+    entry<Destination.BookmarkedPosts> {
+        BookmarkedPostsComposable(navigator)
     }
 
-    composable<Destination.FollowedHashtags> {
-        FollowedHashtagsComposable(navController)
+    entry<Destination.FollowedHashtags> {
+        FollowedHashtagsComposable(navigator)
     }
 
-    composable<Destination.AboutInstance> {
-        AboutInstanceComposable(navController)
+    entry<Destination.AboutInstance> {
+        AboutInstanceComposable(navigator)
     }
 
-    composable<Destination.AboutPixelix> {
-        AboutPixelixComposable(navController)
+    entry<Destination.AboutPixelix> {
+        AboutPixelixComposable(navigator)
     }
 
-    composable<Destination.OwnProfile> {
-        OwnProfileComposable(navController, openPreferencesDrawer)
+    entry<Destination.OwnProfile> {
+        OwnProfileComposable(navigator, openPreferencesDrawer)
     }
 
-    composable<Destination.Followers> { navBackStackEntry ->
-        val args = navBackStackEntry.toRoute<Destination.Followers>()
+    entry<Destination.Followers> { args ->
         FollowersMainComposable(
-            navController,
+            navigator,
             accountId = args.userId,
             username = args.username,
             isFollowers = args.isFollowers
         )
     }
 
-    composable<Destination.Post> { navBackStackEntry ->
-        val args = navBackStackEntry.toRoute<Destination.Post>()
-        SinglePostComposable(navController, postId = args.id, args.refresh, args.openReplies)
+    entry<Destination.Post> { args ->
+        SinglePostComposable(navigator, postId = args.id, args.refresh, args.openReplies)
     }
 
-    composable<Destination.Collection> { navBackStackEntry ->
-        val args = navBackStackEntry.toRoute<Destination.Collection>()
-        CollectionComposable(navController, collectionId = args.id)
+    entry<Destination.Collection> { args ->
+        CollectionComposable(navigator, collectionId = args.id)
     }
 
-    composable<Destination.Search> { navBackStackEntry ->
-        val args = navBackStackEntry.toRoute<Destination.Search>()
-        ExploreComposable(navController, args.page)
+    entry<Destination.Search> { args ->
+        ExploreComposable(navigator, args.page)
     }
 
-    composable<Destination.Conversations> {
-        ConversationsComposable(navController = navController)
+    entry<Destination.Conversations> {
+        ConversationsComposable(navController = navigator)
     }
 
-    composable<Destination.Chat> { navBackStackEntry ->
-        val args = navBackStackEntry.toRoute<Destination.Chat>()
-        ChatComposable(navController = navController, accountId = args.id)
+    entry<Destination.Chat> { args ->
+        ChatComposable(navController = navigator, accountId = args.id)
     }
 
-    composable<Destination.Mention> { navBackStackEntry ->
-        val args = navBackStackEntry.toRoute<Destination.Mention>()
-        MentionComposable(navController = navController, mentionId = args.id)
+    entry<Destination.Mention> { args ->
+        MentionComposable(navController = navigator, mentionId = args.id)
     }
 }

@@ -3,17 +3,28 @@ package com.daniebeler.pfpixelix.ui.navigation
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 
-internal class AppNavigator(
+class AppNavigator internal constructor(
     private val state: AppNavigationState,
     private val exitApp: () -> Unit,
 ) {
     private val _reselectEvents = MutableSharedFlow<Destination>(extraBufferCapacity = 1)
     val reselectEvents = _reselectEvents.asSharedFlow()
+    val graph = NavigationGraph()
 
-    fun navigate(destination: Destination) {
+    fun navigate(
+        destination: Destination,
+        options: NavigationOptions.() -> Unit = {},
+    ) {
+        val navigationOptions = NavigationOptions().apply(options)
         if (destination in state.backStacks) {
             state.currentTopLevel = destination
-        } else {
+            if (!navigationOptions.restoreState) {
+                state.currentBackStack.apply {
+                    clear()
+                    add(destination)
+                }
+            }
+        } else if (!navigationOptions.launchSingleTop || state.currentDestination != destination) {
             state.currentBackStack.add(destination)
         }
     }
@@ -62,6 +73,17 @@ internal class AppNavigator(
         }
     }
 
+    fun navigateUp(): Boolean = popBackStack()
+
+    fun <T : Destination> clearBackStack(destination: T): Boolean {
+        val stack = state.backStacks[destination] ?: return false
+        stack.apply {
+            clear()
+            add(destination)
+        }
+        return true
+    }
+
     fun resetForSession(startDestination: Destination) {
         state.backStacks.forEach { (root, stack) ->
             stack.clear()
@@ -71,4 +93,24 @@ internal class AppNavigator(
             state.currentTopLevel = startDestination
         }
     }
+}
+
+class NavigationGraph {
+    val id: Int = 0
+    val startDestinationId: Int = 0
+    fun findStartDestination(): NavigationGraph = this
+}
+
+class NavigationOptions {
+    var launchSingleTop: Boolean = false
+    var restoreState: Boolean = false
+
+    fun popUpTo(@Suppress("UNUSED_PARAMETER") route: Any, options: PopUpToOptions.() -> Unit = {}) {
+        PopUpToOptions().apply(options)
+    }
+}
+
+class PopUpToOptions {
+    var inclusive: Boolean = false
+    var saveState: Boolean = false
 }

@@ -24,8 +24,8 @@
     </plurals>
     <string name="following">Gefolgt</string>
     <plurals name="following">
-        <item quantity="one">Gefolgt</item>
-        <item quantity="other">Gefolgt</item>
+        <item quantity="one">Folgt</item>
+        <item quantity="other">Folgt</item>
     </plurals>
     <plurals name="posts">
         <item quantity="one">Beitrag</item>
@@ -294,8 +294,8 @@
     <string name="requested">Angefragt</string>
     <string name="follow_request">Möchte dir folgen</string>
     <string name="new_status">Hat einen neuen Post erstellt</string>
-    <string name="boosted_status_updated">Boosted post wurde aktualisiert</string>
-    <string name="notification">Nachricht</string>
+    <string name="boosted_status_updated">Boosted Post wurde aktualisiert</string>
+    <string name="notification">Benachrichtigung</string>
     <string name="accept_follow_request">Folgeanfrage annehmen</string>
     <string name="reject_follow_request">Folgeanfrage ablehnen</string>
     <string name="reason">Grund</string>
@@ -336,4 +336,50 @@
     <string name="no_cameras">Keine Kameras</string>
     <string name="no_lenses">Keine Objektive</string>
     <string name="no_films">Keine Filme</string>
+    <plurals name="seconds_ago">
+        <item quantity="one">vor %1$d Sekunde</item>
+        <item quantity="other">vor %1$d Sekunden</item>
+    </plurals>
+    <plurals name="minutes_ago">
+        <item quantity="one">vor %1$d Minute</item>
+        <item quantity="other">vor %1$d Minuten</item>
+    </plurals>
+    <plurals name="hours_ago">
+        <item quantity="one">vor %1$d Stunde</item>
+        <item quantity="other">vor %1$d Stunden</item>
+    </plurals>
+    <plurals name="days_ago">
+        <item quantity="one">vor %1$d Tag</item>
+        <item quantity="other">vor %1$d Tagen</item>
+    </plurals>
+    <plurals name="weeks_ago">
+        <item quantity="one">vor %1$d Woche</item>
+        <item quantity="other">vor %1$d Wochen</item>
+    </plurals>
+    <plurals name="months_ago">
+        <item quantity="one">vor %1$d Monat</item>
+        <item quantity="other">vor %1$d Monaten</item>
+    </plurals>
+    <plurals name="years_ago">
+        <item quantity="one">vor %1$d Jahr</item>
+        <item quantity="other">vor %1$d Jahren</item>
+    </plurals>
+    <string name="manually_accept_new_followers">Neue Follower manuell bestätigen</string>
+    <string name="chemistry">Chemie</string>
+    <string name="fields">Felder</string>
+    <string name="add_field">Felder hinzufügen</string>
+    <string name="key">Schlüssel</string>
+    <string name="value">Wert</string>
+    <string name="content_settings">Einstellungen für Inhalte</string>
+    <string name="new_post_settings">Einstellungen für neue Beiträge</string>
+    <string name="use_dynamic_colors">Dynamische Farben verwenden</string>
+    <string name="default_timeline_tab">Standard-Tab für die Timeline</string>
+    <string name="categories">Kategorien</string>
+    <string name="cameras">Kameras</string>
+    <string name="lenses">Objektive</string>
+    <string name="films">Filme</string>
+    <string name="new_comment">Hat einen neuen Kommentar geschrieben</string>
+    <string name="include_public_posts_in_search_engines">Öffentliche Beiträge in Suchmaschinen anzeigen</string>
+    <string name="include_profile_in_search_engines">Profil in Suchmaschinen anzeigen</string>
+    <string name="scanner">Scanner</string>
 </resources>

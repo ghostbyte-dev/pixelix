@@ -50,6 +50,7 @@ import com.daniebeler.pfpixelix.utils.KmpUri
 import com.daniebeler.pfpixelix.utils.toKmpUri
 import kotlinx.serialization.Serializable
 
+@Serializable
 sealed interface Destination : NavKey {
     @Serializable
     data class Hashtag(val hashtag: String) : Destination

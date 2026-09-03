@@ -15,6 +15,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.dialog
 import androidx.navigation.compose.navigation
 import androidx.navigation.toRoute
+import androidx.navigation3.runtime.NavKey
 import com.daniebeler.pfpixelix.EdgeToEdgeDialogProperties
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.ui.composables.HomeComposable
@@ -49,7 +50,7 @@ import com.daniebeler.pfpixelix.utils.KmpUri
 import com.daniebeler.pfpixelix.utils.toKmpUri
 import kotlinx.serialization.Serializable
 
-sealed interface Destination {
+sealed interface Destination : NavKey {
     @Serializable
     data class Hashtag(val hashtag: String) : Destination
 

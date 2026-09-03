@@ -127,7 +127,18 @@ fun OtherProfileComposable(
     var showUnBlockAlert by remember { mutableStateOf(false) }
 
     LaunchedEffect(userId, username) {
-        viewModel.loadData(userId, username, false, navController)
+        viewModel.loadData(userId, username, false)
+    }
+    LaunchedEffect(viewModel, navController) {
+        viewModel.navigationEffects.collect { effect ->
+            when (effect) {
+                OtherProfileNavigationEffect.OpenOwnProfile ->
+                    navController.navigate(Destination.HomeTabOwnProfile) {
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+            }
+        }
     }
 
     Scaffold(
@@ -192,7 +203,7 @@ fun OtherProfileComposable(
                 navController = navController,
                 getItemsPaginated = { viewModel.getPostsPaginated(viewModel.userId) },
                 onRefresh = {
-                    viewModel.loadData(userId, username, true, navController)
+                    viewModel.loadData(userId, username, true)
                 },
                 postsCount = viewModel.accountState.account?.postsCount,
                 itemGetsDeleted = { postId -> viewModel.postGetsDeleted(postId) },

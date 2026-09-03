@@ -53,6 +53,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
+import com.daniebeler.pfpixelix.ui.navigation.Destination
 import androidx.navigationevent.NavigationEventInfo
 import androidx.navigationevent.compose.NavigationBackHandler
 import androidx.navigationevent.compose.rememberNavigationEventState
@@ -100,6 +101,23 @@ fun PostEditorComposable(
     viewModel: PostEditorViewModel = injectViewModel(key = "post-editor-viewmodel-key") { newPostViewModel }
 ) {
     val focusManager = LocalFocusManager.current
+    LaunchedEffect(viewModel, navController) {
+        viewModel.navigationEffects.collect { effect ->
+            when (effect) {
+                PostEditorNavigationEffect.PostCreated ->
+                    navController.navigate(Destination.HomeTabOwnProfile) {
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                is PostEditorNavigationEffect.PostUpdated -> {
+                    navController.popBackStack()
+                    navController.navigate(Destination.Post(effect.postId, refresh = true)) {
+                        launchSingleTop = true
+                    }
+                }
+            }
+        }
+    }
     var showReleaseAlert by remember {
         mutableStateOf(false)
     }
@@ -417,7 +435,7 @@ fun PostEditorComposable(
             }, confirmButton = {
                 TextButton(onClick = {
                     showReleaseAlert = false
-                    viewModel.submitPost(navController)
+                    viewModel.submitPost()
                 }) {
                     Text(stringResource(Res.string.release))
                 }

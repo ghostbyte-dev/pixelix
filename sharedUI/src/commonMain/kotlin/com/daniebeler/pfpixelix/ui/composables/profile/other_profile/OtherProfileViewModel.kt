@@ -6,7 +6,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.receiveAsFlow
 import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.model.MutedAccount
 import com.daniebeler.pfpixelix.domain.model.Post
@@ -29,7 +30,6 @@ import com.daniebeler.pfpixelix.ui.composables.profile.MutualFollowersState
 import com.daniebeler.pfpixelix.ui.composables.profile.PostsState
 import com.daniebeler.pfpixelix.ui.composables.profile.RelationshipState
 import com.daniebeler.pfpixelix.ui.composables.profile.ViewEnum
-import com.daniebeler.pfpixelix.ui.navigation.Destination
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -68,6 +68,9 @@ class OtherProfileViewModel(
     var followerLabel by mutableStateOf("")
     var followingLabel by mutableStateOf("")
 
+    private val navigationEffectChannel = Channel<OtherProfileNavigationEffect>(Channel.BUFFERED)
+    val navigationEffects = navigationEffectChannel.receiveAsFlow()
+
     val mutedAccount: MutedAccount?
         get() {
             val account = accountState.account ?: return null
@@ -85,7 +88,7 @@ class OtherProfileViewModel(
         }
 
     fun loadData(
-        userId: String?, username: String?, refreshing: Boolean, navController: AppNavigator
+        userId: String?, username: String?, refreshing: Boolean
     ) {
         if (username == null) {
             if (session.backendType.value == BackendType.VERNISSAGE) {
@@ -96,7 +99,7 @@ class OtherProfileViewModel(
             return
         }
         if (userId == null) {
-            loadDataByUsername(username, false, navController)
+            loadDataByUsername(username, false)
             return
         }
         val credentials = authService.getCurrentSession()
@@ -105,14 +108,8 @@ class OtherProfileViewModel(
         val myUsername = credentials?.username
 
         if (userId == myAccountId || userId == myUsername) {
-            navController.navigate(Destination.HomeTabOwnProfile) {
-                launchSingleTop = true
-                restoreState = true
-                popUpTo(navController.graph.findStartDestination().id) {
-                    inclusive = false
-                    saveState = false
-                }
-            }
+            navigationEffectChannel.trySend(OtherProfileNavigationEffect.OpenOwnProfile)
+            return
         }
 
         this.userId = userId
@@ -153,11 +150,11 @@ class OtherProfileViewModel(
         }
     }
 
-    fun loadDataByUsername(username: String, refreshing: Boolean, navController: AppNavigator) {
+    fun loadDataByUsername(username: String, refreshing: Boolean) {
         val myUsername = authService.getCurrentSession()!!.username
         if (username == myUsername) {
-            navController.popBackStack()
-            navController.navigate(Destination.OwnProfile)
+            navigationEffectChannel.trySend(OtherProfileNavigationEffect.OpenOwnProfile)
+            return
         }
         getAccountByUsername(username, refreshing)
     }

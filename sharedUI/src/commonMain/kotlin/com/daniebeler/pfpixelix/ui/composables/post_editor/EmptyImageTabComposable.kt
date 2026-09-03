@@ -28,9 +28,12 @@ import io.github.vinceglb.filekit.readBytes
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.photo
+import pixelix.app.generated.resources.select_images
+import pixelix.app.generated.resources.select_images_description
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -61,7 +64,7 @@ fun EmptyImageTab(addImage: (KmpUri, MediaAttachmentMetadataRequest) -> Unit) {
             }
         }
 
-        Text("Select one or more images to add them to your post", textAlign = TextAlign.Center)
+        Text(stringResource(Res.string.select_images_description), textAlign = TextAlign.Center)
         Spacer(Modifier.height(12.dp))
 
         val buttonSize = ButtonDefaults.MediumContainerHeight
@@ -78,7 +81,7 @@ fun EmptyImageTab(addImage: (KmpUri, MediaAttachmentMetadataRequest) -> Unit) {
                 modifier = Modifier.size(ButtonDefaults.iconSizeFor(buttonSize)),
             )
             Spacer(Modifier.size(ButtonDefaults.iconSpacingFor(buttonSize)))
-            Text("Select images", style = ButtonDefaults.textStyleFor(buttonSize))
+            Text(stringResource(Res.string.select_images), style = ButtonDefaults.textStyleFor(buttonSize))
         }
     }
 }

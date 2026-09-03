@@ -27,9 +27,14 @@ import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.model.Location
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposableDialog
 import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
+import pixelix.app.generated.resources.city
+import pixelix.app.generated.resources.country
 import pixelix.app.generated.resources.globe
+import pixelix.app.generated.resources.loading_cities
+import pixelix.app.generated.resources.loading_countries
 import pixelix.app.generated.resources.location
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -75,7 +80,7 @@ fun TextFieldLocationsComposable(
                     .fillMaxWidth()
                     .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryEditable, enabled = true)
                     .onFocusChanged { if (it.isFocused) expanded = true },
-                label = { Text("Country") },
+                label = { Text(stringResource(Res.string.country)) },
                 trailingIcon = {
                     ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
                 },
@@ -101,7 +106,7 @@ fun TextFieldLocationsComposable(
             ) {
                 if (viewModel.countriesState.isLoading) {
                     DropdownMenuItem(
-                        text = { Text("Loading countries...") },
+                        text = { Text(stringResource(Res.string.loading_countries)) },
                         onClick = {},
                         enabled = false
                     )
@@ -143,7 +148,7 @@ fun TextFieldLocationsComposable(
             modifier = Modifier
                 .fillMaxWidth()
                 .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryEditable, enabled = true),
-            label = { Text("City") },
+            label = { Text(stringResource(Res.string.city)) },
             trailingIcon = {
                 ExposedDropdownMenuDefaults.TrailingIcon(expanded = viewModel.locationsDropdownOpen)
             },
@@ -169,7 +174,7 @@ fun TextFieldLocationsComposable(
         ) {
             if (viewModel.locationsSuggestions.isLoading) {
                 DropdownMenuItem(
-                    text = { Text("Loading countries...") },
+                    text = { Text(stringResource(Res.string.loading_cities)) },
                     onClick = {},
                     enabled = false
                 )

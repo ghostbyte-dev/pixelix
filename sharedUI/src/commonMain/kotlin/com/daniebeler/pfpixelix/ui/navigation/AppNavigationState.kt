@@ -2,10 +2,8 @@ package com.daniebeler.pfpixelix.ui.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavEntry
@@ -21,7 +19,42 @@ import kotlinx.serialization.modules.subclass
 internal val navigationSavedStateConfiguration = SavedStateConfiguration {
     serializersModule = SerializersModule {
         polymorphic(NavKey::class) {
-            subclass(Destination::class, Destination.serializer())
+            subclass(Destination.Hashtag::class, Destination.Hashtag.serializer())
+            subclass(Destination.HashtagTimeline::class, Destination.HashtagTimeline.serializer())
+            subclass(Destination.CameraTimeline::class, Destination.CameraTimeline.serializer())
+            subclass(Destination.CategoryTimeline::class, Destination.CategoryTimeline.serializer())
+            subclass(Destination.LensTimeline::class, Destination.LensTimeline.serializer())
+            subclass(Destination.FilmTimeline::class, Destination.FilmTimeline.serializer())
+            subclass(Destination.Post::class, Destination.Post.serializer())
+            subclass(Destination.EditPost::class, Destination.EditPost.serializer())
+            subclass(Destination.Collection::class, Destination.Collection.serializer())
+            subclass(Destination.Followers::class, Destination.Followers.serializer())
+            subclass(Destination.Conversations::class, Destination.Conversations.serializer())
+            subclass(Destination.Chat::class, Destination.Chat.serializer())
+            subclass(Destination.Mention::class, Destination.Mention.serializer())
+            subclass(Destination.EditProfile::class, Destination.EditProfile.serializer())
+            subclass(Destination.IconSelection::class, Destination.IconSelection.serializer())
+            subclass(Destination.MutedAccounts::class, Destination.MutedAccounts.serializer())
+            subclass(Destination.BlockedAccounts::class, Destination.BlockedAccounts.serializer())
+            subclass(Destination.LikedPosts::class, Destination.LikedPosts.serializer())
+            subclass(Destination.BookmarkedPosts::class, Destination.BookmarkedPosts.serializer())
+            subclass(Destination.FollowedHashtags::class, Destination.FollowedHashtags.serializer())
+            subclass(Destination.AboutInstance::class, Destination.AboutInstance.serializer())
+            subclass(Destination.AboutPixelix::class, Destination.AboutPixelix.serializer())
+            subclass(Destination.Profile::class, Destination.Profile.serializer())
+            subclass(Destination.ProfileByUsername::class, Destination.ProfileByUsername.serializer())
+            subclass(Destination.FirstLogin::class, Destination.FirstLogin.serializer())
+            subclass(Destination.NewLogin::class, Destination.NewLogin.serializer())
+            subclass(Destination.Search::class, Destination.Search.serializer())
+            subclass(Destination.OwnProfile::class, Destination.OwnProfile.serializer())
+            subclass(Destination.Feeds::class, Destination.Feeds.serializer())
+            subclass(Destination.NewPost::class, Destination.NewPost.serializer())
+            subclass(Destination.Notifications::class, Destination.Notifications.serializer())
+            subclass(Destination.HomeTabFeeds::class, Destination.HomeTabFeeds.serializer())
+            subclass(Destination.HomeTabSearch::class, Destination.HomeTabSearch.serializer())
+            subclass(Destination.HomeTabNewPost::class, Destination.HomeTabNewPost.serializer())
+            subclass(Destination.HomeTabNotifications::class, Destination.HomeTabNotifications.serializer())
+            subclass(Destination.HomeTabOwnProfile::class, Destination.HomeTabOwnProfile.serializer())
         }
     }
 }

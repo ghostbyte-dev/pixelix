@@ -102,7 +102,6 @@ val LocalSnackbarPresenter = compositionLocalOf<(String) -> Unit> {
 @Composable
 fun App(
     appComponent: AppComponent,
-    browserNavigation: @Composable (Destination) -> Unit = {},
     exitApp: () -> Unit
 ) {
     val uriHandler = LocalUriHandler.current
@@ -154,6 +153,10 @@ fun App(
                 }
             }
             if (activeUser == "unknown") return@PixelixTheme
+
+            // navigation3-browser permits a single binding for the lifetime of the page.
+            // Keep it outside the session key so login/logout does not dispose the active binding.
+            BrowserIntegration()
 
             key(activeUser) {
                 val scope = rememberCoroutineScope()
@@ -223,7 +226,6 @@ fun App(
                             modifier = Modifier.nestedScroll(scrollBehaviorBottom)
                         ) { paddingValues ->
                             Box(Modifier.fillMaxSize().padding(paddingValues)) {
-                                browserNavigation(navigationState.currentDestination)
                                 NavDisplay(
                                     entries = navigationState.decoratedEntries(
                                         appEntryProvider(

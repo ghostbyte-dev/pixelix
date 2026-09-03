@@ -29,7 +29,6 @@ fun webApp() {
     ComposeViewport {
         App(
             appComponent = appComponent,
-            browserNavigation = { PixelixBrowserNavigation(it) },
             exitApp = { /* browser Back leaves the app from its root */ },
         )
     }

@@ -382,4 +382,5 @@
     <string name="include_public_posts_in_search_engines">Öffentliche Beiträge in Suchmaschinen anzeigen</string>
     <string name="include_profile_in_search_engines">Profil in Suchmaschinen anzeigen</string>
     <string name="scanner">Scanner</string>
+    <string name="app_customization">Anpassungen der App</string>
 </resources>

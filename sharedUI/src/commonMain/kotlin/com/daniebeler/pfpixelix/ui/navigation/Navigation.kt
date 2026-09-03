@@ -4,6 +4,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.window.Dialog
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.scene.DialogSceneStrategy
 import com.daniebeler.pfpixelix.EdgeToEdgeDialogProperties
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.ui.composables.HomeComposable
@@ -171,7 +172,9 @@ internal fun appEntryProvider(
         PostEditorComposable(navigator, imageUris)
     }
 
-    entry<Destination.NewLogin> {
+    entry<Destination.NewLogin>(
+        metadata = DialogSceneStrategy.dialog(EdgeToEdgeDialogProperties())
+    ) {
         LoginComposable(true, navigator)
     }
 

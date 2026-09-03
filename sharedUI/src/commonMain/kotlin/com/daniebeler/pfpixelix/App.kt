@@ -56,6 +56,8 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.navigation3.scene.DialogSceneStrategy
+import androidx.navigation3.scene.SinglePaneSceneStrategy
 import androidx.navigation3.ui.NavDisplay
 import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import co.touchlab.kermit.Logger
@@ -231,6 +233,10 @@ fun App(
                                         )
                                     ),
                                     onBack = navController::popBackStack,
+                                    sceneStrategies = listOf(
+                                        remember { DialogSceneStrategy() },
+                                        remember { SinglePaneSceneStrategy() },
+                                    ),
                                     modifier = Modifier.fillMaxSize(),
                                 )
 

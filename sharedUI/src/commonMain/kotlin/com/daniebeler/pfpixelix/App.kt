@@ -100,7 +100,7 @@ val LocalSnackbarPresenter = compositionLocalOf<(String) -> Unit> {
 @Composable
 fun App(
     appComponent: AppComponent,
-    onNavHostReady: suspend (AppNavigator) -> Unit = {},
+    browserNavigation: @Composable (Destination) -> Unit = {},
     exitApp: () -> Unit
 ) {
     val uriHandler = LocalUriHandler.current
@@ -195,13 +195,6 @@ fun App(
                     }
                 }
 
-                // Bridges the AppNavigator to the host platform once the graph is set up.
-                // On web this binds browser Back/Forward and the address bar to navigation;
-                // other platforms pass the default no-op.
-                LaunchedEffect(navController) {
-                    onNavHostReady(navController)
-                }
-
                 CompositionLocalProvider(
                     LocalSnackbarPresenter provides snackBarPresenter
                 ) {
@@ -228,6 +221,7 @@ fun App(
                             modifier = Modifier.nestedScroll(scrollBehaviorBottom)
                         ) { paddingValues ->
                             Box(Modifier.fillMaxSize().padding(paddingValues)) {
+                                browserNavigation(navigationState.currentDestination)
                                 NavDisplay(
                                     entries = navigationState.decoratedEntries(
                                         appEntryProvider(

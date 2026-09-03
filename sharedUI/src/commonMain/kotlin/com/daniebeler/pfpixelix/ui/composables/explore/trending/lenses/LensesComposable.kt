@@ -3,7 +3,7 @@ package com.daniebeler.pfpixelix.ui.composables.explore.trending.lenses
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.runtime.Composable
-import androidx.navigation.NavController
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.ui.composables.explore.trending.PagePaginatedListScreen
 import com.daniebeler.pfpixelix.ui.composables.explore.trending.trending_hashtags.ExploreGridElement
@@ -19,7 +19,7 @@ import pixelix.app.generated.resources.posts
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun LensesComposable(
-    navController: NavController,
+    navController: AppNavigator,
     viewModel: LensesViewModel = injectViewModel(key = "lenses-key") { lensesViewModel }
 ) {
 

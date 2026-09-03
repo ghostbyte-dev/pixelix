@@ -50,7 +50,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.model.Account
@@ -112,7 +112,7 @@ import pixelix.app.generated.resources.unmute_this_profile
 )
 @Composable
 fun OtherProfileComposable(
-    navController: NavController,
+    navController: AppNavigator,
     userId: String?,
     username: String?,
     viewModel: OtherProfileViewModel = injectViewModel(key = "other-profile$userId$username") { otherProfileViewModel }

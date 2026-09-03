@@ -20,7 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import androidx.navigation.NavController
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.model.uiKey
 import com.daniebeler.pfpixelix.ui.composables.post.MasonryPost
@@ -40,7 +40,7 @@ fun LazyStaggeredGridScope.postsWrapperComposable(
     isFirstImageLarge: Boolean = false,
     gridColumnCount: Int,
     gridContentWidth: Dp,
-    navController: NavController,
+    navController: AppNavigator,
     edit: Boolean = false,
     editRemove: (postId: String) -> Unit = { },
     onClick: ((id: String) -> Unit)? = null
@@ -105,7 +105,7 @@ private fun LazyStaggeredGridScope.postsGridInScope(
     isFirstImageLarge: Boolean = false,
     columnCount: Int = 3,
     contentWidth: Dp = 0.dp,
-    navController: NavController,
+    navController: AppNavigator,
     edit: Boolean = false,
     editRemove: (postId: String) -> Unit = { },
     onClick: ((id: String) -> Unit)? = null
@@ -274,7 +274,7 @@ private fun LazyStaggeredGridScope.postsListInScope(
     endReached: Boolean,
     postGetsDeleted: (postId: String) -> Unit,
     updatePost: (post: Post) -> Unit,
-    navController: NavController,
+    navController: AppNavigator,
 ) {
     val spacedBy: Dp = 24.dp
 
@@ -319,7 +319,7 @@ private fun LazyStaggeredGridScope.postsMasonryInScope(
     isRefreshing: Boolean,
     endReached: Boolean,
     columnCount: Int,
-    navController: NavController,
+    navController: AppNavigator,
 ) {
 
     if (posts.isNotEmpty()) {
@@ -366,7 +366,7 @@ private fun LazyStaggeredGridScope.postsLargeMasonryInScope(
     isRefreshing: Boolean,
     endReached: Boolean,
     columnCount: Int = 1,
-    navController: NavController,
+    navController: AppNavigator,
 ) {
 
     if (posts.isNotEmpty()) {

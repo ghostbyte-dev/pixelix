@@ -20,7 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.domain.model.Tag
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import org.jetbrains.compose.resources.vectorResource
@@ -30,7 +30,7 @@ import pixelix.app.generated.resources.hash
 @Composable
 fun CustomHashtag(
     hashtag: Tag,
-    navController: NavController,
+    navController: AppNavigator,
     onClick: () -> Unit = {}
 ) {
     Row(

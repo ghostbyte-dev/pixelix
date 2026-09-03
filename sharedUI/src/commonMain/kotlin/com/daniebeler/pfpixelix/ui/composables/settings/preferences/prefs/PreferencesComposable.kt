@@ -29,7 +29,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.service.platform.PlatformFeatures
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.AutoplayVideoPref
@@ -62,7 +62,7 @@ import pixelix.app.generated.resources.settings
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PreferencesComposable(
-    navController: NavController,
+    navController: AppNavigator,
     drawerState: DrawerState,
     closePreferencesDrawer: () -> Unit,
     viewModel: PreferencesViewModel = injectViewModel(key = "preferences-viewmodel-key") { preferencesViewModel }

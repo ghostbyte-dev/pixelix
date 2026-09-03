@@ -9,8 +9,7 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavController
-import androidx.navigation.NavGraph.Companion.findStartDestination
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import co.touchlab.kermit.Logger
 import com.daniebeler.pfpixelix.domain.model.Instance
 import com.daniebeler.pfpixelix.domain.model.License
@@ -231,7 +230,7 @@ class PostEditorViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    fun submitPost(navController: NavController) {
+    fun submitPost(navController: AppNavigator) {
         if (mediaItems.find { it.isLoading } != null) return // Wait for uploads
 
         postSubmissionState = PostSubmissionState(isLoading = true)
@@ -247,7 +246,7 @@ class PostEditorViewModel @Inject constructor(
         }
     }
 
-    private fun updateExistingPost(navController: NavController) {
+    private fun updateExistingPost(navController: AppNavigator) {
         val postId = editingPostId ?: return
         val mediaIds = mediaItems.mapNotNull { it.id }
         val locationIdNullable = locationId.ifBlank { null }
@@ -666,7 +665,7 @@ class PostEditorViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    private fun createNewPost(newMediaUploadState: MediaUploadState, navController: NavController) {
+    private fun createNewPost(newMediaUploadState: MediaUploadState, navController: AppNavigator) {
         val mediaIds = newMediaUploadState.mediaAttachments.map { it.id }
         val locationIdNullable = locationId.ifBlank {
             null

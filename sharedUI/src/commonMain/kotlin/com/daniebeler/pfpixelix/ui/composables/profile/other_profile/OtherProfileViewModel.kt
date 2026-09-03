@@ -6,8 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavController
-import androidx.navigation.NavGraph.Companion.findStartDestination
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.model.MutedAccount
 import com.daniebeler.pfpixelix.domain.model.Post
@@ -86,7 +85,7 @@ class OtherProfileViewModel(
         }
 
     fun loadData(
-        userId: String?, username: String?, refreshing: Boolean, navController: NavController
+        userId: String?, username: String?, refreshing: Boolean, navController: AppNavigator
     ) {
         if (username == null) {
             if (session.backendType.value == BackendType.VERNISSAGE) {
@@ -154,7 +153,7 @@ class OtherProfileViewModel(
         }
     }
 
-    fun loadDataByUsername(username: String, refreshing: Boolean, navController: NavController) {
+    fun loadDataByUsername(username: String, refreshing: Boolean, navController: AppNavigator) {
         val myUsername = authService.getCurrentSession()!!.username
         if (username == myUsername) {
             navController.popBackStack()

@@ -52,7 +52,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import androidx.navigationevent.NavigationEventInfo
 import androidx.navigationevent.compose.NavigationBackHandler
 import androidx.navigationevent.compose.rememberNavigationEventState
@@ -95,7 +95,7 @@ import pixelix.app.generated.resources.save
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun PostEditorComposable(
-    navController: NavController,
+    navController: AppNavigator,
     uris: List<KmpUri>? = null,
     viewModel: PostEditorViewModel = injectViewModel(key = "post-editor-viewmodel-key") { newPostViewModel }
 ) {

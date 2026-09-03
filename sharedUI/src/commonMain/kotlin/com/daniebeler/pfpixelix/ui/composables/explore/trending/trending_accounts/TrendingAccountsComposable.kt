@@ -15,7 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.ui.composables.explore.trending.TrendingRange
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
@@ -33,7 +33,7 @@ import pixelix.app.generated.resources.no_trending_profiles
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun TrendingAccountsComposable(
-    navController: NavController,
+    navController: AppNavigator,
     viewModel: TrendingAccountsViewModel = injectViewModel(key = "trending-accounts-key") { trendingAccountsViewModel }
 ) {
 

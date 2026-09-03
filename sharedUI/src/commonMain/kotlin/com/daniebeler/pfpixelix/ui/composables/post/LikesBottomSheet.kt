@@ -25,7 +25,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
@@ -39,7 +39,7 @@ import pixelix.app.generated.resources.no_likes_yet
 
 @Composable
 fun LikesBottomSheet(
-    viewModel: PostViewModel, navController: NavController
+    viewModel: PostViewModel, navController: AppNavigator
 ) {
     Column(
         Modifier
@@ -83,7 +83,7 @@ fun LikesBottomSheet(
 }
 
 @Composable
-private fun LikedByAccountElement(account: Account, navController: NavController) {
+private fun LikedByAccountElement(account: Account, navController: AppNavigator) {
     Row(
         modifier = Modifier
             .padding(horizontal = 12.dp, vertical = 8.dp)

@@ -2,7 +2,7 @@ package com.daniebeler.pfpixelix.ui.composables.settings.blocked_accounts
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.runtime.Composable
-import androidx.navigation.NavController
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.ui.composables.widgets.AccountListScreen
 import org.jetbrains.compose.resources.stringResource
@@ -12,7 +12,7 @@ import pixelix.app.generated.resources.no_blocked_accounts
 
 @Composable
 fun BlockedAccountsComposable(
-    navController: NavController,
+    navController: AppNavigator,
     viewModel: BlockedAccountsViewModel = injectViewModel(key = "blocked-accounts-key") { blockedAccountsViewModel }
 ) {
     AccountListScreen(

@@ -412,4 +412,5 @@
     <string name="translations_desc">Du möchtest Pixelix in deiner Sprache sehen? Wir sind auf unsere großartige Community angewiesen, um die App für Menschen auf der ganzen Welt zugänglich zu machen.</string>
     <string name="translations_btn_title">Hilf Pixelix zu übersetzen</string>
     <string name="translations_btn_desc">Teile deine Sprachkenntnisse mit der Community</string>
+    <string name="add_account">Benutzer hinzufügen</string>
 </resources>

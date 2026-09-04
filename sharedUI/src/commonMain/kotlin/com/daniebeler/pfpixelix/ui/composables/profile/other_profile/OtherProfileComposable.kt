@@ -133,10 +133,7 @@ fun OtherProfileComposable(
         viewModel.navigationEffects.collect { effect ->
             when (effect) {
                 OtherProfileNavigationEffect.OpenOwnProfile ->
-                    navController.navigate(Destination.HomeTabOwnProfile) {
-                        launchSingleTop = true
-                        restoreState = true
-                    }
+                    navController.clearAndNavigate(Destination.HomeTabOwnProfile)
             }
         }
     }

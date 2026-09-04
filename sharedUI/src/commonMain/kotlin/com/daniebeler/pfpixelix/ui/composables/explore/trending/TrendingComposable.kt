@@ -61,7 +61,7 @@ fun TrendingComposable(
 
     val pagerState = rememberPagerState(
         initialPage = initialPage,
-        pageCount = { if (viewModel.capabilities.value.trending.supportsAdvancedCategories) 9 else 4 })
+        pageCount = { if (viewModel.capabilities.value.trending.supportsAdvancedCategories) 9 else 3 })
 
     val scope = rememberCoroutineScope()
 

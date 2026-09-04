@@ -45,6 +45,7 @@ exifinterface = "1.4.2"
 
 blurhash = "0.3.0"
 unifiedpush-connector = "3.3.5"
+embeddedFcmDistributor = "3.1.0"
 
 [libraries]
 
@@ -110,6 +111,7 @@ ui-tooling = { module = "org.jetbrains.compose.ui:ui-tooling", version.ref = "co
 androidx-exifinterface = { group = "androidx.exifinterface", name = "exifinterface", version.ref = "exifinterface" }
 vanniktech-blurhash = { module = "com.vanniktech:blurhash", version.ref = "blurhash" }
 unifiedpush-connector = { group = "org.unifiedpush.android", name = "connector", version.ref = "unifiedpush-connector" }
+embedded-fcm-distributor = { group = "org.unifiedpush.android", name = "embedded-fcm-distributor", version.ref = "embeddedFcmDistributor" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

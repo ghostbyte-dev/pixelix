@@ -158,6 +158,7 @@ kotlin {
             //blurhash
             implementation(libs.vanniktech.blurhash)
             implementation(libs.unifiedpush.connector)
+            implementation(libs.embedded.fcm.distributor)
         }
 
         iosMain.dependencies {

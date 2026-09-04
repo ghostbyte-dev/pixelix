@@ -336,6 +336,13 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/image_paths" />
         </provider>
+        <receiver android:enabled="true"  android:name=".domain.service.pushNotifications.EmbeddedDistributor" android:exported="false">
+            <intent-filter>
+                <action android:name="org.unifiedpush.android.distributor.feature.BYTES_MESSAGE"/>
+                <action android:name="org.unifiedpush.android.distributor.REGISTER"/>
+                <action android:name="org.unifiedpush.android.distributor.UNREGISTER"/>
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

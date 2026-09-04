@@ -25,6 +25,12 @@ fun webApp() {
     setOAuthRedirectCallback {
         appComponent.systemUrlHandler.onRedirect(it)
     }
+    setOAuthRedirectMessageListener {
+        appComponent.systemUrlHandler.onRedirect(it)
+    }
+    setOAuthRedirectBroadcastListener {
+        appComponent.systemUrlHandler.onRedirect(it)
+    }
 
     ComposeViewport {
         App(
@@ -37,3 +43,27 @@ fun webApp() {
 
 private fun setOAuthRedirectCallback(cb: (String) -> Unit): Unit =
     js("{ window.pixelixOAuthCallback = cb; }")
+
+private fun setOAuthRedirectMessageListener(cb: (String) -> Unit): Unit = js(
+    """{
+        window.addEventListener('message', function(event) {
+            if (event.origin !== window.location.origin) return;
+            if (!event.data || event.data.type !== 'pixelix-oauth-redirect') return;
+            cb(event.data.url);
+        });
+    }"""
+)
+
+private fun setOAuthRedirectBroadcastListener(cb: (String) -> Unit): Unit = js(
+    """{
+        if (typeof BroadcastChannel === 'undefined') return;
+        if (window.pixelixOAuthChannel) window.pixelixOAuthChannel.close();
+        var channel = new BroadcastChannel('pixelix-oauth');
+        channel.onmessage = function(event) {
+            if (!event.data || event.data.type !== 'pixelix-oauth-redirect') return;
+            cb(event.data.url);
+        };
+        // Keep the channel alive for the lifetime of the PWA page.
+        window.pixelixOAuthChannel = channel;
+    }"""
+)

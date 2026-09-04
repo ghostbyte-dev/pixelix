@@ -89,6 +89,10 @@ class UserPreferences(private val dataStore: DataStore<Preferences>) {
     var enableSwipeBetweenTabs by boolean("k_enable_swipe_between_timelines", true)
     val enableSwipeBetweenTabsFlow = booleanFlow("k_enable_swipe_between_timelines", true)
 
+    var enableDoubleTapToLike by boolean("k_enable_double_tap_to_like", true)
+    val enableDoubleTapToLikeFlow = booleanFlow("k_enable_double_tap_to_like", true)
+
+
     var showHomeTimelineHelp by boolean("k_show_home_timeline_help", true)
     val showHomeTimelineHelpFlow = booleanFlow("k_show_home_timeline_help", true)
 

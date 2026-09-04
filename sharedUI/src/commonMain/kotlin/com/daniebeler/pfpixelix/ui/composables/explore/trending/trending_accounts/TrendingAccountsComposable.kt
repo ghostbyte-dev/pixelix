@@ -27,8 +27,11 @@ import com.daniebeler.pfpixelix.ui.composables.widgets.InfiniteListHandler
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
+import pixelix.app.generated.resources.daily
 import pixelix.app.generated.resources.datetime
+import pixelix.app.generated.resources.monthly
 import pixelix.app.generated.resources.no_trending_profiles
+import pixelix.app.generated.resources.yearly
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -39,6 +42,10 @@ fun TrendingAccountsComposable(
 
     val calendarIcon = vectorResource(Res.drawable.datetime)
     val lazyListState = rememberLazyListState()
+
+    val dailyLabel = stringResource(Res.string.daily)
+    val monthlyLabel = stringResource(Res.string.monthly)
+    val yearlyLabel = stringResource(Res.string.yearly)
 
     CustomPullToRefreshBox(
         isRefreshing = viewModel.trendingAccountsState.isRefreshing,
@@ -53,12 +60,12 @@ fun TrendingAccountsComposable(
             content = {
                 if (viewModel.capabilities.value.trending.supportsMultipleProfileTimeRanges) {
                     item {
-                        ButtonGroup(overflowIndicator = { Text("Daily") }) {
+                        ButtonGroup(overflowIndicator = { Text(dailyLabel) }) {
                             toggleableItem(
                                 weight = 1f,
                                 checked = viewModel.timeRange == TrendingRange.DAILY,
                                 onCheckedChange = { viewModel.changeTimeRange(TrendingRange.DAILY) },
-                                label = "Daily",
+                                label = dailyLabel,
                                 icon = {
                                     if (viewModel.timeRange == TrendingRange.DAILY) {
                                         Icon(imageVector = calendarIcon, contentDescription = "")
@@ -69,7 +76,7 @@ fun TrendingAccountsComposable(
                                 weight = 1f,
                                 checked = viewModel.timeRange == TrendingRange.MONTHLY,
                                 onCheckedChange = { viewModel.changeTimeRange(TrendingRange.MONTHLY) },
-                                label = "Monthly",
+                                label = monthlyLabel,
                                 icon = {
                                     if (viewModel.timeRange == TrendingRange.MONTHLY) {
                                         Icon(imageVector = calendarIcon, contentDescription = "")
@@ -80,7 +87,7 @@ fun TrendingAccountsComposable(
                                 weight = 1f,
                                 checked = viewModel.timeRange == TrendingRange.YEARLY,
                                 onCheckedChange = { viewModel.changeTimeRange(TrendingRange.YEARLY) },
-                                label = "Yearly",
+                                label = yearlyLabel,
                                 icon = {
                                     if (viewModel.timeRange == TrendingRange.YEARLY) {
                                         Icon(imageVector = calendarIcon, contentDescription = "")

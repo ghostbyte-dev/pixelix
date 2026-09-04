@@ -874,8 +874,8 @@ private fun MetadataItem(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.padding(vertical = 4.dp).then(
             if (isClickable) {
-                Modifier.clickable { onClick() }
-            } else Modifier)) {
+            Modifier.clickable { onClick() }
+        } else Modifier)) {
         Icon(
             imageVector = vectorResource(icon),
             tint = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -964,10 +964,10 @@ private fun PostDeleteDialog(viewModel: PostViewModel) {
 
     AlertDialog(
         icon = {
-            Icon(
-                imageVector = vectorResource(Res.drawable.trash), contentDescription = null
-            )
-        },
+        Icon(
+            imageVector = vectorResource(Res.drawable.trash), contentDescription = null
+        )
+    },
         title = { Text(text = stringResource(Res.string.delete_post)) },
         text = { Text(text = stringResource(Res.string.this_action_cannot_be_undone)) },
         onDismissRequest = { viewModel.deleteDialog = null },
@@ -1038,13 +1038,16 @@ fun PostImage(
         }
 
         Box(modifier = Modifier.zIndex(2f).snapBackZoomable(zoomState).pointerInput(Unit) {
-            detectTapGestures(onDoubleTap = {
-                CoroutineScope(Dispatchers.Default).launch {
-                    viewModel.likePost(postId, updatePost)
-                    like()
-                    showHeart = true
+            detectTapGestures(
+                onDoubleTap = if (viewModel.isDoubleTapEnabled) {
+                {
+                    CoroutineScope(Dispatchers.Default).launch {
+                        viewModel.likePost(postId, updatePost)
+                        like()
+                        showHeart = true
+                    }
                 }
-            }, onTap = {
+            } else null, onTap = {
                 if (isMasonry) {
                     navController.navigate(Destination.Post(postId))
                 } else {
@@ -1113,17 +1116,13 @@ private fun ImageWrapper(
     onSuccess: () -> Unit
 ) {
     AsyncImage(
-        model = ImageRequest.Builder(LocalPlatformContext.current)
-            .data(
-                if (fullQuality) {
-                    mediaAttachment.url
-                } else {
-                    mediaAttachment.previewUrl ?: mediaAttachment.url
-                }
-            )
-            .size(Size.ORIGINAL)
-            .precision(Precision.EXACT)
-            .build(),
+        model = ImageRequest.Builder(LocalPlatformContext.current).data(
+            if (fullQuality) {
+                mediaAttachment.url
+            } else {
+                mediaAttachment.previewUrl ?: mediaAttachment.url
+            }
+        ).size(Size.ORIGINAL).precision(Precision.EXACT).build(),
         contentDescription = null,
         modifier = Modifier.fillMaxWidth(),
         contentScale = ContentScale.FillWidth,
@@ -1175,9 +1174,11 @@ fun MediaDialog(
                         mediaAttachment,
                         true,
                         { zoomState.setContentSize(it.painter.intrinsicSize) },
-                        {isLoading = false})
+                        { isLoading = false })
                 } else {
-                    VideoAttachment(mediaAttachment, postViewModel, {isLoading = false}, isMasonry = false)
+                    VideoAttachment(
+                        mediaAttachment, postViewModel, { isLoading = false }, isMasonry = false
+                    )
                 }
             }
             Box(Modifier.align(Alignment.TopEnd).padding(20.dp).zIndex(2f)) {

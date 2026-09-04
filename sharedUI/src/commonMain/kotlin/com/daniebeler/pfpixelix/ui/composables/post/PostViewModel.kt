@@ -78,6 +78,7 @@ class PostViewModel @Inject constructor(
 
     var isAltTextButtonHidden by mutableStateOf(false)
     var hideMetadataPref by mutableStateOf(true)
+    var isDoubleTapEnabled by mutableStateOf(true)
     var isAutoplayVideos by mutableStateOf(true)
     var blurSensitiveContent by mutableStateOf(false)
     var instance: Instance? = null
@@ -110,6 +111,9 @@ class PostViewModel @Inject constructor(
         }
         viewModelScope.launch {
             prefs.hideMetadataFlow.collect { hideMetadataPref = it }
+        }
+        viewModelScope.launch {
+            prefs.enableDoubleTapToLikeFlow.collect { isDoubleTapEnabled = it }
         }
         viewModelScope.launch {
             prefs.autoplayVideoFlow.collect { isAutoplayVideos = it }

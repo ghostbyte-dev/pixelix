@@ -19,14 +19,33 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.daniebeler.pfpixelix.domain.service.platform.PlatformFeatures
 import com.daniebeler.pfpixelix.ui.composables.widgets.CardButton
 import org.jetbrains.compose.resources.DrawableResource
+import org.jetbrains.compose.resources.stringResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.bug
 import pixelix.app.generated.resources.chevron_right
 import pixelix.app.generated.resources.coffee
 import pixelix.app.generated.resources.feedback
+import pixelix.app.generated.resources.feedback_btn_desc
+import pixelix.app.generated.resources.feedback_btn_title
+import pixelix.app.generated.resources.feedback_desc
+import pixelix.app.generated.resources.feedback_title
+import pixelix.app.generated.resources.report_btn_desc
+import pixelix.app.generated.resources.report_btn_title
+import pixelix.app.generated.resources.report_desc
+import pixelix.app.generated.resources.report_title
+import pixelix.app.generated.resources.sponsor_btn_desc
+import pixelix.app.generated.resources.sponsor_btn_title
+import pixelix.app.generated.resources.sponsor_desc
+import pixelix.app.generated.resources.sponsor_title
+import pixelix.app.generated.resources.support_headline
 import pixelix.app.generated.resources.translation
+import pixelix.app.generated.resources.translations_btn_desc
+import pixelix.app.generated.resources.translations_btn_title
+import pixelix.app.generated.resources.translations_desc
+import pixelix.app.generated.resources.translations_title
 
 
 @Composable
@@ -40,45 +59,48 @@ fun ContributeBottomSheet(openUrl: (url: String) -> Unit) {
             modifier = Modifier.verticalScroll(scrollState)
         ) {
             Text(
-                text = "Help improve Pixelix",
+                text = stringResource(Res.string.support_headline),
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.SemiBold,
                 modifier = Modifier
                     .padding(start = 16.dp, bottom = 12.dp)
             )
-            ContributeCard(
-                title = "Sponsor",
-                desc = "Pixelix is built and maintained in our free time. If you enjoy using it, you can help support ongoing development and infrastructure costs.",
-                onClick = { openUrl("https://github.com/ghostbyte-dev/pixelix/wiki/Sponsor") },
-                buttonTitle = "Sponsor",
-                buttonDesc = "Support the creators with a coffee",
-                buttonIcon = Res.drawable.coffee
-            )
+
+            if (PlatformFeatures.supportsSponsorship) {
+                ContributeCard(
+                    title = stringResource(Res.string.sponsor_title),
+                    desc = stringResource(Res.string.sponsor_desc),
+                    onClick = { openUrl("https://github.com/ghostbyte-dev/pixelix/wiki/Sponsor") },
+                    buttonTitle = stringResource(Res.string.sponsor_btn_title),
+                    buttonDesc = stringResource(Res.string.sponsor_btn_desc),
+                    buttonIcon = Res.drawable.coffee
+                )
+            }
 
             ContributeCard(
-                title = "Report a bug",
-                desc = "Found something that isn’t working correctly? Let us know so we can fix it. Every report helps improve Pixelix for everyone.",
+                title = stringResource(Res.string.report_title),
+                desc = stringResource(Res.string.report_desc),
                 onClick = { openUrl("https://github.com/ghostbyte-dev/pixelix/issues") },
-                buttonTitle = "Report an issue",
-                buttonDesc = "We appreciate your help tracking down bugs",
+                buttonTitle = stringResource(Res.string.report_btn_title),
+                buttonDesc = stringResource(Res.string.report_btn_desc),
                 buttonIcon = Res.drawable.bug
             )
 
             ContributeCard(
-                "Share feedback",
-                desc = "Take part in a short survey to share your ideas, opinions, and suggestions about Pixelix’s design and features.",
+                stringResource(Res.string.feedback_title),
+                desc = stringResource(Res.string.feedback_desc),
                 onClick = { openUrl("https://app.formbricks.com/s/cmplkixsldbx0qh01yijw6fcy") },
-                buttonTitle = "Share feedback",
-                buttonDesc = "Your ideas directly improve the app",
+                buttonTitle = stringResource(Res.string.feedback_btn_title),
+                buttonDesc = stringResource(Res.string.feedback_btn_desc),
                 buttonIcon = Res.drawable.feedback
             )
 
             ContributeCard(
-                title = "Translations",
-                desc = "Want to see Pixelix in your language? We rely on our amazing community to help make the app accessible to everyone around the world.",
+                title = stringResource(Res.string.translations_title),
+                desc = stringResource(Res.string.translations_desc),
                 onClick = { openUrl("https://hosted.weblate.org/projects/pixelix/") },
-                buttonTitle = "Help translate",
-                buttonDesc = "Share your language skills with the community",
+                buttonTitle = stringResource(Res.string.translations_btn_title),
+                buttonDesc = stringResource(Res.string.translations_btn_desc),
                 buttonIcon = Res.drawable.translation
             )
 

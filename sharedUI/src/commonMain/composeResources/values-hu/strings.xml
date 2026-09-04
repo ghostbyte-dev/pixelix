@@ -379,4 +379,13 @@
     <string name="new_post_settings">Új bejegyzés beállításai</string>
     <string name="use_dynamic_colors">Dinamikus színek használata</string>
     <string name="posts_title">Bejegyzések</string>
+    <string name="default_timeline_tab">Alapértelmezett idővonal lap</string>
+    <string name="editors_choice_accounts">Szerkesztők kedvence: Fiókok</string>
+    <string name="editors_choice_accounts_explained">Művészek csoportja, akiket a kiszolgáló kurátorai kiemeltek.</string>
+    <string name="editors_choice_posts">Szerkesztők kedvence: Bejegyzések</string>
+    <string name="editors_choice_posts_explained">Fényképek gyűjteménye, akiket a kiszolgáló kurátorai kiemeltek.</string>
+    <string name="categories">Kategóriák</string>
+    <string name="cameras">Fényképezőgépek</string>
+    <string name="lenses">Objektívek</string>
+    <string name="films">Filmek</string>
 </resources>

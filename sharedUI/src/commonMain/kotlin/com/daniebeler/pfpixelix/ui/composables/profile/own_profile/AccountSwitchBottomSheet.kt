@@ -45,6 +45,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.add
+import pixelix.app.generated.resources.add_account
 import pixelix.app.generated.resources.are_you_sure_you_want_to_remove_this_account
 import pixelix.app.generated.resources.cancel
 import pixelix.app.generated.resources.default_avatar
@@ -163,7 +164,7 @@ fun AccountSwitchBottomSheet(
                     },
                     content = {
                         Text(
-                            text = "Add account", fontWeight = FontWeight.Bold
+                            text = stringResource(Res.string.add_account), fontWeight = FontWeight.Bold
                         )
                     })
             }

@@ -1,6 +1,5 @@
 package com.daniebeler.pfpixelix.domain.service.pushNotifications
 
-import android.content.Context
 import co.touchlab.kermit.Logger
 import com.daniebeler.pfpixelix.MyApplication.Companion.appComponent
 import com.daniebeler.pfpixelix.domain.model.PushNotification
@@ -27,7 +26,7 @@ class PixelixPushService : PushService() {
         get() = appComponent.pushSubscriptionService
 
     override fun onNewEndpoint(endpoint: PushEndpoint, instance: String) {
-        Logger.d("PixelixPush") { "new endpoint" + endpoint.url }
+        Logger.d(tag="PixelixPush") { "new endpoint" + endpoint.url }
         val keyManager = DefaultKeyManager(context)
         val publicKeySet = keyManager.getPublicKeySet(instance) ?: return
 
@@ -54,8 +53,8 @@ class PixelixPushService : PushService() {
     }
 
     override fun onMessage(message: PushMessage, instance: String) {
-        Logger.d("PixelixPush") { "message" }
-        Logger.d("PixelixPush") { message.content.toString(Charsets.UTF_8) }
+        Logger.d(tag="PixelixPush") { "message" }
+        Logger.d(tag="PixelixPush") { message.content.toString(Charsets.UTF_8) }
         val message = message.content.toString(Charsets.UTF_8)
         val notification = decodeMessage(message)
         if (notification != null) {
@@ -67,17 +66,15 @@ class PixelixPushService : PushService() {
         reason: FailedReason,
         instance: String
     ) {
-        Logger.d("PixelixPush") {
+        Logger.d(tag="PixelixPush") {
             "registration failed: " + reason.name
         }
-        TODO("Not yet implemented")
     }
 
     override fun onUnregistered(instance: String) {
-        TODO("Not yet implemented")
     }
 
-    fun decodeMessage(message: String): PushNotification? {
+    private fun decodeMessage(message: String): PushNotification? {
         val payload = try {
             Json.decodeFromString<VernissagePushPayloadDto>(message)
         } catch (e: Exception) {

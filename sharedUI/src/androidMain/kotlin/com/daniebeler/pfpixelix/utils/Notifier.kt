@@ -6,16 +6,14 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
-import android.os.Build
-import androidx.annotation.RequiresApi
+import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.net.toUri
 import co.touchlab.kermit.Logger
 import com.daniebeler.pfpixelix.AppActivity
 import com.daniebeler.pfpixelix.R
 import com.daniebeler.pfpixelix.domain.model.PushNotification
 import java.util.concurrent.ThreadLocalRandom
-import androidx.core.net.toUri
 
 class Notifier(var context: Context) {
     private val channelId = context.packageName
@@ -28,13 +26,13 @@ class Notifier(var context: Context) {
     fun showNotification(
         notification: PushNotification
     ) {
-        Logger.d("PushNotification") {
+        Logger.d(tag="PushNotification") {
             "show Notification" +
                     "$notification"
         }
 
         if (!NotificationManagerCompat.from(context).areNotificationsEnabled()) {
-            Logger.w("PushNotification") { "Notifications disabled at OS level — not shown" }
+            Logger.w(tag="PushNotification") { "Notifications disabled at OS level — not shown" }
             return
         }
         val deepLinkIntent = Intent(
@@ -58,13 +56,17 @@ class Notifier(var context: Context) {
 
         val notification =
             notificationBuilder
-                .setTicker(notification.body) // the status text
-                .setWhen(System.currentTimeMillis()) // the time stamp
-                .setContentTitle(notification.title) // the label of the entry
-                .setContentText(notification.body) // the contents of the entry
+                .setTicker(notification.body)
+                .setWhen(System.currentTimeMillis())
+                .setShowWhen(true)
+                .setContentTitle(notification.title)
+                .setContentText(notification.body)
                 .setSmallIcon(R.drawable.ic_launcher_02_foreground)
                 .setContentIntent(pendingIntent)
                 .setAutoCancel(true)
+                .setCategory(NotificationCompat.CATEGORY_SOCIAL)
+                .setOnlyAlertOnce(true)
+                .setStyle(Notification.BigTextStyle().bigText(notification.body))
                 .build()
 
         val notificationId =

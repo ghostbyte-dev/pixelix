@@ -13,7 +13,7 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyStateComposable
@@ -24,7 +24,7 @@ import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 @Composable
 fun AccountListScreen(
     title: String,
-    navController: NavController,
+    navController: AppNavigator,
     items: List<Account>,
     isLoading: Boolean,
     isRefreshing: Boolean,

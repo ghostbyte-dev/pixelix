@@ -9,8 +9,8 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavController
-import androidx.navigation.NavGraph.Companion.findStartDestination
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.receiveAsFlow
 import co.touchlab.kermit.Logger
 import com.daniebeler.pfpixelix.domain.model.Instance
 import com.daniebeler.pfpixelix.domain.model.License
@@ -32,7 +32,6 @@ import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
 import com.daniebeler.pfpixelix.domain.service.suggestions.HashtagMentionsSuggestionsManager
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.ui.composables.profile.AccountState
-import com.daniebeler.pfpixelix.ui.navigation.Destination
 import com.daniebeler.pfpixelix.utils.BlurHashEncoder
 import com.daniebeler.pfpixelix.utils.KmpUri
 import com.daniebeler.pfpixelix.utils.io
@@ -231,7 +230,10 @@ class PostEditorViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    fun submitPost(navController: NavController) {
+    private val navigationEffectChannel = Channel<PostEditorNavigationEffect>(Channel.BUFFERED)
+    val navigationEffects = navigationEffectChannel.receiveAsFlow()
+
+    fun submitPost() {
         if (mediaItems.find { it.isLoading } != null) return // Wait for uploads
 
         postSubmissionState = PostSubmissionState(isLoading = true)
@@ -241,13 +243,13 @@ class PostEditorViewModel @Inject constructor(
 
         if (mode == EditorMode.CREATE) {
             mediaUploadState = sortMediaUploadState(mediaUploadState)
-            createNewPost(mediaUploadState, navController)
+            createNewPost(mediaUploadState)
         } else {
-            updateExistingPost(navController)
+            updateExistingPost()
         }
     }
 
-    private fun updateExistingPost(navController: NavController) {
+    private fun updateExistingPost() {
         val postId = editingPostId ?: return
         val mediaIds = mediaItems.mapNotNull { it.id }
         val locationIdNullable = locationId.ifBlank { null }
@@ -266,10 +268,9 @@ class PostEditorViewModel @Inject constructor(
         postEditorService.updatePost(postId, updateRequest).onEach { result ->
             postSubmissionState = when (result) {
                 is Resource.Success -> {
-                    navController.popBackStack()
-                    navController.navigate(Destination.Post(postId, refresh = true)) {
-                        launchSingleTop = true
-                    }
+                    navigationEffectChannel.trySend(
+                        PostEditorNavigationEffect.PostUpdated(postId)
+                    )
                     PostSubmissionState()
                 }
 
@@ -666,7 +667,7 @@ class PostEditorViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    private fun createNewPost(newMediaUploadState: MediaUploadState, navController: NavController) {
+    private fun createNewPost(newMediaUploadState: MediaUploadState) {
         val mediaIds = newMediaUploadState.mediaAttachments.map { it.id }
         val locationIdNullable = locationId.ifBlank {
             null
@@ -684,14 +685,7 @@ class PostEditorViewModel @Inject constructor(
         postEditorService.createPost(createPostDto).onEach { result ->
             postSubmissionState = when (result) {
                 is Resource.Success -> {
-                    navController.navigate(Destination.HomeTabOwnProfile) {
-                        launchSingleTop = true
-                        restoreState = true
-                        popUpTo(navController.graph.findStartDestination().id) {
-                            inclusive = false
-                            saveState = true
-                        }
-                    }
+                    navigationEffectChannel.trySend(PostEditorNavigationEffect.PostCreated)
                     PostSubmissionState()
                 }
 

@@ -16,7 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.ui.composables.explore.ExploreViewModel
 import com.daniebeler.pfpixelix.ui.composables.explore.trending.cameras.CamerasComposable
 import com.daniebeler.pfpixelix.ui.composables.explore.trending.categories.CategoriesComposable
@@ -53,7 +53,7 @@ enum class TrendingRange {
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun TrendingComposable(
-    navController: NavController,
+    navController: AppNavigator,
     viewModel: ExploreViewModel,
     initialPage: Int,
     isSwipeEnabled: Boolean

@@ -26,8 +26,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
-import androidx.navigation.NavGraph.Companion.findStartDestination
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.ui.composables.post.PostComposable
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
@@ -44,7 +43,7 @@ import pixelix.app.generated.resources.post
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SinglePostComposable(
-    navController: NavController,
+    navController: AppNavigator,
     postId: String,
     refresh: Boolean,
     openReplies: Boolean,

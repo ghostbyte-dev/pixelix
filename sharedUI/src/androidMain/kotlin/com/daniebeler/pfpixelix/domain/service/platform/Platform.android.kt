@@ -8,6 +8,7 @@ import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.FileProvider
 import co.touchlab.kermit.Logger
 import com.daniebeler.pfpixelix.MyApplication
+import com.daniebeler.pfpixelix.domain.service.general.BackendType
 import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
 import com.daniebeler.pfpixelix.utils.KmpContext
 import com.daniebeler.pfpixelix.utils.KmpUri
@@ -35,6 +36,10 @@ actual class Platform actual constructor(
 
         return contentUri
     }
+
+    actual fun prepareAuthBrowser(host: String, backendType: BackendType): Boolean = true
+
+    actual suspend fun consumePreparedAuthData(): PreparedAuthData? = null
 
     actual fun openUrl(url: String) {
         val activity = MyApplication.currentActivity?.get()
@@ -68,7 +73,7 @@ actual class Platform actual constructor(
 
     actual fun dismissBrowser() {}
 
-        actual fun getAppVersion(): String {
+    actual fun getAppVersion(): String {
         return try {
             context.packageManager.getPackageInfo(context.packageName, 0).versionName
         } catch (e: Throwable) {

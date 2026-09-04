@@ -31,7 +31,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.model.Notification
@@ -59,7 +59,7 @@ import pixelix.app.generated.resources.sent_a_dm
 @Composable
 fun CustomNotification(
     notification: Notification,
-    navController: NavController,
+    navController: AppNavigator,
     removeNotification: () -> Unit,
     index: Int,
     count: Int,

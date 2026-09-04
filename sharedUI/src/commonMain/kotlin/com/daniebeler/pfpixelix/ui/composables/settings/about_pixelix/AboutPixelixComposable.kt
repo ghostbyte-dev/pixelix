@@ -29,7 +29,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.ui.composables.widgets.ButtonRowElement
 import com.daniebeler.pfpixelix.ui.composables.widgets.ScreenScaffold
@@ -50,7 +50,7 @@ import pixelix.app.generated.resources.website
 
 @Composable
 fun AboutPixelixComposable(
-    navController: NavController,
+    navController: AppNavigator,
     viewModel: AboutPixelixViewModel = injectViewModel(key = "about-pixelix-viewmodel-key") { aboutPixelixViewModel }
 ) {
     val scrollState = rememberScrollState()

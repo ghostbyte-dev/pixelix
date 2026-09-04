@@ -18,7 +18,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.ui.composables.widgets.CustomPost
@@ -29,7 +29,7 @@ import com.daniebeler.pfpixelix.ui.navigation.Destination
 @Composable
 fun TrendingAccountElement(
     account: Account,
-    navController: NavController,
+    navController: AppNavigator,
     viewModel: TrendingAccountElementViewModel = injectViewModel(key = account.id) { trendingAccountElementViewModel }
 ) {
     LaunchedEffect(account) {

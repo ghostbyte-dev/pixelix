@@ -48,7 +48,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.ui.composables.states.EndOfListComposable
@@ -74,7 +74,7 @@ import pixelix.app.generated.resources.send
 
 @Composable
 fun ChatComposable(
-    navController: NavController,
+    navController: AppNavigator,
     accountId: String,
     viewModel: ChatViewModel = injectViewModel(key = "chat$accountId") { chatViewModel }
 ) {

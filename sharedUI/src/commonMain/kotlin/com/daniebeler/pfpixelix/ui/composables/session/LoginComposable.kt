@@ -56,7 +56,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import androidx.navigationevent.NavigationEventInfo
 import androidx.navigationevent.compose.NavigationBackHandler
 import androidx.navigationevent.compose.rememberNavigationEventState
@@ -84,7 +84,7 @@ import pixelix.app.generated.resources.vernissage_full_logo_white
 @Composable
 fun LoginComposable(
     isCloseable: Boolean = false,
-    navController: NavController,
+    navController: AppNavigator,
     viewModel: LoginViewModel = injectViewModel("LoginViewModel") { loginViewModel }
 ) {
     val dark = MaterialTheme.colorScheme.background.luminance() < 0.5

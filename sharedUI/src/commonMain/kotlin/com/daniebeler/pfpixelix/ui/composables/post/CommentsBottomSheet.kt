@@ -56,7 +56,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.domain.model.Instance
 import com.daniebeler.pfpixelix.domain.model.Post
@@ -87,7 +87,7 @@ import pixelix.app.generated.resources.trash
 
 @Composable
 fun CommentsBottomSheet(
-    post: Post, navController: NavController, viewModel: PostViewModel
+    post: Post, navController: AppNavigator, viewModel: PostViewModel
 ) {
     val suggestionsState by viewModel.hashtagMentionsSuggestionsManager.suggestionsState.collectAsStateWithLifecycle()
 
@@ -269,7 +269,7 @@ fun CommentsBottomSheet(
 private fun ReplyElement(
     reply: ReplyNode,
     postDescription: Boolean,
-    navController: NavController,
+    navController: AppNavigator,
     deleteReply: () -> Unit,
     myAccountId: String?,
     openUrl: (url: String) -> Unit,

@@ -41,7 +41,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.ui.composables.widgets.InfiniteStaggeredGridHandler
 import com.daniebeler.pfpixelix.ui.composables.SheetItem
@@ -71,7 +71,7 @@ import pixelix.app.generated.resources.you_don_t_have_any_notifications
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ConversationsComposable(
-    navController: NavController,
+    navController: AppNavigator,
     viewModel: ConversationsViewModel = injectViewModel(key = "conversations-viewmodel-key") { conversationsViewModel }
 ) {
 
@@ -196,7 +196,7 @@ fun ConversationsComposable(
 
 @Composable
 private fun CreateNewConversation(
-    close: () -> Unit, viewModel: ConversationsViewModel, navController: NavController
+    close: () -> Unit, viewModel: ConversationsViewModel, navController: AppNavigator
 ) {
 
     AlertDialog(title = {

@@ -11,6 +11,7 @@ import com.daniebeler.pfpixelix.domain.service.general.AuthService.Companion.gra
 import com.daniebeler.pfpixelix.domain.service.general.BackendType
 import com.daniebeler.pfpixelix.domain.service.general.Session
 import com.daniebeler.pfpixelix.domain.service.platform.Platform
+import com.daniebeler.pfpixelix.domain.service.platform.PreparedAuthData
 import com.daniebeler.pfpixelix.domain.service.platform.redirectUrl
 import com.daniebeler.pfpixelix.domain.service.search.SavedSearchesService
 import com.daniebeler.pfpixelix.ui.events.SystemUrlHandler
@@ -36,18 +37,24 @@ class PixelfedAuthService(
     override suspend fun auth(host: String) {
         val serverUrl = getServerUrl(host)
         val api = createPixelfedAuthApi(serverUrl, json)
-        val authData = api.getAuthData(clientName, platform.redirectUrl)
+        val preparedAuthData = platform.consumePreparedAuthData()
+        val client = preparedAuthData ?: api.getAuthData(
+            clientName,
+            platform.redirectUrl
+        ).let { PreparedAuthData(it.clientId, it.clientSecret) }
+        val clientId = client.clientId
+        val clientSecret = requireNotNull(client.clientSecret) { "OAuth registration returned no client_secret" }
 
         val authUrl = URLBuilder("${serverUrl}oauth/authorize").apply {
             parameters.apply {
                 append("response_type", "code")
                 append("redirect_uri", platform.redirectUrl)
-                append("client_id", authData.clientId)
+                append("client_id", clientId)
             }
         }.build()
 
         urlHandler.isAuthInProgress = true
-        platform.openUrl(authUrl.toString())
+        if (preparedAuthData == null) platform.openUrl(authUrl.toString())
         val redirectString = urlHandler.redirects.first()
         platform.dismissBrowser()
 
@@ -58,8 +65,8 @@ class PixelfedAuthService(
         val code = redirect.parameters["code"] ?: error("Redirect doesn't have a code")
 
         val token = api.getToken(
-            authData.clientId,
-            authData.clientSecret,
+            clientId,
+            clientSecret,
             code,
             platform.redirectUrl,
             grantType
@@ -75,8 +82,8 @@ class PixelfedAuthService(
             serverUrl = serverUrl.toString(),
             token = token.accessToken,
             refreshToken = token.refreshToken,
-            clientId = authData.clientId,
-            clientSecret = authData.clientSecret,
+            clientId = clientId,
+            clientSecret = clientSecret,
             createdAt = token.createdAt,
             backendType = BackendType.PIXELFED
         )

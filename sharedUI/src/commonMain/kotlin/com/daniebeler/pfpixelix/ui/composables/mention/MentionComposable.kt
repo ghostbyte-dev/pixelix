@@ -34,8 +34,7 @@ import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
-import androidx.navigation.NavGraph.Companion.findStartDestination
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.ui.composables.post.PostComposable
@@ -55,7 +54,7 @@ import pixelix.app.generated.resources.post
 @Composable
 fun MentionComposable(
     mentionId: String,
-    navController: NavController,
+    navController: AppNavigator,
     viewModel: MentionViewModel = injectViewModel(key = "mention$mentionId") { mentionViewModel }
 ) {
     val lazyListState = rememberLazyListState()
@@ -139,7 +138,7 @@ fun MentionComposable(
 }
 
 @Composable
-private fun SubPosts(posts: List<Post>, navController: NavController) {
+private fun SubPosts(posts: List<Post>, navController: AppNavigator) {
     Column(Modifier.padding(start = 32.dp), verticalArrangement = Arrangement.spacedBy(32.dp)) {
         posts.forEach { ancestor ->
             CustomLayoutWithDivider {

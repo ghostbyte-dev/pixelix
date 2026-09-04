@@ -10,7 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.ui.composables.explore.trending.TrendingRange
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposableDialog
@@ -26,7 +26,7 @@ import pixelix.app.generated.resources.yearly
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun TrendingPostsComposable(
-    navController: NavController,
+    navController: AppNavigator,
     viewModel: TrendingPostsViewModel = injectViewModel(key = "trending-posts") { trendingPostsViewModel }
 ) {
     val calendarIcon = vectorResource(Res.drawable.datetime)

@@ -31,7 +31,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.model.Credentials
@@ -55,7 +55,7 @@ import pixelix.app.generated.resources.remove_account
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AccountSwitchBottomSheet(
-    navController: NavController,
+    navController: AppNavigator,
     closeBottomSheet: () -> Unit,
     ownProfileViewModel: OwnProfileViewModel?,
     viewModel: AccountSwitchViewModel = injectViewModel(key = "account_switcher_viewmodel") { accountSwitchViewModel }

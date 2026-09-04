@@ -1,7 +1,7 @@
 package com.daniebeler.pfpixelix.ui.composables.explore.trending.films
 
 import androidx.compose.runtime.Composable
-import androidx.navigation.NavController
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.ui.composables.explore.trending.PagePaginatedListScreen
 import com.daniebeler.pfpixelix.ui.composables.explore.trending.trending_hashtags.ExploreGridElement
@@ -15,7 +15,7 @@ import pixelix.app.generated.resources.posts
 
 @Composable
 fun FilmsComposable(
-    navController: NavController,
+    navController: AppNavigator,
     viewModel: FilmsViewModel = injectViewModel(key = "films-key") { filmsViewModel }
 ) {
     PagePaginatedListScreen(

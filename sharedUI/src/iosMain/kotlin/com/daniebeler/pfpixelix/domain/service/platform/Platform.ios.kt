@@ -2,6 +2,7 @@ package com.daniebeler.pfpixelix.domain.service.platform
 
 import androidx.compose.ui.platform.LocalUriHandler
 import co.touchlab.kermit.Logger
+import com.daniebeler.pfpixelix.domain.service.general.BackendType
 import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
 import com.daniebeler.pfpixelix.utils.KmpContext
 import com.daniebeler.pfpixelix.utils.KmpUri
@@ -36,7 +37,11 @@ actual class Platform actual constructor(
         return platformFile.toKmpUri()
     }
 
-        actual fun openUrl(url: String) {
+    actual fun prepareAuthBrowser(host: String, backendType: BackendType): Boolean = true
+
+    actual suspend fun consumePreparedAuthData(): PreparedAuthData? = null
+
+    actual fun openUrl(url: String) {
         if (prefs.useInAppBrowser) {
             val safariViewController = SFSafariViewController(uRL = NSURL(string = url))
             dispatch_async(dispatch_get_main_queue()) {

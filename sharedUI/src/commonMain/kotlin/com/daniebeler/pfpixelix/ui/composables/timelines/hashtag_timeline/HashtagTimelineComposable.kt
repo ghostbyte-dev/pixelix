@@ -2,14 +2,14 @@ package com.daniebeler.pfpixelix.ui.composables.timelines.hashtag_timeline
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.navigation.NavController
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.ui.composables.timelines.parametric_timeline_screens.TimelineScreen
 import com.daniebeler.pfpixelix.ui.composables.widgets.FollowButton
 
 @Composable
 fun HashtagTimelineComposable(
-    navController: NavController,
+    navController: AppNavigator,
     hashtag: String,
     viewModel: HashtagTimelineViewModel = injectViewModel(key = "hashtag-timeline-$hashtag") { hashtagTimelineViewModel }
 ) {

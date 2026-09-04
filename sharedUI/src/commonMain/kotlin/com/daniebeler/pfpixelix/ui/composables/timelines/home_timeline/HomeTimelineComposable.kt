@@ -5,7 +5,7 @@ import androidx.compose.foundation.pager.PagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.di.LocalAppComponent
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
@@ -26,7 +26,7 @@ import pixelix.app.generated.resources.photo
 fun HomeTimelineComposable(
     pagerState: PagerState,
     tabIndex: Int,
-    navController: NavController,
+    navController: AppNavigator,
     viewModel: HomeTimelineViewModel = injectViewModel(key = "home-timeline-key") { homeTimelineViewModel }
 ) {
     val staggeredGridState = rememberLazyStaggeredGridState()

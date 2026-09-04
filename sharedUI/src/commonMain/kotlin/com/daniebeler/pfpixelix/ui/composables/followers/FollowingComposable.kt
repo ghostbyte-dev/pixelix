@@ -8,7 +8,7 @@ import androidx.compose.foundation.lazy.staggeredgrid.itemsIndexed
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.ui.composables.custom_account.AccountListItem
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
@@ -29,7 +29,7 @@ import pixelix.app.generated.resources.user_group
 
 @Composable
 fun FollowingComposable(
-    navController: NavController,
+    navController: AppNavigator,
     viewModel: FollowersViewModel = injectViewModel(key = "followers-viewmodel-key") { followersViewModel }
 ) {
     val staggeredGridState = rememberLazyStaggeredGridState()

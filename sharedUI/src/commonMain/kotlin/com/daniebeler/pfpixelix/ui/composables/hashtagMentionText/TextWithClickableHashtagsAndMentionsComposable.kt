@@ -32,7 +32,7 @@ import androidx.compose.ui.text.withLink
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.model.Account
@@ -51,7 +51,7 @@ fun HashtagsMentionsTextView(
     text: String,
     modifier: Modifier = Modifier,
     mentions: List<Account>?,
-    navController: NavController,
+    navController: AppNavigator,
     openUrl: (url: String) -> Unit,
     textSize: TextUnit? = null,
     maximumLines: Int = Int.MAX_VALUE,

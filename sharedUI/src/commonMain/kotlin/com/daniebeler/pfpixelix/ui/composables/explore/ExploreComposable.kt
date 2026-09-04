@@ -56,7 +56,7 @@ import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import co.touchlab.kermit.Logger
 import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.di.LocalAppComponent
@@ -89,7 +89,7 @@ import pixelix.app.generated.resources.trash
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ExploreComposable(
-    navController: NavController,
+    navController: AppNavigator,
     initialPage: Int = 0,
     viewModel: ExploreViewModel = injectViewModel(key = "search-viewmodel-key") { exploreViewModel }
 ) {
@@ -244,7 +244,7 @@ private fun SearchResultComposable(
     searchState: SearchState,
     saveAccount: (String, Account) -> Unit,
     saveHashtag: (String) -> Unit,
-    navController: NavController
+    navController: AppNavigator
 ) {
     val pagerState = rememberPagerState(initialPage = 0, pageCount = { 2 })
     val scope = rememberCoroutineScope()
@@ -316,7 +316,7 @@ private fun SearchResultComposable(
 @Composable
 private fun PastSearchItem(
     item: SavedSearchItem,
-    navController: NavController,
+    navController: AppNavigator,
     setSearchText: (text: String) -> Unit,
     deleteSavedSearch: () -> Unit
 ) {

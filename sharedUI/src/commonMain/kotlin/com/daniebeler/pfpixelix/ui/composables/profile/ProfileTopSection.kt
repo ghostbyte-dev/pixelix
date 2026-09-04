@@ -36,7 +36,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.model.Relationship
@@ -70,7 +70,7 @@ fun ProfileTopSection(
     postsLabel: String,
     followerLabel: String,
     followingLabel: String,
-    navController: NavController,
+    navController: AppNavigator,
     openUrl: (url: String) -> Unit
 ) {
     var isMuteInfoAlertOpen by remember { mutableStateOf(false) }

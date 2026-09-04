@@ -19,7 +19,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.LocalSnackbarPresenter
 import com.daniebeler.pfpixelix.domain.model.MediaAttachment
 import com.daniebeler.pfpixelix.domain.model.Post
@@ -62,7 +62,7 @@ fun ShareBottomSheet(
     viewModel: PostViewModel,
     post: Post,
     currentMediaAttachmentNumber: Int,
-    navController: NavController,
+    navController: AppNavigator,
     closeBottomSheet: () -> Unit
 ) {
 

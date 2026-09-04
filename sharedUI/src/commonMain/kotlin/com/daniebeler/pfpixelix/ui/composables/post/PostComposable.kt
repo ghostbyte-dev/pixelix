@@ -67,7 +67,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.zIndex
-import androidx.navigation.NavController
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import co.touchlab.kermit.Logger
 import coil3.compose.AsyncImage
 import coil3.compose.AsyncImagePainter
@@ -143,7 +143,7 @@ private enum class BottomSheetType { None, Comments, Menu, Likes }
 @Composable
 fun PostComposable(
     post: Post,
-    navController: NavController,
+    navController: AppNavigator,
     postGetsDeleted: (postId: String) -> Unit,
     setZindex: (zIndex: Float) -> Unit,
     openReplies: Boolean = false,
@@ -286,7 +286,7 @@ fun PostComposable(
 @Composable
 fun MasonryPost(
     post: Post,
-    navController: NavController,
+    navController: AppNavigator,
     roundedCornerShape: RoundedCornerShape,
     viewModel: PostViewModel = injectViewModel(key = "post" + post.id) { postViewModel }
 ) {
@@ -321,7 +321,7 @@ fun MasonryPost(
 
 @Composable
 private fun PostHeader(
-    post: Post, timeAgoText: String, navController: NavController, onMenuClick: () -> Unit
+    post: Post, timeAgoText: String, navController: AppNavigator, onMenuClick: () -> Unit
 ) {
     post.rebloggedBy?.let { reblogAccount ->
         Row(
@@ -397,7 +397,7 @@ private fun PostMediaSection(
     onLikeAnimation: () -> Unit,
     updatePost: (post: Post) -> Unit,
     fullQuality: Boolean,
-    navController: NavController
+    navController: AppNavigator
 ) {
     if (post.mediaAttachments.isNotEmpty()) {
         if (post.sensitive && !viewModel.showPost && viewModel.blurSensitiveContent) {
@@ -494,7 +494,7 @@ private fun PostMediaContent(
     onLikeAnimation: () -> Unit,
     updatePost: (post: Post) -> Unit,
     fullQuality: Boolean,
-    navController: NavController
+    navController: AppNavigator
 ) {
     if (post.mediaAttachments.count() > 1) {
         val smallestAspectRatio = post.mediaAttachments.minByOrNull {
@@ -591,7 +591,7 @@ private fun PostActionBar(
     animateBoost: () -> Unit,
     onCommentsClick: () -> Unit,
     onLikesClick: () -> Unit,
-    navController: NavController,
+    navController: AppNavigator,
     updatePost: (post: Post) -> Unit,
     hideMetadataPref: Boolean
 ) {
@@ -896,7 +896,7 @@ private fun MetadataItem(
 
 @Composable
 private fun PostLikedByRow(
-    post: Post, navController: NavController, onLikesClick: () -> Unit
+    post: Post, navController: AppNavigator, onLikesClick: () -> Unit
 ) {
     if (post.likedBy?.username?.isNotBlank() != true || post.likedBy.id.isNullOrBlank()) return
 
@@ -930,7 +930,7 @@ private fun PostBottomSheet(
     post: Post,
     viewModel: PostViewModel,
     pagerState: PagerState,
-    navController: NavController,
+    navController: AppNavigator,
     onDismiss: () -> Unit
 ) {
     if (activeSheet == BottomSheetType.None) return
@@ -996,7 +996,7 @@ fun PostImage(
     isMasonry: Boolean,
     roundedCornerShape: RoundedCornerShape,
     fullQuality: Boolean,
-    navController: NavController
+    navController: AppNavigator
 ) {
     var showHeart by remember { mutableStateOf(false) }
     val scale = animateFloatAsState(if (showHeart) 1f else 0f, label = "heart_filled animation")

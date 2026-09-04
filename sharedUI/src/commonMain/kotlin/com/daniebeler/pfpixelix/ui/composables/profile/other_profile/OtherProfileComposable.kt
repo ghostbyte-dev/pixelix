@@ -50,7 +50,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.model.Account
@@ -112,7 +112,7 @@ import pixelix.app.generated.resources.unmute_this_profile
 )
 @Composable
 fun OtherProfileComposable(
-    navController: NavController,
+    navController: AppNavigator,
     userId: String?,
     username: String?,
     viewModel: OtherProfileViewModel = injectViewModel(key = "other-profile$userId$username") { otherProfileViewModel }
@@ -127,7 +127,15 @@ fun OtherProfileComposable(
     var showUnBlockAlert by remember { mutableStateOf(false) }
 
     LaunchedEffect(userId, username) {
-        viewModel.loadData(userId, username, false, navController)
+        viewModel.loadData(userId, username, false)
+    }
+    LaunchedEffect(viewModel, navController) {
+        viewModel.navigationEffects.collect { effect ->
+            when (effect) {
+                OtherProfileNavigationEffect.OpenOwnProfile ->
+                    navController.clearAndNavigate(Destination.HomeTabOwnProfile)
+            }
+        }
     }
 
     Scaffold(
@@ -192,7 +200,7 @@ fun OtherProfileComposable(
                 navController = navController,
                 getItemsPaginated = { viewModel.getPostsPaginated(viewModel.userId) },
                 onRefresh = {
-                    viewModel.loadData(userId, username, true, navController)
+                    viewModel.loadData(userId, username, true)
                 },
                 postsCount = viewModel.accountState.account?.postsCount,
                 itemGetsDeleted = { postId -> viewModel.postGetsDeleted(postId) },

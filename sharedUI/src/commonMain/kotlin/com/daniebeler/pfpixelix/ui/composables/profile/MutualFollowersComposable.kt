@@ -37,7 +37,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.ui.composables.custom_account.AccountListItem
 import com.daniebeler.pfpixelix.ui.navigation.Destination
@@ -52,7 +52,7 @@ import pixelix.app.generated.resources.others
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun MutualFollowersComposable(
-    mutualFollowersState: MutualFollowersState, navController: NavController
+    mutualFollowersState: MutualFollowersState, navController: AppNavigator
 ) {
 
     val normalStyle = SpanStyle(color = MaterialTheme.colorScheme.onBackground)

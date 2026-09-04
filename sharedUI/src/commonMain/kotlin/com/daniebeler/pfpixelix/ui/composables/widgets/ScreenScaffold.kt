@@ -23,7 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.arrow_left
@@ -33,7 +33,7 @@ import pixelix.app.generated.resources.arrow_left
 fun ScreenScaffold(
     title: String,
     subtitle: String? = null,
-    navController: NavController,
+    navController: AppNavigator,
     actions: @Composable RowScope.() -> Unit = {},
     content: @Composable () -> Unit
 ) {

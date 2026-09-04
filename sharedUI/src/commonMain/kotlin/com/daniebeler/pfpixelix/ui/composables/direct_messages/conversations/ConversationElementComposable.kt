@@ -18,7 +18,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.domain.model.Conversation
 import com.daniebeler.pfpixelix.ui.navigation.Destination
@@ -27,7 +27,7 @@ import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.default_avatar
 
 @Composable
-fun ConversationElementComposable(conversation: Conversation, navController: NavController) {
+fun ConversationElementComposable(conversation: Conversation, navController: AppNavigator) {
 
     Row(
         Modifier

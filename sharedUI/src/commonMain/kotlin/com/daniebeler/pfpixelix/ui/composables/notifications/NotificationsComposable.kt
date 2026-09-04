@@ -42,7 +42,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.model.NotificationType
 import com.daniebeler.pfpixelix.domain.service.platform.PlatformFeatures
@@ -69,7 +69,7 @@ import pixelix.app.generated.resources.you_don_t_have_any_notifications
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun NotificationsComposable(
-    navController: NavController,
+    navController: AppNavigator,
     viewModel: NotificationsViewModel = injectViewModel(key = "notifications-viewmodel-key") { notificationsViewModel }
 ) {
 

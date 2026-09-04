@@ -39,7 +39,11 @@ class VernissageAuthService(
         val serverUrl = getServerUrl(host)
         val api = createVernissageAuthApi(serverUrl, json)
 
-        val authData = api.getAuthData("Pixelix", listOf("dev.ghostbyte.pixelix://callback"))
+        val preparedAuthData = platform.consumePreparedAuthData()
+        val clientId = preparedAuthData?.clientId ?: api.getAuthData(
+            "Pixelix",
+            listOf(platform.redirectUrl)
+        ).clientId
 
         val state = Random.nextInt(100000, 999999).toString()
         val nonce = Random.nextInt(100000, 999999).toString()
@@ -51,7 +55,7 @@ class VernissageAuthService(
 
             parameters.apply {
                 append("response_type", "code")
-                append("client_id", authData.clientId)
+                append("client_id", clientId)
                 append("redirect_uri", platform.redirectUrl)
                 append("scope", scope)
                 append("state", state)
@@ -60,7 +64,7 @@ class VernissageAuthService(
         }.build()
 
         urlHandler.isAuthInProgress = true
-        platform.openUrl(authUrl.toString())
+        if (preparedAuthData == null) platform.openUrl(authUrl.toString())
         val redirectString = urlHandler.redirects.first()
         platform.dismissBrowser()
 
@@ -69,8 +73,6 @@ class VernissageAuthService(
         }
         val redirect = Url(redirectString)
         val code = redirect.parameters["code"] ?: error("Redirect doesn't have a code")
-
-        val clientId = authData.clientId
 
         val tokenResponse = api.getToken(
             clientId = clientId,
@@ -101,7 +103,7 @@ class VernissageAuthService(
             serverUrl = serverUrl.toString(),
             token = tokenResponse.accessToken + "test",
             refreshToken = tokenResponse.refreshToken,
-            clientId = authData.clientId,
+            clientId = clientId,
             clientSecret = "authData.clientSecret",
             createdAt = "tokenResponse.createdAt",
             backendType = BackendType.VERNISSAGE

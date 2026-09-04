@@ -1,7 +1,7 @@
 package com.daniebeler.pfpixelix.ui.composables.settings.bookmarked_posts
 
 import androidx.compose.runtime.Composable
-import androidx.navigation.NavController
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.ui.composables.timelines.parametric_timeline_screens.ParametricTimelineViewModel
 import com.daniebeler.pfpixelix.ui.composables.timelines.parametric_timeline_screens.TimelineScreen
@@ -11,7 +11,7 @@ import pixelix.app.generated.resources.bookmarked_posts
 
 @Composable
 fun BookmarkedPostsComposable(
-    navController: NavController,
+    navController: AppNavigator,
     viewModel: ParametricTimelineViewModel = injectViewModel(key = "bookmarked-posts") {
         parametricTimelineViewModel.apply { init(ParametricTimelineViewModel.FetchType.BOOKMARKED_POSTS) }
     }

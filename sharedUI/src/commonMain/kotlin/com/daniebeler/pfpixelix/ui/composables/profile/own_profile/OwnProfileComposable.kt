@@ -42,7 +42,7 @@ import androidx.compose.ui.layout.layout
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.service.platform.PlatformFeatures
 import com.daniebeler.pfpixelix.ui.composables.profile.CollectionsComposable
@@ -63,7 +63,7 @@ import pixelix.app.generated.resources.user_switch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OwnProfileComposable(
-    navController: NavController,
+    navController: AppNavigator,
     openPreferencesDrawer: () -> Unit,
     viewModel: OwnProfileViewModel = injectViewModel(key = "own-profile-key") { ownProfileViewModel }
 ) {

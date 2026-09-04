@@ -18,7 +18,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.ui.composables.profile.SwitchViewComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.ViewEnum
@@ -39,7 +39,7 @@ fun InfinitePostsList(
     isRefreshing: Boolean,
     error: String,
     endReached: Boolean,
-    navController: NavController,
+    navController: AppNavigator,
     getItemsPaginated: () -> Unit,
     emptyMessage: EmptyState = EmptyState(
         icon = vectorResource(Res.drawable.photo), heading = "No Posts"

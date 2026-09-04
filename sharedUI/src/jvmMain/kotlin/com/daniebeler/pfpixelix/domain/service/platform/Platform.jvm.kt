@@ -1,5 +1,6 @@
 package com.daniebeler.pfpixelix.domain.service.platform
 
+import com.daniebeler.pfpixelix.domain.service.general.BackendType
 import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
 import com.daniebeler.pfpixelix.utils.KmpContext
 import com.daniebeler.pfpixelix.utils.KmpUri
@@ -14,6 +15,10 @@ actual class Platform actual constructor(
     private val context: KmpContext,
     private val prefs: UserPreferences
 ) {
+    actual fun prepareAuthBrowser(host: String, backendType: BackendType): Boolean = true
+
+    actual suspend fun consumePreparedAuthData(): PreparedAuthData? = null
+
     actual fun openUrl(url: String) {
         val os = System.getProperty("os.name").lowercase()
 

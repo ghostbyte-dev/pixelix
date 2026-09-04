@@ -11,7 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.basic.SettingPref
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import org.jetbrains.compose.resources.DrawableResource
@@ -25,7 +25,7 @@ import pixelix.app.generated.resources.customize_app_icon
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun CustomizeAppIconPref(
-    navController: NavController, closePreferenceDrawer: () -> Unit, logo: DrawableResource
+    navController: AppNavigator, closePreferenceDrawer: () -> Unit, logo: DrawableResource
 ) {
     SettingPref(leadingContent = {
         Image(

@@ -10,7 +10,7 @@ import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyStateComposable
@@ -26,7 +26,7 @@ import pixelix.app.generated.resources.no_muted_accounts
 
 @Composable
 fun MutedAccountsComposable(
-    navController: NavController,
+    navController: AppNavigator,
     viewModel: MutedAccountsViewModel = injectViewModel(key = "muted-accounts-key") { mutedAccountsViewModel }
 ) {
     ScreenScaffold(

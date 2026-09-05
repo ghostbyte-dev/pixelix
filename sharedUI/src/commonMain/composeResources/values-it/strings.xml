@@ -406,4 +406,5 @@
     <string name="editors_choice_posts">Scelta degli editori: Post</string>
     <string name="select_images_description">Selezionare una o più immagini per aggiungerle al tuo post</string>
     <string name="country">Paese</string>
+    <string name="add_account">Aggiungi account</string>
 </resources>

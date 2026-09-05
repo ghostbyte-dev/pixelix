@@ -29,10 +29,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import co.touchlab.kermit.Logger
 import com.daniebeler.pfpixelix.di.LocalAppComponent
 import com.daniebeler.pfpixelix.domain.model.License
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.basic.SettingPref
 import com.daniebeler.pfpixelix.utils.KmpContext
+import com.daniebeler.pfpixelix.utils.initializePushNotifications
+import kotlinx.coroutines.flow.first
 import org.jetbrains.compose.resources.stringResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.default_license
@@ -44,16 +47,33 @@ import pixelix.app.generated.resources.ok
 @Composable
 fun PushDistributorPref() {
     val showAlert = remember { mutableStateOf(false) }
-
-    val prefs = LocalAppComponent.current.preferences
+    val appComponent = LocalAppComponent.current
+    val prefs = appComponent.preferences
     val distributor by prefs.pushDistributorFlow.collectAsState(prefs.pushDistributor)
-
+    val activeUser = appComponent.authService.activeUser.collectAsState("none")
     if (showAlert.value) {
         PushDistributorPrefDialog(
             distributor = distributor, {
                 prefs.pushDistributor = it
             }, onDismiss = {
                 showAlert.value = false
+
+                val capabilities = appComponent.authService.getCurrentCapabilities()
+                if (capabilities.general.supportsPushNotifications) {
+                    Logger.d(tag = "pushNotification") {
+                        "active user: $activeUser"
+                    }
+                    activeUser.value?.let { it ->
+                        initializePushNotifications(
+                            context = appComponent.context,
+                            activeUser = it,
+                            distributorPreference = appComponent.preferences.pushDistributor,
+                            setDistributorPreference = { distributor ->
+                                appComponent.preferences.pushDistributor = distributor
+                            }
+                        )
+                    }
+                }
             }, context = LocalAppComponent.current.context
         )
     }

@@ -17,6 +17,9 @@ actual fun initializePushNotifications(
     val distributors = UnifiedPush.getDistributors(ctx)
     val hasPreferenceDistributor = distributors.firstOrNull { it == distributorPreference }
     Logger.d("pushNotification") {
+        "user: $activeUser"
+    }
+    Logger.d("pushNotification") {
         "distributors found: " + distributors.size
     }
     Logger.d("pushNotification") {

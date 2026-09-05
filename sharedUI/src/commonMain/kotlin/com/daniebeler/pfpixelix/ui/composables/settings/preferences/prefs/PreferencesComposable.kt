@@ -45,6 +45,7 @@ import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.HideSensitiveContentPref
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.LogoutPref
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.MoreSettingsPref
+import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.PushDistributorPref
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.RepostSettingsPref
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.SwipeBetweenTimelines
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.ThemePref
@@ -103,6 +104,7 @@ fun PreferencesComposable(
             )
             Spacer(modifier = Modifier.height(6.dp))
 
+            PushDistributorPref()
             HideSensitiveContentPref()
 
             HideAltTextButtonPref()

@@ -5,28 +5,45 @@ import co.touchlab.kermit.Logger
 import org.unifiedpush.android.connector.UnifiedPush
 import org.unifiedpush.android.connector.keys.DefaultKeyManager
 
-actual fun initializePushNotifications(context: Any?, activeUser: String) {
+actual fun initializePushNotifications(
+    context: Any?,
+    activeUser: String,
+    distributorPreference: String,
+    setDistributorPreference: (distributor: String) -> Unit
+) {
     val ctx = context as Context
     val keyManager = DefaultKeyManager(ctx)
 
     val distributors = UnifiedPush.getDistributors(ctx)
-    if (distributors.isEmpty()) {
-        return
-    } else if (distributors.size == 1) {
+    val hasPreferenceDistributor = distributors.firstOrNull { it == distributorPreference }
+    Logger.d("pushNotification") {
+        "distributors found: " + distributors.size
+    }
+    Logger.d("pushNotification") {
+        "distributors: $distributors"
+    }
+    if (hasPreferenceDistributor != null) {
         Logger.d("pushNotification") {
-            "distributors found: 1, fcm"
+            "using preference distributor: $distributorPreference"
+        }
+        UnifiedPush.saveDistributor(ctx, distributorPreference)
+    } else {
+
+        Logger.d("pushNotification") {
+            "not using preference distributor: $distributorPreference"
         }
 
-        UnifiedPush.saveDistributor(ctx, distributors.first())
-        UnifiedPush.register(ctx, activeUser, keyManager = keyManager)
-    } else {
-        Logger.d("pushNotification") {
-            "distributors found: " + distributors.size
+        if (distributors.isEmpty()) {
+            return
+        } else if (distributors.size == 1) {
+            UnifiedPush.saveDistributor(ctx, distributors.first())
+            setDistributorPreference(distributors.first())
+        } else {
+            UnifiedPush.saveDistributor(ctx, distributors[1])
+            setDistributorPreference(distributors[1])
         }
-        Logger.d("pushNotification") {
-            "distributors: $distributors"
-        }
-        UnifiedPush.saveDistributor(ctx, distributors[1])
-        UnifiedPush.register(ctx, activeUser, keyManager = keyManager)
     }
+
+    UnifiedPush.register(ctx, activeUser, keyManager = keyManager)
+
 }

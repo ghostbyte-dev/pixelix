@@ -186,7 +186,16 @@ fun App(
                     val capabilities = appComponent.authService.getCurrentCapabilities()
 
                     if (capabilities.general.supportsPushNotifications) {
-                        activeUser?.let { initializePushNotifications(appComponent.context, it) }
+                        activeUser?.let { it ->
+                            initializePushNotifications(
+                                context = appComponent.context,
+                                activeUser = it,
+                                distributorPreference = appComponent.preferences.pushDistributor,
+                                setDistributorPreference = { distributor ->
+                                    appComponent.preferences.pushDistributor = distributor
+                                }
+                            )
+                        }
                     }
                 }
 

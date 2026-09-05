@@ -115,6 +115,8 @@ class UserPreferences(private val dataStore: DataStore<Preferences>) {
 
     var hasRequestedPushPermission by boolean("k_has_requested_push_permission", false)
 
+    var pushDistributor by string("k_push_distributor", "")
+    val pushDistributorFlow = stringFlow("k_push_distributor", "")
     private var _defaultVisibility: Int by Prop(intPreferencesKey("k_default_visibility"), Visibility.PUBLIC.ordinal)
     var defaultVisibility: Visibility
         get() = Visibility.entries.getOrElse(_defaultVisibility) { Visibility.PUBLIC }

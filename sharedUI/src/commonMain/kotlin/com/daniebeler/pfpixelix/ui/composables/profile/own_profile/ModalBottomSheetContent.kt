@@ -9,7 +9,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.domain.service.general.BackendType
 import com.daniebeler.pfpixelix.ui.composables.widgets.ButtonRowElement
 import com.daniebeler.pfpixelix.ui.navigation.Destination
@@ -35,7 +35,7 @@ import pixelix.app.generated.resources.vernissage_logo
 
 @Composable
 fun ModalBottomSheetContent(
-    navController: NavController,
+    navController: AppNavigator,
     instanceDomain: String,
     appIcon: DrawableResource,
     backendType: BackendType,

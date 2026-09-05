@@ -38,7 +38,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.ui.composables.profile.ViewEnum
 import com.daniebeler.pfpixelix.ui.composables.widgets.ButtonRowElement
@@ -64,7 +64,7 @@ import pixelix.app.generated.resources.share_this_collection
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CollectionComposable(
-    navController: NavController,
+    navController: AppNavigator,
     collectionId: String,
     viewModel: CollectionViewModel = injectViewModel(key = "collection-viewmodel-key") { collectionViewModel }
 ) {

@@ -34,7 +34,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
-import androidx.navigation.NavController
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.di.injectViewModel
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.pluralStringResource
@@ -49,7 +49,7 @@ import pixelix.app.generated.resources.following
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FollowersMainComposable(
-    navController: NavController,
+    navController: AppNavigator,
     accountId: String,
     username: String,
     isFollowers: Boolean,

@@ -19,7 +19,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.di.LocalAppComponent
 import com.daniebeler.pfpixelix.domain.model.Post
@@ -36,7 +36,7 @@ private const val DEFAULT_BLUR_HASH = "LEHLk~WB2yk8pyo0adR*.7kCMdnj"
 @Composable
 fun CustomPost(
     post: Post,
-    navController: NavController,
+    navController: AppNavigator,
     modifier: Modifier = Modifier,
     isFullQuality: Boolean = false,
     onClick: ((id: String) -> Unit)? = null,

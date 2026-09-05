@@ -7,4 +7,5 @@ expect object PlatformFeatures {
     val customAppIcon: Boolean
     val addCollection: Boolean
     val supportsDynamicColors: Boolean
+    val supportsSponsorship: Boolean
 }

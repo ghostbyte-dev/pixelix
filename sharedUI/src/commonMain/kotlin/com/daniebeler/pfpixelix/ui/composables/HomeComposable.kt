@@ -40,8 +40,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
-import androidx.navigation.NavController
-import androidx.navigation.NavGraph.Companion.findStartDestination
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.di.LocalAppComponent
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.ui.composables.contribute.ContributeBottomSheet
@@ -69,7 +68,7 @@ import pixelix.app.generated.resources.settings
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeComposable(
-    navController: NavController,
+    navController: AppNavigator,
     openPreferencesDrawer: () -> Unit,
     viewModel: HomeViewModel = injectViewModel("homeViewModel") { homeViewModel },
 ) {

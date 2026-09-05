@@ -15,7 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.ui.composables.explore.trending.TrendingRange
 import com.daniebeler.pfpixelix.ui.composables.explore.trending.trending_hashtags.ExploreGridElement
@@ -37,7 +37,7 @@ import pixelix.app.generated.resources.no_trending_hashtags
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun CategoriesComposable(
-    navController: NavController,
+    navController: AppNavigator,
     viewModel: CategoriesViewModel = injectViewModel(key = "categories-key") { categoriesViewModel }
 ) {
     val lazyListState = rememberLazyListState()

@@ -282,13 +282,13 @@
     <string name="character_count">%1$d / %2$d caractères</string>
     <string name="registration">Inscription</string>
     <string name="closed">fermé</string>
-    <string name="manually_accept_new_followers">Accepter manuellement les nouveaux abonnés</string>
+    <string name="manually_accept_new_followers">Accepter manuellement les nouveaux abonné·e·s</string>
     <string name="optional_end_date">Date de fin facultative</string>
-    <string name="requested">Demandé</string>
-    <string name="new_comment">Publié un nouveau commentaire</string>
+    <string name="requested">A demandé</string>
+    <string name="new_comment">A écrit un nouveau commentaire</string>
     <string name="notification">Notification</string>
     <string name="accept_follow_request">Accepter la demande de suivi</string>
-    <string name="reject_follow_request">Refuser la demande de suivi</string>
+    <string name="reject_follow_request">Rejeter la demande de suivi</string>
     <string name="send">Envoyer</string>
     <string name="default_visibility">Visibilité par défaut</string>
     <string name="model">Modèle</string>
@@ -304,11 +304,75 @@
     <string name="gps_coordinates">Coordonnées GPS</string>
     <string name="latitude">Latitude</string>
     <string name="longitude">Longitude</string>
-    <string name="hide_camera_metadata">Masquer les métadonnées de la caméra</string>
+    <string name="hide_camera_metadata">Cacher les métadonnées de la caméra</string>
     <string name="back">Retour</string>
     <string name="default_license">Licence par défaut</string>
     <string name="fields">Champs</string>
     <string name="add_field">Ajouter un champ</string>
     <string name="key">Clé</string>
-    <string name="use_dynamic_colors">Utilisez des couleurs dynamiques</string>
+    <string name="use_dynamic_colors">Utiliser les couleurs dynamiques</string>
+    <string name="trending_accounts">Profils populaires</string>
+    <string name="trending_hashtags">Mots-clés populaires</string>
+    <string name="trending_posts">Publications populaires</string>
+    <string name="no_categories">Pas de catégories</string>
+    <string name="no_cameras">Pas de caméras</string>
+    <plurals name="seconds_ago">
+        <item quantity="one">il y a %1$d seconde</item>
+        <item quantity="many">il y a %1$d secondes</item>
+        <item quantity="other">il y a %1$d secondes</item>
+    </plurals>
+    <plurals name="minutes_ago">
+        <item quantity="one">il y a %1$d minute</item>
+        <item quantity="many">il y a %1$d minutes</item>
+        <item quantity="other">il y a %1$d minutes</item>
+    </plurals>
+    <plurals name="hours_ago">
+        <item quantity="one">il y a %1$d heure</item>
+        <item quantity="many">il y a %1$d heures</item>
+        <item quantity="other">il y a %1$d heures</item>
+    </plurals>
+    <plurals name="days_ago">
+        <item quantity="one">il y a %1$d jour</item>
+        <item quantity="many">il y a %1$d jours</item>
+        <item quantity="other">il y a %1$d jours</item>
+    </plurals>
+    <plurals name="weeks_ago">
+        <item quantity="one">il y a %1$d semaine</item>
+        <item quantity="many">il y a %1$d semaines</item>
+        <item quantity="other">il y a %1$d semaines</item>
+    </plurals>
+    <plurals name="months_ago">
+        <item quantity="one">il y a %1$d mois</item>
+        <item quantity="many">il y a %1$d mois</item>
+        <item quantity="other">il y a %1$d mois</item>
+    </plurals>
+    <plurals name="years_ago">
+        <item quantity="one">il y a %1$d an</item>
+        <item quantity="many">il y a %1$d ans</item>
+        <item quantity="other">il y a %1$d ans</item>
+    </plurals>
+    <string name="swipe_between_tabs">Balayez pour changer d'onglet</string>
+    <string name="discard">Annuler</string>
+    <string name="are_you_sure">Êtes-vous sûr·e ?</string>
+    <string name="cancel_post_warning">Voulez-vous annuler cette publication ?</string>
+    <string name="cancel_profile_edit">Voulez-vous annuler les changements ?</string>
+    <string name="cancel_post_edit">Voulez-vous annuler les changements ?</string>
+    <string name="jump_to_top">Remonter en haut</string>
+    <string name="include_public_posts_in_search_engines">Inclure les publications publiques dans les moteurs de recherche</string>
+    <string name="include_profile_in_search_engines">Inclure le profil dans les moteurs de recherche</string>
+    <string name="follow_request">A demandé à vous suivre</string>
+    <string name="new_status">A créer une nouvelle publication</string>
+    <string name="boosted_status_updated">Publication republiée a été mise à jour</string>
+    <string name="reason">Raison</string>
+    <string name="caption_template">Modèle de description</string>
+    <string name="mentioned_only">Mentionné·e·s seulement</string>
+    <string name="next">Suivant</string>
+    <string name="edit_images">Éditer les images</string>
+    <string name="compress">Compresser</string>
+    <string name="compressing">Compressage...</string>
+    <string name="value">Valeur</string>
+    <string name="content_settings">Paramètres du contenu</string>
+    <string name="app_customization">Personnalisation de l'app</string>
+    <string name="new_post_settings">Paramètres des nouvelles publications</string>
+    <string name="default_timeline_tab">Onglet de la timeline par défaut</string>
 </resources>

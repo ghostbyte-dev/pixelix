@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Opening sign in…</title>
+    </head>
+    <body>
+        <p id="status">Preparing sign in…</p>
+        <script>
+            const CLIENT_ID_KEY = 'pixelix-oauth-client-id';
+            const CLIENT_SECRET_KEY = 'pixelix-oauth-client-secret';
+
+            function addRepeated(body, name, values) {
+                values.forEach(value => body.append(name, value));
+            }
+
+            function createRegistration(server, backend, redirectUri) {
+                if (backend !== 'vernissage') {
+                    const url = new URL('/api/v1/apps', server);
+                    url.searchParams.set('client_name', 'pixelix');
+                    url.searchParams.set('redirect_uris', redirectUri);
+                    return { url, options: { method: 'POST' } };
+                }
+
+                const body = new URLSearchParams();
+                body.set('client_name', 'Pixelix');
+                body.set('redirect_uris', redirectUri);
+                addRepeated(body, 'grant_types', ['authorization_code', 'refresh_token']);
+                addRepeated(body, 'response_types', ['code']);
+                return {
+                    url: new URL('/api/v1/auth-dynamic-clients', server),
+                    options: {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
+                        body: body.toString()
+                    }
+                };
+            }
+
+            function createAuthorizeUrl(server, backend, redirectUri, clientId) {
+                const path = backend === 'vernissage'
+                    ? '/api/v1/oauth/authorize'
+                    : '/oauth/authorize';
+                const url = new URL(path, server);
+                url.searchParams.set('response_type', 'code');
+                url.searchParams.set('client_id', clientId);
+                url.searchParams.set('redirect_uri', redirectUri);
+
+                if (backend === 'vernissage') {
+                    const randomId = () => String(Math.floor(100000 + Math.random() * 900000));
+                    url.searchParams.set('scope', 'read write');
+                    url.searchParams.set('state', randomId());
+                    url.searchParams.set('nonce', randomId());
+                }
+                return url;
+            }
+
+            (async function startOAuth() {
+                const status = document.getElementById('status');
+                try {
+                    const params = new URLSearchParams(window.location.search);
+                    const host = params.get('host');
+                    const backend = params.get('backend');
+                    const redirectUri = params.get('redirect_uri');
+                    if (!host || !backend || !redirectUri) throw new Error('Missing OAuth parameters');
+
+                    const server = new URL('https://' + host.replace(/^https?:\/\//, ''));
+                    const registration = createRegistration(server, backend, redirectUri);
+                    const response = await fetch(registration.url, registration.options);
+                    if (!response.ok) throw new Error('OAuth registration failed: HTTP ' + response.status);
+
+                    const authData = await response.json();
+                    if (!authData.client_id) throw new Error('OAuth registration returned no client_id');
+
+                    // The app needs these values after the OAuth callback to exchange the code.
+                    if (authData.client_secret) {
+                        localStorage.setItem(CLIENT_SECRET_KEY, authData.client_secret);
+                    }
+                    // Store the ID last: the app treats it as the "preparation complete" marker.
+                    localStorage.setItem(CLIENT_ID_KEY, authData.client_id);
+
+                    const authorizeUrl = createAuthorizeUrl(
+                        server,
+                        backend,
+                        redirectUri,
+                        authData.client_id
+                    );
+                    window.location.replace(authorizeUrl);
+                } catch (error) {
+                    status.textContent = 'Could not start sign in: ' +
+                        (error?.message || String(error));
+                }
+            })();
+        </script>
+    </body>
+</html>

@@ -25,7 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.service.general.BackendType
@@ -51,7 +51,7 @@ import pixelix.app.generated.resources.users
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AboutInstanceComposable(
-    navController: NavController,
+    navController: AppNavigator,
     viewModel: AboutInstanceViewModel = injectViewModel(key = "about-instance-key") { aboutInstanceViewModel }
 ) {
 

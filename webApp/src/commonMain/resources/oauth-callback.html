@@ -7,17 +7,39 @@
     <body>
         <p>You can close this window.</p>
         <script>
-            // OAuth redirect target. The Pixelix tab that started the login flow is waiting for the
-            // auth code; hand the full redirect URL (with ?code=...) back to it and close ourselves.
-            // The opener is same-origin, so we call the callback it installed on `window`.
+            // Return the redirect to the Pixelix window. A direct same-origin callback is fastest;
+            // postMessage is retained as a fallback for installed PWAs/mobile browser contexts.
             (function () {
+                var delivered = false;
+                var message = { type: 'pixelix-oauth-redirect', url: window.location.href };
                 try {
-                    if (window.opener && !window.opener.closed &&
-                        typeof window.opener.pixelixOAuthCallback === 'function') {
-                        window.opener.pixelixOAuthCallback(window.location.href);
+                    if (window.opener && !window.opener.closed) {
+                        if (typeof window.opener.pixelixOAuthCallback === 'function') {
+                            window.opener.pixelixOAuthCallback(window.location.href);
+                        } else {
+                            window.opener.postMessage(message, window.location.origin);
+                        }
+                        delivered = true;
                     }
-                } catch (e) { /* opener gone or cross-origin: nothing we can do */ }
-                window.close();
+                } catch (e) { /* opener unavailable or isolated */ }
+
+                // Standalone PWAs may open OAuth in a browser context without window.opener.
+                // BroadcastChannel still reaches the original same-origin PWA window.
+                try {
+                    if (typeof BroadcastChannel !== 'undefined') {
+                        var channel = new BroadcastChannel('pixelix-oauth');
+                        channel.postMessage(message);
+                        channel.close();
+                        delivered = true;
+                    }
+                } catch (e) { /* BroadcastChannel unavailable */ }
+
+                if (delivered) {
+                    window.close();
+                } else {
+                    document.querySelector('p').textContent =
+                        'Return to Pixelix to finish signing in.';
+                }
             })();
         </script>
     </body>

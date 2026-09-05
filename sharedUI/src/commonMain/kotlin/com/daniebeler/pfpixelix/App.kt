@@ -56,12 +56,10 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import androidx.navigation.NavController
-import androidx.navigation.NavDestination.Companion.hasRoute
-import androidx.navigation.NavGraph.Companion.findStartDestination
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
+import androidx.navigation3.scene.DialogSceneStrategy
+import androidx.navigation3.scene.SinglePaneSceneStrategy
+import androidx.navigation3.ui.NavDisplay
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import co.touchlab.kermit.Logger
 import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.di.AppComponent
@@ -71,7 +69,8 @@ import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.Prefer
 import com.daniebeler.pfpixelix.ui.composables.widgets.ReverseModalNavigationDrawer
 import com.daniebeler.pfpixelix.ui.events.GlobalNavigationEvent
 import com.daniebeler.pfpixelix.ui.navigation.Destination
-import com.daniebeler.pfpixelix.ui.navigation.appGraph
+import com.daniebeler.pfpixelix.ui.navigation.appEntryProvider
+import com.daniebeler.pfpixelix.ui.navigation.rememberAppNavigationState
 import com.daniebeler.pfpixelix.ui.theme.PixelixTheme
 import com.daniebeler.pfpixelix.utils.end
 import com.daniebeler.pfpixelix.utils.initializePushNotifications
@@ -104,7 +103,6 @@ val LocalSnackbarPresenter = compositionLocalOf<(String) -> Unit> {
 @Composable
 fun App(
     appComponent: AppComponent,
-    onNavHostReady: suspend (NavController) -> Unit = {},
     exitApp: () -> Unit
 ) {
     val uriHandler = LocalUriHandler.current
@@ -157,12 +155,21 @@ fun App(
             }
             if (activeUser == "unknown") return@PixelixTheme
 
+            // navigation3-browser permits a single binding for the lifetime of the page.
+            // Keep it outside the session key so login/logout does not dispose the active binding.
+            BrowserIntegration()
+
             key(activeUser) {
                 val scope = rememberCoroutineScope()
                 val drawerState = rememberDrawerState(DrawerValue.Closed)
                 val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
                 var showAccountSwitchBottomSheet by remember { mutableStateOf(false) }
-                val navController = rememberNavController()
+                val startDestination =
+                    if (activeUser == null) Destination.FirstLogin else Destination.HomeTabFeeds
+                val navigationState = rememberAppNavigationState(startDestination)
+                val navController = remember(navigationState, exitApp) {
+                    AppNavigator(navigationState, exitApp)
+                }
 
                 val snackbarHostState = remember { SnackbarHostState() }
                 val snackBarPresenter: (String) -> Unit = { msg ->
@@ -177,11 +184,11 @@ fun App(
                 // Activity/Fragment because you didn't actually destroy them properly,
                 // you just dropped any access to them
                 LaunchedEffect(activeUser) {
-                    navController.clearBackStack<Destination.HomeTabFeeds>()
-                    navController.clearBackStack<Destination.HomeTabSearch>()
-                    navController.clearBackStack<Destination.HomeTabNewPost>()
-                    navController.clearBackStack<Destination.HomeTabNotifications>()
-                    navController.clearBackStack<Destination.HomeTabOwnProfile>()
+                    navController.clearBackStack(Destination.HomeTabFeeds)
+                    navController.clearBackStack(Destination.HomeTabSearch)
+                    navController.clearBackStack(Destination.HomeTabNewPost)
+                    navController.clearBackStack(Destination.HomeTabNotifications)
+                    navController.clearBackStack(Destination.HomeTabOwnProfile)
 
                     val capabilities = appComponent.authService.getCurrentCapabilities()
 
@@ -203,21 +210,10 @@ fun App(
                     appComponent.globalNavigator.navigationEvents.collect { event ->
                         when (event) {
                             is GlobalNavigationEvent.NavigateToLogin -> {
-                                navController.navigate(Destination.FirstLogin) {
-                                    popUpTo(navController.graph.startDestinationId) {
-                                        inclusive = true
-                                    }
-                                }
+                                navController.clearAndNavigate(Destination.FirstLogin)
                             }
                         }
                     }
-                }
-
-                // Bridges the NavController to the host platform once the graph is set up.
-                // On web this binds browser Back/Forward and the address bar to navigation;
-                // other platforms pass the default no-op.
-                LaunchedEffect(navController) {
-                    onNavHostReady(navController)
                 }
 
                 CompositionLocalProvider(
@@ -246,33 +242,36 @@ fun App(
                             modifier = Modifier.nestedScroll(scrollBehaviorBottom)
                         ) { paddingValues ->
                             Box(Modifier.fillMaxSize().padding(paddingValues)) {
-                                val startDestination =
-                                    if (activeUser == null) Destination.FirstLogin
-                                    else Destination.HomeTabFeeds
-                                NavHost(
-                                    modifier = Modifier.fillMaxSize(),
-                                    navController = navController,
-                                    startDestination = startDestination,
-                                    builder = {
-                                        appGraph(
+                                NavDisplay(
+                                    entries = navigationState.decoratedEntries(
+                                        appEntryProvider(
                                             navController,
                                             { scope.launch { drawerState.open() } },
-                                            exitApp
+                                            exitApp,
                                         )
-                                    })
+                                    ),
+                                    onBack = navController::popBackStack,
+                                    sceneStrategies = listOf(
+                                        remember { DialogSceneStrategy() },
+                                        remember { SinglePaneSceneStrategy() },
+                                    ),
+                                    modifier = Modifier.fillMaxSize(),
+                                )
 
-                                val navBackStackEntry by navController.currentBackStackEntryAsState()
-                                val currentDestination = navBackStackEntry?.destination
-
-                                val showBottomBar =
-                                    currentDestination?.hasRoute<Destination.OwnProfile>() == true || currentDestination?.hasRoute<Destination.Feeds>() == true || currentDestination?.hasRoute<Destination.Search>() == true || currentDestination?.hasRoute<Destination.Notifications>() == true
+                                val currentDestination = navigationState.currentDestination
+                                val showBottomBar = currentDestination == Destination.Feeds ||
+                                    currentDestination is Destination.Search ||
+                                    currentDestination == Destination.Notifications ||
+                                    currentDestination == Destination.OwnProfile ||
+                                    currentDestination in HomeTab.entries.map { it.destination }
 
                                 if (showBottomBar) {
                                     Box(
                                         modifier = Modifier.align(Alignment.BottomCenter)
                                     ) {
                                         BottomBarFloating(
-                                            navController, scrollBehaviorBottom
+                                            navController, navigationState.currentDestination,
+                                            navigationState.currentTopLevel, scrollBehaviorBottom
                                         )
 
                                     }
@@ -352,7 +351,9 @@ private enum class HomeTab(
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun BottomBarFloating(
-    navController: NavController,
+    navController: AppNavigator,
+    currentDestination: Destination,
+    currentTopLevel: Destination,
     scrollBehavior: FloatingToolbarScrollBehavior
 ) {
     var avatar by remember { mutableStateOf<String?>(null) }
@@ -365,14 +366,11 @@ private fun BottomBarFloating(
         }
     }
 
-    val navBackStackEntry = navController.currentBackStackEntryAsState().value
-    val currentDestination = navBackStackEntry?.destination ?: return
-
     val systemNavigationBarHeight =
         WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
     HorizontalFloatingToolbar(
         expanded = true,
-        scrollBehavior = if (currentDestination.hasRoute<Destination.NewPost>()) null else scrollBehavior,
+        scrollBehavior = if (currentDestination is Destination.NewPost) null else scrollBehavior,
         modifier = Modifier.padding(bottom = systemNavigationBarHeight + 4.dp),
         colors = FloatingToolbarColors(
             toolbarContentColor = MaterialTheme.colorScheme.onSurface,
@@ -382,10 +380,7 @@ private fun BottomBarFloating(
         )
     ) {
         HomeTab.entries.forEachIndexed { _, tab ->
-            val isSelected =
-                currentDestination.hasRoute(tab.destination::class) || currentDestination.parent?.hasRoute(
-                    tab.destination::class
-                ) == true
+            val isSelected = currentTopLevel == tab.destination
 
 
             val containerColor =
@@ -407,9 +402,9 @@ private fun BottomBarFloating(
                                     }
                                 }
                             } else {
-                                if (currentDestination.hasRoute<Destination.Search>()) {
+                                if (currentDestination is Destination.Search || currentTopLevel == Destination.HomeTabSearch) {
                                     appComponent.searchFieldFocus.focus()
-                                } else if (currentDestination.hasRoute<Destination.Feeds>()) {
+                                } else if (currentDestination == Destination.Feeds || currentTopLevel == Destination.HomeTabFeeds) {
                                     appComponent.backToTopTrigger.scrollToTop()
                                 }
                             }

@@ -75,13 +75,20 @@ class LoginViewModel(
     }
 
     fun auth() {
-        session.setBackendType(selectedPlatform ?: BackendType.PIXELFED)
+        // This must happen synchronously in the click handler for mobile popup policies.
+        val backendType = selectedPlatform ?: BackendType.PIXELFED
+        if (!platform.prepareAuthBrowser(serverHost.text, backendType)) {
+            error = "The browser blocked the login window. Allow pop-ups and try again."
+            return
+        }
+        session.setBackendType(backendType)
         viewModelScope.launch {
             try {
                 isLoading = true
                 error = null
                 authService.auth(serverHost.text)
             } catch (e: Throwable) {
+                platform.dismissBrowser()
                 error = e.message
             } finally {
                 isLoading = false

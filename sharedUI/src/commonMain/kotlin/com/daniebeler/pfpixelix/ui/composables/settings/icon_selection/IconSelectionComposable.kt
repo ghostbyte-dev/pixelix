@@ -41,7 +41,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.di.injectViewModel
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
@@ -57,7 +57,7 @@ import pixelix.app.generated.resources.change_app_icon_dialog_content
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun IconSelectionComposable(
-    navController: NavController,
+    navController: AppNavigator,
     viewModel: IconSelectionViewModel = injectViewModel(key = "iconselectionvm") { iconSelectionViewModel }
 ) {
     val lazyGridState = rememberLazyGridState()

@@ -65,9 +65,9 @@
     <string name="followed_by">Seguito da</string>
     <string name="other">altro</string>
     <string name="others">altri</string>
-    <string name="yearly">annualmente</string>
-    <string name="monthly">mensilmente</string>
-    <string name="daily">giornalmente</string>
+    <string name="yearly">Annualmente</string>
+    <string name="monthly">Mensilmente</string>
+    <string name="daily">Giornalmente</string>
     <string name="i_don_t_have_an_account">Non ho un account</string>
     <string name="server_url">URL del server</string>
     <string name="are_you_sure_you_want_to_log_out">Sei sicuro di voler uscire?</string>
@@ -397,4 +397,13 @@
     <string name="new_post_settings">Impostazioni nuovo post</string>
     <string name="use_dynamic_colors">Usa colori dinamici</string>
     <string name="default_timeline_tab">Scheda timeline predefinita</string>
+    <string name="double_tap_to_like">Doppio tap per mettere Mi piace</string>
+    <string name="translations_btn_desc">Condividi le tue abilità di traduzione con la community</string>
+    <string name="translations_btn_title">Aiuta a tradurre</string>
+    <string name="translations_desc">Vuoi vedere Pixelix nella tua lingua? Ci affidiamo alla nostra fantastica community per rendere l'app applicazione accessibile a chiunque nel mondo.</string>
+    <string name="editors_choice_accounts">Scelta degli editori: Profili</string>
+    <string name="editors_choice_accounts_explained">Una collezione di artisti che sono stati selezionati da curatori su questo server.</string>
+    <string name="editors_choice_posts">Scelta degli editori: Post</string>
+    <string name="select_images_description">Selezionare una o più immagini per aggiungerle al tuo post</string>
+    <string name="country">Paese</string>
 </resources>

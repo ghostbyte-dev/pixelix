@@ -35,6 +35,7 @@ class Notifier(var context: Context) {
             Logger.w(tag="PushNotification") { "Notifications disabled at OS level — not shown" }
             return
         }
+        //TODO: deep link not implemented yet
         val deepLinkIntent = Intent(
             Intent.ACTION_VIEW,
             "pixelix://notifications".toUri(),

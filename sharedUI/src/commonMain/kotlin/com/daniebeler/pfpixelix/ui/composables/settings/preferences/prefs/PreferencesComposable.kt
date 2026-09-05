@@ -29,7 +29,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.service.platform.PlatformFeatures
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.AutoplayVideoPref
@@ -40,6 +40,7 @@ import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.DefaultLicensePref
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.DefaultVisibilityPref
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.DeleteAccountPref
+import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.DoubleTapToLike
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.HideAltTextButtonPref
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.HideMetadataPref
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.HideSensitiveContentPref
@@ -63,7 +64,7 @@ import pixelix.app.generated.resources.settings
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PreferencesComposable(
-    navController: NavController,
+    navController: AppNavigator,
     drawerState: DrawerState,
     closePreferencesDrawer: () -> Unit,
     viewModel: PreferencesViewModel = injectViewModel(key = "preferences-viewmodel-key") { preferencesViewModel }
@@ -140,6 +141,8 @@ fun PreferencesComposable(
             if (PlatformFeatures.inAppBrowser) {
                 UseInAppBrowserPref()
             }
+
+            DoubleTapToLike()
 
             SwipeBetweenTimelines()
 

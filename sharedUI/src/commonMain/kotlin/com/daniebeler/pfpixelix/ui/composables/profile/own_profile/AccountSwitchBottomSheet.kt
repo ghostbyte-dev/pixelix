@@ -31,7 +31,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.model.Credentials
@@ -45,6 +45,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.add
+import pixelix.app.generated.resources.add_account
 import pixelix.app.generated.resources.are_you_sure_you_want_to_remove_this_account
 import pixelix.app.generated.resources.cancel
 import pixelix.app.generated.resources.default_avatar
@@ -54,7 +55,7 @@ import pixelix.app.generated.resources.remove_account
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun AccountSwitchBottomSheet(
-    navController: NavController,
+    navController: AppNavigator,
     closeBottomSheet: () -> Unit,
     ownProfileViewModel: OwnProfileViewModel?,
     viewModel: AccountSwitchViewModel = injectViewModel(key = "account_switcher_viewmodel") { accountSwitchViewModel }
@@ -163,7 +164,7 @@ fun AccountSwitchBottomSheet(
                     },
                     content = {
                         Text(
-                            text = "Add account", fontWeight = FontWeight.Bold
+                            text = stringResource(Res.string.add_account), fontWeight = FontWeight.Bold
                         )
                     })
             }

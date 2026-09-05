@@ -25,7 +25,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.model.Account
@@ -47,7 +47,7 @@ import pixelix.app.generated.resources.trash
 fun AccountListItem(
     account: Account,
     relationship: Relationship?,
-    navController: NavController,
+    navController: AppNavigator,
     index: Int,
     count: Int,
     showFollowers: Boolean = true,
@@ -150,7 +150,7 @@ fun AccountListItem(
 fun CustomAccount(
     account: Account,
     relationship: Relationship?,
-    navController: NavController,
+    navController: AppNavigator,
     showFollowers: Boolean = true,
     onClick: () -> Unit = {},
     removeSavedSearch: (() -> Unit)? = null,

@@ -16,7 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.ui.composables.profile.other_profile.UnBlockAccountAlert
@@ -29,7 +29,7 @@ import pixelix.app.generated.resources.unblock
 
 @Composable
 fun CustomBlockedAccountRow(
-    account: Account, navController: NavController, viewModel: BlockedAccountsViewModel
+    account: Account, navController: AppNavigator, viewModel: BlockedAccountsViewModel
 ) {
     Row(
         Modifier

@@ -5,7 +5,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 import com.daniebeler.pfpixelix.ui.composables.widgets.InfinitePostsList
 import com.daniebeler.pfpixelix.ui.composables.widgets.PaginatedPostsViewModel
@@ -21,7 +21,7 @@ import pixelix.app.generated.resources.photo
 fun TimelineScreen(
     title: String,
     subtitle: String? = null,
-    navController: NavController,
+    navController: AppNavigator,
     viewModel: PaginatedPostsViewModel,
     actions: @Composable RowScope.() -> Unit = {},
     contentPaddingTop: Dp = 24.dp,

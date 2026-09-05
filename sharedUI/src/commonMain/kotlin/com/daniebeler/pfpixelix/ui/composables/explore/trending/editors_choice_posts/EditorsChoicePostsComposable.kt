@@ -6,7 +6,7 @@ import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.ui.composables.timelines.TimelineHelpCard
 import com.daniebeler.pfpixelix.ui.composables.timelines.parametric_timeline_screens.ParametricTimelineViewModel
@@ -19,7 +19,7 @@ import pixelix.app.generated.resources.editors_choice_posts_explained
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun EditorsChoicePostsComposable(
-    navController: NavController,
+    navController: AppNavigator,
     viewModel: ParametricTimelineViewModel = injectViewModel(key = "editors-choice-posts") {
         parametricTimelineViewModel.apply { init(ParametricTimelineViewModel.FetchType.EDITORS_CHOICE_POSTS) }
     }

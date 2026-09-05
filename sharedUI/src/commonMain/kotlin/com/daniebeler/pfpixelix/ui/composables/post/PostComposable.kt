@@ -67,7 +67,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.zIndex
-import androidx.navigation.NavController
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import co.touchlab.kermit.Logger
 import coil3.compose.AsyncImage
 import coil3.compose.AsyncImagePainter
@@ -143,7 +143,7 @@ private enum class BottomSheetType { None, Comments, Menu, Likes }
 @Composable
 fun PostComposable(
     post: Post,
-    navController: NavController,
+    navController: AppNavigator,
     postGetsDeleted: (postId: String) -> Unit,
     setZindex: (zIndex: Float) -> Unit,
     openReplies: Boolean = false,
@@ -286,7 +286,7 @@ fun PostComposable(
 @Composable
 fun MasonryPost(
     post: Post,
-    navController: NavController,
+    navController: AppNavigator,
     roundedCornerShape: RoundedCornerShape,
     viewModel: PostViewModel = injectViewModel(key = "post" + post.id) { postViewModel }
 ) {
@@ -321,7 +321,7 @@ fun MasonryPost(
 
 @Composable
 private fun PostHeader(
-    post: Post, timeAgoText: String, navController: NavController, onMenuClick: () -> Unit
+    post: Post, timeAgoText: String, navController: AppNavigator, onMenuClick: () -> Unit
 ) {
     post.rebloggedBy?.let { reblogAccount ->
         Row(
@@ -397,7 +397,7 @@ private fun PostMediaSection(
     onLikeAnimation: () -> Unit,
     updatePost: (post: Post) -> Unit,
     fullQuality: Boolean,
-    navController: NavController
+    navController: AppNavigator
 ) {
     if (post.mediaAttachments.isNotEmpty()) {
         if (post.sensitive && !viewModel.showPost && viewModel.blurSensitiveContent) {
@@ -494,7 +494,7 @@ private fun PostMediaContent(
     onLikeAnimation: () -> Unit,
     updatePost: (post: Post) -> Unit,
     fullQuality: Boolean,
-    navController: NavController
+    navController: AppNavigator
 ) {
     if (post.mediaAttachments.count() > 1) {
         val smallestAspectRatio = post.mediaAttachments.minByOrNull {
@@ -591,7 +591,7 @@ private fun PostActionBar(
     animateBoost: () -> Unit,
     onCommentsClick: () -> Unit,
     onLikesClick: () -> Unit,
-    navController: NavController,
+    navController: AppNavigator,
     updatePost: (post: Post) -> Unit,
     hideMetadataPref: Boolean
 ) {
@@ -874,8 +874,8 @@ private fun MetadataItem(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.padding(vertical = 4.dp).then(
             if (isClickable) {
-                Modifier.clickable { onClick() }
-            } else Modifier)) {
+            Modifier.clickable { onClick() }
+        } else Modifier)) {
         Icon(
             imageVector = vectorResource(icon),
             tint = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -896,7 +896,7 @@ private fun MetadataItem(
 
 @Composable
 private fun PostLikedByRow(
-    post: Post, navController: NavController, onLikesClick: () -> Unit
+    post: Post, navController: AppNavigator, onLikesClick: () -> Unit
 ) {
     if (post.likedBy?.username?.isNotBlank() != true || post.likedBy.id.isNullOrBlank()) return
 
@@ -930,7 +930,7 @@ private fun PostBottomSheet(
     post: Post,
     viewModel: PostViewModel,
     pagerState: PagerState,
-    navController: NavController,
+    navController: AppNavigator,
     onDismiss: () -> Unit
 ) {
     if (activeSheet == BottomSheetType.None) return
@@ -964,10 +964,10 @@ private fun PostDeleteDialog(viewModel: PostViewModel) {
 
     AlertDialog(
         icon = {
-            Icon(
-                imageVector = vectorResource(Res.drawable.trash), contentDescription = null
-            )
-        },
+        Icon(
+            imageVector = vectorResource(Res.drawable.trash), contentDescription = null
+        )
+    },
         title = { Text(text = stringResource(Res.string.delete_post)) },
         text = { Text(text = stringResource(Res.string.this_action_cannot_be_undone)) },
         onDismissRequest = { viewModel.deleteDialog = null },
@@ -996,7 +996,7 @@ fun PostImage(
     isMasonry: Boolean,
     roundedCornerShape: RoundedCornerShape,
     fullQuality: Boolean,
-    navController: NavController
+    navController: AppNavigator
 ) {
     var showHeart by remember { mutableStateOf(false) }
     val scale = animateFloatAsState(if (showHeart) 1f else 0f, label = "heart_filled animation")
@@ -1038,13 +1038,16 @@ fun PostImage(
         }
 
         Box(modifier = Modifier.zIndex(2f).snapBackZoomable(zoomState).pointerInput(Unit) {
-            detectTapGestures(onDoubleTap = {
-                CoroutineScope(Dispatchers.Default).launch {
-                    viewModel.likePost(postId, updatePost)
-                    like()
-                    showHeart = true
+            detectTapGestures(
+                onDoubleTap = if (viewModel.isDoubleTapEnabled) {
+                {
+                    CoroutineScope(Dispatchers.Default).launch {
+                        viewModel.likePost(postId, updatePost)
+                        like()
+                        showHeart = true
+                    }
                 }
-            }, onTap = {
+            } else null, onTap = {
                 if (isMasonry) {
                     navController.navigate(Destination.Post(postId))
                 } else {
@@ -1113,17 +1116,13 @@ private fun ImageWrapper(
     onSuccess: () -> Unit
 ) {
     AsyncImage(
-        model = ImageRequest.Builder(LocalPlatformContext.current)
-            .data(
-                if (fullQuality) {
-                    mediaAttachment.url
-                } else {
-                    mediaAttachment.previewUrl ?: mediaAttachment.url
-                }
-            )
-            .size(Size.ORIGINAL)
-            .precision(Precision.EXACT)
-            .build(),
+        model = ImageRequest.Builder(LocalPlatformContext.current).data(
+            if (fullQuality) {
+                mediaAttachment.url
+            } else {
+                mediaAttachment.previewUrl ?: mediaAttachment.url
+            }
+        ).size(Size.ORIGINAL).precision(Precision.EXACT).build(),
         contentDescription = null,
         modifier = Modifier.fillMaxWidth(),
         contentScale = ContentScale.FillWidth,
@@ -1175,9 +1174,11 @@ fun MediaDialog(
                         mediaAttachment,
                         true,
                         { zoomState.setContentSize(it.painter.intrinsicSize) },
-                        {isLoading = false})
+                        { isLoading = false })
                 } else {
-                    VideoAttachment(mediaAttachment, postViewModel, {isLoading = false}, isMasonry = false)
+                    VideoAttachment(
+                        mediaAttachment, postViewModel, { isLoading = false }, isMasonry = false
+                    )
                 }
             }
             Box(Modifier.align(Alignment.TopEnd).padding(20.dp).zIndex(2f)) {

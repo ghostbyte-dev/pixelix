@@ -23,7 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.domain.model.Message
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
@@ -37,7 +37,7 @@ import pixelix.app.generated.resources.trash
 
 @Composable
 fun ConversationElementComposable(
-    message: Message, deleteMessage: () -> Unit, navController: NavController
+    message: Message, deleteMessage: () -> Unit, navController: AppNavigator
 ) {
     var arrangement = Arrangement.Start
     var alignment = Alignment.Start

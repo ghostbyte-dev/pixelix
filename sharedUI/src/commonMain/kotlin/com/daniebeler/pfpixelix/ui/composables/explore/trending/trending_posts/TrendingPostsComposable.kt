@@ -10,22 +10,30 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.ui.composables.explore.trending.TrendingRange
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposableDialog
 import com.daniebeler.pfpixelix.ui.composables.widgets.InfinitePostsList
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
+import pixelix.app.generated.resources.daily
 import pixelix.app.generated.resources.datetime
+import pixelix.app.generated.resources.monthly
+import pixelix.app.generated.resources.yearly
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun TrendingPostsComposable(
-    navController: NavController,
+    navController: AppNavigator,
     viewModel: TrendingPostsViewModel = injectViewModel(key = "trending-posts") { trendingPostsViewModel }
 ) {
     val calendarIcon = vectorResource(Res.drawable.datetime)
+
+    val dailyLabel = stringResource(Res.string.daily)
+    val monthlyLabel = stringResource(Res.string.monthly)
+    val yearlyLabel = stringResource(Res.string.yearly)
 
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
         InfinitePostsList(
@@ -45,12 +53,12 @@ fun TrendingPostsComposable(
             contentPaddingTop = 32.dp,
             contentPaddingBottom = 80.dp,
             before = {
-                ButtonGroup(overflowIndicator = { Text("Daily") }) {
+                ButtonGroup(overflowIndicator = { Text(dailyLabel) }) {
                     toggleableItem(
                         weight = 1f,
                         checked = viewModel.timeRange == TrendingRange.DAILY,
                         onCheckedChange = { viewModel.changeTimeRange(TrendingRange.DAILY) },
-                        label = "Daily",
+                        label = dailyLabel,
                         icon = {
                             if (viewModel.timeRange == TrendingRange.DAILY) {
                                 Icon(imageVector = calendarIcon, contentDescription = "")
@@ -61,7 +69,7 @@ fun TrendingPostsComposable(
                         weight = 1f,
                         checked = viewModel.timeRange == TrendingRange.MONTHLY,
                         onCheckedChange = { viewModel.changeTimeRange(TrendingRange.MONTHLY) },
-                        label = "Monthly",
+                        label = monthlyLabel,
                         icon = {
                             if (viewModel.timeRange == TrendingRange.MONTHLY) {
                                 Icon(imageVector = calendarIcon, contentDescription = "")
@@ -72,7 +80,7 @@ fun TrendingPostsComposable(
                         weight = 1f,
                         checked = viewModel.timeRange == TrendingRange.YEARLY,
                         onCheckedChange = { viewModel.changeTimeRange(TrendingRange.YEARLY) },
-                        label = "Yearly",
+                        label = yearlyLabel,
                         icon = {
                             if (viewModel.timeRange == TrendingRange.YEARLY) {
                                 Icon(imageVector = calendarIcon, contentDescription = "")

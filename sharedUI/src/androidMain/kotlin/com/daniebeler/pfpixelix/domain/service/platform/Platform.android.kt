@@ -4,7 +4,9 @@ import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.content.Intent
 import android.net.Uri
+import android.provider.Settings
 import androidx.browser.customtabs.CustomTabsIntent
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.FileProvider
 import co.touchlab.kermit.Logger
 import com.daniebeler.pfpixelix.MyApplication
@@ -89,5 +91,25 @@ actual class Platform actual constructor(
         if (appWidgetManager.isRequestPinAppWidgetSupported) {
             appWidgetManager.requestPinAppWidget(myProvider, null, null)
         }
+    }
+
+    actual fun hasPushNotificationPermission(): Boolean {
+        val test = NotificationManagerCompat.from(context).areNotificationsEnabled()
+        Logger.d("notificationSettings") {
+            "permission: $test"
+        }
+        return test
+    }
+
+    actual fun openAppSettings() {
+        val intent =
+            Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+                putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+            }
+                .apply {
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                }
+
+        context.startActivity(intent)
     }
 }

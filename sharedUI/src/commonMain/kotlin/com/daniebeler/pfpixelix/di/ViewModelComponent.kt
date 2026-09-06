@@ -39,6 +39,7 @@ import com.daniebeler.pfpixelix.ui.composables.settings.blocked_accounts.Blocked
 import com.daniebeler.pfpixelix.ui.composables.settings.followed_hashtags.FollowedHashtagsViewModel
 import com.daniebeler.pfpixelix.ui.composables.settings.icon_selection.IconSelectionViewModel
 import com.daniebeler.pfpixelix.ui.composables.settings.muted_accounts.MutedAccountsViewModel
+import com.daniebeler.pfpixelix.ui.composables.settings.notification_settings.NotificationSettingsViewModel
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.PreferencesViewModel
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.ClearCacheViewModel
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.DefaultLicenseViewModel
@@ -101,6 +102,7 @@ abstract class ViewModelComponent(
     abstract val clearCacheViewModel: ClearCacheViewModel
     abstract val defaultLicenseViewModel: DefaultLicenseViewModel
     abstract val homeViewModel: HomeViewModel
+    abstract val notificationSettingsViewModel: NotificationSettingsViewModel
 
     companion object
 }

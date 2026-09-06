@@ -12,7 +12,6 @@ import org.jetbrains.compose.resources.stringResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.double_tap_to_like
 import pixelix.app.generated.resources.heart
-import pixelix.app.generated.resources.swipe_gesture
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable

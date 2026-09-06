@@ -29,7 +29,6 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.service.platform.PlatformFeatures
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.AutoplayVideoPref
@@ -46,11 +45,12 @@ import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.HideSensitiveContentPref
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.LogoutPref
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.MoreSettingsPref
-import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.PushDistributorPref
+import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.NotificationSettingsPref
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.RepostSettingsPref
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.SwipeBetweenTimelines
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.ThemePref
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.UseInAppBrowserPref
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
@@ -105,7 +105,9 @@ fun PreferencesComposable(
             )
             Spacer(modifier = Modifier.height(6.dp))
 
-            PushDistributorPref()
+            if (viewModel.capabilities.value.general.supportsPushNotifications) {
+                NotificationSettingsPref(navController, closePreferencesDrawer)
+            }
             HideSensitiveContentPref()
 
             HideAltTextButtonPref()

@@ -14,7 +14,6 @@ import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.savedstate.serialization.SavedStateConfiguration
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
-import kotlinx.serialization.modules.subclass
 
 internal val navigationSavedStateConfiguration = SavedStateConfiguration {
     serializersModule = SerializersModule {
@@ -55,6 +54,7 @@ internal val navigationSavedStateConfiguration = SavedStateConfiguration {
             subclass(Destination.HomeTabNewPost::class, Destination.HomeTabNewPost.serializer())
             subclass(Destination.HomeTabNotifications::class, Destination.HomeTabNotifications.serializer())
             subclass(Destination.HomeTabOwnProfile::class, Destination.HomeTabOwnProfile.serializer())
+            subclass(Destination.NotificationSettings::class, Destination.NotificationSettings.serializer())
         }
     }
 }

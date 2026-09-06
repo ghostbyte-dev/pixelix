@@ -385,4 +385,5 @@
     <string name="translations_btn_title">Help translate</string>
     <string name="translations_btn_desc">Share your language skills with the community</string>
     <string name="add_account">Add account</string>
+    <string name="notification_settings">Notification Settings</string>
 </resources>

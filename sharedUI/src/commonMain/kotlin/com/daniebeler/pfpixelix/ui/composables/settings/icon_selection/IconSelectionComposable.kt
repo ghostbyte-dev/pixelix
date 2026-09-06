@@ -102,20 +102,21 @@ fun IconSelectionComposable(
 
         TopAppBar(
             modifier = Modifier.clip(
-            RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)
-        ), title = {
-            Text("Icon Selection", fontWeight = FontWeight.Bold, fontSize = 18.sp)
-        }, navigationIcon = {
-            IconButton(onClick = {
-                navController.popBackStack()
-            }) {
-                Icon(
-                    imageVector = vectorResource(Res.drawable.arrow_left), contentDescription = ""
-                )
-            }
-        }, colors = TopAppBarDefaults.mediumTopAppBarColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainer
-        )
+                RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)
+            ), title = {
+                Text("Icon Selection", fontWeight = FontWeight.Bold, fontSize = 18.sp)
+            }, navigationIcon = {
+                IconButton(onClick = {
+                    navController.popBackStack()
+                }) {
+                    Icon(
+                        imageVector = vectorResource(Res.drawable.arrow_left),
+                        contentDescription = ""
+                    )
+                }
+            }, colors = TopAppBarDefaults.mediumTopAppBarColors(
+                containerColor = MaterialTheme.colorScheme.surfaceContainer
+            )
         )
 
         if (newIcon != null) {

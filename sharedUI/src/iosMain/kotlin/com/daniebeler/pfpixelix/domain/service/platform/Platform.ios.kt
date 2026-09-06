@@ -1,6 +1,5 @@
 package com.daniebeler.pfpixelix.domain.service.platform
 
-import androidx.compose.ui.platform.LocalUriHandler
 import co.touchlab.kermit.Logger
 import com.daniebeler.pfpixelix.domain.service.general.BackendType
 import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
@@ -24,8 +23,8 @@ import platform.UIKit.UITabBarController
 import platform.UIKit.UIUserInterfaceIdiomPad
 import platform.UIKit.UIViewController
 import platform.UIKit.popoverPresentationController
-import platform.darwin.dispatch_get_main_queue
 import platform.darwin.dispatch_async
+import platform.darwin.dispatch_get_main_queue
 
 @Inject
 actual class Platform actual constructor(
@@ -114,4 +113,11 @@ actual class Platform actual constructor(
     }
 
     actual fun pinWidget() {}
+
+    actual fun hasPushNotificationPermission(): Boolean {
+        return false
+    }
+
+    actual fun openAppSettings() {
+    }
 }

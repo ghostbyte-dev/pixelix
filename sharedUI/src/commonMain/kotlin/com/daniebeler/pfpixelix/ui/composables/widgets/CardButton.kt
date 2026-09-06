@@ -26,13 +26,14 @@ fun CardButton(
     leadingIcon: DrawableResource,
     title: String,
     desc: String? = null,
-    trailingContent: DrawableResource,
+    trailingContent: DrawableResource? = null,
     onClick: () -> Unit = {},
+    cardColor: Color = MaterialTheme.colorScheme.onPrimaryContainer,
+    textColor: Color = MaterialTheme.colorScheme.primaryContainer
 ) {
     val shape: Shape = MaterialTheme.shapes.medium
-    val textColor: Color = MaterialTheme.colorScheme.onPrimaryContainer
     val cardColors = CardDefaults.cardColors(
-        containerColor = MaterialTheme.colorScheme.primaryContainer
+        containerColor = cardColor
     )
 
 
@@ -74,12 +75,14 @@ fun CardButton(
                     )
                 }
             }
-            Box(Modifier.padding(start = 14.dp, end = 10.dp)) {
-                Icon(
-                    imageVector = vectorResource(trailingContent),
-                    contentDescription = "open",
-                    tint = textColor
-                )
+            trailingContent?.let {
+                Box(Modifier.padding(start = 14.dp, end = 10.dp)) {
+                    Icon(
+                        imageVector = vectorResource(it),
+                        contentDescription = "open",
+                        tint = textColor
+                    )
+                }
             }
         }
     }

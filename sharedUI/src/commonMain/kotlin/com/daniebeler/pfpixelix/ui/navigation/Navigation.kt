@@ -29,6 +29,7 @@ import com.daniebeler.pfpixelix.ui.composables.settings.followed_hashtags.Follow
 import com.daniebeler.pfpixelix.ui.composables.settings.icon_selection.IconSelectionComposable
 import com.daniebeler.pfpixelix.ui.composables.settings.liked_posts.LikedPostsComposable
 import com.daniebeler.pfpixelix.ui.composables.settings.muted_accounts.MutedAccountsComposable
+import com.daniebeler.pfpixelix.ui.composables.settings.notification_settings.NotificationSettingsComposable
 import com.daniebeler.pfpixelix.ui.composables.single_post.SinglePostComposable
 import com.daniebeler.pfpixelix.ui.composables.timelines.hashtag_timeline.HashtagTimelineComposable
 import com.daniebeler.pfpixelix.ui.composables.timelines.parametric_timeline_screens.CameraTimelineComposable
@@ -91,6 +92,9 @@ sealed interface Destination : NavKey {
 
     @Serializable
     data object IconSelection : Destination
+
+    @Serializable
+    data object NotificationSettings : Destination
 
     @Serializable
     data object MutedAccounts : Destination
@@ -244,6 +248,10 @@ internal fun appEntryProvider(
 
     entry<Destination.IconSelection> {
         IconSelectionComposable(navigator)
+    }
+
+    entry<Destination.NotificationSettings> {
+        NotificationSettingsComposable(navigator)
     }
 
     entry<Destination.EditPost> { args ->

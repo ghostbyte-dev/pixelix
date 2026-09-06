@@ -24,6 +24,8 @@ expect class Platform(
     fun shareText(text: String)
     fun getAppVersion(): String
     fun pinWidget()
+    fun hasPushNotificationPermission(): Boolean
+    fun openAppSettings()
 }
 
 data class PreparedAuthData(

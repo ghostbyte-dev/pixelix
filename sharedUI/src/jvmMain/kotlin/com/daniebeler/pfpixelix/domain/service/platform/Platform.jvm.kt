@@ -56,4 +56,11 @@ actual class Platform actual constructor(
     actual fun toSafeUri(platformFile: PlatformFile): KmpUri {
         return platformFile.toKmpUri()
     }
+
+    actual fun hasPushNotificationPermission(): Boolean {
+        return false
+    }
+
+    actual fun openAppSettings() {
+    }
 }

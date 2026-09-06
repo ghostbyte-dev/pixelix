@@ -51,6 +51,13 @@ actual class Platform actual constructor(
     actual fun getAppVersion(): String = "1.0.0"
 
     actual fun pinWidget() {}
+
+    actual fun hasPushNotificationPermission(): Boolean {
+        return false
+    }
+
+    actual fun openAppSettings() {
+    }
 }
 
 private fun buildLauncherUrl(host: String, backendType: String, redirectUrl: String): String = js(

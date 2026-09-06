@@ -31,8 +31,8 @@
         <item quantity="other">Příspěvků</item>
     </plurals>
     <string name="hashtags">Hashtagy</string>
-    <string name="reblogged_your_post">reblogoval tvůj příspěvek</string>
-    <string name="liked_your_post">olajkoval tvůj příspěvek</string>
+    <string name="reblogged_your_post">reblogoval váš příspěvek</string>
+    <string name="liked_your_post">olajkoval váš příspěvek</string>
     <string name="followed_you">tě sleduje</string>
     <string name="share_this_post">Sdílet tento příspěvek</string>
     <string name="trending">Trendy</string>
@@ -60,9 +60,9 @@
     <string name="followed_by">Sledován</string>
     <string name="other">ostatní</string>
     <string name="others">ostatní</string>
-    <string name="yearly">ročně</string>
-    <string name="monthly">měsíčně</string>
-    <string name="daily">denně</string>
+    <string name="yearly">Ročně</string>
+    <string name="monthly">Měsíčně</string>
+    <string name="daily">Denně</string>
     <string name="i_don_t_have_an_account">Nemám účet</string>
     <string name="server_url">URL serveru</string>
     <string name="are_you_sure_you_want_to_log_out">Opravdu se chcete odhlásit?</string>
@@ -340,7 +340,7 @@
     <string name="no_cameras">Žádné fotoaparáty</string>
     <string name="displayname">Zobrazované jméno</string>
     <string name="bio">O mně</string>
-    <string name="adult_or_sensitive_content">Pro dospělé nebo citlivý obsah</string>
+    <string name="adult_or_sensitive_content">Obsah pro dospělé nebo citlivý obsah</string>
     <string name="terrorism">Terorismus</string>
     <string name="swipe_between_tabs">Posuň pro přepnutí stran</string>
     <string name="requested">Navrhnuto</string>
@@ -364,4 +364,29 @@
     <string name="exposure_time">Doba expozice</string>
     <string name="gps_coordinates">GPS souřadnice</string>
     <string name="default_timeline_tab">Výchozí záložka časové osy</string>
+    <string name="double_tap_to_like">Dvojitým klepnutím olajkovat příspěvky</string>
+    <string name="select_images_description">Vyberte jeden nebo více obrázků k přidání do vašeho příspěvku</string>
+    <string name="report_btn_desc">Oceňujeme vaši pomoc s odhalováním chyb</string>
+    <string name="feedback_desc">Zúčastněte se krátkého průzkumu a podělte se s námi o své nápady, názory a návrhy ohledně vzhledu a funkcí aplikace Pixelix.</string>
+    <string name="feedback_btn_desc">Vaše nápady přímo vylepšují tuto aplikaci</string>
+    <string name="translations_desc">Chcete vidět Pixelix ve svém jazyce? Spoléháme na naši úžasnou komunitu s pomocí zpřístupnit aplikaci všem na celém světě.</string>
+    <string name="translations_btn_desc">Sdílejte své jazykové schopnosti s komunitou</string>
+    <string name="report_btn_title">Nahlásit problém</string>
+    <string name="report_desc">Našli jste něco, co nefunguje správně? Dejte nám vědět, abychom to mohli opravit. Každé hlášení pomáhá vylepšit Pixelix pro všechny.</string>
+    <string name="report_title">Nahlásit chybu</string>
+    <string name="sponsor_btn_desc">Podpořte tvůrce příspěvkem na kávu</string>
+    <string name="sponsor_btn_title">Sponzorovat</string>
+    <string name="sponsor_desc">Pixelix vytváříme a udržujeme v našem volném čase. Pokud ho rádi používáte, můžete nám pomoci s průběžným vývojem a náklady na infrastrukturu.</string>
+    <string name="sponsor_title">Sponzorovat</string>
+    <string name="support_headline">Pomozte vylepšit Pixelix</string>
+    <string name="loading_cities">Načítání měst...</string>
+    <string name="city">Město</string>
+    <string name="loading_countries">Načítání zemí...</string>
+    <string name="country">Země</string>
+    <string name="select_images">Vyberte obrázky</string>
+    <string name="translations_btn_title">Pomoci s překladem</string>
+    <string name="translations_title">Překlady</string>
+    <string name="feedback_btn_title">Sdílet zpětnou vazbu</string>
+    <string name="feedback_title">Sdílet zpětnou vazbu</string>
+    <string name="add_account">Přidat účet</string>
 </resources>

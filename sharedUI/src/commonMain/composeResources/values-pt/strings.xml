@@ -355,4 +355,10 @@
     <string name="flash">Flash</string>
     <string name="scanner">Scanner</string>
     <string name="key">Chave</string>
+    <string name="add_account">Adicionar conta</string>
+    <string name="lenses">Lentes</string>
+    <string name="cameras">Câmaras</string>
+    <string name="categories">Categorias</string>
+    <string name="editors_choice_posts_explained">Uma coleção de fotografias que foram escolhidas pelos curadores deste servidor.</string>
+    <string name="focal_length_35mm">Distância focal de 35 mm</string>
 </resources>

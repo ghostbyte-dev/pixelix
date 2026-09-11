@@ -42,4 +42,6 @@
     <string name="delete_this_post">Șterge această postare</string>
     <string name="delete_post">Ștergi postarea?</string>
     <string name="bookmarked_posts">Postări Salvate</string>
+    <string name="trending_post_description">Postările ajung în trend dacă au fost postate în intervalul de timp selectat și au multe aprecieri.</string>
+    <string name="what_makes_a_post_trend">Cum faci o postare să fie populară?</string>
 </resources>

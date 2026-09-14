@@ -322,17 +322,18 @@ private fun LazyStaggeredGridScope.postsMasonryInScope(
     navController: AppNavigator,
 ) {
 
-    if (posts.isNotEmpty()) {
+    val filteredPosts = posts.filter { it.mediaAttachments.isNotEmpty() }
+    if (filteredPosts.isNotEmpty()) {
 
-        items(items = posts, key = { it.uiKey }) { post ->
+        items(items = filteredPosts, key = { it.uiKey }) { post ->
             val zIndex = remember {
                 mutableFloatStateOf(1f)
             }
 
-            val shape = remember(posts.size) {
+            val shape = remember(filteredPosts.size) {
                 calculateOuterGridShape(
-                    index = posts.indexOf(post),
-                    totalCount = posts.size,
+                    index = filteredPosts.indexOf(post),
+                    totalCount = filteredPosts.size,
                     columnCount = columnCount
                 )
             }
@@ -352,7 +353,7 @@ private fun LazyStaggeredGridScope.postsMasonryInScope(
             }
         }
 
-        if (endReached && posts.size > 3) {
+        if (endReached && filteredPosts.size > 3) {
             item(key = "end_of_list_key", span = StaggeredGridItemSpan.FullLine) {
                 EndOfListComposable()
             }
@@ -369,17 +370,18 @@ private fun LazyStaggeredGridScope.postsLargeMasonryInScope(
     navController: AppNavigator,
 ) {
 
-    if (posts.isNotEmpty()) {
+    val filteredPosts = posts.filter { it.mediaAttachments.isNotEmpty() }
+    if (filteredPosts.isNotEmpty()) {
 
-        items(posts, key = { it.uiKey }) { post ->
+        items(filteredPosts, key = { it.uiKey }) { post ->
             val zIndex = remember {
                 mutableFloatStateOf(1f)
             }
 
-            val shape = remember(posts.size) {
+            val shape = remember(filteredPosts.size) {
                 calculateOuterGridShape(
-                    index = posts.indexOf(post),
-                    totalCount = posts.size,
+                    index = filteredPosts.indexOf(post),
+                    totalCount = filteredPosts.size,
                     columnCount = columnCount
                 )
             }
@@ -399,7 +401,7 @@ private fun LazyStaggeredGridScope.postsLargeMasonryInScope(
             }
         }
 
-        if (endReached && posts.size > 3) {
+        if (endReached && filteredPosts.size > 3) {
             item(key = "end_of_list_key", span = StaggeredGridItemSpan.FullLine) {
                 EndOfListComposable()
             }

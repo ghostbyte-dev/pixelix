@@ -12,8 +12,6 @@ import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedConversati
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedInstanceDto
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedMediaAttachmentDto
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedMessageDto
-import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedNewMessageDto
-import com.daniebeler.pfpixelix.domain.service.pixelfed.model.request.PixelfedNewPostRequest
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedNodeInfoDto
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedNotificationDto
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedPlaceDto
@@ -25,6 +23,7 @@ import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedReportResp
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedSearchDto
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedSettingsDto
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedTagDto
+import com.daniebeler.pfpixelix.domain.service.pixelfed.model.request.PixelfedNewPostRequest
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.request.PixelfedUpdateUserRequest
 import de.jensklingenberg.ktorfit.Call
 import de.jensklingenberg.ktorfit.http.Body
@@ -149,11 +148,12 @@ interface PixelfedApi {
         @Body body: MultiPartFormDataContent
     ): PixelfedAccountDto
 
-    @GET("api/v1/accounts/{accountid}/statuses?pe=1")
+    @GET("api/pixelfed/v1/accounts/{accountid}/statuses?pe=1")
     suspend fun getPostsByAccountId(
         @Path("accountid") accountId: String,
         @Query("max_id") maxId: String? = null,
-        @Query("limit") limit: Int
+        @Query("limit") limit: Int,
+        @Query("pinned") pinned: Boolean = false
     ): List<PixelfedPostDto>
 
     @GET("api/v1/accounts/relationships")
@@ -388,6 +388,16 @@ interface PixelfedApi {
     suspend fun reportPost(
         @Body reportPostBody: String
     ): PixelfedReportResponseDto
+
+    @POST("api/v1/statuses/{postId}/pin")
+    suspend fun pinPost(
+        @Path postId: String
+    ): PixelfedPostDto
+
+    @POST("api/v1/statuses/{postId}/unpin")
+    suspend fun unpinPost(
+        @Path postId: String
+    ): PixelfedPostDto
 
     @GET("api/pixelfed/v1/web/settings")
     suspend fun getSettings(): PixelfedSettingsDto

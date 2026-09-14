@@ -125,6 +125,7 @@ import pixelix.app.generated.resources.media_description
 import pixelix.app.generated.resources.more_menu
 import pixelix.app.generated.resources.ok
 import pixelix.app.generated.resources.others
+import pixelix.app.generated.resources.pin
 import pixelix.app.generated.resources.reblogged_by
 import pixelix.app.generated.resources.repost
 import pixelix.app.generated.resources.repost_strong
@@ -172,7 +173,6 @@ fun PostComposable(
         viewModel.deleteEvents.collect { event ->
             when (event) {
                 is DeleteEvent.Success -> {
-                    Logger.i("deletion") { "Post deleted successfully" }
                     postGetsDeleted(post.id)
                 }
             }
@@ -262,11 +262,13 @@ fun PostComposable(
     PostBottomSheet(
         activeSheet = activeSheet,
         sheetState = sheetState,
-        post = post,
+        post = currentPost,
         viewModel = viewModel,
         pagerState = pagerState,
         navController = navController,
-        onDismiss = { activeSheet = BottomSheetType.None })
+        onDismiss = { activeSheet = BottomSheetType.None },
+        updatePost = updatePost
+    )
 
     PostDeleteDialog(viewModel = viewModel)
 
@@ -521,7 +523,8 @@ private fun PostMediaContent(
                         isMasonry = isMasonry,
                         roundedCornerShape = roundedCornerShape,
                         fullQuality = fullQuality,
-                        navController = navController
+                        navController = navController,
+                        pinned = post.pinned
                     )
                 }
             }
@@ -537,6 +540,7 @@ private fun PostMediaContent(
                     fontSize = 13.sp
                 )
             }
+
         }
 
         if (!isMasonry) {
@@ -573,8 +577,9 @@ private fun PostMediaContent(
                 isMasonry = isMasonry,
                 roundedCornerShape = roundedCornerShape,
                 fullQuality = fullQuality,
-                navController = navController
-            )
+                navController = navController,
+                pinned = post.pinned
+           )
         }
     }
 }
@@ -874,8 +879,8 @@ private fun MetadataItem(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.padding(vertical = 4.dp).then(
             if (isClickable) {
-            Modifier.clickable { onClick() }
-        } else Modifier)) {
+                Modifier.clickable { onClick() }
+            } else Modifier)) {
         Icon(
             imageVector = vectorResource(icon),
             tint = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -931,7 +936,8 @@ private fun PostBottomSheet(
     viewModel: PostViewModel,
     pagerState: PagerState,
     navController: AppNavigator,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    updatePost: (post: Post) -> Unit
 ) {
     if (activeSheet == BottomSheetType.None) return
 
@@ -948,7 +954,8 @@ private fun PostBottomSheet(
                     post,
                     pagerState.currentPage,
                     navController,
-                    onDismiss
+                    onDismiss,
+                    updatePost
                 )
             }
 
@@ -964,10 +971,10 @@ private fun PostDeleteDialog(viewModel: PostViewModel) {
 
     AlertDialog(
         icon = {
-        Icon(
-            imageVector = vectorResource(Res.drawable.trash), contentDescription = null
-        )
-    },
+            Icon(
+                imageVector = vectorResource(Res.drawable.trash), contentDescription = null
+            )
+        },
         title = { Text(text = stringResource(Res.string.delete_post)) },
         text = { Text(text = stringResource(Res.string.this_action_cannot_be_undone)) },
         onDismissRequest = { viewModel.deleteDialog = null },
@@ -996,7 +1003,8 @@ fun PostImage(
     isMasonry: Boolean,
     roundedCornerShape: RoundedCornerShape,
     fullQuality: Boolean,
-    navController: AppNavigator
+    navController: AppNavigator,
+    pinned: Boolean
 ) {
     var showHeart by remember { mutableStateOf(false) }
     val scale = animateFloatAsState(if (showHeart) 1f else 0f, label = "heart_filled animation")
@@ -1040,22 +1048,22 @@ fun PostImage(
         Box(modifier = Modifier.zIndex(2f).snapBackZoomable(zoomState).pointerInput(Unit) {
             detectTapGestures(
                 onDoubleTap = if (viewModel.isDoubleTapEnabled) {
-                {
-                    CoroutineScope(Dispatchers.Default).launch {
-                        viewModel.likePost(postId, updatePost)
-                        like()
-                        showHeart = true
+                    {
+                        CoroutineScope(Dispatchers.Default).launch {
+                            viewModel.likePost(postId, updatePost)
+                            like()
+                            showHeart = true
+                        }
                     }
-                }
-            } else null, onTap = {
-                if (isMasonry) {
-                    navController.navigate(Destination.Post(postId))
-                } else {
-                    if (mediaAttachment.type != "video") {
-                        showMediaDialog = mediaAttachment
+                } else null, onTap = {
+                    if (isMasonry) {
+                        navController.navigate(Destination.Post(postId))
+                    } else {
+                        if (mediaAttachment.type != "video") {
+                            showMediaDialog = mediaAttachment
+                        }
                     }
-                }
-            })
+                })
         }) {
             if (mediaAttachment.type != "video") {
                 ImageWrapper(
@@ -1079,6 +1087,24 @@ fun PostImage(
                     vectorResource(Res.drawable.document_text),
                     contentDescription = null,
                     Modifier.size(22.dp)
+                )
+            }
+        }
+
+        if (pinned) {
+            Box(
+                modifier = Modifier.padding(8.dp).align(Alignment.TopStart)
+                    .background(
+                        MaterialTheme.colorScheme.surfaceContainer.copy(0.8f),
+                        RoundedCornerShape(8.dp)
+                    ).size(28.dp).zIndex(3f),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = vectorResource(Res.drawable.pin),
+                    tint = Color.White,
+                    contentDescription = "Pinned post",
+                    modifier = Modifier.size(18.dp)
                 )
             }
         }

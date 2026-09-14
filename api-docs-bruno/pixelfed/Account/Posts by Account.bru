@@ -5,12 +5,13 @@ meta {
 }
 
 get {
-  url: {{baseUrl}}/api/pixelfed/v1/accounts/{{accountId}}/statuses
+  url: {{baseUrl}}/api/pixelfed/v1/accounts/{{accountId}}/statuses?pinned=true&max_id=1000088825238416499
   body: none
   auth: inherit
 }
 
 params:query {
+  pinned: true
+  max_id: 1000088825238416499
   ~limit: 
-  ~max_id: 
 }

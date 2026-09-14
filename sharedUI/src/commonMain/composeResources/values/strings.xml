@@ -385,4 +385,8 @@
     <string name="translations_btn_title">Help translate</string>
     <string name="translations_btn_desc">Share your language skills with the community</string>
     <string name="add_account">Add account</string>
+    <string name="pin_post">Pin post</string>
+    <string name="unpin_post">Unpin post</string>
+    <string name="unpinning">unpinning...</string>
+    <string name="pinning">pinning...</string>
 </resources>

@@ -26,7 +26,8 @@ data class Post(
     val emojis: List<Emoji>,
     val commentsDisabled: Boolean,
     val category: Category?,
-    val application: String? = null
+    val application: String? = null,
+    val pinned: Boolean = false
 ): Identifiable
 
 val Post.uiKey: String

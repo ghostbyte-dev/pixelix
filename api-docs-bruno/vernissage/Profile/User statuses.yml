@@ -12,7 +12,7 @@ http:
       type: query
       disabled: true
     - name: userName
-      value: hiebeler05@pixelfed.social
+      value: hiebeler05
       type: path
   auth: inherit
 
@@ -21,3 +21,4 @@ settings:
   timeout: 0
   followRedirects: true
   maxRedirects: 5
+  forwardAuthorizationHeader: true

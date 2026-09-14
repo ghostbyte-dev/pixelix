@@ -1,13 +1,18 @@
 package com.daniebeler.pfpixelix.ui.composables.post
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,7 +24,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.LocalSnackbarPresenter
 import com.daniebeler.pfpixelix.domain.model.MediaAttachment
 import com.daniebeler.pfpixelix.domain.model.Post
@@ -28,6 +32,7 @@ import com.daniebeler.pfpixelix.domain.service.platform.PlatformFeatures
 import com.daniebeler.pfpixelix.ui.composables.profile.other_profile.BlockAccountAlert
 import com.daniebeler.pfpixelix.ui.composables.settings.muted_accounts.MuteAccountAlert
 import com.daniebeler.pfpixelix.ui.composables.widgets.ButtonRowElement
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
@@ -47,14 +52,21 @@ import pixelix.app.generated.resources.mute_this_profile
 import pixelix.app.generated.resources.muted
 import pixelix.app.generated.resources.open
 import pixelix.app.generated.resources.open_in_browser
+import pixelix.app.generated.resources.pin
+import pixelix.app.generated.resources.pin_post
+import pixelix.app.generated.resources.pinning
 import pixelix.app.generated.resources.report_this_post
 import pixelix.app.generated.resources.share
 import pixelix.app.generated.resources.share_this_post
 import pixelix.app.generated.resources.trash
 import pixelix.app.generated.resources.unlisted
+import pixelix.app.generated.resources.unpin
+import pixelix.app.generated.resources.unpin_post
+import pixelix.app.generated.resources.unpinning
 import pixelix.app.generated.resources.visibility_x
 import pixelix.app.generated.resources.warning
 
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ShareBottomSheet(
     url: String,
@@ -63,7 +75,8 @@ fun ShareBottomSheet(
     post: Post,
     currentMediaAttachmentNumber: Int,
     navController: AppNavigator,
-    closeBottomSheet: () -> Unit
+    closeBottomSheet: () -> Unit,
+    updatePost: (post: Post) -> Unit
 ) {
 
     var humanReadableVisibility by remember {
@@ -109,16 +122,6 @@ fun ShareBottomSheet(
             Text(text = stringResource(Res.string.visibility_x, humanReadableVisibility))
         }
 
-//        if (mediaAttachment?.license != null) {
-//            ButtonRowElement(
-//                icon = Res.drawable.document_text, text = stringResource(
-//                    Res.string.license, mediaAttachment.license.name
-//                ), onClick = {
-//                    viewModel.openUrl(mediaAttachment.license.url)
-//                    closeBottomSheet()
-//                })
-//        }
-
         HorizontalDivider(Modifier.padding(12.dp))
 
         ButtonRowElement(
@@ -151,6 +154,37 @@ fun ShareBottomSheet(
 
         if (minePost) {
             HorizontalDivider(Modifier.padding(12.dp))
+
+            if (viewModel.isPinningLoading) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+
+                    Box(modifier = Modifier.padding(start = 18.dp, top = 12.dp, bottom = 12.dp), contentAlignment = Alignment.Center) {
+                        LoadingIndicator(Modifier.size(22.dp))
+                    }
+                    Spacer(modifier = Modifier.width(12.dp))
+                    Column(verticalArrangement = Arrangement.Center) {
+                        Text(text = stringResource(if (post.pinned) {Res.string.unpinning} else {Res.string.pinning}))
+                    }
+                }
+            } else if (!post.pinned) {
+                ButtonRowElement(
+                    icon = Res.drawable.pin,
+                    text = stringResource(Res.string.pin_post),
+                    onClick = {
+                        viewModel.pinPost(post.id, updatePost)
+                    })
+            } else {
+                ButtonRowElement(
+                    icon = Res.drawable.unpin,
+                    text = stringResource(Res.string.unpin_post),
+                    onClick = {
+                        viewModel.unpinPost(post.id, updatePost)
+                    }
+                )
+            }
 
             ButtonRowElement(
                 icon = Res.drawable.edit, text = stringResource(Res.string.edit_post), onClick = {

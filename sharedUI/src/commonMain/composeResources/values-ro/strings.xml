@@ -5,4 +5,43 @@
     <string name="active_users">Utilizatori activi:</string>
     <string name="server_version">%1$s Versiune %2$s</string>
     <string name="visit_url">Vizitați %1$s</string>
+    <string name="notifications">Notificări</string>
+    <string name="settings">Setări</string>
+    <string name="liked_posts">Postări Apreciate</string>
+    <string name="blocked_accounts">Profile Blocate</string>
+    <string name="logout">Deconectare</string>
+    <string name="open_in_browser">Deschide în browser</string>
+    <string name="share_this_profile">Distribuie profilul</string>
+    <string name="block_this_profile">Blochează acest profil</string>
+    <string name="load_more">Afișează mai multe</string>
+    <string name="follow">Urmărește</string>
+    <string name="unfollow">Nu mai urmări</string>
+    <string name="followers">Urmăritori</string>
+    <plurals name="follower">
+        <item quantity="one">Urmăritor</item>
+        <item quantity="few">Urmăritori</item>
+        <item quantity="other">Urmăritori</item>
+    </plurals>
+    <plurals name="posts">
+        <item quantity="one">Postare</item>
+        <item quantity="few">Postări</item>
+        <item quantity="other">Postări</item>
+    </plurals>
+    <string name="hashtags">Haștaguri</string>
+    <string name="liked_your_post">ti-a apreciat postarea</string>
+    <string name="followed_you">te urmarește</string>
+    <string name="trending">Popular</string>
+    <string name="accounts">Profile</string>
+    <string name="admin">Administrator</string>
+    <string name="users">Utilizatori</string>
+    <string name="stats">Statistici</string>
+    <string name="unblock_account">Deblochezi Profilul?</string>
+    <string name="confirm_to_unblock_this_account">Confirmă pentru a debloca acest profil</string>
+    <string name="no_blocked_accounts">Fără profile blocate</string>
+    <string name="liked_by">Apreciat de</string>
+    <string name="delete_this_post">Șterge această postare</string>
+    <string name="delete_post">Ștergi postarea?</string>
+    <string name="bookmarked_posts">Postări Salvate</string>
+    <string name="trending_post_description">Postările ajung în trend dacă au fost postate în intervalul de timp selectat și au multe aprecieri.</string>
+    <string name="what_makes_a_post_trend">Cum faci o postare să fie populară?</string>
 </resources>

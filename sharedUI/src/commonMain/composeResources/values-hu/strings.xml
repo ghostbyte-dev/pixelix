@@ -413,4 +413,8 @@
     <string name="add_account">Fiók hozzáadása</string>
     <string name="double_tap_to_like">Dupla koppintás a bejegyzések kedveléséhez</string>
     <string name="report_btn_title">Probléma jelentése</string>
+    <string name="pin_post">Bejegyzés kitűzése</string>
+    <string name="unpin_post">Kitűzés eltávolítása</string>
+    <string name="unpinning">kitűzés eltávolítása…</string>
+    <string name="pinning">kitűzés…</string>
 </resources>

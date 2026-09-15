@@ -389,4 +389,8 @@
     <string name="feedback_btn_title">Sdílet zpětnou vazbu</string>
     <string name="feedback_title">Sdílet zpětnou vazbu</string>
     <string name="add_account">Přidat účet</string>
+    <string name="pinning">připínání...</string>
+    <string name="unpinning">odepínání...</string>
+    <string name="unpin_post">Odepnout příspěvek</string>
+    <string name="pin_post">Připnout příspěvek</string>
 </resources>

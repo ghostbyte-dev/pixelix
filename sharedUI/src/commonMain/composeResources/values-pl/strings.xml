@@ -447,4 +447,8 @@
     <string name="translations_btn_title">Pomóż przetłumaczyć</string>
     <string name="translations_btn_desc">Podziel się swoimi umiejętnościami językowymi ze społecznością</string>
     <string name="add_account">Dodaj konto</string>
+    <string name="pin_post">Przypnij wpis</string>
+    <string name="unpin_post">Odepnij wpis</string>
+    <string name="unpinning">odpinanie…</string>
+    <string name="pinning">przypinanie…</string>
 </resources>

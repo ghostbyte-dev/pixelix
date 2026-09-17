@@ -5,12 +5,15 @@ info:
 
 http:
   method: GET
-  url: "{{baseUrl}}/api/v1/users/:userName/statuses"
+  url: "{{baseUrl}}/api/v1/users/:userName/statuses?onlyPinned=true"
   params:
     - name: maxId
       value: ""
       type: query
       disabled: true
+    - name: onlyPinned
+      value: "true"
+      type: query
     - name: userName
       value: hiebeler05
       type: path

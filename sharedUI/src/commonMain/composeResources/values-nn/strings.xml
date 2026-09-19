@@ -336,32 +336,32 @@
     <string name="default_license">Standard lisens</string>
     <string name="posts_title">Innlegg</string>
     <plurals name="seconds_ago">
-        <item quantity="one">%1$d sekund sia</item>
-        <item quantity="other">%1$d sekund sia</item>
+        <item quantity="one">for %1$d sekund sia</item>
+        <item quantity="other">for %1$d sekund sia</item>
     </plurals>
     <plurals name="minutes_ago">
-        <item quantity="one">%1$d minutt sia</item>
-        <item quantity="other">%1$d minutt sia</item>
+        <item quantity="one">for %1$d minutt sia</item>
+        <item quantity="other">for %1$d minutt sia</item>
     </plurals>
     <plurals name="hours_ago">
-        <item quantity="one">%1$d time sia</item>
-        <item quantity="other">%1$d timar sia</item>
+        <item quantity="one">for %1$d time sia</item>
+        <item quantity="other">for %1$d timar sia</item>
     </plurals>
     <plurals name="days_ago">
-        <item quantity="one">%1$d dag sia</item>
-        <item quantity="other">%1$d dagar sia</item>
+        <item quantity="one">for %1$d dag sia</item>
+        <item quantity="other">for %1$d dagar sia</item>
     </plurals>
     <plurals name="weeks_ago">
-        <item quantity="one">%1$d veke sia</item>
-        <item quantity="other">%1$d veker sia</item>
+        <item quantity="one">for %1$d veke sia</item>
+        <item quantity="other">for %1$d veker sia</item>
     </plurals>
     <plurals name="months_ago">
-        <item quantity="one">%1$d månad sia</item>
-        <item quantity="other">%1$d månadar sia</item>
+        <item quantity="one">for %1$d månad sia</item>
+        <item quantity="other">for %1$d månadar sia</item>
     </plurals>
     <plurals name="years_ago">
-        <item quantity="one">%1$d år sia</item>
-        <item quantity="other">%1$d år sia</item>
+        <item quantity="one">for %1$d år sia</item>
+        <item quantity="other">for %1$d år sia</item>
     </plurals>
     <string name="fields">Felt</string>
     <string name="add_field">Legg til felt</string>

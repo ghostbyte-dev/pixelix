@@ -51,7 +51,7 @@ class HashtagMentionsSuggestionsManager @Inject constructor(
             "tags"
         }
         val searchShortened = searchString.substring(1)
-        searchJob = exploreService.search(searchShortened, limit = 10).onEach { result ->
+        searchJob = exploreService.search(searchShortened, limit = 10, includePosts = false).onEach { result ->
             _suggestionsState.update { currentState ->
                 when (result) {
                     is Resource.Success -> {

@@ -6,6 +6,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -56,8 +57,6 @@ import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.unit.dp
-import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
-import co.touchlab.kermit.Logger
 import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.di.LocalAppComponent
 import com.daniebeler.pfpixelix.di.injectViewModel
@@ -66,10 +65,14 @@ import com.daniebeler.pfpixelix.domain.model.SavedSearchItem
 import com.daniebeler.pfpixelix.domain.model.SavedSearchType
 import com.daniebeler.pfpixelix.domain.model.toDomain
 import com.daniebeler.pfpixelix.ui.composables.custom_account.AccountListItem
-import com.daniebeler.pfpixelix.ui.composables.widgets.CustomHashtag
 import com.daniebeler.pfpixelix.ui.composables.custom_account.CustomAccount
 import com.daniebeler.pfpixelix.ui.composables.explore.trending.TrendingComposable
+import com.daniebeler.pfpixelix.ui.composables.profile.ViewEnum
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
+import com.daniebeler.pfpixelix.ui.composables.widgets.CustomHashtag
+import com.daniebeler.pfpixelix.ui.composables.widgets.CustomPullToRefreshBox
+import com.daniebeler.pfpixelix.ui.composables.widgets.InfinitePostsList
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
@@ -83,8 +86,8 @@ import pixelix.app.generated.resources.default_avatar
 import pixelix.app.generated.resources.explore
 import pixelix.app.generated.resources.hash
 import pixelix.app.generated.resources.hashtags
+import pixelix.app.generated.resources.posts_title
 import pixelix.app.generated.resources.search
-import pixelix.app.generated.resources.trash
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -115,10 +118,13 @@ fun ExploreComposable(
             inputField = {
                 SearchBarDefaults.InputField(
                     query = textFieldState.text.toString(),
-                    onQueryChange = { textFieldState.setTextAndPlaceCursorAtEnd(it) },
+                    onQueryChange = {
+                        textFieldState.setTextAndPlaceCursorAtEnd(it)
+                        viewModel.textInputChange(textFieldState.text.toString())
+                    },
                     onSearch = {
                         expanded = false
-                        viewModel.onSearch(it)
+                        viewModel.onSearch(it, isRefreshing = false)
                         viewModel.saveSearch(it)
                     },
                     expanded = expanded,
@@ -150,7 +156,7 @@ fun ExploreComposable(
                                 contentDescription = "clear search query",
                                 modifier = Modifier.clickable {
                                     textFieldState.clearText()
-                                    viewModel.searchState = SearchState()
+                                    viewModel.clear()
                                 })
                         }
                     })
@@ -158,11 +164,6 @@ fun ExploreComposable(
             expanded = expanded,
             onExpandedChange = { expanded = it },
         ) {
-
-            LaunchedEffect(textFieldState.text) {
-                viewModel.textInputChange(textFieldState.text.toString())
-            }
-
             if (textFieldState.text.isBlank() && viewModel.savedSearches.isNotEmpty()) {
                 LazyColumn(
                     modifier = Modifier.imePadding(),
@@ -181,7 +182,7 @@ fun ExploreComposable(
                             PastSearchItem(item = it, navController, { text ->
                                 expanded = false
                                 textFieldState.setTextAndPlaceCursorAtEnd(text)
-                                viewModel.onSearch(text)
+                                viewModel.onSearch(text, isRefreshing = false)
                             }, { viewModel.deleteSavedSearch(it) })
                         }
                     }
@@ -219,12 +220,17 @@ fun ExploreComposable(
             Modifier.windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Top))
                 .semantics { traversalIndex = 1f }.padding(top = 80.dp),
         ) {
-            if (textFieldState.text.isNotBlank() && viewModel.searchState.searchResult != null) {
+            if (textFieldState.text.isNotBlank() && (viewModel.searchState.searchResult != null || viewModel.searchState.isLoading)) {
                 SearchResultComposable(
                     searchState = viewModel.searchState,
                     saveAccount = { username, account -> viewModel.saveAccount(username, account) },
                     saveHashtag = { hashtag -> viewModel.saveHashtag(hashtag) },
-                    navController = navController
+                    navController = navController,
+                    onRefresh = {
+                        viewModel.onSearch(textFieldState.text.toString(), isRefreshing = true)
+                    },
+                    view = viewModel.view,
+                    changeView = { viewModel.changeView(it) }
                 )
             } else {
                 TrendingComposable(
@@ -244,9 +250,12 @@ private fun SearchResultComposable(
     searchState: SearchState,
     saveAccount: (String, Account) -> Unit,
     saveHashtag: (String) -> Unit,
-    navController: AppNavigator
+    view: ViewEnum,
+    changeView: (view: ViewEnum) -> Unit,
+    navController: AppNavigator,
+    onRefresh: () -> Unit
 ) {
-    val pagerState = rememberPagerState(initialPage = 0, pageCount = { 2 })
+    val pagerState = rememberPagerState(initialPage = 0, pageCount = { 3 })
     val scope = rememberCoroutineScope()
     Column {
         PrimaryTabRow(selectedTabIndex = pagerState.currentPage) {
@@ -272,6 +281,17 @@ private fun SearchResultComposable(
                         pagerState.animateScrollToPage(1)
                     }
                 })
+
+            Tab(
+                text = { Text(stringResource(Res.string.posts_title)) },
+                selected = pagerState.currentPage == 2,
+                selectedContentColor = MaterialTheme.colorScheme.primary,
+                unselectedContentColor = MaterialTheme.colorScheme.onBackground,
+                onClick = {
+                    scope.launch {
+                        pagerState.animateScrollToPage(2)
+                    }
+                })
         }
         HorizontalPager(
             state = pagerState,
@@ -279,7 +299,15 @@ private fun SearchResultComposable(
             modifier = Modifier.weight(1f).background(MaterialTheme.colorScheme.background)
         ) { tabIndex ->
             when (tabIndex) {
-                0 -> Box(modifier = Modifier.fillMaxSize()) {
+                0 -> CustomPullToRefreshBox(
+                    isRefreshing = searchState.isRefreshing,
+                    onRefresh = onRefresh,
+                    animatedBox = true,
+                    enabled = true
+                ) {
+                    if (searchState.isLoading) {
+                        LoadingComposable()
+                    }
                     LazyColumn(contentPadding = PaddingValues(8.dp), content = {
                         if (searchState.searchResult != null) {
                             itemsIndexed(searchState.searchResult.accounts) { index, account ->
@@ -295,19 +323,48 @@ private fun SearchResultComposable(
                     })
                 }
 
-                1 -> Box(modifier = Modifier.fillMaxSize()) {
-                    LazyColumn(content = {
-                        if (searchState.searchResult != null) {
-                            items(searchState.searchResult.tags) {
-                                CustomHashtag(
-                                    hashtag = it,
-                                    onClick = { saveHashtag(it.name) },
-                                    navController = navController
-                                )
-                            }
+                1 ->
+                    CustomPullToRefreshBox(
+                        isRefreshing = searchState.isRefreshing,
+                        onRefresh = onRefresh,
+                        animatedBox = true,
+                        enabled = true
+                    ) {
+                        if (searchState.isLoading) {
+                            LoadingComposable()
                         }
-                    })
-                }
+                        LazyColumn(content = {
+                            if (searchState.searchResult != null) {
+                                items(searchState.searchResult.tags) {
+                                    CustomHashtag(
+                                        hashtag = it,
+                                        onClick = { saveHashtag(it.name) },
+                                        navController = navController
+                                    )
+                                }
+                            }
+                        })
+                    }
+
+                2 ->
+                    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+                            InfinitePostsList(
+                                items = searchState.searchResult?.posts ?: emptyList(),
+                                isLoading = searchState.isLoading,
+                                isRefreshing = searchState.isRefreshing,
+                                error = searchState.error,
+                                endReached = true,
+                                view = view,
+                                changeView = changeView,
+                                isFirstItemLarge = true,
+                                itemGetsDeleted = { },
+                                getItemsPaginated = { },
+                                onRefresh = onRefresh,
+                                navController = navController,
+                                postGetsUpdated = { },
+                                contentPaddingBottom = 80.dp
+                            )
+                    }
             }
         }
     }
@@ -321,23 +378,24 @@ private fun PastSearchItem(
     deleteSavedSearch: () -> Unit
 ) {
     Row(
-        modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp).fillMaxWidth().clickable {
-            when (item.savedSearchType) {
-                SavedSearchType.Account -> navController.navigate(
-                    Destination.Profile(
-                        item.account?.id, item.account?.username
+        modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp).fillMaxWidth()
+            .clickable {
+                when (item.savedSearchType) {
+                    SavedSearchType.Account -> navController.navigate(
+                        Destination.Profile(
+                            item.account?.id, item.account?.username
+                        )
                     )
-                )
 
-                SavedSearchType.Hashtag -> navController.navigate(
-                    Destination.HashtagTimeline(
-                        item.value
+                    SavedSearchType.Hashtag -> navController.navigate(
+                        Destination.HashtagTimeline(
+                            item.value
+                        )
                     )
-                )
 
-                SavedSearchType.Search -> setSearchText(item.value)
-            }
-        }, verticalAlignment = Alignment.CenterVertically
+                    SavedSearchType.Search -> setSearchText(item.value)
+                }
+            }, verticalAlignment = Alignment.CenterVertically
     ) {
         if (item.savedSearchType == SavedSearchType.Account) {
             AsyncImage(

@@ -32,14 +32,14 @@ class ConversationsViewModel @Inject constructor(
         dmService.getConversations().onEach { result ->
             conversationsState = when (result) {
                 is Resource.Success -> {
-                    val endReached = (result.data?.size ?: 0) == 0
+                    val endReached = (result.data.size) == 0
                     ConversationsState(
-                        conversations = result.data ?: emptyList(), endReached = endReached
+                        conversations = result.data, endReached = endReached
                     )
                 }
 
                 is Resource.Error -> {
-                    ConversationsState(error = result.message ?: "An unexpected error occurred")
+                    ConversationsState(error = result.message)
                 }
 
                 is Resource.Loading -> {
@@ -56,14 +56,14 @@ class ConversationsViewModel @Inject constructor(
     fun changeNewConversationUsername(newUsername: TextFieldValue) {
         newConversationSelectedAccount = null
         newConversationUsername = newUsername
-        exploreService.search(newUsername.text, "accounts").onEach { result ->
+        exploreService.search(newUsername.text, "accounts", includePosts = false).onEach { result ->
             newConversationState = when (result) {
                 is Resource.Success -> {
                     NewConversationState(suggestions = result.data.accounts)
                 }
 
                 is Resource.Error -> {
-                    NewConversationState(error = result.message ?: "An unexpected error occurred")
+                    NewConversationState(error = result.message)
                 }
 
                 is Resource.Loading -> {

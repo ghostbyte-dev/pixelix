@@ -5,15 +5,15 @@ meta {
 }
 
 get {
-  url: {{baseUrl}}/api/v2/search?q=https://vernissage.photos/@hiebeler05/7683047531575511576&_pe=1&resolve=true
+  url: {{baseUrl}}/api/v2/search?q=photo&_pe=1&resolve=true&type=statuses
   body: none
   auth: inherit
 }
 
 params:query {
-  q: https://vernissage.photos/@hiebeler05/7683047531575511576
+  q: photo
   _pe: 1
   resolve: true
-  ~type: 
+  type: statuses
   ~limit: 5
 }

@@ -258,7 +258,7 @@ interface PixelfedApi {
     suspend fun getPostsOfCollection(
         @Path("collectionid") collectionId: String,
         @Query("page") page: Int,
-        ): List<PixelfedPostDto>
+    ): List<PixelfedPostDto>
 
     @POST("api/v1.1/collections/remove")
     suspend fun removePostOfCollection(
@@ -340,7 +340,10 @@ interface PixelfedApi {
 
     @GET("api/v2/search?_pe=1")
     suspend fun getSearch(
-        @Query("q") searchText: String, @Query("type") type: String?, @Query("limit") limit: Int
+        @Query("q") searchText: String,
+        @Query("type") type: String?,
+        @Query("limit") limit: Int,
+        @Query("resolve") resolve: Boolean = true
     ): PixelfedSearchDto
 
     @GET("api/v1.1/compose/search/location?limit=5")

@@ -28,7 +28,7 @@ interface ExploreService {
     fun getTrendingAccounts(range: TrendingRange, maxId: String? = null): Flow<Resource<PaginatedResponse<Account>>>
     fun getTrendingPosts(range: TrendingRange, maxId: String? = null): Flow<Resource<PaginatedResponse<Post>>>
 
-    fun search(searchText: String, type: String? = null, limit: Int = 5): Flow<Resource<Search>>
+    fun search(searchText: String, type: String? = null, limit: Int = 5, includePosts: Boolean): Flow<Resource<Search>>
 
     fun searchLocations(searchText: String, countryCode: String?): Flow<Resource<List<Location>>>
     fun getAllCountries(): Flow<Resource<List<Country>>>
@@ -87,8 +87,9 @@ class ExploreServiceDelegate(
     override fun search(
         searchText: String,
         type: String?,
-        limit: Int
-    ): Flow<Resource<Search>> = current.search(searchText, type, limit)
+        limit: Int,
+        includePosts: Boolean
+    ): Flow<Resource<Search>> = current.search(searchText, type, limit, includePosts)
 
     override fun searchLocations(searchText: String, countryCode: String?): Flow<Resource<List<Location>>> = current.searchLocations(searchText, countryCode)
 

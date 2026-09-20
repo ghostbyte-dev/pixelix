@@ -156,18 +156,13 @@ fun HashtagsMentionsTextView(
                                             ?: mentions.find { it.username == value }
 
                                         if (account != null) {
-                                            scope.launch {
-                                                val myAccountId = viewModel.getMyAccountId()
-                                                if (account.id == myAccountId) {
-                                                    navController.navigate(Destination.OwnProfile)
-                                                } else {
-                                                    navController.navigate(
-                                                        Destination.Profile(
-                                                            account.id, account.username
-                                                        )
-                                                    )
-                                                }
-                                            }
+                                            navController.navigate(
+                                                Destination.Profile(
+                                                    account.id, account.username
+                                                )
+                                            )
+                                        } else {
+                                            navController.navigate(Destination.ProfileByUsername(value))
                                         }
                                     }
                                 }

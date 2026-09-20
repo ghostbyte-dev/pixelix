@@ -129,14 +129,6 @@ fun OtherProfileComposable(
     LaunchedEffect(userId, username) {
         viewModel.loadData(userId, username, false)
     }
-    LaunchedEffect(viewModel, navController) {
-        viewModel.navigationEffects.collect { effect ->
-            when (effect) {
-                OtherProfileNavigationEffect.OpenOwnProfile ->
-                    navController.clearAndNavigate(Destination.HomeTabOwnProfile)
-            }
-        }
-    }
 
     Scaffold(
         contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top),

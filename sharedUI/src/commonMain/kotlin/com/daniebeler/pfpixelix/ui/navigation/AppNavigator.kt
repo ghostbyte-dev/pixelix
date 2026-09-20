@@ -1,11 +1,15 @@
 package com.daniebeler.pfpixelix.ui.navigation
 
+import co.touchlab.kermit.Logger
+import com.daniebeler.pfpixelix.domain.service.general.Session
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 
 class AppNavigator internal constructor(
     private val state: AppNavigationState,
     private val exitApp: () -> Unit,
+    private val activeUser: String?,
+    private val activeUserName: String?
 ) {
     private val _reselectEvents = MutableSharedFlow<Destination>(extraBufferCapacity = 1)
     val reselectEvents = _reselectEvents.asSharedFlow()
@@ -16,16 +20,35 @@ class AppNavigator internal constructor(
         options: NavigationOptions.() -> Unit = {},
     ) {
         val navigationOptions = NavigationOptions().apply(options)
-        if (destination in state.backStacks) {
-            state.currentTopLevel = destination
+        val resolved = when (destination) {
+            is Destination.Profile if ((destination.userId != null &&
+                    destination.userId == activeUser) ||
+                    (destination.username != null &&
+                            destination.username == activeUserName))
+                -> {
+                Destination.HomeTabOwnProfile
+            }
+
+            is Destination.ProfileByUsername if destination.userName == activeUserName
+                -> {
+                Destination.HomeTabOwnProfile
+            }
+
+            else -> {
+                destination
+            }
+        }
+
+        if (resolved in state.backStacks) {
+            state.currentTopLevel = resolved
             if (!navigationOptions.restoreState) {
                 state.currentBackStack.apply {
                     clear()
-                    add(destination)
+                    add(resolved)
                 }
             }
-        } else if (!navigationOptions.launchSingleTop || state.currentDestination != destination) {
-            state.currentBackStack.add(destination)
+        } else if (!navigationOptions.launchSingleTop || state.currentDestination != resolved) {
+            state.currentBackStack.add(resolved)
         }
     }
 

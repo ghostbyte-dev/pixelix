@@ -34,6 +34,7 @@ class VernissageAuthService(
     private val platform: Platform
 ) : AuthService {
     override val activeUser: Flow<String?> = session.credentials.map { it?.accountId }
+    override val activeUserName: Flow<String?> = session.credentials.map { it?.acct }
 
     override suspend fun auth(host: String) {
         val serverUrl = getServerUrl(host)
@@ -98,6 +99,7 @@ class VernissageAuthService(
         val newCred = Credentials(
             accountId = requireNotNull(account.id),
             username = requireNotNull(account.username),
+            acct = requireNotNull(account.acct),
             displayName = account.displayname ?: account.username,
             avatar = account.avatar ?: "",
             serverUrl = serverUrl.toString(),

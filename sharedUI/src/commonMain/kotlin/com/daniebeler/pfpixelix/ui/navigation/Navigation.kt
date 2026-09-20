@@ -60,8 +60,6 @@ sealed interface Destination : NavKey {
     data class FilmTimeline(val film: String) : Destination
 
 
-
-
     @Serializable
     data class Post(
         val id: String, val refresh: Boolean = false, val openReplies: Boolean = false
@@ -159,7 +157,7 @@ sealed interface Destination : NavKey {
 internal fun appEntryProvider(
     navigator: AppNavigator,
     openPreferencesDrawer: () -> Unit,
-    exitApp: () -> Unit,
+    exitApp: () -> Unit
 ) = entryProvider<NavKey> {
     entry<Destination.FirstLogin> {
         Dialog(onDismissRequest = exitApp, properties = EdgeToEdgeDialogProperties()) {

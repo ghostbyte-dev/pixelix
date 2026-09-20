@@ -61,9 +61,9 @@
     <string name="followed_by">Følgd av</string>
     <string name="other">andre</string>
     <string name="others">andre</string>
-    <string name="yearly">årleg</string>
-    <string name="monthly">månadleg</string>
-    <string name="daily">dagleg</string>
+    <string name="yearly">Årleg</string>
+    <string name="monthly">Månadleg</string>
+    <string name="daily">Dagleg</string>
     <string name="i_don_t_have_an_account">Eg har ikkje ein konto</string>
     <string name="server_url">Nettadressa til tenaren</string>
     <string name="are_you_sure_you_want_to_log_out">Er du sikker på at du vil logge ut?</string>
@@ -336,32 +336,32 @@
     <string name="default_license">Standard lisens</string>
     <string name="posts_title">Innlegg</string>
     <plurals name="seconds_ago">
-        <item quantity="one">%1$d sekund sia</item>
-        <item quantity="other">%1$d sekund sia</item>
+        <item quantity="one">for %1$d sekund sia</item>
+        <item quantity="other">for %1$d sekund sia</item>
     </plurals>
     <plurals name="minutes_ago">
-        <item quantity="one">%1$d minutt sia</item>
-        <item quantity="other">%1$d minutt sia</item>
+        <item quantity="one">for %1$d minutt sia</item>
+        <item quantity="other">for %1$d minutt sia</item>
     </plurals>
     <plurals name="hours_ago">
-        <item quantity="one">%1$d time sia</item>
-        <item quantity="other">%1$d timar sia</item>
+        <item quantity="one">for %1$d time sia</item>
+        <item quantity="other">for %1$d timar sia</item>
     </plurals>
     <plurals name="days_ago">
-        <item quantity="one">%1$d dag sia</item>
-        <item quantity="other">%1$d dagar sia</item>
+        <item quantity="one">for %1$d dag sia</item>
+        <item quantity="other">for %1$d dagar sia</item>
     </plurals>
     <plurals name="weeks_ago">
-        <item quantity="one">%1$d veke sia</item>
-        <item quantity="other">%1$d veker sia</item>
+        <item quantity="one">for %1$d veke sia</item>
+        <item quantity="other">for %1$d veker sia</item>
     </plurals>
     <plurals name="months_ago">
-        <item quantity="one">%1$d månad sia</item>
-        <item quantity="other">%1$d månadar sia</item>
+        <item quantity="one">for %1$d månad sia</item>
+        <item quantity="other">for %1$d månadar sia</item>
     </plurals>
     <plurals name="years_ago">
-        <item quantity="one">%1$d år sia</item>
-        <item quantity="other">%1$d år sia</item>
+        <item quantity="one">for %1$d år sia</item>
+        <item quantity="other">for %1$d år sia</item>
     </plurals>
     <string name="fields">Felt</string>
     <string name="add_field">Legg til felt</string>
@@ -378,4 +378,38 @@
     <string name="trending_accounts">Dagsaktuelle profilar</string>
     <string name="trending_hashtags">Dagsaktuelle emneknaggar</string>
     <string name="trending_posts">Dagsaktuelle innlegg</string>
+    <string name="double_tap_to_like">Dobbeltklikk for å like eit innlegg</string>
+    <string name="default_timeline_tab">Standard-fane for tidslinja</string>
+    <string name="editors_choice_accounts">Redaksjonens utvalde: kontoar</string>
+    <string name="editors_choice_accounts_explained">Ei handplukka samling av brukarar på denne tenaren.</string>
+    <string name="editors_choice_posts">Redaksjonens utvalde: innlegg</string>
+    <string name="editors_choice_posts_explained">Ei handplukka samling av innlegg frå denne tenaren.</string>
+    <string name="categories">Kategoriar</string>
+    <string name="cameras">Kamera</string>
+    <string name="lenses">Objektiv</string>
+    <string name="films">Filmar</string>
+    <string name="select_images">Vel bilete</string>
+    <string name="select_images_description">Vel eitt eller flere bilde for å legge dei til innlegget</string>
+    <string name="country">Land</string>
+    <string name="loading_countries">Hentar land …</string>
+    <string name="city">By</string>
+    <string name="loading_cities">Hentar byar …</string>
+    <string name="support_headline">Bidra til å gjerne Pixelix betre</string>
+    <string name="sponsor_title">Pengestøtte</string>
+    <string name="sponsor_desc">Vi bygger og vedlikeheld Pixelix på fritida vår. Om du likar å bruke det, kan du bidra til å dekke kostnadene for utvikling og infrastruktur.</string>
+    <string name="sponsor_btn_title">Støtt</string>
+    <string name="sponsor_btn_desc">Støtt utviklarane med ein kaffi</string>
+    <string name="report_title">Rapporter feil</string>
+    <string name="report_desc">Har du funne noko som ikkje fungerer som det skal? Fortel oss gjerne, så vi kan fikse det. Kvar rapport bidreg til å forbetre Pixelix for alle.</string>
+    <string name="report_btn_title">Rapporter ein feil</string>
+    <string name="report_btn_desc">Vi set stor pris på hjelp til å finne feil</string>
+    <string name="feedback_title">Del tilbakemeldingar</string>
+    <string name="feedback_desc">Ta del i ei kort spørjeundersøking og del idéar, synspunkt og føreslag til Pixelix sine design og funksjonar.</string>
+    <string name="feedback_btn_title">Del tilbakemeldingar</string>
+    <string name="feedback_btn_desc">Dine idéar bidreg direkte til å forbetre applikasjonen</string>
+    <string name="translations_title">Omsettingar</string>
+    <string name="translations_desc">Vil du sjå Pixelix på ditt eige språk? Vi er avhengige av det flotte fellesskapet vårt for å gjerne applikasjonen tilgjengeleg for alle rundt om i verda.</string>
+    <string name="translations_btn_title">Hjelp til med å omsette Pixelix</string>
+    <string name="translations_btn_desc">Del språkferdigheitene dine med fellesskapet</string>
+    <string name="add_account">Legg til konto</string>
 </resources>

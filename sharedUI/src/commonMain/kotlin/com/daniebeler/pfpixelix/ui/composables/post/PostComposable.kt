@@ -67,8 +67,6 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.zIndex
-import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
-import co.touchlab.kermit.Logger
 import coil3.compose.AsyncImage
 import coil3.compose.AsyncImagePainter
 import coil3.compose.LocalPlatformContext
@@ -82,6 +80,7 @@ import com.daniebeler.pfpixelix.ui.composables.hashtagMentionText.HashtagsMentio
 import com.daniebeler.pfpixelix.ui.composables.post.reply.OwnReplyState
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposableDialog
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import com.daniebeler.pfpixelix.utils.BlurHashDecoder
 import com.daniebeler.pfpixelix.utils.formatLocalized
@@ -1218,4 +1217,23 @@ fun MediaDialog(
             }
         }
     }
+}
+
+@Composable
+private fun VideoAttachment(
+    attachment: MediaAttachment,
+    viewModel: PostViewModel,
+    onReady: () -> Unit,
+    isMasonry: Boolean,
+) {
+    VideoPlayerContent(
+        id = attachment.id,
+        url = attachment.url,
+        aspectRatio = attachment.aspectRatio?.toFloat(),
+        volumeOn = viewModel.volume,
+        onToggleVolume = { viewModel.toggleVolume(!viewModel.volume) },
+        autoplay = viewModel.isAutoplayVideos,
+        onReady = onReady,
+        allowFullscreenOnClick = !isMasonry,
+    )
 }

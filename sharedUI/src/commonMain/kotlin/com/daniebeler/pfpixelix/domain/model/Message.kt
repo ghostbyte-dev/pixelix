@@ -8,5 +8,6 @@ data class Message(
     val seen: Boolean,
     val text: String = "",
     val timeAgo: String,
-    val type: String
+    val type: String,
+    val media: String?
 )

@@ -237,9 +237,7 @@ private fun LazyStaggeredGridScope.postsGridInScope(
     } else {
         items(filteredPosts, key = { it.uiKey }) { post ->
             val shape = calculateOuterGridShape(
-                filteredPosts.indexOf(post),
-                filteredPosts.size,
-                columnCount
+                filteredPosts.indexOf(post), filteredPosts.size, columnCount
             )
             CustomPost(
                 post = post,
@@ -255,12 +253,11 @@ private fun LazyStaggeredGridScope.postsGridInScope(
 
     if (endReached && filteredPosts.size > 10) {
         item(
-            key = "end_of_list_key",
-            span = StaggeredGridItemSpan.FullLine
+            key = "end_of_list_key", span = StaggeredGridItemSpan.FullLine
         ) { EndOfListComposable() }
     }
 
-    if (!isRefreshing && isLoading && filteredPosts.isNotEmpty()) {
+    if (!isRefreshing && isLoading) {
         item(key = "loading_key", span = StaggeredGridItemSpan.FullLine) {
             LoadingComposable(Modifier.fillMaxWidth().padding(vertical = 50.dp))
         }
@@ -298,17 +295,17 @@ private fun LazyStaggeredGridScope.postsListInScope(
             }
             Spacer(Modifier.height(spacedBy))
         }
+    }
 
-        if (isLoading && !isRefreshing) {
-            item(key = "loading_key", span = StaggeredGridItemSpan.FullLine) {
-                LoadingComposable(Modifier.fillMaxWidth().padding(vertical = 50.dp))
-            }
+    if (isLoading && !isRefreshing) {
+        item(key = "loading_key", span = StaggeredGridItemSpan.FullLine) {
+            LoadingComposable(Modifier.fillMaxWidth().padding(vertical = 50.dp))
         }
+    }
 
-        if (endReached && posts.size > 3) {
-            item(key = "end_of_list_key", span = StaggeredGridItemSpan.FullLine) {
-                EndOfListComposable()
-            }
+    if (endReached && posts.size > 3) {
+        item(key = "end_of_list_key", span = StaggeredGridItemSpan.FullLine) {
+            EndOfListComposable()
         }
     }
 }
@@ -322,17 +319,18 @@ private fun LazyStaggeredGridScope.postsMasonryInScope(
     navController: AppNavigator,
 ) {
 
-    if (posts.isNotEmpty()) {
+    val filteredPosts = posts.filter { it.mediaAttachments.isNotEmpty() }
+    if (filteredPosts.isNotEmpty()) {
 
-        items(items = posts, key = { it.uiKey }) { post ->
+        items(items = filteredPosts, key = { it.uiKey }) { post ->
             val zIndex = remember {
                 mutableFloatStateOf(1f)
             }
 
-            val shape = remember(posts.size) {
+            val shape = remember(filteredPosts.size) {
                 calculateOuterGridShape(
-                    index = posts.indexOf(post),
-                    totalCount = posts.size,
+                    index = filteredPosts.indexOf(post),
+                    totalCount = filteredPosts.size,
                     columnCount = columnCount
                 )
             }
@@ -345,17 +343,17 @@ private fun LazyStaggeredGridScope.postsMasonryInScope(
                 )
             }
         }
+    }
 
-        if (isLoading && !isRefreshing) {
-            item(key = "loading_list_key", span = StaggeredGridItemSpan.FullLine) {
-                LoadingComposable(Modifier.fillMaxWidth().padding(vertical = 50.dp))
-            }
+    if (isLoading && !isRefreshing) {
+        item(key = "loading_list_key", span = StaggeredGridItemSpan.FullLine) {
+            LoadingComposable(Modifier.fillMaxWidth().padding(vertical = 50.dp))
         }
+    }
 
-        if (endReached && posts.size > 3) {
-            item(key = "end_of_list_key", span = StaggeredGridItemSpan.FullLine) {
-                EndOfListComposable()
-            }
+    if (endReached && filteredPosts.size > 3) {
+        item(key = "end_of_list_key", span = StaggeredGridItemSpan.FullLine) {
+            EndOfListComposable()
         }
     }
 }
@@ -369,17 +367,18 @@ private fun LazyStaggeredGridScope.postsLargeMasonryInScope(
     navController: AppNavigator,
 ) {
 
-    if (posts.isNotEmpty()) {
+    val filteredPosts = posts.filter { it.mediaAttachments.isNotEmpty() }
+    if (filteredPosts.isNotEmpty()) {
 
-        items(posts, key = { it.uiKey }) { post ->
+        items(filteredPosts, key = { it.uiKey }) { post ->
             val zIndex = remember {
                 mutableFloatStateOf(1f)
             }
 
-            val shape = remember(posts.size) {
+            val shape = remember(filteredPosts.size) {
                 calculateOuterGridShape(
-                    index = posts.indexOf(post),
-                    totalCount = posts.size,
+                    index = filteredPosts.indexOf(post),
+                    totalCount = filteredPosts.size,
                     columnCount = columnCount
                 )
             }
@@ -392,27 +391,23 @@ private fun LazyStaggeredGridScope.postsLargeMasonryInScope(
                 )
             }
         }
-
-        if (isLoading && !isRefreshing) {
-            item(key = "loading_key", span = StaggeredGridItemSpan.FullLine) {
-                LoadingComposable(Modifier.fillMaxWidth().padding(vertical = 50.dp))
-            }
+    }
+    if (isLoading && !isRefreshing) {
+        item(key = "loading_key", span = StaggeredGridItemSpan.FullLine) {
+            LoadingComposable(Modifier.fillMaxWidth().padding(vertical = 50.dp))
         }
+    }
 
-        if (endReached && posts.size > 3) {
-            item(key = "end_of_list_key", span = StaggeredGridItemSpan.FullLine) {
-                EndOfListComposable()
-            }
+    if (endReached && filteredPosts.size > 3) {
+        item(key = "end_of_list_key", span = StaggeredGridItemSpan.FullLine) {
+            EndOfListComposable()
         }
     }
 }
 
 
 fun calculateOuterGridShape(
-    index: Int,
-    totalCount: Int,
-    columnCount: Int,
-    cornerRadius: Dp = 16.dp
+    index: Int, totalCount: Int, columnCount: Int, cornerRadius: Dp = 16.dp
 ): RoundedCornerShape {
     if (totalCount <= 1) return RoundedCornerShape(cornerRadius)
 
@@ -432,9 +427,6 @@ fun calculateOuterGridShape(
         if (isBottomRow && (column == columnCount - 1 || index == totalCount - 1)) cornerRadius else 0.dp
 
     return RoundedCornerShape(
-        topStart = topLeft,
-        topEnd = topRight,
-        bottomStart = bottomLeft,
-        bottomEnd = bottomRight
+        topStart = topLeft, topEnd = topRight, bottomStart = bottomLeft, bottomEnd = bottomRight
     )
 }

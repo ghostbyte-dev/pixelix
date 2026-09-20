@@ -5,13 +5,13 @@ info:
 
 http:
   method: GET
-  url: "{{baseUrl}}/api/v1/search?query=hiebeler05&type=users"
+  url: "{{baseUrl}}/api/v1/search?query=https://pixelix.social/p/hiebeler05/786570826587262674&type=statuses"
   params:
     - name: query
-      value: hiebeler05
+      value: https://pixelix.social/p/hiebeler05/786570826587262674
       type: query
     - name: type
-      value: users
+      value: statuses
       type: query
   auth: inherit
 
@@ -20,3 +20,4 @@ settings:
   timeout: 0
   followRedirects: true
   maxRedirects: 5
+  forwardAuthorizationHeader: true

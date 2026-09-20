@@ -6,7 +6,6 @@ import com.daniebeler.pfpixelix.domain.model.Country
 import com.daniebeler.pfpixelix.domain.model.Film
 import com.daniebeler.pfpixelix.domain.model.Lens
 import com.daniebeler.pfpixelix.domain.model.License
-import com.daniebeler.pfpixelix.domain.model.Location
 import com.daniebeler.pfpixelix.domain.model.PagePaginatedResponse
 import com.daniebeler.pfpixelix.domain.model.RelatedHashtag
 import com.daniebeler.pfpixelix.domain.model.Search
@@ -26,7 +25,6 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import me.tatarka.inject.annotations.Inject
-import kotlin.collections.emptyList
 
 @Inject
 class VernissageExploreService(
@@ -42,11 +40,17 @@ class VernissageExploreService(
             api.getTrendingPosts(range.toApiString(), maxId = maxId)
         }.filterSensitive(prefs.hideSensitiveContent)
 
-    override fun search(searchText: String, type: String?, limit: Int) = loadResource {
+    override fun search(searchText: String, type: String?, limit: Int, includePosts: Boolean) = loadResource {
         if (type == null) {
             coroutineScope {
                 val accountsDeferred = async { api.getSearch(searchText, "accounts") }
                 val hashtagsDeferred = async { api.getSearch(searchText, "hashtags") }
+                val postsDto = if (includePosts) {
+                    val postsDeferred = async { api.getSearch(searchText, "statuses") }
+                    postsDeferred.await().posts
+                } else {
+                    emptyList()
+                }
 
                 val accountsDto = accountsDeferred.await().users
                 val hashtagsDto = hashtagsDeferred.await().tags
@@ -54,7 +58,7 @@ class VernissageExploreService(
                 Search(
                     accounts = accountsDto.map { it.toDomain() },
                     tags = hashtagsDto.map { it.toDomain() },
-                    posts = emptyList()
+                    posts = postsDto.map { it.toDomain() }
                 )
             }
         } else {

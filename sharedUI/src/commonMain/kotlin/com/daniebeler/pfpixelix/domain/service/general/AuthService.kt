@@ -18,6 +18,7 @@ interface AuthService {
     }
 
     val activeUser: Flow<String?>
+    val activeUserName: Flow<String?>
 
     suspend fun auth(host: String)
 
@@ -53,6 +54,7 @@ class AuthServiceDelegate(
             else -> pixelfed
         }
     override val activeUser: Flow<String?> = current.activeUser
+    override val activeUserName: Flow<String?> = current.activeUserName
 
     override suspend fun auth(host: String) = current.auth(host)
 

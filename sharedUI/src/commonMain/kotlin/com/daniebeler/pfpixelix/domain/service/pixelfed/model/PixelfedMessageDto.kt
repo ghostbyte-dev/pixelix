@@ -13,7 +13,8 @@ data class PixelfedMessageDto(
     @SerialName("seen") val seen: Boolean,
     @SerialName("text") val text: String = "",
     @SerialName("timeAgo") val timeAgo: String,
-    @SerialName("type") val type: String
+    @SerialName("type") val type: String,
+    @SerialName("media") val media: String?
 )
 
 // --- MAPPING EXTENSIONS ---
@@ -27,7 +28,8 @@ fun PixelfedMessageDto.toDomain(): Message {
         seen = this.seen,
         text = this.text,
         timeAgo = this.timeAgo,
-        type = this.type
+        type = this.type,
+        media = this.media
     )
 }
 
@@ -40,6 +42,7 @@ fun Message.toDto(): PixelfedMessageDto {
         seen = this.seen,
         text = this.text,
         timeAgo = this.timeAgo,
-        type = this.type
+        type = this.type,
+        media = this.media
     )
 }

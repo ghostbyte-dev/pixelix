@@ -375,4 +375,5 @@
     <string name="app_customization">Personnalisation de l'app</string>
     <string name="new_post_settings">Paramètres des nouvelles publications</string>
     <string name="default_timeline_tab">Onglet de la timeline par défaut</string>
+    <string name="city">Ville</string>
 </resources>

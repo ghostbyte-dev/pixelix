@@ -135,8 +135,14 @@ class OwnProfileViewModel @Inject constructor(
         postService.getOwnPosts().onEach { result ->
             postsState = when (result) {
                 is Resource.Success -> {
+                    val newPosts = result.data.data
                     val endReached = (result.data.data.size) < PixelfedApi.PROFILE_POSTS_LIMIT
-                    PostsState(posts = result.data.data, endReached = endReached, nextId = result.data.next)
+                    val distinctList = newPosts.distinctBy { it.id }
+                    PostsState(
+                        posts = distinctList,
+                        endReached = endReached,
+                        nextId = result.data.next
+                    )
                 }
 
                 is Resource.Error -> {
@@ -144,7 +150,12 @@ class OwnProfileViewModel @Inject constructor(
                 }
 
                 is Resource.Loading -> {
-                    PostsState(isLoading = true, posts = postsState.posts, refreshing = refreshing, nextId = postsState.nextId)
+                    PostsState(
+                        isLoading = true,
+                        posts = postsState.posts,
+                        refreshing = refreshing,
+                        nextId = postsState.nextId
+                    )
                 }
             }
         }.launchIn(viewModelScope)
@@ -155,9 +166,12 @@ class OwnProfileViewModel @Inject constructor(
             postService.getOwnPosts(postsState.nextId).onEach { result ->
                 postsState = when (result) {
                     is Resource.Success -> {
+                        val newPosts = result.data.data
                         val endReached = result.data.data.size < PixelfedApi.PROFILE_POSTS_LIMIT
+                        val rawList = postsState.posts + newPosts
+                        val distinctList = rawList.distinctBy { it.id }
                         PostsState(
-                            posts = postsState.posts + (result.data.data),
+                            posts = distinctList,
                             endReached = endReached,
                             nextId = result.data.next
                         )
@@ -168,7 +182,11 @@ class OwnProfileViewModel @Inject constructor(
                     }
 
                     is Resource.Loading -> {
-                        PostsState(isLoading = true, posts = postsState.posts, nextId = postsState.nextId)
+                        PostsState(
+                            isLoading = true,
+                            posts = postsState.posts,
+                            nextId = postsState.nextId
+                        )
                     }
                 }
             }.launchIn(viewModelScope)

@@ -198,6 +198,16 @@ interface VernissageApi {
         @Path("id") userId: String
     ): VernissagePostDto
 
+    @POST("api/v1/statuses/{id}/pin")
+    suspend fun pinPost(
+        @Path("id") postId: String
+    ): VernissagePostDto
+
+    @POST("api/v1/statuses/{id}/unpin")
+    suspend fun unpinPost(
+        @Path("id") postId: String
+    ): VernissagePostDto
+
     @Headers("Content-Type: application/json")
     @POST("api/v1/statuses/{id}/reblog")
     suspend fun reblogPost(
@@ -216,7 +226,8 @@ interface VernissageApi {
     suspend fun getPostsByAccount(
         @Path("userName") userName: String,
         @Query("maxId") maxPostId: String? = null,
-        @Query("limit") limit: Int = PROFILE_POSTS_LIMIT
+        @Query("limit") limit: Int = PROFILE_POSTS_LIMIT,
+        @Query("onlyPinned") onlyPinned: Boolean = false
     ): VernissagePaginatedResponse<VernissagePostDto>
 
     @GET("api/v1/statuses/{id}/favourited")

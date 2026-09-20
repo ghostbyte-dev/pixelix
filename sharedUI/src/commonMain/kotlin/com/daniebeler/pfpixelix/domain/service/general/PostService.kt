@@ -62,7 +62,9 @@ interface PostService {
     fun getBookmarkedPosts(cursor: String? = null): Flow<Resource<PaginatedResponse<Post>>>
 
     fun reportPost(reportBody: NewReport): Flow<Resource<ReportResponse>>
+    fun pinPost(postId: String): Flow<Resource<Post>>
 
+    fun unpinPost(postId: String): Flow<Resource<Post>>
     fun getLikedBy(postId: String): Flow<Resource<PaginatedResponse<Account>>>
 
     fun Flow<Resource<PaginatedResponse<Post>>>.filterSensitive(hideSensitiveContent: Boolean) =
@@ -213,6 +215,10 @@ class PostServiceDelegate(
 
     override fun reportPost(reportBody: NewReport): Flow<Resource<ReportResponse>> =
         current.reportPost(reportBody)
+
+    override fun pinPost(postId: String): Flow<Resource<Post>> = current.pinPost(postId)
+
+    override fun unpinPost(postId: String): Flow<Resource<Post>> = current.unpinPost(postId)
 
     override fun getLikedBy(postId: String): Flow<Resource<PaginatedResponse<Account>>> = current.getLikedBy(postId)
 }

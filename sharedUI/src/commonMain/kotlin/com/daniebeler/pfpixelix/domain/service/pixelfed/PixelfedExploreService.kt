@@ -45,7 +45,7 @@ class PixelfedExploreService(
             }
         }.filterSensitive(prefs.hideSensitiveContent)
 
-    override fun search(searchText: String, type: String?, limit: Int) = loadResource {
+    override fun search(searchText: String, type: String?, limit: Int, includePosts: Boolean) = loadResource {
         api.getSearch(searchText, type, limit).toDomain()
     }
 

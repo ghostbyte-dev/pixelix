@@ -47,7 +47,6 @@ class OtherProfileViewModel(
     private val platform: Platform,
     private val prefs: UserPreferences,
     private val collectionService: CollectionService,
-    private val authService: AuthService,
     private val session: Session
 ) : ViewModel() {
     val capabilities = session.capabilities
@@ -67,9 +66,6 @@ class OtherProfileViewModel(
     var postsLabel by mutableStateOf("")
     var followerLabel by mutableStateOf("")
     var followingLabel by mutableStateOf("")
-
-    private val navigationEffectChannel = Channel<OtherProfileNavigationEffect>(Channel.BUFFERED)
-    val navigationEffects = navigationEffectChannel.receiveAsFlow()
 
     val mutedAccount: MutedAccount?
         get() {
@@ -100,15 +96,6 @@ class OtherProfileViewModel(
         }
         if (userId == null) {
             loadDataByUsername(username, false)
-            return
-        }
-        val credentials = authService.getCurrentSession()
-
-        val myAccountId = credentials?.accountId
-        val myUsername = credentials?.username
-
-        if (userId == myAccountId || userId == myUsername) {
-            navigationEffectChannel.trySend(OtherProfileNavigationEffect.OpenOwnProfile)
             return
         }
 
@@ -151,11 +138,6 @@ class OtherProfileViewModel(
     }
 
     fun loadDataByUsername(username: String, refreshing: Boolean) {
-        val myUsername = authService.getCurrentSession()!!.username
-        if (username == myUsername) {
-            navigationEffectChannel.trySend(OtherProfileNavigationEffect.OpenOwnProfile)
-            return
-        }
         getAccountByUsername(username, refreshing)
     }
 

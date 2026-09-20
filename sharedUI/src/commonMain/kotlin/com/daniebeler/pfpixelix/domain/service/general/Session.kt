@@ -1,5 +1,6 @@
 package com.daniebeler.pfpixelix.domain.service.general
 
+import co.touchlab.kermit.Logger
 import com.daniebeler.pfpixelix.di.AppSingleton
 import com.daniebeler.pfpixelix.domain.model.Credentials
 import com.daniebeler.pfpixelix.domain.service.capabilities.Capabilities
@@ -30,6 +31,9 @@ class Session {
 
     fun setCredentials(credentials: Credentials?) {
         credentialsState.value = credentials
+        Logger.d(tag="navigate") {
+            credentials.toString()
+        }
         if (credentials != null) {
             setBackendType(credentials.backendType)
         }

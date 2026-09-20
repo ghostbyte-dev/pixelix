@@ -52,7 +52,7 @@ class PixelfedPostService(
     private fun getPostsByAccountId(
         accountId: String, maxPostId: String?, limit: Int
     ) = loadPaginatedListResources<Post> {
-        api.getPostsByAccountId(accountId, maxPostId, limit).map { it.toDomain() }
+        api.getPostsByAccountId(accountId, maxPostId, limit, maxPostId == null).map { it.toDomain() }
     }
 
     override fun getLikedPosts(maxId: String?) = flow {
@@ -137,6 +137,14 @@ class PixelfedPostService(
 
     override fun reportPost(reportBody: NewReport) = loadResource {
         api.reportPost(json.encodeToString(reportBody)).toDomain()
+    }
+
+    override fun pinPost(postId: String): Flow<Resource<Post>> = loadResource {
+        api.pinPost(postId).toDomain()
+    }
+
+    override fun unpinPost(postId: String): Flow<Resource<Post>> = loadResource {
+        api.unpinPost(postId).toDomain()
     }
 
     override fun getLikedBy(postId: String) =

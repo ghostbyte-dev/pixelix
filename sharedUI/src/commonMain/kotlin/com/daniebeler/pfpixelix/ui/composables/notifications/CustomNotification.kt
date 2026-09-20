@@ -239,30 +239,36 @@ fun CustomNotification(
                 })
         },
         trailingContent = {
-            val doesMediaAttachmentExsist = (notification.post?.mediaAttachments?.size ?: 0) > 0
-            if (showImage && (doesMediaAttachmentExsist || (viewModel.ancestor != null && viewModel.ancestor!!.mediaAttachments.isNotEmpty()))) {
-                val previewUrl = if (doesMediaAttachmentExsist) {
-                    notification.post?.mediaAttachments?.get(0)?.previewUrl ?: notification.post?.mediaAttachments?.get(0)?.url
+            val notificationAttachments = notification.post?.mediaAttachments.orEmpty()
+            val ancestorAttachments = viewModel.ancestor?.mediaAttachments.orEmpty()
+
+            val doesMediaAttachmentExist = notificationAttachments.isNotEmpty()
+            val doesAncestorAttachmentExist = ancestorAttachments.isNotEmpty()
+            if (showImage && (doesMediaAttachmentExist || doesAncestorAttachmentExist)) {
+                val previewUrl = if (doesMediaAttachmentExist) {
+                    notificationAttachments.firstOrNull()?.let { it.previewUrl ?: it.url }
                 } else {
-                    viewModel.ancestor?.mediaAttachments?.get(0)?.previewUrl ?: notification.post?.mediaAttachments?.get(0)?.url
+                    ancestorAttachments.firstOrNull()?.let { it.previewUrl ?: it.url }
                 }
-                Spacer(modifier = Modifier.width(10.dp))
-                AsyncImage(
-                    model = previewUrl,
-                    contentDescription = "",
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.height(36.dp).aspectRatio(1f).clip(RoundedCornerShape(4.dp))
-                        .clickable {
-                            navController.navigate(
-                                Destination.Post(
-                                    id = if (doesMediaAttachmentExsist) {
-                                        notification.post!!.id
-                                    } else {
-                                        viewModel.ancestor!!.id
-                                    }, openReplies = !doesMediaAttachmentExsist
+                if (previewUrl != null) {
+                    Spacer(modifier = Modifier.width(10.dp))
+                    AsyncImage(
+                        model = previewUrl,
+                        contentDescription = "",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.height(36.dp).aspectRatio(1f).clip(RoundedCornerShape(4.dp))
+                            .clickable {
+                                navController.navigate(
+                                    Destination.Post(
+                                        id = if (doesMediaAttachmentExist) {
+                                            notification.post!!.id
+                                        } else {
+                                            viewModel.ancestor!!.id
+                                        }, openReplies = !doesMediaAttachmentExist
+                                    )
                                 )
-                            )
-                        })
+                            })
+                }
             }
         },
         modifier = Modifier.fillMaxWidth().padding(vertical = 1.dp),

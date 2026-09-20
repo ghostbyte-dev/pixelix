@@ -16,6 +16,8 @@ import com.daniebeler.pfpixelix.domain.service.utils.loadResource
 import com.daniebeler.pfpixelix.domain.service.utils.loadVernissagePaginatedListResources
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.VernissageNewReplyDto
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.toDomain
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.serialization.json.Json
@@ -50,7 +52,21 @@ class VernissagePostService(
     private fun getPostsByAccountId(
         identifier: String, maxPostId: String?, limit: Int
     ) = loadVernissagePaginatedListResources {
-        api.getPostsByAccount(identifier, maxPostId, limit)
+        if (maxPostId == null) {
+
+            coroutineScope {
+                val onlyPinnedDeferred = async { api.getPostsByAccount(identifier, null, limit, true) }
+                val notPinnedDeferred = async { api.getPostsByAccount(identifier, null, limit, false) }
+
+                val onlyPinned = onlyPinnedDeferred.await()
+                val notPinned = notPinnedDeferred.await()
+
+                val allPosts = notPinned.copy(data = onlyPinned.data + notPinned.data)
+                allPosts
+            }
+        } else {
+            api.getPostsByAccount(identifier, maxPostId, limit)
+        }
     }
 
     override fun getLikedPosts(maxId: String?) = loadVernissagePaginatedListResources {
@@ -122,6 +138,14 @@ class VernissagePostService(
     override fun reportPost(reportBody: NewReport) = loadResource {
         ReportResponse("", 0)
         // api.reportPost(json.encodeToString(reportBody)).toDomain()
+    }
+
+    override fun pinPost(postId: String): Flow<Resource<Post>> = loadResource {
+        api.pinPost(postId).toDomain()
+    }
+
+    override fun unpinPost(postId: String): Flow<Resource<Post>> = loadResource {
+        api.unpinPost(postId).toDomain()
     }
 
     override fun getLikedBy(postId: String) = loadVernissagePaginatedListResources {

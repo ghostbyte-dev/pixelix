@@ -86,6 +86,7 @@ class PostViewModel @Inject constructor(
 
     var volume by mutableStateOf(prefs.enableVolume)
     var relationshipState by mutableStateOf(RelationshipState())
+    var isPinningLoading by mutableStateOf(false)
 
     val mutedAccount: MutedAccount?
         get() {
@@ -629,6 +630,54 @@ class PostViewModel @Inject constructor(
 
                 is Resource.Loading -> {
                     RelationshipState(isLoading = true)
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    fun pinPost(postId: String, updatePost: (Post) -> Unit) {
+        if (post == null) {
+            return
+        }
+        postService.pinPost(postId).onEach { result ->
+            when (result) {
+                is Resource.Success -> {
+                    post = post?.copy(pinned = true)
+                    post?.let { updatePost(it) }
+                    isPinningLoading = false
+                }
+
+                is Resource.Error -> {
+                    post = post?.copy(pinned = false)
+                    isPinningLoading = false
+                }
+
+                is Resource.Loading -> {
+                    isPinningLoading = true
+                }
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    fun unpinPost(postId: String, updatePost: (Post) -> Unit) {
+        if (post == null) {
+            return
+        }
+        postService.unpinPost(postId).onEach { result ->
+            when (result) {
+                is Resource.Success -> {
+                    post = post?.copy(pinned = false)
+                    post?.let { updatePost(it) }
+                    isPinningLoading = false
+                }
+
+                is Resource.Error -> {
+                    post = post?.copy(pinned = true)
+                    isPinningLoading = false
+                }
+
+                is Resource.Loading -> {
+                    isPinningLoading = true
                 }
             }
         }.launchIn(viewModelScope)

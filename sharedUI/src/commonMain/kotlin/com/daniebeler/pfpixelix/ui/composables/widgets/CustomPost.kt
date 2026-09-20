@@ -1,6 +1,7 @@
 package com.daniebeler.pfpixelix.ui.composables.widgets
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
@@ -19,17 +20,18 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.di.LocalAppComponent
 import com.daniebeler.pfpixelix.domain.model.Post
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import com.daniebeler.pfpixelix.utils.BlurHashDecoder
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.eye_off
+import pixelix.app.generated.resources.images
+import pixelix.app.generated.resources.pin
 import pixelix.app.generated.resources.remove_circle
-import pixelix.app.generated.resources.stack
 
 private const val DEFAULT_BLUR_HASH = "LEHLk~WB2yk8pyo0adR*.7kCMdnj"
 
@@ -98,11 +100,36 @@ fun CustomPost(
                 }
 
                 if (post.mediaAttachments.size > 1 && !edit) {
-                    Box(modifier = Modifier.padding(8.dp).align(Alignment.TopEnd)) {
+                    Box(
+                        modifier = Modifier.padding(8.dp).align(Alignment.TopEnd)
+                            .background(
+                            MaterialTheme.colorScheme.surfaceContainer.copy(0.8f),
+                                RoundedCornerShape(8.dp)
+                        ).size(28.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
                         Icon(
-                            imageVector = vectorResource(Res.drawable.stack),
+                            imageVector = vectorResource(Res.drawable.images),
                             tint = Color.White,
-                            contentDescription = null
+                            contentDescription = null,
+                            modifier = Modifier.size(18.dp)
+                        )
+                    }
+                }
+                if (post.pinned) {
+                    Box(
+                        modifier = Modifier.padding(8.dp).align(Alignment.TopStart)
+                            .background(
+                                MaterialTheme.colorScheme.surfaceContainer.copy(0.8f),
+                                RoundedCornerShape(8.dp)
+                            ).size(28.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = vectorResource(Res.drawable.pin),
+                            tint = Color.White,
+                            contentDescription = null,
+                            modifier = Modifier.size(18.dp)
                         )
                     }
                 }

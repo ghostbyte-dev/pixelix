@@ -5,14 +5,15 @@ meta {
 }
 
 get {
-  url: {{baseUrl}}/api/v2/search?q=hiebeler05&_pe=1
+  url: {{baseUrl}}/api/v2/search?q=photo&_pe=1&resolve=true&type=statuses
   body: none
   auth: inherit
 }
 
 params:query {
-  q: hiebeler05
+  q: photo
   _pe: 1
-  ~type: 
+  resolve: true
+  type: statuses
   ~limit: 5
 }

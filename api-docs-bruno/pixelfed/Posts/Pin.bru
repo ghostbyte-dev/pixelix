@@ -1,0 +1,17 @@
+meta {
+  name: Pin
+  type: http
+  seq: 17
+}
+
+post {
+  url: {{baseUrl}}/api/v1/statuses/{{postId}}/pin
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+  forwardAuthorizationHeader: false
+}

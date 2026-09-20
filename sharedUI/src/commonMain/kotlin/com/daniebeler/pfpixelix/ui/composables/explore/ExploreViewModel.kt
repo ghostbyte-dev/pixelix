@@ -14,6 +14,7 @@ import com.daniebeler.pfpixelix.domain.service.general.ExploreService
 import com.daniebeler.pfpixelix.domain.service.general.Session
 import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
 import com.daniebeler.pfpixelix.domain.service.search.SavedSearchesService
+import com.daniebeler.pfpixelix.ui.composables.profile.ViewEnum
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.StateFlow
@@ -21,6 +22,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
+import kotlin.time.Duration.Companion.milliseconds
 
 class ExploreViewModel @Inject constructor(
     private val exploreService: ExploreService,
@@ -35,6 +37,8 @@ class ExploreViewModel @Inject constructor(
         private set
 
     var isSwipeEnabled by mutableStateOf(true)
+    private var resultsJob: Job? = null
+    var view by mutableStateOf(ViewEnum.Grid)
 
     init {
         viewModelScope.launch {
@@ -52,6 +56,23 @@ class ExploreViewModel @Inject constructor(
         viewModelScope.launch {
             prefs.enableSwipeBetweenTabsFlow.collect { isSwipeEnabled = it }
         }
+
+        viewModelScope.launch {
+            prefs.showUserGridTimelineFlow.collect { res ->
+                view = ViewEnum.getView(res)
+            }
+        }
+    }
+
+    fun clear() {
+        searchState = SearchState()
+        searchJob?.cancel()
+        resultsJob?.cancel()
+    }
+
+    fun changeView(newView: ViewEnum) {
+        view = newView
+        prefs.showUserGridTimeline = newView.ordinal
     }
 
     fun saveAccount(accountUsername: String, account: Account) {
@@ -94,9 +115,10 @@ class ExploreViewModel @Inject constructor(
         }
     }
 
-    fun onSearch(text: String) {
+    fun onSearch(text: String, isRefreshing: Boolean) {
+        searchJob?.cancel()
         if (text.isNotBlank()) {
-            getSearchResults(text, 20)
+            getSearchResults(text, 20, true, isRefreshing = isRefreshing)
         }
     }
 
@@ -109,26 +131,27 @@ class ExploreViewModel @Inject constructor(
     private fun searchDebounced(searchText: String) {
         searchJob?.cancel()
         searchJob = viewModelScope.launch {
-            delay(500)
+            delay(500.milliseconds)
             if (searchText.isNotBlank()) {
-                getSearchResults(searchText, 5)
+                getSearchResults(searchText, 5, false)
             }
         }
     }
 
-    private fun getSearchResults(text: String, limit: Int) {
-        exploreService.search(text, limit = limit).onEach { result ->
+    private fun getSearchResults(text: String, limit: Int, includePosts: Boolean, isRefreshing: Boolean = false) {
+        resultsJob?.cancel()
+        resultsJob = exploreService.search(text, limit = limit, includePosts = includePosts).onEach { result ->
             searchState = when (result) {
                 is Resource.Success -> {
                     SearchState(searchResult = result.data)
                 }
 
                 is Resource.Error -> {
-                    SearchState(error = result.message ?: "An unexpected error occurred")
+                    SearchState(error = result.message)
                 }
 
                 is Resource.Loading -> {
-                    SearchState(isLoading = true)
+                    SearchState(isLoading = true, isRefreshing = isRefreshing)
                 }
             }
         }.launchIn(viewModelScope)

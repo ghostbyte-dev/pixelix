@@ -141,6 +141,7 @@ fun App(
     ) {
         PixelixTheme {
             var activeUser by remember { mutableStateOf<String?>("unknown") }
+            var activeUserName by remember { mutableStateOf<String?>(null) }
             LaunchedEffect(Unit) {
                 appComponent.preferences.preload()
                 val authService = appComponent.authService
@@ -148,8 +149,15 @@ fun App(
 
                 appComponent.notificationBadgeRefresher.start()
 
-                authService.activeUser.collect {
-                    activeUser = it
+                launch {
+                    authService.activeUser.collect {
+                        activeUser = it
+                    }
+                }
+                launch {
+                    authService.activeUserName.collect {
+                        activeUserName = it
+                    }
                 }
             }
             if (activeUser == "unknown") return@PixelixTheme
@@ -167,7 +175,7 @@ fun App(
                     if (activeUser == null) Destination.FirstLogin else Destination.HomeTabFeeds
                 val navigationState = rememberAppNavigationState(startDestination)
                 val navController = remember(navigationState, exitApp) {
-                    AppNavigator(navigationState, exitApp)
+                    AppNavigator(navigationState, exitApp, activeUser, activeUserName)
                 }
 
                 val snackbarHostState = remember { SnackbarHostState() }
@@ -231,7 +239,7 @@ fun App(
                                         appEntryProvider(
                                             navController,
                                             { scope.launch { drawerState.open() } },
-                                            exitApp,
+                                            exitApp
                                         )
                                     ),
                                     onBack = navController::popBackStack,
@@ -243,11 +251,13 @@ fun App(
                                 )
 
                                 val currentDestination = navigationState.currentDestination
+
                                 val showBottomBar = currentDestination == Destination.Feeds ||
-                                    currentDestination is Destination.Search ||
-                                    currentDestination == Destination.Notifications ||
-                                    currentDestination == Destination.OwnProfile ||
-                                    currentDestination in HomeTab.entries.map { it.destination }
+                                        currentDestination is Destination.Search ||
+                                        currentDestination == Destination.Notifications ||
+                                        currentDestination == Destination.OwnProfile ||
+                                        currentDestination in HomeTab.entries.map { it.destination }
+
 
                                 if (showBottomBar) {
                                     Box(
@@ -376,22 +386,22 @@ private fun BottomBarFloating(
                     colors = IconButtonDefaults.iconButtonColors(
                         containerColor = containerColor, contentColor = contentColor
                     ), onClick = {
-                            if (!isSelected) {
-                                navController.navigate(tab.destination) {
-                                    launchSingleTop = true
-                                    restoreState = true
-                                    popUpTo(navController.graph.findStartDestination().id) {
-                                        inclusive = false
-                                        saveState = true
-                                    }
-                                }
-                            } else {
-                                if (currentDestination is Destination.Search || currentTopLevel == Destination.HomeTabSearch) {
-                                    appComponent.searchFieldFocus.focus()
-                                } else if (currentDestination == Destination.Feeds || currentTopLevel == Destination.HomeTabFeeds) {
-                                    appComponent.backToTopTrigger.scrollToTop()
+                        if (!isSelected) {
+                            navController.navigate(tab.destination) {
+                                launchSingleTop = true
+                                restoreState = true
+                                popUpTo(navController.graph.findStartDestination().id) {
+                                    inclusive = false
+                                    saveState = true
                                 }
                             }
+                        } else {
+                            if (currentDestination is Destination.Search || currentTopLevel == Destination.HomeTabSearch) {
+                                appComponent.searchFieldFocus.focus()
+                            } else if (currentDestination == Destination.Feeds || currentTopLevel == Destination.HomeTabFeeds) {
+                                appComponent.backToTopTrigger.scrollToTop()
+                            }
+                        }
                     }) {
                     if (tab == HomeTab.OwnProfile && avatar != null) {
                         AsyncImage(

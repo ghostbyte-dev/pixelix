@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 data class Credentials(
     val accountId: String,
     val username: String,
-    val acct: String?,
+    val acct: String? = null,
     val displayName: String,
     val avatar: String,
     val serverUrl: String,

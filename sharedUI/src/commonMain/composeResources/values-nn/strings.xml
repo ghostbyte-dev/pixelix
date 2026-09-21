@@ -412,4 +412,6 @@
     <string name="translations_btn_title">Hjelp til med å omsette Pixelix</string>
     <string name="translations_btn_desc">Del språkferdigheitene dine med fellesskapet</string>
     <string name="add_account">Legg til konto</string>
+    <string name="pin_post">Fest innlegg</string>
+    <string name="pinning">festar …</string>
 </resources>

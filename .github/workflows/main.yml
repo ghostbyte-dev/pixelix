@@ -52,7 +52,7 @@ jobs:
       - name: Run Fastlane Release Lane
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITHUB_REF_NAME: ${{ github.ref_name }}
+          GITHUB_REF_NAME: ${{ github.event.inputs.tag || github.ref_name }}
         run: bundle exec fastlane android release
 
 #      - name: Release

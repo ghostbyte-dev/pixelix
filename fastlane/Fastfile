@@ -42,7 +42,7 @@ platform :android do
   lane :github_release do
     version_code = get_android_version_code
     notes = get_release_notes(version_code: version_code)
-    apk_path = File.expand_path("../signed_release.apk", __dir__)
+    apk_path = File.expand_path("../androidApp/build/outputs/apk/release/androidApp-release.apk", __dir__)
 
     set_github_release(
       repository_name: "ghostbyte-dev/pixelix",

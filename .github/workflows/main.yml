@@ -29,28 +29,28 @@ jobs:
           sed -i -e '/jetbrains/d' -e '/foojay/d' settings.gradle.kts
           bundler install
 
+      - name: Decode keystore
+        run: |
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > androidApp/release.keystore
+
       - name: Build
         run: cd androidApp && ../gradlew assembleRelease
         env:
           ANDROID_HOME: /opt/android-sdk
 
-      - name: Decode keystore
-        run: |
-          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > androidApp/release.keystore
-
-      - name: Sign
-        run: |
-          TAG=${{ github.event.inputs.tag || github.ref_name }}
-          /opt/android-sdk/build-tools/$(ls /opt/android-sdk/build-tools/ | tail -1)/apksigner sign \
-            --ks androidApp/release.keystore \
-            --ks-pass "pass:${{ secrets.KEYSTORE_PASSWORD }}" \
-            --key-pass "pass:${{ secrets.KEY_PASSWORD }}" \
-            --ks-key-alias "${{ secrets.KEY_ALIAS }}" \
-            --out signed_release.apk \
-            androidApp/build/outputs/apk/release/androidApp-release-unsigned.apk
-          rm keystore.jks
-        env:
-          ANDROID_HOME: /opt/android-sdk
+#      - name: Sign
+#        run: |
+#          TAG=${{ github.event.inputs.tag || github.ref_name }}
+#          /opt/android-sdk/build-tools/$(ls /opt/android-sdk/build-tools/ | tail -1)/apksigner sign \
+#            --ks androidApp/release.keystore \
+#            --ks-pass "pass:${{ secrets.KEYSTORE_PASSWORD }}" \
+#            --key-pass "pass:${{ secrets.KEY_PASSWORD }}" \
+#            --ks-key-alias "${{ secrets.KEY_ALIAS }}" \
+#            --out signed_release.apk \
+#            androidApp/build/outputs/apk/release/androidApp-release-unsigned.apk
+#          rm keystore.jks
+#        env:
+#          ANDROID_HOME: /opt/android-sdk
 
 
       - name: Run Fastlane Release Lane

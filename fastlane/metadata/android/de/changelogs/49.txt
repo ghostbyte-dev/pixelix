@@ -1,0 +1,6 @@
+ - Einstellung zum Aktivieren/Deaktivieren von Doppeltippen zum Liken hinzufügen
+ - Anpinnen von Beiträgen implementieren
+ - Bilder und Videos in privaten Nachrichten anzeigen
+ - Beiträge-Tab in der Suche hinzufügen
+ - Navigationsbibliothek aktualisieren
+ - Fehlerbehebungen

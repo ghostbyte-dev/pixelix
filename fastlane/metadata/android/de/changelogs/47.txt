@@ -1,0 +1,4 @@
+ - Editor's Wahl Tabs hinzugefügt (Beiträge, Benutzer)
+ - Bilder in voller Qualität in der Einzelbeitragsansicht verwendet
+ - Einstellung für Standard-Timeline-Tab hinzugefügt
+ - Fehlerbehebungen

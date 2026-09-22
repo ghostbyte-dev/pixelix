@@ -1,0 +1,3 @@
+Kritischer Bug Fix
+
+- Absturz beim App-Start auf Geräten mit Android 11 oder älter wurde behoben.

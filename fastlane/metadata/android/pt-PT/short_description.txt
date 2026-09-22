@@ -1,0 +1,1 @@
+Pixelix: cliente Pixelfed intuitivo para carregar, ver e partilhar fotos.

@@ -8,7 +8,7 @@ on:
     inputs:
       tag:
         description: 'Version tag for APK name'
-        default: 'v4.4.1'
+        default: 'vx.x.x'
 
 jobs:
   build:
@@ -28,6 +28,12 @@ jobs:
           update-alternatives --set java /usr/lib/jvm/java-21-openjdk-amd64/bin/java
           sed -i -e '/jetbrains/d' -e '/foojay/d' settings.gradle.kts
 
+      - name: Set up Ruby & Bundler
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '4.0.6'
+          bundler-cache: true
+
       - name: Build
         run: cd androidApp && ../gradlew assembleRelease
         env:
@@ -42,16 +48,22 @@ jobs:
             --ks-pass "pass:${{ secrets.KEYSTORE_PASSWORD }}" \
             --key-pass "pass:${{ secrets.KEYSTORE_PASSWORD }}" \
             --ks-key-alias "${{ secrets.KEY_ALIAS }}" \
-            --out pixelix_${TAG}.apk \
+            --out signed_release.apk \
             androidApp/build/outputs/apk/release/androidApp-release-unsigned.apk
           rm keystore.jks
         env:
           ANDROID_HOME: /opt/android-sdk
-          
-      - name: Release
-        uses: softprops/action-gh-release@v2
-        with:
-          files: pixelix_${{ github.event.inputs.tag || github.ref_name }}.apk
-          draft: true
-          tag_name: ${{ github.event.inputs.tag || github.ref_name }}
-          fail_on_unmatched_files: false
+
+      - name: Run Fastlane Release Lane
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REF_NAME: ${{ github.ref_name }}
+        run: bundle exec fastlane android release
+
+#      - name: Release
+#        uses: softprops/action-gh-release@v2
+#        with:
+#          files: pixelix_${{ github.event.inputs.tag || github.ref_name }}.apk
+#          draft: true
+#          tag_name: ${{ github.event.inputs.tag || github.ref_name }}
+#          fail_on_unmatched_files: false

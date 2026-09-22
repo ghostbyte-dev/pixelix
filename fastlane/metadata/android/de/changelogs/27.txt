@@ -1,0 +1,9 @@
+UI/UX-Verbesserungen
+- Neugestaltung der "Neuer Post"-Seite – Ein frisches, optimiertes Design zum Erstellen neuer Beiträge.
+- Neugestaltung der Einstellungen – Verbesserte Layouts und Benutzerfreundlichkeit für ein besseres Nutzererlebnis.
+- AMOLED-Theme – Genieße ein echtes Schwarzes Design für bessere Akkulaufzeit und ein elegantes Aussehen.
+
+Fehlerbehebungen & Verbesserungen
+- Behoben: Das Problem mit verlorenen Likes – Deine Likes bleiben nun wie erwartet in den Timelines erhalten.
+- Großes Bildmodal – Ein Klick auf ein Bild öffnet nun eine Vollbildvorschau.
+- Verschiedene Fehlerbehebungen & Leistungsverbesserungen – Ein flüssigeres und zuverlässigeres App-Erlebnis.

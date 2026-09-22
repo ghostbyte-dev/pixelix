@@ -1,0 +1,3 @@
+Fehlerbehebungen
+Bilder beim Upload komprimieren, falls sie zu groß sind
+Versionen aktualisiert

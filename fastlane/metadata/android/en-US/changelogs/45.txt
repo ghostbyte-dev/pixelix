@@ -1,0 +1,3 @@
+ - Added custom app colors
+ - Added categories, lenses and films tabs to explore page
+ - Bug fixes

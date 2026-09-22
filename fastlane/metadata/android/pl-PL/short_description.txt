@@ -1,0 +1,1 @@
+Pixelix: przyjazny klient Pixelfed do udostępniania i przeglądania zdjęć.

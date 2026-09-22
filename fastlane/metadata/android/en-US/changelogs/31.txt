@@ -1,0 +1,8 @@
+ - collection bug fix
+ - multiple images keep same aspect ratio
+ - setting to automatically show sensitive content
+ - double click on search icon focuses search bar
+ - autocomplete for server url at login screen
+ - more visible boosted button
+ - improved image popup handling
+ - many bug fixes

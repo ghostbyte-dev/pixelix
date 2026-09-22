@@ -1,0 +1,11 @@
+Pixelix ist ein Open-Source-Client für die Fediverse-Fotosharing-Plattformen Pixelfed und Vernissage.
+
+ - Material Design
+ - Multi-Account-Support
+ - Dark und Light Theme
+ - Profileinstellungen
+ - Home / Lokale / Globale Timelines
+ - Trending Posts, Trending Hashtags und Trending Profile
+ - Auswählbare App-Icons
+ - Post-Vorlagen
+ - Open Source

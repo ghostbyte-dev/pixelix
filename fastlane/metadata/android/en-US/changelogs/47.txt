@@ -1,0 +1,4 @@
+ - Add Editor's choice tabs (Posts, Accounts)
+ - Use full quality image on single post screen
+ - Add default timeline tab setting
+ - Bug fixes

@@ -1,0 +1,9 @@
+Neue Funktionen:
+  - Russische Übersetzung hinzugefügt.
+
+Fehlerbehebungen:
+  - Beiträgen bei privaten Profilen werden angezeigt:
+    - Ein Problem wurde behoben, bei dem keine Beiträge angezeigt wurden, wenn private Profile betrachtet wurden.
+  - Liken und Boost von rebloggeden Beiträgen:
+    - Ein Fehler wurde behoben, durch den das Liken und Boosten von erneut geposteten Beiträgen nicht funktionierte.
+  - Toolbar-Insets im Einstellungsbildschirm fixes

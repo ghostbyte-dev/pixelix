@@ -1,0 +1,11 @@
+New Features:
+  - Added Russian translation.
+
+Bug Fixes:
+  - Private Profile Post Retrieval:
+    - Fixed an issue where no posts were displayed when viewing private profiles.
+  - Liking and Boosting Reblogged Posts:
+    - Resolved a bug where liking and boosting reblogged posts did not work.
+  - Preferences Screen Toolbar Insets:
+    - Corrected wrong window insets for the toolbar on the preferences screen.
+

@@ -1,0 +1,36 @@
+Neue Funktionen:
+  - Erwähnungen aus Benachrichtigungen anzeigen:
+    - Eine Seite, um Erwähnungen sowie deren Vorfahren und Kommentare anzusehen, der durch Klicken auf eine Erwähnungsbenachrichtigung geöffnet wird.
+
+  - Explore-Seiten-Implementierung
+    - Eine dedizierte Explore-Seite wurde hinzugefügt, um trendige Accounts und Hashtags zu entdecken.
+
+  - Account-Wechsler-Funktion
+    - Ein langes Klicken auf das Profilbild in der unteren Leiste öffnet nun den Account-Wechsler-Bottom-Sheet.
+
+  - Reposts in der Home-Timeline
+    - Rebloggte Posts werden nun in der Home-Timeline angezeigt und zeigen den "Reblogged by" Benutzernamen an.
+
+Verbesserungen:
+  - Unteres Navigationsleisten-Enhancements
+    - Die untere Leiste wurde verkleinert, um weniger Platz zu beanspruchen.
+    - Das Profilbild hat das Profil-Symbol in der unteren Leiste ersetzt.
+    - Navigationsleisten-Insets wurden für eine bessere UI-Ausrichtung berücksichtigt.
+
+  - Coil-Image-Caching-Optimierung
+    - Die Coil-Caching-Einstellungen wurden aktualisiert:
+      - Speicher-Cache: Max. 20%
+      - Festplatten-Cache: Max. 50 MB
+
+  - Standard-Avatar-Bilder werden nun angezeigt, wenn das Avatar-Bild nicht geladen werden kann.
+
+  - Lokalisierungs-Updates
+    - Neue Übersetzungen über Crowdin für eine verbesserte mehrsprachige Unterstützung hinzugefügt.
+
+Bug Fixes:
+  - Inhaltsverarbeitungsverbesserungen
+    - Die Route zum Abrufen von Posts nach Account wurde verbessert.
+    - Die korrekte Handhabung der Felder contentText und contentHtml wurde sichergestellt.
+
+Verschiedenes:
+  - Verschiedene UI-Verbesserungen und kleinere Optimierungen.

@@ -1,0 +1,2 @@
+Critical Bug fix:
+- Fix crash on app start for devices below android 12

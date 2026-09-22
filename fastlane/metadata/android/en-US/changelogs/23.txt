@@ -1,0 +1,7 @@
+- Bug Fixes
+- Infinite loading collections
+- Add editing title of collections
+- Fix wrong aspect ratio of posts
+- Add return to top button
+- Improving notifications
+- Animate like and boost icon

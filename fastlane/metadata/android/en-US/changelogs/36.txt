@@ -1,0 +1,3 @@
+Bugs fixed
+Compress image on upload if it is too big
+upgraded versions

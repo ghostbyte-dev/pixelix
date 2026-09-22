@@ -1,0 +1,7 @@
+New suggestions bar
+Video:
+  - Fullscreen mode
+  - Video scrubbing
+Warning dialog when going back while editing or creating posts or your profile
+Setting to disable swiping between timelines
+Bug fixes

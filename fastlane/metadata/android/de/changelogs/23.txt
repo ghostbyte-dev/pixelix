@@ -1,0 +1,7 @@
+- Fehlerbehebungen
+- Endloses Laden von Sammlungen
+- Hinzufügen der Titelbearbeitung für Sammlungen
+- Korrektur des falschen Seitenverhältnisses von Beiträgen
+- Zurück zum Anfang in timelines Button hinzugefügt
+- Verbesserung von Benachrichtigungen
+- Animieren von Like- und Boost-Icons

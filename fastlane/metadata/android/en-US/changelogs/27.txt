@@ -1,0 +1,9 @@
+UI/UX Improvements
+- New Post Page Redesign – A fresh, streamlined look for creating new posts.
+- Settings Redesign – Improved layout and usability for a better user experience.
+- AMOLED Theme – Enjoy a true black theme for battery efficiency and a sleek look.
+
+Bug Fixes & Enhancements
+- Fixed: Losing Likes Issue – Your likes now stay as expected in the timelines.
+- Big Image Modal – Clicking on an image now opens a full-screen preview.
+- Various Bug Fixes & Performance Improvements – Smoother and more reliable app experience.

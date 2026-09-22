@@ -1,0 +1,36 @@
+New Features:
+  - Explore Mentions from Notifications:
+    - A screen to view Mentions and there ancestors and descendants, which is opened by clicking on a mention notification.
+
+  - Explore Page Implementation
+    - Added a dedicated Explore page to discover trending accounts and hashtags.
+
+  - Account Switcher Feature
+    - Long-clicking the profile icon in the bottom bar now opens the account switch bottom sheet.
+
+  - Reposts in Home Timeline
+    - Reblogged posts now display in the home-timeline and show the "Reblogged by" username.
+
+Improvements:
+  - Bottom Navigation Bar Enhancements
+    - The bottom bar has been resized to take up less space.
+    - Avatar picture has replaced the profile icon in the bottom bar.
+    - Navigation bar insets are now accounted for better UI alignment.
+
+  - Coil Image Caching Optimization
+    - Updated Coil caching settings:
+    - Memory cache: Max 20%
+    - Disk cache: Max 50MB
+
+  - Default avatar images will now be displayed when an avatar image fails to load.
+
+  - Localization Updates
+     - Added new translations via Crowdin for improved multilingual support.
+
+Bug Fixes:
+  - Content Handling Improvements
+    - Improved the route to fetch posts by account.
+    - Ensured correct handling of contentText and contentHtml fields.
+
+Miscellaneous:
+  - Various UI improvements and minor optimizations.

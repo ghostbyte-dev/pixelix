@@ -1,0 +1,6 @@
+ - Add preference to enable/disable double tap to like
+ - Implement pinning of posts
+ - Show images and videos in private messages
+ - Add posts tab in search
+ - Upgrade navigation library
+ - Bug fixes

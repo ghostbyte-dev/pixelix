@@ -1,0 +1,6 @@
+- Vernissage support
+- New post editor
+- Post templates
+- General design improvements
+- Add more translations
+- Bug fixes

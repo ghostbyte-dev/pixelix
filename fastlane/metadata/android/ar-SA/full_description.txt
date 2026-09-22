@@ -1,0 +1,1 @@
+يوفر بيكسيليكس واجهة سلسة وبديهية للتفاعل مع بيكسلفد، الشبكة الإجتماعية الاتحادية لتشارك الصور. Designed with user experience in mind, Pixelix makes it simple to connect to your Pixelfed instance, upload photos directly from your device, and browse through your feed with ease. سواء كنت مستخدما بيكسلفيد قديم أو فقط مبتدئ، يوفر بيكسيلكس طريقة مبسطة لمشاركة واكتشاف المحتوى البصري.

@@ -1,0 +1,5 @@
+- Hinzufügen von Standorten zu Beiträgen
+- Hinzufügen und Entfernen von Beiträgen aus Sammlungen
+- Verfeinerte Gestaltung des Bearbeitungsbildschirmes für Beiträge
+- Bug Fixes
+- Designanpassungen

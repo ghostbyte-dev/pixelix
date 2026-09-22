@@ -1,0 +1,5 @@
+- Adding location to posts
+- Adding and removing posts from collections
+- Refined design of edit-post-screen
+- Bug Fixes
+- Design Fixes

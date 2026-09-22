@@ -1,0 +1,3 @@
+ - Custom App-Farben hinzugefügt
+ - Tabs für Kategorien, Objektive und Filme auf der Entdecken-Seite hinzugefügt
+ - Fehlerbehebungen

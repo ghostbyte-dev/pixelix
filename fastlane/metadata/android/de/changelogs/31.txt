@@ -1,0 +1,8 @@
+ - Sammlungs-Bug behoben
+ - Mehrere Bilder behalten dasselbe Seitenverhältnis
+ - Einstellung zum automatischen Anzeigen sensibler Inhalte
+ - Doppelklick auf das Suchsymbol fokussiert die Suchleiste
+ - Autovervollständigung für Server-URL am Login-Bildschirm
+ - Auffälligere Boost-Schaltfläche
+ - Verbesserte Handhabung von Bild-Popups
+ - Viele Fehlerbehebungen

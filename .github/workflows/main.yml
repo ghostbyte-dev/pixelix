@@ -24,15 +24,10 @@ jobs:
       - name: Setup
         run: |
           apt-get update -q
-          apt-get install -y openjdk-21-jdk-headless
+          apt-get install -y openjdk-21-jdk-headless ruby ruby-bundler build-essential
           update-alternatives --set java /usr/lib/jvm/java-21-openjdk-amd64/bin/java
           sed -i -e '/jetbrains/d' -e '/foojay/d' settings.gradle.kts
-
-      - name: Install Ruby & Bundler
-        run: |
-          apt-get update -q
-          apt-get install -y ruby ruby-bundler
-          bundle install
+          bundler install
 
       - name: Build
         run: cd androidApp && ../gradlew assembleRelease

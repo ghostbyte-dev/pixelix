@@ -28,11 +28,11 @@ jobs:
           update-alternatives --set java /usr/lib/jvm/java-21-openjdk-amd64/bin/java
           sed -i -e '/jetbrains/d' -e '/foojay/d' settings.gradle.kts
 
-      - name: Set up Ruby & Bundler
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '4.0.6'
-          bundler-cache: true
+      - name: Install Ruby & Bundler
+        run: |
+          apt-get update -q
+          apt-get install -y ruby ruby-bundler
+          bundle install
 
       - name: Build
         run: cd androidApp && ../gradlew assembleRelease

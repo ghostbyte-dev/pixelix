@@ -15,36 +15,53 @@
 
 default_platform(:android)
 
+private_lane :get_android_version_code do
+  gradle_file = File.expand_path("../androidApp/build.gradle.kts", __dir__)
+  gradle_content = File.read(gradle_file)
+  gradle_content[/versionCode\s*=\s*(\d+)/, 1]
+end
+
+private_lane :get_release_notes do |options|
+  version_code = options[:version_code]
+  changelog_file = File.expand_path("metadata/android/en-US/changelogs/#{version_code}.txt", __dir__)
+
+  if version_code && File.exist?(changelog_file)
+    File.read(changelog_file).strip
+  else
+    "Bug fixes and performance improvements."
+  end
+end
+
 platform :android do
   desc "Runs all the tests"
   lane :test do
     gradle(task: "test")
   end
 
-  desc "Release pre-built APK to GitHub Releases"
-  lane :release do
+  desc "Create a draft GitHub release with pre-built APK"
+  lane :github_release do
+    version_code = get_android_version_code
+    notes = get_release_notes(version_code: version_code)
     apk_path = File.expand_path("../signed_release.apk", __dir__)
-
-    gradle_file = File.expand_path("../androidApp/build.gradle.kts", __dir__)
-    gradle_content = File.read(gradle_file)
-    version_code = gradle_content[/versionCode\s*=\s*(\d+)/, 1]
-
-    changelog_file = File.expand_path("metadata/android/en-US/changelogs/#{version_code}.txt", __dir__)
-
-    release_notes = if version_code && File.exist?(changelog_file)
-                      File.read(changelog_file).strip
-                    else
-                      "Bug fixes and performance improvements."
-                    end
 
     set_github_release(
       repository_name: "ghostbyte-dev/pixelix",
       api_bearer: ENV["GITHUB_TOKEN"],
       tag_name: ENV["GITHUB_REF_NAME"],
       name: "Pixelix " + (ENV["GITHUB_REF_NAME"] || "Dev Build"),
-      description: release_notes,
+      description: notes,
       upload_assets: [apk_path],
       is_draft: true
     )
+  end
+  lane :playstore do
+    gradle(
+      task: 'bundle',
+      build_type: 'Release'
+    )
+  end
+  lane :release do
+    github_release
+    playstore
   end
 end

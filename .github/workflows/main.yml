@@ -34,14 +34,17 @@ jobs:
         env:
           ANDROID_HOME: /opt/android-sdk
 
+      - name: Decode keystore
+        run: |
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > androidApp/release.keystore
+
       - name: Sign
         run: |
-          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > keystore.jks
           TAG=${{ github.event.inputs.tag || github.ref_name }}
           /opt/android-sdk/build-tools/$(ls /opt/android-sdk/build-tools/ | tail -1)/apksigner sign \
-            --ks keystore.jks \
+            --ks androidApp/release.keystore \
             --ks-pass "pass:${{ secrets.KEYSTORE_PASSWORD }}" \
-            --key-pass "pass:${{ secrets.KEYSTORE_PASSWORD }}" \
+            --key-pass "pass:${{ secrets.KEY_PASSWORD }}" \
             --ks-key-alias "${{ secrets.KEY_ALIAS }}" \
             --out signed_release.apk \
             androidApp/build/outputs/apk/release/androidApp-release-unsigned.apk
@@ -49,8 +52,13 @@ jobs:
         env:
           ANDROID_HOME: /opt/android-sdk
 
+
       - name: Run Fastlane Release Lane
         env:
+          KEYSTORE_PATH: release.keystore
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REF_NAME: ${{ github.event.inputs.tag || github.ref_name }}
         run: bundle exec fastlane android release

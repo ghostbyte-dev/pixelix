@@ -23,13 +23,21 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 Runs all the tests
 
-### android release
+### android github_release
 
 ```sh
-[bundle exec] fastlane android release
+[bundle exec] fastlane android github_release
 ```
 
-Release pre-built APK to GitHub Releases
+Create a draft GitHub release with pre-built APK
+
+### android playstore
+
+```sh
+[bundle exec] fastlane android playstore
+```
+
+
 
 ----
 

@@ -59,9 +59,14 @@ platform :android do
       task: 'bundle',
       build_type: 'Release'
     )
+    upload_to_play_store(
+      track: 'internal',
+      aab: 'androidApp/build/outputs/bundle/release/androidApp-release.aab',
+      validate_only: true
+    )
   end
   lane :release do
-    github_release
+#     github_release
     playstore
   end
 end

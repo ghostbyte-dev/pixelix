@@ -34,14 +34,14 @@ jobs:
         run: |
           echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > androidApp/release.keystore
 
-#      - name: Build
-#        run: cd androidApp && ../gradlew assembleRelease
-#        env:
-#          ANDROID_HOME: /opt/android-sdk
-#          KEYSTORE_PATH: release.keystore
-#          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-#          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
-#          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+      - name: Build
+        run: cd androidApp && ../gradlew assembleRelease
+        env:
+          ANDROID_HOME: /opt/android-sdk
+          KEYSTORE_PATH: release.keystore
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
 
 #      - name: Sign
 #        run: |

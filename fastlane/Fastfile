@@ -21,6 +21,12 @@ private_lane :get_android_version_code do
   gradle_content[/versionCode\s*=\s*(\d+)/, 1]
 end
 
+private_lane :get_android_version_name do
+  gradle_file = File.expand_path("../androidApp/build.gradle.kts", __dir__)
+  gradle_content = File.read(gradle_file)
+  gradle_content[/versionName\s*=\s*"([^"]+)"/, 1]
+end
+
 private_lane :get_release_notes do |options|
   version_code = options[:version_code]
   changelog_file = File.expand_path("metadata/android/en-US/changelogs/#{version_code}.txt", __dir__)
@@ -41,8 +47,12 @@ platform :android do
   desc "Create a draft GitHub release with pre-built APK"
   lane :github_release do
     version_code = get_android_version_code
+    version_name = get_android_version_name
     notes = get_release_notes(version_code: version_code)
-    apk_path = File.expand_path("../androidApp/build/outputs/apk/release/androidApp-release.apk", __dir__)
+
+    original_apk_path = File.expand_path("../androidApp/build/outputs/apk/release/androidApp-release.apk", __dir__)
+    renamed_apk_path = File.expand_path("../androidApp/build/outputs/apk/release/pixelix_#{version_name}.apk", __dir__)
+    FileUtils.cp(original_apk_path, renamed_apk_path)
 
     set_github_release(
       repository_name: "ghostbyte-dev/pixelix",
@@ -50,7 +60,7 @@ platform :android do
       tag_name: ENV["GITHUB_REF_NAME"],
       name: "Pixelix " + (ENV["GITHUB_REF_NAME"] || "Dev Build"),
       description: notes,
-      upload_assets: [apk_path],
+      upload_assets: [renamed_apk_path],
       is_draft: true
     )
   end
@@ -65,7 +75,7 @@ platform :android do
     )
   end
   lane :release do
-#     github_release
+    github_release
     playstore
   end
 end

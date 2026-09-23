@@ -17,6 +17,7 @@ jobs:
       image: registry.gitlab.com/fdroid/fdroidserver:buildserver-trixie
     permissions:
       contents: write
+      id-token: write
 
     steps:
       - uses: actions/checkout@v4

@@ -17,10 +17,9 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
-          cache: 'gradle'
 
-      - name: Grant execute permission for gradlew
-        run: chmod +x ./gradlew
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
 
       - name: Run unit tests
         run: ./gradlew test --stacktrace
@@ -30,5 +29,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: test-reports
-          path: '**/build/reports/tests/'
-
+          path: |
+            **/build/reports/tests/
+            **/build/test-results/
+          retention-days: 7

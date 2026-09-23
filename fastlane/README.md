@@ -39,6 +39,14 @@ Create a draft GitHub release with pre-built APK
 
 
 
+### android release
+
+```sh
+[bundle exec] fastlane android release
+```
+
+
+
 ----
 
 This README.md is auto-generated and will be re-generated every time [_fastlane_](https://fastlane.tools) is run.

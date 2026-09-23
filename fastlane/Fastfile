@@ -76,6 +76,7 @@ platform :android do
       skip_upload_images: true,
       skip_upload_screenshots: true,
       skip_upload_apk: true,
+      skip_upload_changelogs: true
     )
   end
   lane :release do

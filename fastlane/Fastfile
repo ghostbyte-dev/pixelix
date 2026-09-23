@@ -72,6 +72,7 @@ platform :android do
     upload_to_play_store(
       track: 'internal',
       aab: 'androidApp/build/outputs/bundle/release/androidApp-release.aab',
+      skip_upload_apk: true
     )
   end
   lane :release do

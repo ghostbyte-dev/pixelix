@@ -65,6 +65,7 @@ jobs:
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_REF_NAME: ${{ github.event.inputs.tag || github.ref_name }}
+          ANDROID_HOME: /opt/android-sdk
         run: bundle exec fastlane android release
 
 #      - name: Release

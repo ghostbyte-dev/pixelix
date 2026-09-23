@@ -72,11 +72,8 @@ platform :android do
     upload_to_play_store(
       track: 'internal',
       aab: 'androidApp/build/outputs/bundle/release/androidApp-release.aab',
-      skip_upload_metadata: true,
-      skip_upload_images: true,
-      skip_upload_screenshots: true,
       skip_upload_apk: true,
-      skip_upload_changelogs: true
+      release_status: 'draft'
     )
   end
   lane :release do

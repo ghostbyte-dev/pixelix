@@ -389,4 +389,5 @@
     <string name="unpin_post">Unpin post</string>
     <string name="unpinning">unpinning...</string>
     <string name="pinning">pinning...</string>
+    <string name="error">Error</string>
 </resources>

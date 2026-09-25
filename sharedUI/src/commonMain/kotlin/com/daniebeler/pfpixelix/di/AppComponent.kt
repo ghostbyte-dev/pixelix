@@ -53,6 +53,7 @@ import com.daniebeler.pfpixelix.ui.events.NotificationBadgeState
 import com.daniebeler.pfpixelix.ui.events.SearchFieldFocus
 import com.daniebeler.pfpixelix.ui.events.SystemFileShare
 import com.daniebeler.pfpixelix.ui.events.SystemUrlHandler
+import com.daniebeler.pfpixelix.utils.AppBuildConfig
 import com.daniebeler.pfpixelix.utils.KmpContext
 import com.daniebeler.pfpixelix.utils.coilContext
 import de.jensklingenberg.ktorfit.Ktorfit
@@ -120,8 +121,11 @@ abstract class AppComponent(
 
     @Provides
     fun provideWidgetService(delegate: WidgetServiceDelegate): WidgetService = delegate
+
     @Provides
-    fun provideNotificationService(delegate: NotificationServiceDelegate): NotificationService = delegate
+    fun provideNotificationService(delegate: NotificationServiceDelegate): NotificationService =
+        delegate
+
     @Provides
     fun provideInstanceService(delegate: InstanceServiceDelegate): InstanceService = delegate
 
@@ -133,8 +137,10 @@ abstract class AppComponent(
 
     @Provides
     fun provideCollectionService(delegate: CollectionServiceDelegate): CollectionService = delegate
+
     @Provides
-    fun provideDirectMessagesService(delegate: DirectMessagesServiceDelegate): DirectMessagesService = delegate
+    fun provideDirectMessagesService(delegate: DirectMessagesServiceDelegate): DirectMessagesService =
+        delegate
 
     @get:Provides
     @get:AppSingleton
@@ -167,7 +173,8 @@ abstract class AppComponent(
         sessionStorage: DataStore<SessionStorage>,
         globalNavigator: GlobalNavigator
     ): HttpClient {
-        val authInterceptor = PixelfedAuthInterceptor(session, json, sessionStorage, globalNavigator)
+        val authInterceptor =
+            PixelfedAuthInterceptor(session, json, sessionStorage, globalNavigator)
 
         return HttpClient {
 
@@ -176,13 +183,18 @@ abstract class AppComponent(
             install(Logging) {
                 logger = object : io.ktor.client.plugins.logging.Logger {
                     override fun log(message: String) {
-                        val formattedMessage = message.lines().joinToString(separator = "\n") { "\t\t$it" }
-                        Logger.v (tag = "PixelixHttp") {
+                        val formattedMessage =
+                            message.lines().joinToString(separator = "\n") { "\t\t$it" }
+                        Logger.v(tag = "PixelixHttp") {
                             formattedMessage
                         }
                     }
                 }
-                level = LogLevel.NONE
+                level = if (AppBuildConfig.isDebug) {
+                    LogLevel.ALL
+                } else {
+                    LogLevel.NONE
+                }
             }
             install(HttpTimeout) {
                 requestTimeoutMillis = 60000
@@ -225,7 +237,8 @@ abstract class AppComponent(
         sessionStorage: DataStore<SessionStorage>,
         globalNavigator: GlobalNavigator
     ): HttpClient {
-        val authInterceptor = VernissageAuthInterceptor(session, json, sessionStorage, globalNavigator)
+        val authInterceptor =
+            VernissageAuthInterceptor(session, json, sessionStorage, globalNavigator)
 
         return HttpClient {
 
@@ -239,7 +252,11 @@ abstract class AppComponent(
                         }
                     }
                 }
-                level = LogLevel.NONE
+                level = if (AppBuildConfig.isDebug) {
+                    LogLevel.ALL
+                } else {
+                    LogLevel.NONE
+                }
             }
             install(HttpTimeout) {
                 requestTimeoutMillis = 60000

@@ -43,7 +43,6 @@ class LoginViewModel(
         private set
 
     var error by mutableStateOf<String?>(null)
-        private set
 
     fun onClose() {
         session.setBackendType(originalPlatform)

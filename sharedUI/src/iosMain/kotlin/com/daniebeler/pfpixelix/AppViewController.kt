@@ -10,12 +10,15 @@ import com.daniebeler.pfpixelix.domain.service.icon.IosAppIconManager
 import com.daniebeler.pfpixelix.utils.KmpContext
 import com.daniebeler.pfpixelix.utils.configureLogger
 import platform.UIKit.UIViewController
+import kotlin.experimental.ExperimentalNativeApi
 
 class IosUrlCallback {
     var onRedirect: (String) -> Unit = {}
 }
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalComposeUiApi::class,
+    ExperimentalNativeApi::class
+)
 fun AppViewController(urlCallback: IosUrlCallback): UIViewController {
     var viewController: UIViewController? = null
     val appComponent = AppComponent.Companion.create(

@@ -25,6 +25,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -56,7 +57,6 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import androidx.navigationevent.NavigationEventInfo
 import androidx.navigationevent.compose.NavigationBackHandler
 import androidx.navigationevent.compose.rememberNavigationEventState
@@ -64,6 +64,7 @@ import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.service.general.BackendType
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pfpixelix.ui.composables.widgets.SuggestionsBar
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -71,7 +72,9 @@ import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.chevron_right
 import pixelix.app.generated.resources.close
+import pixelix.app.generated.resources.error
 import pixelix.app.generated.resources.i_don_t_have_an_account
+import pixelix.app.generated.resources.ok
 import pixelix.app.generated.resources.pixelfed_full_logo_black
 import pixelix.app.generated.resources.pixelfed_full_logo_white
 import pixelix.app.generated.resources.pixelix_logo_black_xxl
@@ -162,19 +165,7 @@ fun LoginComposable(
                             ).background(MaterialTheme.colorScheme.background)
 
                         ) {
-
                             Spacer(modifier = Modifier.height(16.dp))
-
-                            viewModel.error?.let { err ->
-                                if (err.isNotBlank()) {
-                                    Row(
-                                        Modifier.fillMaxWidth(),
-                                        horizontalArrangement = Arrangement.Center
-                                    ) {
-                                        Text(text = err)
-                                    }
-                                }
-                            }
 
                             when (viewModel.currentStep) {
                                 LoginStep.PLATFORM_SELECTION -> {
@@ -218,7 +209,21 @@ fun LoginComposable(
         }
     }
 
-
+    viewModel.error?.let {
+        AlertDialog(title = {
+            Text(text = stringResource(Res.string.error))
+        }, text = {
+            Text(text = it)
+        }, onDismissRequest = {
+            viewModel.error = null
+        }, confirmButton = {
+            TextButton(onClick = {
+                viewModel.error = null
+            }) {
+                Text(stringResource(Res.string.ok))
+            }
+        })
+    }
 }
 
 

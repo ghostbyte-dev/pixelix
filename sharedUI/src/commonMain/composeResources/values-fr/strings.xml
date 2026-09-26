@@ -63,9 +63,9 @@
     <string name="followed_by">Suivi·e par</string>
     <string name="other">autre</string>
     <string name="others">autres</string>
-    <string name="yearly">tous les ans</string>
-    <string name="monthly">tous les mois</string>
-    <string name="daily">tous les jours</string>
+    <string name="yearly">cette année</string>
+    <string name="monthly">ce mois</string>
+    <string name="daily">aujourd'hui</string>
     <string name="i_don_t_have_an_account">Je n’ai pas de compte</string>
     <string name="server_url">URL du serveur</string>
     <string name="are_you_sure_you_want_to_log_out">Voulez-vous vraiment vous déconnecter ?</string>

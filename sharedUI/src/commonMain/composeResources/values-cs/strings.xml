@@ -393,4 +393,5 @@
     <string name="unpinning">odepínání...</string>
     <string name="unpin_post">Odepnout příspěvek</string>
     <string name="pin_post">Připnout příspěvek</string>
+    <string name="error">Chyba</string>
 </resources>

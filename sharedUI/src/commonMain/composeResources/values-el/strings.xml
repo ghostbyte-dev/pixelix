@@ -2,12 +2,12 @@
 <resources>
     <string name="notifications">Ειδοποιήσεις</string>
     <string name="settings">Ρυθμίσεις</string>
-    <string name="liked_posts">Αναρτήσεις που Αρέσουν</string>
+    <string name="liked_posts">Αναρτήσεις που σ' Αρέσουν</string>
     <string name="bookmarked_posts">Αναρτήσεις με Σελιδοδείκτη</string>
-    <string name="followed_hashtags">Ετικέτες που Ακολουθούνται</string>
+    <string name="followed_hashtags">Ετικέτες που Ακολουθείς</string>
     <string name="blocked_accounts">Αποκλεισμένα Προφίλ</string>
     <string name="muted_accounts">Προφίλ Σε Σίγαση</string>
-    <string name="logout">Αποσυνδέση</string>
+    <string name="logout">Αποσύνδεση</string>
     <string name="open_in_browser">Άνοιγμα στον περιηγητή</string>
     <string name="share_this_profile">Κοινοποίηση αυτού του προφίλ</string>
     <string name="block_this_profile">Αποκλεισμός αυτού του προφίλ</string>
@@ -25,7 +25,7 @@
     <string name="following">Ακολουθείς</string>
     <plurals name="following">
         <item quantity="one">Ακολουθεί</item>
-        <item quantity="other">Ακολουθούν</item>
+        <item quantity="other">Ακολουθούνται</item>
     </plurals>
     <plurals name="posts">
         <item quantity="one">Ανάρτηση</item>
@@ -55,16 +55,16 @@
     <string name="liked_by">Αρέσει σε</string>
     <string name="delete_this_post">Διαγραφή ανάρτησης</string>
     <string name="delete_post">Διαγραφή ανάρτησης;</string>
-    <string name="this_action_cannot_be_undone">Αυτή η ενέργεια δεν μπορεί να ανεραιθεί</string>
+    <string name="this_action_cannot_be_undone">Αυτή η ενέργεια δεν μπορεί να αναιρεθεί</string>
     <string name="delete">Διαγραφή</string>
     <string name="this_is_the_end">Έφτασες στο Τέλος!</string>
     <string name="and">και</string>
     <string name="followed_by">Ακολουθείται από</string>
-    <string name="other">άλλο</string>
-    <string name="others">άλλοι</string>
-    <string name="yearly">ετησίως</string>
-    <string name="monthly">μηνιαίως</string>
-    <string name="daily">καθημερινά</string>
+    <string name="other">ακόμη</string>
+    <string name="others">ακόμη</string>
+    <string name="yearly">Ετήσια</string>
+    <string name="monthly">Μηνιαία</string>
+    <string name="daily">Ημερίσια</string>
     <string name="i_don_t_have_an_account">Δεν έχω προφίλ</string>
     <string name="server_url">URL διακομιστή</string>
     <string name="are_you_sure_you_want_to_log_out">Σίγουρα θες να αποσυνδεθείς;</string>
@@ -93,9 +93,9 @@
     <string name="sensitive_nsfw_media">Ευαίσθητα/NSFW Πολυμέσα</string>
     <string name="content_warning_or_spoiler_text">προειδοποίηση περιεχομένου ή κείμενο spoiler</string>
     <string name="audience">Κοινό</string>
-    <string name="unlisted">μη καταχωρημένο</string>
-    <string name="followers_only">μόνο ακόλουθοι</string>
-    <string name="audience_public">δημόσιο</string>
+    <string name="unlisted">Εκτός λίστας</string>
+    <string name="followers_only">Μόνο ακόλουθοι</string>
+    <string name="audience_public">Δημόσιο</string>
     <string name="no_followed_hashtags">Δεν ακολουθούνται ετικέτες</string>
     <string name="no_muted_accounts">Δεν υπάρχουν προφίλ σε σίγαση</string>
     <string name="visibility_x">Ορατότητα: %1$s</string>
@@ -279,4 +279,10 @@
     <string name="reported">Αναφέρθηκε</string>
     <string name="delete_account">Διαγραφή Λογαριασμού</string>
     <string name="character_count">%1$d/%2$d χαρακτήρες</string>
+    <string name="trending_accounts">Προφίλ σε τάση</string>
+    <string name="trending_hashtags">Ετικέτες σε τάση</string>
+    <string name="trending_posts">Αναρτήσεις σε τάση</string>
+    <string name="no_categories">Καμία κατηγορία</string>
+    <string name="no_cameras">Δεν υπάρχουν κάμερες</string>
+    <string name="no_lenses">Δεν υπάρχουν φακοί</string>
 </resources>

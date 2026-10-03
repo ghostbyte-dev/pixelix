@@ -1,2 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="notifications">Bildirimler</string>
+    <string name="settings">Ayarlar</string>
+    <string name="liked_posts">Beğenilen Gönderiler</string>
+    <string name="bookmarked_posts">Yer işaretli gönderiler</string>
+    <string name="followed_hashtags">Takip Edilen Etiketler</string>
+    <string name="blocked_accounts">Engellenen Profiller</string>
+</resources>

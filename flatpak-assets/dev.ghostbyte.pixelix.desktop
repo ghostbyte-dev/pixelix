@@ -2,9 +2,10 @@
 Version=1.0
 Type=Application
 Name=Pixelix
-Comment=Kotlin Multiplatform Pixel App
+Comment=Client for Pixelfed and Vernissage
 Exec=pixelix %u
 Icon=dev.ghostbyte.pixelix
 Terminal=false
-Categories=Graphics;Utility;
+Categories=Graphics;Network;Photography;InstantMessaging;
+Keywords=fediverse;pixelfed;vernissage;
 MimeType=x-scheme-handler/dev.ghostbyte.pixelix;

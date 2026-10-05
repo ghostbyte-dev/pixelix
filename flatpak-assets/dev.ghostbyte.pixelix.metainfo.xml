@@ -3,10 +3,46 @@
     <id>dev.ghostbyte.pixelix</id>
     <metadata_license>CC0-1.0</metadata_license>
     <project_license>MIT</project_license>
+    <developer id="dev.ghostbyte">
+        <name>Ghostbyte</name>
+    </developer>
     <name>Pixelix</name>
-    <summary>A Pixelix Kotlin Multiplatform App</summary>
+    <summary>Experience social media the way it should be</summary>
     <description>
-        <p>Pixelix is a powerful tool built with Compose Multiplatform.</p>
+        <p>
+            Pixelix is the ultimate Pixelfed and Vernissage experience. Engage with a community that values privacy and user control over algorithms.
+        </p>
+        <p>
+            Easily chat with friends and followers through text-based direct messages. Stay connected and keep conversations going
+        </p>
+        <p>
+            Showcase your photos on the Fediverse with support for collections, making your content stand out.
+        </p>
     </description>
     <launchable type="desktop-id">dev.ghostbyte.pixelix.desktop</launchable>
+
+    <content_rating type="oars-1.1">
+        <content_attribute id="social-chat">intense</content_attribute>
+    </content_rating>
+
+    <branding>
+        <color type="primary" scheme_preference="light">#9ae600</color>
+        <color type="primary" scheme_preference="dark">#2a8600</color>
+    </branding>
+
+    <url type="homepage">https://app.pixelix.social/</url>
+    <url type="bugtracker">https://github.com/ghostbyte-dev/pixelix/issues</url>
+    <url type="donation">https://app.pixelix.social/#donate</url>
+    <url type="translate">https://hosted.weblate.org/engage/pixelix/</url>
+    <url type="vcs-browser">https://github.com/ghostbyte-dev/pixelix/</url>
+
+    <supports>
+        <control>keyboard</control>
+        <control>pointing</control>
+        <control>touch</control>
+    </supports>
+    <requires>
+        <display_length compare="ge">360</display_length>
+        <internet>always</internet>
+    </requires>
 </component>

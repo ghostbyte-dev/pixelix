@@ -33,7 +33,6 @@ private fun dispatchUrl(url: String) {
 }
 
 fun desktopApp(args: Array<String>) {
-
     val protocolUrl = args.firstOrNull { it.startsWith("dev.ghostbyte.pixelix://") }
 
     if (isAppAlreadyRunning(protocolUrl)) {
@@ -49,9 +48,9 @@ fun desktopApp(args: Array<String>) {
 
     application {
         FileKit.init("com.daniebeler.pfpixelix")
-        configureJavaLogger()
+        configureJavaLogger(true)
 
-        val appComponent = AppComponent.Companion.create(
+        val appComponent = AppComponent.create(
             object : KmpContext() {}, DesktopAppIconManager()
         )
 
@@ -98,7 +97,7 @@ private fun isAppAlreadyRunning(url: String?): Boolean {
             url?.let { socket.getOutputStream().write((it + "\n").toByteArray()) }
         }
         true
-    } catch (e: Throwable) {
+    } catch (_: Throwable) {
         false
     }
 }

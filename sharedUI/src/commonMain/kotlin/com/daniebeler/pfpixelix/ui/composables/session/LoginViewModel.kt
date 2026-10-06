@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import co.touchlab.kermit.Logger
 import com.daniebeler.pfpixelix.domain.service.general.AuthService
 import com.daniebeler.pfpixelix.domain.service.general.BackendType
 import com.daniebeler.pfpixelix.domain.service.general.Session
@@ -69,6 +70,9 @@ class LoginViewModel(
     }
 
     fun selectSuggestion(newHost: TextFieldValue) {
+        Logger.v(tag="suggestions") {
+            "select suggestion viewmodel: ${newHost.text}"
+        }
         serverHost = newHost
         isValidHost = true
     }

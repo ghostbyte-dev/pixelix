@@ -41,6 +41,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -60,6 +61,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigationevent.NavigationEventInfo
 import androidx.navigationevent.compose.NavigationBackHandler
 import androidx.navigationevent.compose.rememberNavigationEventState
+import co.touchlab.kermit.Logger
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.service.general.BackendType
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
@@ -199,6 +201,7 @@ fun LoginComposable(
                     state = suggestionsState,
                     bottomBarPadding = false,
                     onSelected = { selected ->
+                        Logger.v(tag="suggestions") {"on selected"}
                         viewModel.selectSuggestion(
                             viewModel.serversSuggestionsManager.selectSuggestion(
                                 selected
@@ -231,6 +234,7 @@ fun LoginComposable(
 fun ServerInputLayout(
     viewModel: LoginViewModel
 ) {
+    val scope = rememberCoroutineScope()
     Column(Modifier.padding(12.dp)) {
         Row(
             modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
@@ -275,7 +279,7 @@ fun ServerInputLayout(
         val keyboardController = LocalSoftwareKeyboardController.current
         val focusManager = LocalFocusManager.current
         fun login() {
-            viewModel.serversSuggestionsManager.onFocusChanged(false)
+            viewModel.serversSuggestionsManager.onFocusChanged(false, scope)
             keyboardController?.hide()
             focusManager.clearFocus()
             viewModel.auth()
@@ -288,7 +292,7 @@ fun ServerInputLayout(
                 prefix = { Text("https://") },
                 singleLine = true,
                 modifier = Modifier.weight(1f).onFocusChanged { focusState ->
-                    viewModel.serversSuggestionsManager.onFocusChanged(focusState.isFocused)
+                    viewModel.serversSuggestionsManager.onFocusChanged(focusState.isFocused, scope)
                 },
                 shape = RoundedCornerShape(16.dp),
                 colors = TextFieldDefaults.colors(

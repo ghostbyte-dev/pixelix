@@ -11,13 +11,16 @@ import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.ui.composables.post.SuggestionsState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
+import kotlin.time.Duration.Companion.milliseconds
 
 class ServersSuggestionsManager @Inject constructor(
     private val fediseaService: FediseaService,
@@ -61,15 +64,20 @@ class ServersSuggestionsManager @Inject constructor(
             }.launchIn(scope)
     }
 
+    private var hideJob: Job? = null
     fun selectSuggestion(suggestion: String): TextFieldValue {
+        hideJob?.cancel()
         suggestionsOpen = false
         _suggestionsState.update { SuggestionsState() }
         return TextFieldValue(suggestion, TextRange(suggestion.length))
     }
-
-    fun onFocusChanged(isFocused: Boolean) {
+    fun onFocusChanged(isFocused: Boolean, scope: CoroutineScope) {
+        hideJob?.cancel()
         if (!isFocused) {
-            suggestionsOpen = false
+            hideJob = scope.launch {
+                delay(100.milliseconds)
+                suggestionsOpen = false
+            }
         }
     }
 }

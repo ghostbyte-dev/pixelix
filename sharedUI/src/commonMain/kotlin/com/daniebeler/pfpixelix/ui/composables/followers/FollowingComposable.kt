@@ -1,12 +1,16 @@
 package com.daniebeler.pfpixelix.ui.composables.followers
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
-import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
-import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
-import androidx.compose.foundation.lazy.staggeredgrid.itemsIndexed
-import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.di.injectViewModel
@@ -16,7 +20,7 @@ import com.daniebeler.pfpixelix.ui.composables.states.EmptyStateComposable
 import com.daniebeler.pfpixelix.ui.composables.states.EndOfListComposable
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
-import com.daniebeler.pfpixelix.ui.composables.widgets.InfiniteStaggeredGridHandler
+import com.daniebeler.pfpixelix.ui.composables.widgets.InfiniteListHandler
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
@@ -32,34 +36,40 @@ fun FollowingComposable(
     navController: AppNavigator,
     viewModel: FollowersViewModel = injectViewModel(key = "followers-viewmodel-key") { followersViewModel }
 ) {
-    val staggeredGridState = rememberLazyStaggeredGridState()
-
-    LazyVerticalStaggeredGrid(
-        columns = StaggeredGridCells.Fixed(1),
-        state = staggeredGridState,
-        contentPadding = PaddingValues(top = 32.dp, start = 8.dp, end = 8.dp)
+    val listState = rememberLazyListState()
+    LazyColumn(
+        state = listState,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        contentPadding = PaddingValues(top = 32.dp, start = 8.dp, end = 8.dp),
+        modifier = Modifier.fillMaxSize()
     ) {
         itemsIndexed(viewModel.followingState.following, key = { _, it ->
             it.id
         }) { index, account ->
-            AccountListItem(
-                account = account,
-                relationship = null,
-                navController = navController,
-                index = index,
-                count = viewModel.followingState.following.size
-            )
+            Box(modifier = Modifier.widthIn(max = 600.dp).fillMaxWidth()) {
+                AccountListItem(
+                    account = account,
+                    relationship = null,
+                    navController = navController,
+                    index = index,
+                    count = viewModel.followingState.following.size
+                )
+            }
         }
 
         if (viewModel.followingState.following.isNotEmpty() && viewModel.followingState.isLoading && !viewModel.followingState.isRefreshing) {
-            item(span = StaggeredGridItemSpan.FullLine) {
-                LoadingComposable()
+            item {
+                Box(modifier = Modifier.widthIn(max = 600.dp).fillMaxWidth()) {
+                    LoadingComposable()
+                }
             }
         }
 
         if (viewModel.followingState.endReached && viewModel.followingState.following.size > 10) {
-            item(span = StaggeredGridItemSpan.FullLine) {
-                EndOfListComposable()
+            item {
+                Box(modifier = Modifier.widthIn(max = 600.dp).fillMaxWidth()) {
+                    EndOfListComposable()
+                }
             }
         }
     }
@@ -82,9 +92,8 @@ fun FollowingComposable(
         )
     }
 
-    InfiniteStaggeredGridHandler(
-        lazyStaggeredGridState = staggeredGridState,
-        itemCount = viewModel.followingState.following.size
+    InfiniteListHandler(
+        lazyListState = listState,
     ) {
         viewModel.getFollowingPaginated()
     }

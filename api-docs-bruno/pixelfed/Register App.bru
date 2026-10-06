@@ -1,0 +1,16 @@
+meta {
+  name: Register App
+  type: http
+  seq: 19
+}
+
+get {
+  url: https://pixelfed.cr/api/v1/apps
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+  forwardAuthorizationHeader: false
+}

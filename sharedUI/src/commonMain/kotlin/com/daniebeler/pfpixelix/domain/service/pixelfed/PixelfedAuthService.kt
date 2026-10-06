@@ -39,10 +39,14 @@ class PixelfedAuthService(
         val serverUrl = getServerUrl(host)
         val api = createPixelfedAuthApi(serverUrl, json)
         val preparedAuthData = platform.consumePreparedAuthData()
-        val client = preparedAuthData ?: api.getAuthData(
-            clientName,
-            platform.redirectUrl
-        ).let { PreparedAuthData(it.clientId, it.clientSecret) }
+        val client = try {
+             preparedAuthData ?: api.getAuthData(
+                clientName,
+                platform.redirectUrl
+            ).let { return@let PreparedAuthData(it.clientId, it.clientSecret) }
+        } catch (e: Exception) {
+            error("Failed to register App")
+        }
         val clientId = client.clientId
         val clientSecret = requireNotNull(client.clientSecret) { "OAuth registration returned no client_secret" }
 

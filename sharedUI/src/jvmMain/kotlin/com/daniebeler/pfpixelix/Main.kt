@@ -42,8 +42,7 @@ fun desktopApp(args: Array<String>) {
     }
 
     startLinkListener { newUrl ->
-        println("Received new URL while running: $newUrl")
-        //dispatchUrl(newUrl)
+        dispatchUrl(newUrl)
     }
 
     protocolUrl?.let { dispatchUrl(it) }
@@ -53,8 +52,7 @@ fun desktopApp(args: Array<String>) {
         configureJavaLogger()
 
         val appComponent = AppComponent.Companion.create(
-            object : KmpContext() {},
-            DesktopAppIconManager()
+            object : KmpContext() {}, DesktopAppIconManager()
         )
 
         SingletonImageLoader.setSafe {
@@ -84,9 +82,7 @@ fun desktopApp(args: Array<String>) {
         Window(
             title = "Pixelix",
             state = rememberWindowState(
-                width = 400.dp,
-                height = 800.dp,
-                position = WindowPosition.Aligned(Alignment.Center)
+                width = 400.dp, height = 800.dp, position = WindowPosition.Aligned(Alignment.Center)
             ),
             onCloseRequest = ::exitApplication,
         ) {
@@ -114,8 +110,7 @@ private fun startLinkListener(onNewLink: (String) -> Unit) {
             runCatching {
                 serverSocket.accept().use { client ->
                     client.getInputStream().bufferedReader().readLine()
-                        ?.takeIf { it.startsWith("dev.ghostbyte.pixelix://") }
-                        ?.let(onNewLink)
+                        ?.takeIf { it.startsWith("dev.ghostbyte.pixelix://") }?.let(onNewLink)
                 }
             }
         }

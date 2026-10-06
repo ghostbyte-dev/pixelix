@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.di.injectViewModel
+import com.daniebeler.pfpixelix.domain.service.platform.PlatformFeatures
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyStateComposable
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
@@ -36,6 +37,7 @@ fun MutedAccountsComposable(
             isRefreshing = viewModel.mutedAccountsState.isRefreshing,
             onRefresh = { viewModel.getMutedAccounts(true) },
             modifier = Modifier.fillMaxSize(),
+            enabled = PlatformFeatures.supportsPullToRefresh,
             animatedBox = true
         ) {
             LazyVerticalStaggeredGrid(

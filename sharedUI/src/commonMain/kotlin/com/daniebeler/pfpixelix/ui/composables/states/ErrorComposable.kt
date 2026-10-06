@@ -23,6 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.daniebeler.pfpixelix.domain.service.platform.PlatformFeatures
 import com.daniebeler.pfpixelix.ui.composables.widgets.CustomPullToRefreshBox
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
@@ -39,9 +40,16 @@ fun ErrorComposable(message: String, modifier: Modifier = Modifier.fillMaxSize()
 }
 
 @Composable
-fun ErrorComposable(message: String, onRefresh: () -> Unit, isRefreshing: Boolean, modifier: Modifier = Modifier) {
+fun ErrorComposable(
+    message: String, onRefresh: () -> Unit, isRefreshing: Boolean, modifier: Modifier = Modifier
+) {
     if (message.isNotBlank()) {
-        CustomPullToRefreshBox(isRefreshing = isRefreshing, onRefresh = onRefresh, modifier = modifier.fillMaxSize()) {
+        CustomPullToRefreshBox(
+            isRefreshing = isRefreshing,
+            onRefresh = onRefresh,
+            modifier = modifier.fillMaxSize(),
+            enabled = PlatformFeatures.supportsPullToRefresh
+        ) {
             LazyColumn(
                 modifier = modifier.fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -66,16 +74,14 @@ fun ErrorComposableDialog(errorMessage: String?, onDismiss: () -> Unit) {
                 TextButton(onClick = onDismiss) {
                     Text("OK")
                 }
-            }
-        )
+            })
     }
 }
 
 @Composable
 private fun InnerErrorComposable(message: String) {
     Column(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
+        modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Icon(
             imageVector = vectorResource(Res.drawable.warning),

@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.di.injectViewModel
+import com.daniebeler.pfpixelix.domain.service.platform.PlatformFeatures
 import com.daniebeler.pfpixelix.ui.composables.explore.trending.TrendingRange
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyStateComposable
@@ -54,7 +55,8 @@ fun TrendingHashtagsComposable(
     CustomPullToRefreshBox(
         isRefreshing = viewModel.trendingHashtagsState.isRefreshing,
         onRefresh = { viewModel.getTrendingHashtags(true) },
-        animatedBox = true
+        animatedBox = true,
+        enabled = PlatformFeatures.supportsPullToRefresh
     ) {
         LazyColumn(
             state = lazyListState,

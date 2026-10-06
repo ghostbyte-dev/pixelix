@@ -11,6 +11,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.daniebeler.pfpixelix.domain.service.platform.PlatformFeatures
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyStateComposable
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
@@ -33,7 +34,8 @@ fun <T> PagePaginatedListScreen(
     CustomPullToRefreshBox(
         isRefreshing = state.isRefreshing,
         onRefresh = onRefresh,
-        animatedBox = true
+        animatedBox = true,
+        enabled = PlatformFeatures.supportsPullToRefresh
     ) {
         LazyColumn(
             state = lazyListState,

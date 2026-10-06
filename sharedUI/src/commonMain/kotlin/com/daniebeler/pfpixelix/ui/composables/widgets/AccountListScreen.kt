@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.domain.model.Account
+import com.daniebeler.pfpixelix.domain.service.platform.PlatformFeatures
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyStateComposable
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
@@ -38,7 +39,8 @@ fun AccountListScreen(
             isRefreshing = isRefreshing,
             onRefresh = onRefresh,
             modifier = Modifier.fillMaxSize(),
-            animatedBox = true
+            animatedBox = true,
+            enabled = PlatformFeatures.supportsPullToRefresh
         ) {
             LazyVerticalStaggeredGrid(
                 columns = StaggeredGridCells.Adaptive(300.dp),

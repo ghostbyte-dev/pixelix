@@ -8,4 +8,5 @@ expect object PlatformFeatures {
     val addCollection: Boolean
     val supportsDynamicColors: Boolean
     val supportsSponsorship: Boolean
+    val supportsPullToRefresh: Boolean
 }

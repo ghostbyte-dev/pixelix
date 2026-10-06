@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.daniebeler.pfpixelix.domain.model.Post
+import com.daniebeler.pfpixelix.domain.service.platform.PlatformFeatures
 import com.daniebeler.pfpixelix.ui.composables.profile.SwitchViewComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.ViewEnum
 import com.daniebeler.pfpixelix.ui.composables.profile.postsWrapperComposable
@@ -68,7 +69,7 @@ fun InfinitePostsList(
         isRefreshing = isRefreshing,
         onRefresh = onRefresh,
         animatedBox = true,
-        enabled = refreshable
+        enabled = refreshable && PlatformFeatures.supportsPullToRefresh
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             if (error.isEmpty() || items.isNotEmpty() || before != null || isLoading) {

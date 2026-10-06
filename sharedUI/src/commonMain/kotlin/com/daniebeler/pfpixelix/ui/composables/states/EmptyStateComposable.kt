@@ -22,6 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.daniebeler.pfpixelix.domain.service.platform.PlatformFeatures
 import com.daniebeler.pfpixelix.ui.composables.widgets.CustomPullToRefreshBox
 
 @Composable
@@ -55,7 +56,8 @@ fun EmptyStateComposable(
     CustomPullToRefreshBox(
         isRefreshing = isRefreshing,
         onRefresh = onRefresh,
-        modifier = modifier.fillMaxSize()
+        modifier = modifier.fillMaxSize(),
+        enabled = PlatformFeatures.supportsPullToRefresh
     ) {
         LazyColumn(
             modifier = modifier.fillMaxSize(),

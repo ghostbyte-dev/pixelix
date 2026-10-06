@@ -6,14 +6,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.di.injectViewModel
+import com.daniebeler.pfpixelix.domain.service.platform.PlatformFeatures
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyStateComposable
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
@@ -21,6 +18,7 @@ import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pfpixelix.ui.composables.widgets.CustomHashtag
 import com.daniebeler.pfpixelix.ui.composables.widgets.CustomPullToRefreshBox
 import com.daniebeler.pfpixelix.ui.composables.widgets.ScreenScaffold
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
@@ -29,7 +27,6 @@ import pixelix.app.generated.resources.followed_hashtags
 import pixelix.app.generated.resources.hash
 import pixelix.app.generated.resources.no_followed_hashtags
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun FollowedHashtagsComposable(
     navController: AppNavigator,
@@ -40,6 +37,7 @@ fun FollowedHashtagsComposable(
             isRefreshing = viewModel.followedHashtagsState.isRefreshing,
             onRefresh = { viewModel.getFollowedHashtags(true) },
             modifier = Modifier.fillMaxSize(),
+            enabled = PlatformFeatures.supportsPullToRefresh,
             animatedBox = true
         ) {
             LazyVerticalStaggeredGrid(

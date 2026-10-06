@@ -64,6 +64,7 @@ import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.model.SavedSearchItem
 import com.daniebeler.pfpixelix.domain.model.SavedSearchType
 import com.daniebeler.pfpixelix.domain.model.toDomain
+import com.daniebeler.pfpixelix.domain.service.platform.PlatformFeatures
 import com.daniebeler.pfpixelix.ui.composables.custom_account.AccountListItem
 import com.daniebeler.pfpixelix.ui.composables.custom_account.CustomAccount
 import com.daniebeler.pfpixelix.ui.composables.explore.trending.TrendingComposable
@@ -302,8 +303,8 @@ private fun SearchResultComposable(
                 0 -> CustomPullToRefreshBox(
                     isRefreshing = searchState.isRefreshing,
                     onRefresh = onRefresh,
-                    animatedBox = true,
-                    enabled = true
+                    enabled = PlatformFeatures.supportsPullToRefresh,
+                    animatedBox = true
                 ) {
                     if (searchState.isLoading) {
                         LoadingComposable()
@@ -328,7 +329,7 @@ private fun SearchResultComposable(
                         isRefreshing = searchState.isRefreshing,
                         onRefresh = onRefresh,
                         animatedBox = true,
-                        enabled = true
+                        enabled = PlatformFeatures.supportsPullToRefresh
                     ) {
                         if (searchState.isLoading) {
                             LoadingComposable()

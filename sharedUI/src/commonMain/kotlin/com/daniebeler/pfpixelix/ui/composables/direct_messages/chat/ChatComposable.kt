@@ -51,6 +51,7 @@ import androidx.compose.ui.unit.sp
 import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.di.injectViewModel
+import com.daniebeler.pfpixelix.domain.service.platform.PlatformFeatures
 import com.daniebeler.pfpixelix.ui.composables.states.EndOfListComposable
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposableDialog
@@ -99,6 +100,7 @@ fun ChatComposable(
             CustomPullToRefreshBox(
                 isRefreshing = viewModel.chatState.isRefreshing,
                 onRefresh = { viewModel.getChat(accountId, true) },
+                enabled = PlatformFeatures.supportsPullToRefresh,
                 modifier = Modifier
                     .imePadding()
             ) {

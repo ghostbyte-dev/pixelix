@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
@@ -37,6 +36,7 @@ import androidx.compose.ui.unit.sp
 import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.model.Post
+import com.daniebeler.pfpixelix.domain.service.platform.PlatformFeatures
 import com.daniebeler.pfpixelix.ui.composables.post.PostComposable
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
@@ -50,7 +50,6 @@ import pixelix.app.generated.resources.by
 import pixelix.app.generated.resources.chevron_left
 import pixelix.app.generated.resources.post
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MentionComposable(
     mentionId: String,
@@ -97,7 +96,8 @@ fun MentionComposable(
         CustomPullToRefreshBox(
             isRefreshing = viewModel.postContextState.isRefreshing && viewModel.postState.isRefreshing,
             onRefresh = { viewModel.loadData(mentionId, true) },
-            modifier = Modifier.padding(paddingValues)
+            modifier = Modifier.padding(paddingValues),
+            enabled = PlatformFeatures.supportsPullToRefresh
         ) {
             LazyColumn(
                 state = lazyListState,

@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.di.injectViewModel
+import com.daniebeler.pfpixelix.domain.service.platform.PlatformFeatures
 import com.daniebeler.pfpixelix.ui.composables.post.PostComposable
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
@@ -40,7 +41,6 @@ import pixelix.app.generated.resources.arrow_left
 import pixelix.app.generated.resources.by
 import pixelix.app.generated.resources.post
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SinglePostComposable(
     navController: AppNavigator,
@@ -72,6 +72,7 @@ fun SinglePostComposable(
                 isRefreshing = viewModel.postState.isRefreshing,
                 onRefresh = { viewModel.getPost(postId, true) },
                 modifier = Modifier.fillMaxSize(),
+                enabled = PlatformFeatures.supportsPullToRefresh,
                 animatedBox = true
             ) {
                 Column(

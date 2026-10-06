@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -106,11 +107,11 @@ fun LoginComposable(
                 navController.popBackStack()
             }
         })
-    Box(Modifier.imePadding().fillMaxSize()) {
+    Box(Modifier.imePadding().fillMaxSize().background(MaterialTheme.colorScheme.surfaceContainer)) {
         Scaffold(contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top)) { innerPadding ->
-            Column(Modifier.imePadding().fillMaxSize()) {
+            Column(Modifier.imePadding().fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally,) {
                 Column(
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.widthIn(max = 600.dp).fillMaxWidth()
                         .background(MaterialTheme.colorScheme.surfaceContainer)
                         .padding(paddingValues = innerPadding)
                         .verticalScroll(rememberScrollState())

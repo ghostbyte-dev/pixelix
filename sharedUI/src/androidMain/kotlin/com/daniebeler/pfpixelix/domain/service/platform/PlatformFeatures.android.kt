@@ -8,4 +8,5 @@ actual object PlatformFeatures {
     actual val addCollection = true
     actual val supportsDynamicColors = true
     actual val supportsSponsorship = true
+    actual val supportsPullToRefresh = true
 }

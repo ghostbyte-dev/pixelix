@@ -37,7 +37,7 @@ fun desktopApp(args: Array<String>) {
 
     if (isAppAlreadyRunning(protocolUrl)) {
         // If it's already running, the function sends the URL to the main app and exits
-        System.exit(0)
+        //System.exit(0)
     }
 
     startLinkListener { newUrl ->

@@ -43,6 +43,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.di.injectViewModel
+import com.daniebeler.pfpixelix.domain.service.platform.PlatformFeatures
 import com.daniebeler.pfpixelix.ui.composables.widgets.InfiniteStaggeredGridHandler
 import com.daniebeler.pfpixelix.ui.composables.SheetItem
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
@@ -106,6 +107,7 @@ fun ConversationsComposable(
         CustomPullToRefreshBox(
             isRefreshing = viewModel.conversationsState.isRefreshing,
             onRefresh = { viewModel.refresh() },
+            enabled = PlatformFeatures.supportsPullToRefresh,
             modifier = Modifier.fillMaxSize(),
             animatedBox = true
         ) {

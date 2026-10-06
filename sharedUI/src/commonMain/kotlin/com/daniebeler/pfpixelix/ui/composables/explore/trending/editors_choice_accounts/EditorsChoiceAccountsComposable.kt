@@ -7,13 +7,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.di.injectViewModel
+import com.daniebeler.pfpixelix.domain.service.platform.PlatformFeatures
 import com.daniebeler.pfpixelix.ui.composables.explore.trending.trending_accounts.TrendingAccountElement
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyStateComposable
@@ -22,28 +20,26 @@ import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pfpixelix.ui.composables.timelines.TimelineHelpCard
 import com.daniebeler.pfpixelix.ui.composables.widgets.CustomPullToRefreshBox
 import com.daniebeler.pfpixelix.ui.composables.widgets.InfiniteListHandler
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
-import pixelix.app.generated.resources.datetime
 import pixelix.app.generated.resources.editors_choice_accounts
 import pixelix.app.generated.resources.editors_choice_accounts_explained
 import pixelix.app.generated.resources.no_trending_profiles
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun EditorsChoiceAccountsComposable(
     navController: AppNavigator,
     viewModel: EditorsChoiceAccountsViewModel = injectViewModel(key = "editors-choice-accounts-key") { editorsChoiceAccountsViewModel }
 ) {
 
-    val calendarIcon = vectorResource(Res.drawable.datetime)
     val lazyListState = rememberLazyListState()
 
     CustomPullToRefreshBox(
         isRefreshing = viewModel.accountsState.isRefreshing,
         onRefresh = { viewModel.getAccountsState(true) },
-        animatedBox = true
+        animatedBox = true,
+        enabled = PlatformFeatures.supportsPullToRefresh
     ) {
         LazyColumn(
             state = lazyListState,

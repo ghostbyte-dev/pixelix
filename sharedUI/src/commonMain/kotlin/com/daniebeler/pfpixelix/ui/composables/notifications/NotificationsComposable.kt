@@ -17,15 +17,12 @@ import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
-import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
-import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
-import androidx.compose.foundation.lazy.staggeredgrid.itemsIndexed
-import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.ButtonGroupDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -37,6 +34,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.font.FontWeight
@@ -52,7 +50,7 @@ import com.daniebeler.pfpixelix.ui.composables.states.EndOfListComposable
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pfpixelix.ui.composables.widgets.CustomPullToRefreshBox
-import com.daniebeler.pfpixelix.ui.composables.widgets.InfiniteStaggeredGridHandler
+import com.daniebeler.pfpixelix.ui.composables.widgets.InfiniteListHandler
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
@@ -66,14 +64,13 @@ import pixelix.app.generated.resources.reposts
 import pixelix.app.generated.resources.widget
 import pixelix.app.generated.resources.you_don_t_have_any_notifications
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun NotificationsComposable(
     navController: AppNavigator,
     viewModel: NotificationsViewModel = injectViewModel(key = "notifications-viewmodel-key") { notificationsViewModel }
 ) {
 
-    val staggeredGridState = rememberLazyStaggeredGridState()
+    val listState = rememberLazyListState()
     val scrollState = rememberScrollState()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
@@ -128,7 +125,7 @@ fun NotificationsComposable(
                 val mentionsText = stringResource(Res.string.mentions)
 
                 Row(
-                    modifier = Modifier.background(MaterialTheme.colorScheme.surfaceContainer)
+                    modifier = Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.surfaceContainer)
                         .horizontalScroll(scrollState),
                     horizontalArrangement = Arrangement.spacedBy(
                         ButtonGroupDefaults.ConnectedSpaceBetween
@@ -215,38 +212,54 @@ fun NotificationsComposable(
                 CustomPullToRefreshBox(
                     isRefreshing = viewModel.notificationsState.isRefreshing,
                     onRefresh = { viewModel.refresh() },
-                    animatedBox = true
+                    animatedBox = true,
+                    enabled = PlatformFeatures.supportsPullToRefresh
                 ) {
-                    LazyVerticalStaggeredGrid(
-                        columns = StaggeredGridCells.Adaptive(350.dp),
-                        state = staggeredGridState,
-                        contentPadding = PaddingValues(
-                            start = 8.dp, end = 8.dp, bottom = 60.dp, top = 8.dp
-                        ),
+                    Box(
                         modifier = Modifier.fillMaxSize()
                     ) {
-                        if (viewModel.notificationsState.notifications.isNotEmpty()) {
-                            itemsIndexed(
-                                filteredNotifications,
-                                key = { _, it -> it.id }) { index, notification ->
-                                CustomNotification(
-                                    notification = notification,
-                                    navController = navController,
-                                    removeNotification = { viewModel.removeNotification(notification) },
-                                    index = index,
-                                    count = filteredNotifications.size
-                                )
-                            }
-
-                            if (viewModel.notificationsState.isLoading && !viewModel.notificationsState.isRefreshing) {
-                                item(span = StaggeredGridItemSpan.FullLine) {
-                                    LoadingComposable()
+                        LazyColumn(
+                            state = listState,
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            contentPadding = PaddingValues(
+                                start = 8.dp, end = 8.dp, bottom = 60.dp, top = 8.dp
+                            ),
+                            modifier = Modifier
+                                .fillMaxSize()
+                        ) {
+                            if (viewModel.notificationsState.notifications.isNotEmpty()) {
+                                itemsIndexed(
+                                    filteredNotifications,
+                                    key = { _, it -> it.id }) { index, notification ->
+                                    Box(modifier = Modifier.widthIn(max = 600.dp).fillMaxWidth()) {
+                                        CustomNotification(
+                                            notification = notification,
+                                            navController = navController,
+                                            removeNotification = {
+                                                viewModel.removeNotification(
+                                                    notification
+                                                )
+                                            },
+                                            index = index,
+                                            count = filteredNotifications.size
+                                        )
+                                    }
                                 }
-                            }
 
-                            if (viewModel.notificationsState.endReached && viewModel.notificationsState.notifications.size > 10) {
-                                item(span = StaggeredGridItemSpan.FullLine) {
-                                    EndOfListComposable()
+                                if (viewModel.notificationsState.isLoading && !viewModel.notificationsState.isRefreshing) {
+                                    item {
+                                        Box(modifier = Modifier.widthIn(max = 600.dp).fillMaxWidth()) {
+                                            LoadingComposable()
+                                        }
+                                    }
+                                }
+
+                                if (viewModel.notificationsState.endReached && viewModel.notificationsState.notifications.size > 10) {
+                                    item {
+                                        Box(modifier = Modifier.widthIn(max = 600.dp).fillMaxWidth()) {
+                                            EndOfListComposable()
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -270,9 +283,8 @@ fun NotificationsComposable(
             }
         }
 
-        InfiniteStaggeredGridHandler(
-            lazyStaggeredGridState = staggeredGridState,
-            itemCount = viewModel.notificationsState.notifications.size
+        InfiniteListHandler(
+            lazyListState = listState,
         ) {
             viewModel.getNotificationsPaginated()
         }

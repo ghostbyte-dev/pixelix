@@ -11,8 +11,10 @@ plugins {
 
 kotlin {
     jvmToolchain {
-        languageVersion.set(JavaLanguageVersion.of(21)) // or 21
-        vendor.set(JvmVendorSpec.AZUL)
+        languageVersion.set(JavaLanguageVersion.of(21))
+        if (!providers.gradleProperty("flatpakBuild").isPresent) {
+            vendor.set(JvmVendorSpec.AZUL)
+        }
     }
 }
 

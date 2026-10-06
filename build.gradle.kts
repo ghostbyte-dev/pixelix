@@ -11,6 +11,7 @@ plugins {
 }
 
 flatpakSources {
+    outputFile.set(layout.projectDirectory.file("flatpak-assets/flatpak-sources.json"))
     mustRunAfterTasks.set(listOf(":desktopApp:createDistributable"))
 
     targetPlatforms.set(setOf("linux-x64", "linux-arm64"))

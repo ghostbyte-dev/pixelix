@@ -19,3 +19,6 @@ xcuserdata/
 node_modules
 package*.json
 /androidApp/release
+/flatpak-assets/flatpak-sources.json
+.flatpak-builder
+.flatpak-gradle

@@ -1,5 +1,6 @@
 package com.daniebeler.pfpixelix
 
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
@@ -15,9 +16,21 @@ import com.daniebeler.pfpixelix.utils.configureJavaLogger
 import io.github.vinceglb.filekit.FileKit
 import java.awt.Desktop
 import java.awt.Dimension
+import java.net.InetAddress
 import java.net.ServerSocket
 import java.net.Socket
+import java.util.concurrent.ConcurrentLinkedQueue
 import kotlin.concurrent.thread
+
+private val pendingUrls = ConcurrentLinkedQueue<String>()
+
+@Volatile
+private var redirectHandler: ((String) -> Unit)? = null
+
+private fun dispatchUrl(url: String) {
+    val handler = redirectHandler
+    if (handler != null) handler(url) else pendingUrls.add(url)
+}
 
 fun desktopApp(args: Array<String>) {
 
@@ -30,7 +43,10 @@ fun desktopApp(args: Array<String>) {
 
     startLinkListener { newUrl ->
         println("Received new URL while running: $newUrl")
+        //dispatchUrl(newUrl)
     }
+
+    protocolUrl?.let { dispatchUrl(it) }
 
     application {
         FileKit.init("com.daniebeler.pfpixelix")
@@ -43,6 +59,13 @@ fun desktopApp(args: Array<String>) {
 
         SingletonImageLoader.setSafe {
             appComponent.provideImageLoader()
+        }
+
+        LaunchedEffect(Unit) {
+            val handler: (String) -> Unit = { appComponent.systemUrlHandler.onRedirect(it) }
+            redirectHandler = handler
+            // flush anything that arrived before the app was ready
+            while (true) handler(pendingUrls.poll() ?: break)
         }
 
         if (Desktop.isDesktopSupported()) {
@@ -75,9 +98,9 @@ fun desktopApp(args: Array<String>) {
 
 private fun isAppAlreadyRunning(url: String?): Boolean {
     return try {
-        val socket = Socket("localhost", 49152)
-        url?.let { socket.getOutputStream().write(it.toByteArray()) }
-        socket.close()
+        Socket(InetAddress.getLoopbackAddress(), 49152).use { socket ->
+            url?.let { socket.getOutputStream().write((it + "\n").toByteArray()) }
+        }
         true
     } catch (e: Throwable) {
         false
@@ -86,12 +109,15 @@ private fun isAppAlreadyRunning(url: String?): Boolean {
 
 private fun startLinkListener(onNewLink: (String) -> Unit) {
     thread(isDaemon = true) {
-        val serverSocket = ServerSocket(49152)
+        val serverSocket = ServerSocket(49152, 50, InetAddress.getLoopbackAddress())
         while (true) {
-            val client = serverSocket.accept()
-            val url = client.getInputStream().bufferedReader().readLine()
-            if (url != null) onNewLink(url)
-            client.close()
+            runCatching {
+                serverSocket.accept().use { client ->
+                    client.getInputStream().bufferedReader().readLine()
+                        ?.takeIf { it.startsWith("dev.ghostbyte.pixelix://") }
+                        ?.let(onNewLink)
+                }
+            }
         }
     }
 }

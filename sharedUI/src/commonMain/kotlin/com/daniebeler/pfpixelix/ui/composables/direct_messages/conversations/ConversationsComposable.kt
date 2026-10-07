@@ -11,15 +11,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
-import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
-import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
-import androidx.compose.foundation.lazy.staggeredgrid.items
-import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -28,7 +25,6 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -41,18 +37,18 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.service.platform.PlatformFeatures
-import com.daniebeler.pfpixelix.ui.composables.widgets.InfiniteStaggeredGridHandler
 import com.daniebeler.pfpixelix.ui.composables.SheetItem
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
+import com.daniebeler.pfpixelix.ui.composables.states.EmptyStateComposable
 import com.daniebeler.pfpixelix.ui.composables.states.EndOfListComposable
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
-import com.daniebeler.pfpixelix.ui.composables.states.EmptyStateComposable
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pfpixelix.ui.composables.widgets.CustomPullToRefreshBox
+import com.daniebeler.pfpixelix.ui.composables.widgets.InfiniteListHandler
 import com.daniebeler.pfpixelix.ui.composables.widgets.ScreenScaffold
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
@@ -80,7 +76,7 @@ fun ConversationsComposable(
     var showBottomSheet by remember { mutableStateOf(false) }
     val showNewChatDialog = remember { mutableStateOf(false) }
 
-    val staggeredGridState = rememberLazyStaggeredGridState()
+    val listState = rememberLazyListState()
 
     ScreenScaffold(
         title = stringResource(Res.string.conversations),
@@ -111,30 +107,40 @@ fun ConversationsComposable(
             modifier = Modifier.fillMaxSize(),
             animatedBox = true
         ) {
-            LazyVerticalStaggeredGrid(
-                columns = StaggeredGridCells.Adaptive(350.dp),
-                state = staggeredGridState,
+            LazyColumn(
+                state = listState,
                 modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
                 contentPadding = PaddingValues(top = 28.dp, bottom = 60.dp),
             ) {
                     if (viewModel.conversationsState.conversations.isNotEmpty()) {
                         items(viewModel.conversationsState.conversations, key = {
                             it.id
                         }) {
-                            ConversationElementComposable(
-                                conversation = it, navController = navController
-                            )
+                            Box(modifier = Modifier.widthIn(max = 600.dp).fillMaxWidth()) {
+                                ConversationElementComposable(
+                                    conversation = it, navController = navController
+                                )
+                            }
                         }
 
                         if (!viewModel.conversationsState.isRefreshing) {
-                            item(span = StaggeredGridItemSpan.FullLine) {
-                               LoadingComposable(viewModel.conversationsState.isLoading)
+                            item {
+                                Box(
+                                    modifier = Modifier.widthIn(max = 600.dp).fillMaxWidth()
+                                ) {
+                                    LoadingComposable()
+                                }
                             }
                         }
 
                         if (viewModel.conversationsState.endReached && viewModel.conversationsState.conversations.size > 10) {
-                            item(span = StaggeredGridItemSpan.FullLine) {
-                                EndOfListComposable()
+                            item {
+                                Box(
+                                    modifier = Modifier.widthIn(max = 600.dp).fillMaxWidth()
+                                ) {
+                                    EndOfListComposable()
+                                }
                             }
                         }
                     }
@@ -157,7 +163,7 @@ fun ConversationsComposable(
             ErrorComposable(message = viewModel.conversationsState.error)
         }
 
-        InfiniteStaggeredGridHandler(lazyStaggeredGridState = staggeredGridState, itemCount = viewModel.conversationsState.conversations.size) {
+        InfiniteListHandler(lazyListState = listState) {
             //viewModel.getNotificationsPaginated()
         }
 

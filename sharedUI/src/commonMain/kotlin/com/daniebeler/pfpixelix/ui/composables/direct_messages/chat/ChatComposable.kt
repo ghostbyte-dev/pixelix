@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -52,6 +53,7 @@ import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.service.platform.PlatformFeatures
+import com.daniebeler.pfpixelix.ui.composables.MaxWidthTopBar
 import com.daniebeler.pfpixelix.ui.composables.states.EndOfListComposable
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposableDialog
@@ -71,8 +73,6 @@ import pixelix.app.generated.resources.default_avatar
 import pixelix.app.generated.resources.message
 import pixelix.app.generated.resources.send
 
-@OptIn(ExperimentalMaterial3Api::class)
-
 @Composable
 fun ChatComposable(
     navController: AppNavigator,
@@ -91,7 +91,8 @@ fun ChatComposable(
     }
     Box(modifier = Modifier.fillMaxSize()) {
         val statusBarPadding = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
-        val navigationBarPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+        val navigationBarPadding =
+            WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
 
         Box(
             modifier = Modifier.padding(top = TopAppBarDefaults.TopAppBarExpandedHeight + statusBarPadding - 24.dp)
@@ -101,17 +102,16 @@ fun ChatComposable(
                 isRefreshing = viewModel.chatState.isRefreshing,
                 onRefresh = { viewModel.getChat(accountId, true) },
                 enabled = PlatformFeatures.supportsPullToRefresh,
-                modifier = Modifier
-                    .imePadding()
+                modifier = Modifier.imePadding()
             ) {
                 Column(
-                    modifier = Modifier
-                        .fillMaxSize()
+                    modifier = Modifier.fillMaxSize()
                         .padding(bottom = navigationBarPadding, start = 8.dp, end = 8.dp)
                 ) {
                     LazyColumn(
                         state = lazyListState,
-                        modifier = Modifier.weight(1f),
+                        modifier = Modifier.weight(1f).fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
                         reverseLayout = true,
                         contentPadding = PaddingValues(top = 24.dp),
                         content = {
@@ -120,11 +120,13 @@ fun ChatComposable(
                                 items(viewModel.chatState.chat!!.messages, key = {
                                     it.id
                                 }) {
-                                    ConversationElementComposable(
-                                        message = it,
-                                        { viewModel.deleteMessage(it.reportId) },
-                                        navController = navController
-                                    )
+                                    Box(modifier = Modifier.widthIn(max = 600.dp).fillMaxWidth()) {
+                                        ConversationElementComposable(
+                                            message = it,
+                                            { viewModel.deleteMessage(it.reportId) },
+                                            navController = navController
+                                        )
+                                    }
                                 }
 
                                 if (viewModel.chatState.isLoading) {
@@ -144,12 +146,10 @@ fun ChatComposable(
                                 item {
                                     Spacer(modifier = Modifier.height(56.dp))
                                     Box(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
+                                        modifier = Modifier.widthIn(max = 600.dp).fillMaxWidth()
                                             .clip(
                                                 RoundedCornerShape(8.dp)
-                                            )
-                                            .background(MaterialTheme.colorScheme.primaryContainer)
+                                            ).background(MaterialTheme.colorScheme.primaryContainer)
                                             .padding(8.dp)
                                     ) {
                                         Text(
@@ -164,9 +164,10 @@ fun ChatComposable(
                         })
                     Column(
                         modifier = Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
                         Row(
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier.widthIn(max = 600.dp).fillMaxWidth(),
                             verticalAlignment = Alignment.Bottom
                         ) {
                             OutlinedTextField(
@@ -190,14 +191,13 @@ fun ChatComposable(
                             if (viewModel.newMessageState.isLoading) {
                                 Box(
                                     contentAlignment = Alignment.Center,
-                                    modifier = Modifier
-                                        .height(56.dp)
-                                        .width(56.dp)
-                                        .padding(0.dp, 0.dp)
-                                        .clip(RoundedCornerShape(12.dp))
+                                    modifier = Modifier.height(56.dp).width(56.dp)
+                                        .padding(0.dp, 0.dp).clip(RoundedCornerShape(12.dp))
                                         .background(MaterialTheme.colorScheme.primary)
                                 ) {
-                                    LoadingComposable(size = 48.dp, color = MaterialTheme.colorScheme.onPrimary)
+                                    LoadingComposable(
+                                        size = 48.dp, color = MaterialTheme.colorScheme.onPrimary
+                                    )
                                 }
                             } else {
                                 Button(
@@ -205,20 +205,15 @@ fun ChatComposable(
                                         viewModel.sendMessage(accountId)
                                     },
                                     enabled = viewModel.newMessage.length <= 500,
-                                    modifier =
-                                        Modifier
-                                            .height(56.dp)
-                                            .width(56.dp)
-                                            .padding(0.dp, 0.dp),
+                                    modifier = Modifier.height(56.dp).width(56.dp)
+                                        .padding(0.dp, 0.dp),
                                     shape = RoundedCornerShape(12.dp),
                                     contentPadding = PaddingValues(12.dp)
                                 ) {
                                     Icon(
                                         imageVector = vectorResource(Res.drawable.send),
                                         contentDescription = "send",
-                                        Modifier
-                                            .fillMaxSize()
-                                            .fillMaxWidth()
+                                        Modifier.fillMaxSize().fillMaxWidth()
                                     )
                                 }
                             }
@@ -226,19 +221,13 @@ fun ChatComposable(
                         if (viewModel.newMessage.length > 470) {
                             Text(
                                 text = stringResource(
-                                    Res.string.character_count,
-                                    viewModel.newMessage.length,
-                                    500
+                                    Res.string.character_count, viewModel.newMessage.length, 500
                                 ),
                                 style = MaterialTheme.typography.labelSmall,
-                                color = if (viewModel.newMessage.length > 500)
-                                    MaterialTheme.colorScheme.error
-                                else
-                                    MaterialTheme.colorScheme.onSurfaceVariant,
+                                color = if (viewModel.newMessage.length > 500) MaterialTheme.colorScheme.error
+                                else MaterialTheme.colorScheme.onSurfaceVariant,
                                 modifier = Modifier.padding(
-                                    top = 4.dp,
-                                    start = 4.dp,
-                                    bottom = 4.dp
+                                    top = 4.dp, start = 4.dp, bottom = 4.dp
                                 )
                             )
                         }
@@ -251,55 +240,57 @@ fun ChatComposable(
             viewModel.newMessageState = NewMessageState()
         })
 
-        TopAppBar(
-            modifier = Modifier.clip(
-                RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)
-            ),
-            title = {
-                if (viewModel.chatState.chat != null) {
-                    Row(
-                        modifier = Modifier.clickable {
-                            navController.navigate(Destination.Profile(accountId, viewModel.chatState.chat?.username))
-                        }, verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        AsyncImage(
-                            model = viewModel.chatState.chat!!.avatar,
-                            error = painterResource(Res.drawable.default_avatar),
-                            contentDescription = "",
-                            modifier = Modifier
-                                .height(46.dp)
-                                .width(46.dp)
-                                .clip(CircleShape)
-                        )
-                        Spacer(modifier = Modifier.width(10.dp))
-
-                        Column {
-
-                            Text(text = viewModel.chatState.chat!!.name)
-                            Text(
-                                text = viewModel.chatState.chat!!.url.substringAfter("https://")
-                                    .substringBefore("/"),
-                                fontSize = 12.sp,
-                                lineHeight = 6.sp,
-                                color = MaterialTheme.colorScheme.primary
+        MaxWidthTopBar {
+            TopAppBar(
+                modifier = Modifier.clip(
+                    RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)
+                ), title = {
+                    if (viewModel.chatState.chat != null) {
+                        Row(
+                            modifier = Modifier.clickable {
+                                navController.navigate(
+                                    Destination.Profile(
+                                        accountId, viewModel.chatState.chat?.username
+                                    )
+                                )
+                            }, verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            AsyncImage(
+                                model = viewModel.chatState.chat!!.avatar,
+                                error = painterResource(Res.drawable.default_avatar),
+                                contentDescription = "",
+                                modifier = Modifier.height(46.dp).width(46.dp).clip(CircleShape)
                             )
+                            Spacer(modifier = Modifier.width(10.dp))
+
+                            Column {
+
+                                Text(text = viewModel.chatState.chat!!.name)
+                                Text(
+                                    text = viewModel.chatState.chat!!.url.substringAfter("https://")
+                                        .substringBefore("/"),
+                                    fontSize = 12.sp,
+                                    lineHeight = 6.sp,
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            }
                         }
                     }
-                }
 
-            }, navigationIcon = {
-                IconButton(onClick = {
-                    navController.popBackStack()
-                }) {
-                    Icon(
-                        imageVector = vectorResource(Res.drawable.arrow_left), contentDescription = ""
-                    )
-                }
-            }, colors = TopAppBarDefaults.mediumTopAppBarColors(
-                containerColor = MaterialTheme.colorScheme.surfaceContainer
+                }, navigationIcon = {
+                    IconButton(onClick = {
+                        navController.popBackStack()
+                    }) {
+                        Icon(
+                            imageVector = vectorResource(Res.drawable.arrow_left),
+                            contentDescription = ""
+                        )
+                    }
+                }, colors = TopAppBarDefaults.mediumTopAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceContainer
+                )
             )
-        )
-
+        }
 
         InfiniteListHandler(lazyListState = lazyListState) {
             viewModel.getChatPaginated(accountId)

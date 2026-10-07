@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.di.injectViewModel
+import com.daniebeler.pfpixelix.ui.composables.MaxWidthTopBar
 import com.daniebeler.pfpixelix.ui.composables.profile.ViewEnum
 import com.daniebeler.pfpixelix.ui.composables.widgets.ButtonRowElement
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
@@ -206,91 +207,94 @@ fun CollectionComposable(
 
 
 
-        TopAppBar(
-            modifier = Modifier.clip(
-                RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)
-            ), title = {
-                if (viewModel.collectionState.collection != null) {
-                    if (viewModel.editState.editMode) {
-                        TextField(
-                            value = viewModel.editState.name,
-                            singleLine = true,
-                            onValueChange = {
-                                viewModel.editState = viewModel.editState.copy(name = it)
-                            },
-                            modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(16.dp),
-                            colors = TextFieldDefaults.colors(
-                                unfocusedIndicatorColor = Color.Transparent,
-                                focusedIndicatorColor = Color.Transparent,
-                                focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
-                                unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer
+        MaxWidthTopBar {
+            TopAppBar(
+                modifier = Modifier.clip(
+                    RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)
+                ), title = {
+                    if (viewModel.collectionState.collection != null) {
+                        if (viewModel.editState.editMode) {
+                            TextField(
+                                value = viewModel.editState.name,
+                                singleLine = true,
+                                onValueChange = {
+                                    viewModel.editState = viewModel.editState.copy(name = it)
+                                },
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = RoundedCornerShape(16.dp),
+                                colors = TextFieldDefaults.colors(
+                                    unfocusedIndicatorColor = Color.Transparent,
+                                    focusedIndicatorColor = Color.Transparent,
+                                    focusedContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+                                    unfocusedContainerColor = MaterialTheme.colorScheme.surfaceContainer
+                                )
                             )
-                        )
-                    } else {
-                        Column {
-                            Text(
-                                viewModel.collectionState.collection!!.title,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 18.sp
-                            )
-                            Text(
-                                stringResource(
-                                    Res.string.by, viewModel.collectionState.collection!!.username
-                                ), fontSize = 12.sp, lineHeight = 6.sp
-                            )
-                        }
-                    }
-                }
-            }, navigationIcon = {
-                IconButton(onClick = {
-                    navController.popBackStack()
-                }) {
-                    Icon(
-                        imageVector = vectorResource(Res.drawable.arrow_left),
-                        contentDescription = ""
-                    )
-                }
-            }, actions = {
-                if (viewModel.editState.editMode) {
-                    TextButton(onClick = {
-                        viewModel.toggleEditMode()
-                    }) {
-                        Text(stringResource(Res.string.cancel))
-                    }
-                    TextButton(onClick = {
-                        viewModel.confirmEdit()
-                    }) {
-                        Text(stringResource(Res.string.confirm))
-                    }
-                } else {
-
-                    viewModel.collectionState.collection?.let {
-                        if (it.username == viewModel.myUsername) {
-                            IconButton(onClick = {
-                                viewModel.toggleEditMode()
-                            }) {
-                                Icon(
-                                    imageVector = vectorResource(Res.drawable.edit),
-                                    contentDescription = ""
+                        } else {
+                            Column {
+                                Text(
+                                    viewModel.collectionState.collection!!.title,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 18.sp
+                                )
+                                Text(
+                                    stringResource(
+                                        Res.string.by,
+                                        viewModel.collectionState.collection!!.username
+                                    ), fontSize = 12.sp, lineHeight = 6.sp
                                 )
                             }
                         }
                     }
-
+                }, navigationIcon = {
                     IconButton(onClick = {
-                        //Navigate.navigate("settings_screen", navController)
-                        showBottomSheet = true
+                        navController.popBackStack()
                     }) {
                         Icon(
-                            imageVector = vectorResource(Res.drawable.more_menu),
+                            imageVector = vectorResource(Res.drawable.arrow_left),
                             contentDescription = ""
                         )
                     }
-                }
-            }, colors = TopAppBarDefaults.mediumTopAppBarColors(
-                containerColor = MaterialTheme.colorScheme.surfaceContainer
+                }, actions = {
+                    if (viewModel.editState.editMode) {
+                        TextButton(onClick = {
+                            viewModel.toggleEditMode()
+                        }) {
+                            Text(stringResource(Res.string.cancel))
+                        }
+                        TextButton(onClick = {
+                            viewModel.confirmEdit()
+                        }) {
+                            Text(stringResource(Res.string.confirm))
+                        }
+                    } else {
+
+                        viewModel.collectionState.collection?.let {
+                            if (it.username == viewModel.myUsername) {
+                                IconButton(onClick = {
+                                    viewModel.toggleEditMode()
+                                }) {
+                                    Icon(
+                                        imageVector = vectorResource(Res.drawable.edit),
+                                        contentDescription = ""
+                                    )
+                                }
+                            }
+                        }
+
+                        IconButton(onClick = {
+                            //Navigate.navigate("settings_screen", navController)
+                            showBottomSheet = true
+                        }) {
+                            Icon(
+                                imageVector = vectorResource(Res.drawable.more_menu),
+                                contentDescription = ""
+                            )
+                        }
+                    }
+                }, colors = TopAppBarDefaults.mediumTopAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceContainer
+                )
             )
-        )
+        }
     }
 }

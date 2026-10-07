@@ -8,6 +8,7 @@ import androidx.compose.ui.unit.dp
 import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.di.LocalAppComponent
 import com.daniebeler.pfpixelix.di.injectViewModel
+import com.daniebeler.pfpixelix.ui.composables.MaxWidthTopBar
 import com.daniebeler.pfpixelix.ui.composables.timelines.TimelineHelpCard
 import com.daniebeler.pfpixelix.ui.composables.widgets.InfinitePostsList
 import org.jetbrains.compose.resources.stringResource
@@ -56,12 +57,14 @@ fun GlobalTimelineComposable(
             null
         } else {
             {
-                TimelineHelpCard(
-                    title = stringResource(Res.string.global),
-                    description = stringResource(Res.string.global_timeline_explained),
-                    onDiscard = {
-                        viewModel.discardHelp()
-                    })
+                MaxWidthTopBar(hasBackground = false) {
+                    TimelineHelpCard(
+                        title = stringResource(Res.string.global),
+                        description = stringResource(Res.string.global_timeline_explained),
+                        onDiscard = {
+                            viewModel.discardHelp()
+                        })
+                }
             }
         })
 }

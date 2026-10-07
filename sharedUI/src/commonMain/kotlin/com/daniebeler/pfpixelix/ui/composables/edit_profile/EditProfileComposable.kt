@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -60,6 +61,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -79,6 +81,7 @@ import com.attafitamim.krop.ui.CropperPreview
 import com.attafitamim.krop.ui.DefaultControls
 import com.daniebeler.pfpixelix.EdgeToEdgeDialogProperties
 import com.daniebeler.pfpixelix.di.injectViewModel
+import com.daniebeler.pfpixelix.ui.composables.MaxWidthTopBar
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposableDialog
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pfpixelix.ui.composables.widgets.SuggestionsBar
@@ -117,7 +120,6 @@ import pixelix.app.generated.resources.undo
 import pixelix.app.generated.resources.value
 import pixelix.app.generated.resources.website
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditProfileComposable(
     navController: AppNavigator,
@@ -135,16 +137,88 @@ fun EditProfileComposable(
         })
 
     Scaffold(
-        contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top)
+        contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top),
+        topBar = {
+            MaxWidthTopBar {
+                TopAppBar(
+                    modifier = Modifier.clip(
+                        RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)
+                    ), title = {
+                        Text(
+                            text = stringResource(Res.string.edit_profile),
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 18.sp
+                        )
+                    }, navigationIcon = {
+                        IconButton(onClick = {
+                            if (viewModel.isEdited) {
+                                focusManager.clearFocus()
+                                isCancelAlertOpen = true
+                            } else {
+                                navController.popBackStack()
+                            }
+                        }) {
+                            Icon(
+                                imageVector = vectorResource(Res.drawable.arrow_left),
+                                contentDescription = ""
+                            )
+                        }
+                    }, actions = {
+                        if (viewModel.firstLoaded) {
+                            if (!viewModel.isEdited) {
+                                if (!viewModel.accountState.isLoading) {
+                                    Button(
+                                        onClick = {},
+                                        modifier = Modifier.width(120.dp),
+                                        shape = RoundedCornerShape(12.dp),
+                                        enabled = false,
+                                        colors = ButtonDefaults.buttonColors(
+                                            disabledContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                                            disabledContentColor = MaterialTheme.colorScheme.onSurface
+                                        )
+                                    ) {
+                                        Text(text = stringResource(Res.string.save))
+                                    }
+                                }
+                            } else {
+                                if (viewModel.accountState.isLoading) {
+                                    Button(
+                                        onClick = {},
+                                        modifier = Modifier.width(120.dp),
+                                        shape = RoundedCornerShape(12.dp)
+                                    ) {
+                                        LoadingComposable(
+                                            modifier = Modifier.size(20.dp),
+                                            color = MaterialTheme.colorScheme.onPrimary
+                                        )
+                                    }
+                                } else {
+                                    Button(
+                                        onClick = { viewModel.save() },
+                                        modifier = Modifier.width(120.dp),
+                                        shape = RoundedCornerShape(12.dp)
+                                    ) {
+                                        Text(text = stringResource(Res.string.save))
+                                    }
+                                }
+                            }
+                        }
+                    }, colors = TopAppBarDefaults.mediumTopAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceContainer
+                    )
+                )
+            }
+        }
     ) { paddingValues ->
         Column(
-            Modifier.imeAwareInsets(60.dp).fillMaxSize()
+            Modifier.imeAwareInsets(60.dp).fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             val navigationBarPadding =
                 WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
 
             Column(
-                Modifier.padding(paddingValues)
+                Modifier.widthIn(max = 800.dp).padding(paddingValues)
                     .padding(top = TopAppBarDefaults.TopAppBarExpandedHeight - 24.dp).weight(1f)
                     .padding(horizontal = 12.dp).verticalScroll(state = rememberScrollState())
             ) {
@@ -441,73 +515,7 @@ fun EditProfileComposable(
                 })
         }
 
-        TopAppBar(
-            modifier = Modifier.clip(
-                RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)
-            ), title = {
-                Text(
-                    text = stringResource(Res.string.edit_profile),
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp
-                )
-            }, navigationIcon = {
-                IconButton(onClick = {
-                    if (viewModel.isEdited) {
-                        focusManager.clearFocus()
-                        isCancelAlertOpen = true
-                    } else {
-                        navController.popBackStack()
-                    }
-                }) {
-                    Icon(
-                        imageVector = vectorResource(Res.drawable.arrow_left),
-                        contentDescription = ""
-                    )
-                }
-            }, actions = {
-                if (viewModel.firstLoaded) {
-                    if (!viewModel.isEdited) {
-                        if (!viewModel.accountState.isLoading) {
-                            Button(
-                                onClick = {},
-                                modifier = Modifier.width(120.dp),
-                                shape = RoundedCornerShape(12.dp),
-                                enabled = false,
-                                colors = ButtonDefaults.buttonColors(
-                                    disabledContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-                                    disabledContentColor = MaterialTheme.colorScheme.onSurface
-                                )
-                            ) {
-                                Text(text = stringResource(Res.string.save))
-                            }
-                        }
-                    } else {
-                        if (viewModel.accountState.isLoading) {
-                            Button(
-                                onClick = {},
-                                modifier = Modifier.width(120.dp),
-                                shape = RoundedCornerShape(12.dp)
-                            ) {
-                                LoadingComposable(
-                                    modifier = Modifier.size(20.dp),
-                                    color = MaterialTheme.colorScheme.onPrimary
-                                )
-                            }
-                        } else {
-                            Button(
-                                onClick = { viewModel.save() },
-                                modifier = Modifier.width(120.dp),
-                                shape = RoundedCornerShape(12.dp)
-                            ) {
-                                Text(text = stringResource(Res.string.save))
-                            }
-                        }
-                    }
-                }
-            }, colors = TopAppBarDefaults.mediumTopAppBarColors(
-                containerColor = MaterialTheme.colorScheme.surfaceContainer
-            )
-        )
+
 
     }
 }

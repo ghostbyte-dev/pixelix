@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.di.injectViewModel
+import com.daniebeler.pfpixelix.ui.composables.MaxWidthTopBar
 import com.daniebeler.pfpixelix.ui.composables.explore.trending.TrendingRange
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposableDialog
 import com.daniebeler.pfpixelix.ui.composables.widgets.InfinitePostsList
@@ -53,39 +54,38 @@ fun TrendingPostsComposable(
             contentPaddingTop = 32.dp,
             contentPaddingBottom = 80.dp,
             before = {
-                ButtonGroup(overflowIndicator = { Text(dailyLabel) }) {
-                    toggleableItem(
-                        weight = 1f,
-                        checked = viewModel.timeRange == TrendingRange.DAILY,
-                        onCheckedChange = { viewModel.changeTimeRange(TrendingRange.DAILY) },
-                        label = dailyLabel,
-                        icon = {
-                            if (viewModel.timeRange == TrendingRange.DAILY) {
-                                Icon(imageVector = calendarIcon, contentDescription = "")
-                            }
-                        })
+                MaxWidthTopBar(hasBackground = false) {
+                    ButtonGroup(overflowIndicator = { Text(dailyLabel) }) {
+                        toggleableItem(
+                            checked = viewModel.timeRange == TrendingRange.DAILY,
+                            onCheckedChange = { viewModel.changeTimeRange(TrendingRange.DAILY) },
+                            label = dailyLabel,
+                            icon = {
+                                if (viewModel.timeRange == TrendingRange.DAILY) {
+                                    Icon(imageVector = calendarIcon, contentDescription = "")
+                                }
+                            })
 
-                    toggleableItem(
-                        weight = 1f,
-                        checked = viewModel.timeRange == TrendingRange.MONTHLY,
-                        onCheckedChange = { viewModel.changeTimeRange(TrendingRange.MONTHLY) },
-                        label = monthlyLabel,
-                        icon = {
-                            if (viewModel.timeRange == TrendingRange.MONTHLY) {
-                                Icon(imageVector = calendarIcon, contentDescription = "")
-                            }
-                        })
+                        toggleableItem(
+                            checked = viewModel.timeRange == TrendingRange.MONTHLY,
+                            onCheckedChange = { viewModel.changeTimeRange(TrendingRange.MONTHLY) },
+                            label = monthlyLabel,
+                            icon = {
+                                if (viewModel.timeRange == TrendingRange.MONTHLY) {
+                                    Icon(imageVector = calendarIcon, contentDescription = "")
+                                }
+                            })
 
-                    toggleableItem(
-                        weight = 1f,
-                        checked = viewModel.timeRange == TrendingRange.YEARLY,
-                        onCheckedChange = { viewModel.changeTimeRange(TrendingRange.YEARLY) },
-                        label = yearlyLabel,
-                        icon = {
-                            if (viewModel.timeRange == TrendingRange.YEARLY) {
-                                Icon(imageVector = calendarIcon, contentDescription = "")
-                            }
-                        })
+                        toggleableItem(
+                            checked = viewModel.timeRange == TrendingRange.YEARLY,
+                            onCheckedChange = { viewModel.changeTimeRange(TrendingRange.YEARLY) },
+                            label = yearlyLabel,
+                            icon = {
+                                if (viewModel.timeRange == TrendingRange.YEARLY) {
+                                    Icon(imageVector = calendarIcon, contentDescription = "")
+                                }
+                            })
+                    }
                 }
             })
     }

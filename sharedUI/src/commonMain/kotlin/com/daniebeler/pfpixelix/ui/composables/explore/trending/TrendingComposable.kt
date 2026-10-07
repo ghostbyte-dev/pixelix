@@ -50,7 +50,6 @@ enum class TrendingRange {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun TrendingComposable(
     navController: AppNavigator,

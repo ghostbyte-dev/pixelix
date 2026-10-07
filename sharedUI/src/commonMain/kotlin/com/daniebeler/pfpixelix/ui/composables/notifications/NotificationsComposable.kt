@@ -44,6 +44,7 @@ import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.model.NotificationType
 import com.daniebeler.pfpixelix.domain.service.platform.PlatformFeatures
+import com.daniebeler.pfpixelix.ui.composables.MaxWidthTopBar
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyStateComposable
 import com.daniebeler.pfpixelix.ui.composables.states.EndOfListComposable
@@ -91,28 +92,30 @@ fun NotificationsComposable(
         contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top),
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            TopAppBar(
-                scrollBehavior = scrollBehavior, title = {
-                    Text(
-                        stringResource(Res.string.notifications),
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp
-                    )
-                }, actions = {
-                    if (PlatformFeatures.notificationWidgets) {
-                        IconButton(onClick = {
-                            viewModel.pinWidget()
-                        }) {
-                            Icon(
-                                imageVector = vectorResource(Res.drawable.widget),
-                                contentDescription = "add widget"
-                            )
+            MaxWidthTopBar {
+                TopAppBar(
+                    scrollBehavior = scrollBehavior, title = {
+                        Text(
+                            stringResource(Res.string.notifications),
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 18.sp
+                        )
+                    }, actions = {
+                        if (PlatformFeatures.notificationWidgets) {
+                            IconButton(onClick = {
+                                viewModel.pinWidget()
+                            }) {
+                                Icon(
+                                    imageVector = vectorResource(Res.drawable.widget),
+                                    contentDescription = "add widget"
+                                )
+                            }
                         }
-                    }
-                }, colors = TopAppBarDefaults.mediumTopAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceContainer
+                    }, colors = TopAppBarDefaults.mediumTopAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceContainer
+                    )
                 )
-            )
+            }
         }) { paddingValues ->
         Box(
             modifier = Modifier.fillMaxSize().padding(paddingValues)
@@ -124,84 +127,87 @@ fun NotificationsComposable(
                 val repostsText = stringResource(Res.string.reposts)
                 val mentionsText = stringResource(Res.string.mentions)
 
-                Row(
-                    modifier = Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.surfaceContainer)
-                        .horizontalScroll(scrollState),
-                    horizontalArrangement = Arrangement.spacedBy(
-                        ButtonGroupDefaults.ConnectedSpaceBetween
-                    )
-                ) {
+                MaxWidthTopBar {
+                    Row(
+                        modifier = Modifier.fillMaxWidth()
+                            .background(MaterialTheme.colorScheme.surfaceContainer)
+                            .horizontalScroll(scrollState),
+                        horizontalArrangement = Arrangement.spacedBy(
+                            ButtonGroupDefaults.ConnectedSpaceBetween
+                        )
+                    ) {
 
-                    Spacer(modifier = Modifier.width(12.dp))
-                    ToggleButton(
-                        checked = viewModel.filter == NotificationsFilterEnum.All,
-                        onCheckedChange = {
-                            viewModel.changeFilter(NotificationsFilterEnum.All)
-                        },
-                        colors = ToggleButtonDefaults.toggleButtonColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
-                        ),
-                        content = {
-                            Text(allText)
-                        })
+                        Spacer(modifier = Modifier.width(12.dp))
+                        ToggleButton(
+                            checked = viewModel.filter == NotificationsFilterEnum.All,
+                            onCheckedChange = {
+                                viewModel.changeFilter(NotificationsFilterEnum.All)
+                            },
+                            colors = ToggleButtonDefaults.toggleButtonColors(
+                                containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
+                            ),
+                            content = {
+                                Text(allText)
+                            })
 
-                    Spacer(modifier = Modifier.width(12.dp))
+                        Spacer(modifier = Modifier.width(12.dp))
 
-                    ToggleButton(
-                        checked = viewModel.filter == NotificationsFilterEnum.Followers,
-                        onCheckedChange = {
-                            viewModel.changeFilter(NotificationsFilterEnum.Followers)
-                        },
-                        colors = ToggleButtonDefaults.toggleButtonColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
-                        ),
-                        content = {
-                            Text(followersText)
-                        })
+                        ToggleButton(
+                            checked = viewModel.filter == NotificationsFilterEnum.Followers,
+                            onCheckedChange = {
+                                viewModel.changeFilter(NotificationsFilterEnum.Followers)
+                            },
+                            colors = ToggleButtonDefaults.toggleButtonColors(
+                                containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
+                            ),
+                            content = {
+                                Text(followersText)
+                            })
 
-                    Spacer(modifier = Modifier.width(12.dp))
+                        Spacer(modifier = Modifier.width(12.dp))
 
-                    ToggleButton(
-                        checked = viewModel.filter == NotificationsFilterEnum.Mentions,
-                        onCheckedChange = {
-                            viewModel.changeFilter(NotificationsFilterEnum.Mentions)
-                        },
-                        colors = ToggleButtonDefaults.toggleButtonColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
-                        ),
-                        content = {
-                            Text(mentionsText)
-                        })
+                        ToggleButton(
+                            checked = viewModel.filter == NotificationsFilterEnum.Mentions,
+                            onCheckedChange = {
+                                viewModel.changeFilter(NotificationsFilterEnum.Mentions)
+                            },
+                            colors = ToggleButtonDefaults.toggleButtonColors(
+                                containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
+                            ),
+                            content = {
+                                Text(mentionsText)
+                            })
 
-                    Spacer(modifier = Modifier.width(12.dp))
+                        Spacer(modifier = Modifier.width(12.dp))
 
-                    ToggleButton(
-                        checked = viewModel.filter == NotificationsFilterEnum.Likes,
-                        onCheckedChange = {
-                            viewModel.changeFilter(NotificationsFilterEnum.Likes)
-                        },
-                        colors = ToggleButtonDefaults.toggleButtonColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
-                        ),
-                        content = {
-                            Text(likesText)
-                        })
+                        ToggleButton(
+                            checked = viewModel.filter == NotificationsFilterEnum.Likes,
+                            onCheckedChange = {
+                                viewModel.changeFilter(NotificationsFilterEnum.Likes)
+                            },
+                            colors = ToggleButtonDefaults.toggleButtonColors(
+                                containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
+                            ),
+                            content = {
+                                Text(likesText)
+                            })
 
-                    Spacer(modifier = Modifier.width(12.dp))
+                        Spacer(modifier = Modifier.width(12.dp))
 
-                    ToggleButton(
-                        checked = viewModel.filter == NotificationsFilterEnum.Reposts,
-                        onCheckedChange = {
-                            viewModel.changeFilter(NotificationsFilterEnum.Reposts)
-                        },
-                        colors = ToggleButtonDefaults.toggleButtonColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
-                        ),
-                        content = {
-                            Text(repostsText)
-                        })
+                        ToggleButton(
+                            checked = viewModel.filter == NotificationsFilterEnum.Reposts,
+                            onCheckedChange = {
+                                viewModel.changeFilter(NotificationsFilterEnum.Reposts)
+                            },
+                            colors = ToggleButtonDefaults.toggleButtonColors(
+                                containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
+                            ),
+                            content = {
+                                Text(repostsText)
+                            })
 
-                    Spacer(modifier = Modifier.width(12.dp))
+                        Spacer(modifier = Modifier.width(12.dp))
+                    }
                 }
 
                 Spacer(
@@ -224,8 +230,7 @@ fun NotificationsComposable(
                             contentPadding = PaddingValues(
                                 start = 8.dp, end = 8.dp, bottom = 60.dp, top = 8.dp
                             ),
-                            modifier = Modifier
-                                .fillMaxSize()
+                            modifier = Modifier.fillMaxSize()
                         ) {
                             if (viewModel.notificationsState.notifications.isNotEmpty()) {
                                 itemsIndexed(
@@ -248,7 +253,9 @@ fun NotificationsComposable(
 
                                 if (viewModel.notificationsState.isLoading && !viewModel.notificationsState.isRefreshing) {
                                     item {
-                                        Box(modifier = Modifier.widthIn(max = 600.dp).fillMaxWidth()) {
+                                        Box(
+                                            modifier = Modifier.widthIn(max = 600.dp).fillMaxWidth()
+                                        ) {
                                             LoadingComposable()
                                         }
                                     }
@@ -256,7 +263,9 @@ fun NotificationsComposable(
 
                                 if (viewModel.notificationsState.endReached && viewModel.notificationsState.notifications.size > 10) {
                                     item {
-                                        Box(modifier = Modifier.widthIn(max = 600.dp).fillMaxWidth()) {
+                                        Box(
+                                            modifier = Modifier.widthIn(max = 600.dp).fillMaxWidth()
+                                        ) {
                                             EndOfListComposable()
                                         }
                                     }

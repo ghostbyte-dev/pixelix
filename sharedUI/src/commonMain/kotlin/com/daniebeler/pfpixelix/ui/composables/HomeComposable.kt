@@ -87,8 +87,9 @@ fun HomeComposable(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top),
         topBar = {
-            TopAppBar(
-                scrollBehavior = scrollBehavior, title = {
+            MaxWidthTopBar {
+                TopAppBar(
+                    scrollBehavior = scrollBehavior, title = {
                     Text(
                         stringResource(Res.string.app_name),
                         fontWeight = FontWeight.Bold,
@@ -145,74 +146,71 @@ fun HomeComposable(
                 }, colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.surfaceContainer
                 )
-            )
+                )
+            }
         }) { paddingValues ->
-        Box(
+        Column(
             Modifier.fillMaxSize().padding(paddingValues)
                 .background(MaterialTheme.colorScheme.background)
         ) {
-            PrimaryTabRow(
-                selectedTabIndex = pagerState.currentPage,
-                divider = {},
-                containerColor = MaterialTheme.colorScheme.surfaceContainer,
-                modifier = Modifier.clip(
-                    RoundedCornerShape(
-                        bottomStart = 24.dp, bottomEnd = 24.dp
-                    )
-                ).zIndex(1f)
-            ) {
-                Tab(
-                    text = { Text(stringResource(Res.string.home)) },
-                    selected = pagerState.currentPage == 0,
-                    selectedContentColor = MaterialTheme.colorScheme.primary,
-                    unselectedContentColor = MaterialTheme.colorScheme.onBackground,
-                    onClick = {
-                        if (pagerState.currentPage == 0) {
-                            appComponent.backToTopTrigger.scrollToTop()
-                        } else {
-                            scope.launch {
-                                pagerState.animateScrollToPage(0)
-                            }
-                        }
-                    })
-
-                Tab(
-                    text = { Text(stringResource(Res.string.local)) },
-                    selected = pagerState.currentPage == 1,
-                    selectedContentColor = MaterialTheme.colorScheme.primary,
-                    unselectedContentColor = MaterialTheme.colorScheme.onBackground,
-                    onClick = {
-                        scope.launch {
-                            if (pagerState.currentPage == 1) {
+            MaxWidthTopBar {
+                PrimaryTabRow(
+                    selectedTabIndex = pagerState.currentPage,
+                    divider = {},
+                    containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                ) {
+                    Tab(
+                        text = { Text(stringResource(Res.string.home)) },
+                        selected = pagerState.currentPage == 0,
+                        selectedContentColor = MaterialTheme.colorScheme.primary,
+                        unselectedContentColor = MaterialTheme.colorScheme.onBackground,
+                        onClick = {
+                            if (pagerState.currentPage == 0) {
                                 appComponent.backToTopTrigger.scrollToTop()
                             } else {
-                                pagerState.animateScrollToPage(1)
+                                scope.launch {
+                                    pagerState.animateScrollToPage(0)
+                                }
                             }
-                        }
-                    })
+                        })
 
-                Tab(
-                    text = { Text(stringResource(Res.string.global)) },
-                    selected = pagerState.currentPage == 2,
-                    selectedContentColor = MaterialTheme.colorScheme.primary,
-                    unselectedContentColor = MaterialTheme.colorScheme.onBackground,
-                    onClick = {
-                        if (pagerState.currentPage == 2) {
-                            appComponent.backToTopTrigger.scrollToTop()
-                        } else {
+                    Tab(
+                        text = { Text(stringResource(Res.string.local)) },
+                        selected = pagerState.currentPage == 1,
+                        selectedContentColor = MaterialTheme.colorScheme.primary,
+                        unselectedContentColor = MaterialTheme.colorScheme.onBackground,
+                        onClick = {
                             scope.launch {
-                                pagerState.animateScrollToPage(2)
+                                if (pagerState.currentPage == 1) {
+                                    appComponent.backToTopTrigger.scrollToTop()
+                                } else {
+                                    pagerState.animateScrollToPage(1)
+                                }
                             }
-                        }
-                    })
+                        })
+
+                    Tab(
+                        text = { Text(stringResource(Res.string.global)) },
+                        selected = pagerState.currentPage == 2,
+                        selectedContentColor = MaterialTheme.colorScheme.primary,
+                        unselectedContentColor = MaterialTheme.colorScheme.onBackground,
+                        onClick = {
+                            if (pagerState.currentPage == 2) {
+                                appComponent.backToTopTrigger.scrollToTop()
+                            } else {
+                                scope.launch {
+                                    pagerState.animateScrollToPage(2)
+                                }
+                            }
+                        })
+                }
             }
 
             HorizontalPager(
                 state = pagerState,
                 beyondViewportPageCount = 3,
                 userScrollEnabled = viewModel.isSwipeBetweenTabsEnabled,
-                modifier = Modifier.padding(top = 24.dp)
-                    .background(MaterialTheme.colorScheme.background).zIndex(0f)
+                modifier = Modifier.background(MaterialTheme.colorScheme.background)
             ) { tabIndex ->
                 when (tabIndex) {
                     0 -> Box(modifier = Modifier.fillMaxSize()) {

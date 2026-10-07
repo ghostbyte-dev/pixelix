@@ -45,6 +45,7 @@ import androidx.compose.ui.unit.sp
 import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.service.platform.PlatformFeatures
+import com.daniebeler.pfpixelix.ui.composables.MaxWidthTopBar
 import com.daniebeler.pfpixelix.ui.composables.profile.CollectionsComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.ProfileTopSection
 import com.daniebeler.pfpixelix.ui.composables.profile.server_stats.DomainSoftwareComposable
@@ -77,49 +78,51 @@ fun OwnProfileComposable(
         contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top),
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            TopAppBar(
-                scrollBehavior = scrollBehavior, title = {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(12.dp),
-                        modifier = Modifier.clickable { showBottomSheet = 2 }) {
-                        Icon(
-                            imageVector = vectorResource(Res.drawable.user_switch),
-                            contentDescription = "Switch account"
-                        )
-                        Column {
-                            Text(
-                                text = viewModel.accountState.account?.displayname.orEmpty()
-                                    .ifBlank { viewModel.accountState.account?.shortUsername }
-                                    ?: "",
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 18.sp)
-                            Text(
-                                text = viewModel.accountState.account?.acct ?: "",
-                                fontSize = 12.sp,
-                                lineHeight = 6.sp
+            MaxWidthTopBar {
+                TopAppBar(
+                    scrollBehavior = scrollBehavior, title = {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(12.dp),
+                            modifier = Modifier.clickable { showBottomSheet = 2 }) {
+                            Icon(
+                                imageVector = vectorResource(Res.drawable.user_switch),
+                                contentDescription = "Switch account"
+                            )
+                            Column {
+                                Text(
+                                    text = viewModel.accountState.account?.displayname.orEmpty()
+                                        .ifBlank { viewModel.accountState.account?.shortUsername }
+                                        ?: "",
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 18.sp)
+                                Text(
+                                    text = viewModel.accountState.account?.acct ?: "",
+                                    fontSize = 12.sp,
+                                    lineHeight = 6.sp
+                                )
+                            }
+                        }
+                    }, actions = {
+                        if (viewModel.ownDomain.isNotEmpty()) {
+                            DomainSoftwareComposable(
+                                domain = viewModel.ownDomain
                             )
                         }
-                    }
-                }, actions = {
-                    if (viewModel.ownDomain.isNotEmpty()) {
-                        DomainSoftwareComposable(
-                            domain = viewModel.ownDomain
-                        )
-                    }
 
-                    IconButton(onClick = {
-                        showBottomSheet = 1
-                    }) {
-                        Icon(
-                            imageVector = vectorResource(Res.drawable.more_menu),
-                            contentDescription = "preferences"
-                        )
-                    }
-                }, colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceContainer
+                        IconButton(onClick = {
+                            showBottomSheet = 1
+                        }) {
+                            Icon(
+                                imageVector = vectorResource(Res.drawable.more_menu),
+                                contentDescription = "preferences"
+                            )
+                        }
+                    }, colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceContainer
+                    )
                 )
-            )
+            }
         }) { paddingValues ->
         Box(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
             InfinitePostsList(
@@ -140,67 +143,69 @@ fun OwnProfileComposable(
                 postGetsUpdated = { },
                 isFirstItemLarge = true,
                 before = {
-                    Column(
-                        modifier = Modifier.layout { measurable, constraints ->
-                            val horizontalPadding = 4.dp.roundToPx()
+                    MaxWidthTopBar {
+                        Column(
+                            modifier = Modifier.layout { measurable, constraints ->
+                                val horizontalPadding = 4.dp.roundToPx()
 
-                            val expandedWidth = constraints.maxWidth + (horizontalPadding * 2)
-                            val placeable = measurable.measure(
-                                constraints.copy(
-                                    maxWidth = expandedWidth, minWidth = expandedWidth
-                                )
-                            )
-                            layout(constraints.maxWidth, placeable.height) {
-                                placeable.placeRelative(-horizontalPadding, 0)
-                            }
-                        }.fillMaxWidth().clip(
-                            RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)
-                        ).background(MaterialTheme.colorScheme.surfaceContainer)
-                            .padding(bottom = 12.dp)
-                    ) {
-                        if (viewModel.accountState.account != null) {
-                            ProfileTopSection(
-                                account = viewModel.accountState.account,
-                                relationship = null,
-                                postsLabel = viewModel.postsLabel,
-                                followingLabel = viewModel.followingLabel,
-                                followerLabel = viewModel.followerLabel,
-                                navController = navController,
-                                openUrl = { url -> viewModel.openUrl(url) })
-
-                            Row(
-                                Modifier.fillMaxWidth().padding(horizontal = 12.dp)
-                            ) {
-                                Button(
-                                    onClick = {
-                                        navController.navigate(Destination.EditProfile)
-                                    },
-                                    modifier = Modifier.fillMaxWidth(),
-                                    shape = RoundedCornerShape(12.dp),
-                                    contentPadding = PaddingValues(12.dp),
-                                    colors = ButtonDefaults.buttonColors(
-                                        containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
-                                        contentColor = MaterialTheme.colorScheme.onSurface
+                                val expandedWidth = constraints.maxWidth + (horizontalPadding * 2)
+                                val placeable = measurable.measure(
+                                    constraints.copy(
+                                        maxWidth = expandedWidth, minWidth = expandedWidth
                                     )
+                                )
+                                layout(constraints.maxWidth, placeable.height) {
+                                    placeable.placeRelative(-horizontalPadding, 0)
+                                }
+                            }.fillMaxWidth().clip(
+                                RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)
+                            ).background(MaterialTheme.colorScheme.surfaceContainer)
+                                .padding(bottom = 12.dp)
+                        ) {
+                            if (viewModel.accountState.account != null) {
+                                ProfileTopSection(
+                                    account = viewModel.accountState.account,
+                                    relationship = null,
+                                    postsLabel = viewModel.postsLabel,
+                                    followingLabel = viewModel.followingLabel,
+                                    followerLabel = viewModel.followerLabel,
+                                    navController = navController,
+                                    openUrl = { url -> viewModel.openUrl(url) })
+
+                                Row(
+                                    Modifier.fillMaxWidth().padding(horizontal = 12.dp)
                                 ) {
-                                    Text(text = stringResource(Res.string.edit_profile))
+                                    Button(
+                                        onClick = {
+                                            navController.navigate(Destination.EditProfile)
+                                        },
+                                        modifier = Modifier.fillMaxWidth(),
+                                        shape = RoundedCornerShape(12.dp),
+                                        contentPadding = PaddingValues(12.dp),
+                                        colors = ButtonDefaults.buttonColors(
+                                            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                                            contentColor = MaterialTheme.colorScheme.onSurface
+                                        )
+                                    ) {
+                                        Text(text = stringResource(Res.string.edit_profile))
+                                    }
                                 }
                             }
-                        }
-                        if (viewModel.capabilities.value.profile.showCollectionsOwnProfile) {
-                            CollectionsComposable(
-                                collectionsState = viewModel.collectionsState,
-                                getMoreCollections = {
-                                    viewModel.accountState.account?.let {
-                                        viewModel.getCollections(
-                                            it.id, true
-                                        )
-                                    }
-                                },
-                                navController = navController,
-                                addNewButton = PlatformFeatures.addCollection,
-                                instanceDomain = viewModel.ownDomain,
-                            ) { url -> viewModel.openUrl(url) }
+                            if (viewModel.capabilities.value.profile.showCollectionsOwnProfile) {
+                                CollectionsComposable(
+                                    collectionsState = viewModel.collectionsState,
+                                    getMoreCollections = {
+                                        viewModel.accountState.account?.let {
+                                            viewModel.getCollections(
+                                                it.id, true
+                                            )
+                                        }
+                                    },
+                                    navController = navController,
+                                    addNewButton = PlatformFeatures.addCollection,
+                                    instanceDomain = viewModel.ownDomain,
+                                ) { url -> viewModel.openUrl(url) }
+                            }
                         }
                     }
                 })

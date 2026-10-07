@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -23,12 +22,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.daniebeler.pfpixelix.ui.composables.MaxWidthTopBar
 import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.arrow_left
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ScreenScaffold(
     title: String,
@@ -46,40 +45,49 @@ fun ScreenScaffold(
         ) {
             content()
         }
-        TopAppBar(
-            modifier = Modifier.clip(RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)),
-            title = {
-                Column {
-                    Text(
-                        text = title,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
+        MaxWidthTopBar {
+
+
+            TopAppBar(
+                modifier = Modifier.clip(
+                    RoundedCornerShape(
+                        bottomStart = 24.dp,
+                        bottomEnd = 24.dp
                     )
-                    if (!subtitle.isNullOrBlank()) {
+                ),
+                title = {
+                    Column {
                         Text(
-                            text = subtitle,
-                            style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            text = title,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 18.sp,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis
                         )
+                        if (!subtitle.isNullOrBlank()) {
+                            Text(
+                                text = subtitle,
+                                style = MaterialTheme.typography.labelMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
                     }
-                }
-            },
-            navigationIcon = {
-                IconButton(onClick = { navController.popBackStack() }) {
-                    Icon(
-                        imageVector = vectorResource(Res.drawable.arrow_left),
-                        contentDescription = ""
-                    )
-                }
-            },
-            actions = actions,
-            colors = TopAppBarDefaults.mediumTopAppBarColors(
-                containerColor = MaterialTheme.colorScheme.surfaceContainer
+                },
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(
+                            imageVector = vectorResource(Res.drawable.arrow_left),
+                            contentDescription = ""
+                        )
+                    }
+                },
+                actions = actions,
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceContainer
+                )
             )
-        )
+        }
     }
 }

@@ -8,6 +8,7 @@ import androidx.compose.ui.unit.dp
 import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.di.LocalAppComponent
 import com.daniebeler.pfpixelix.di.injectViewModel
+import com.daniebeler.pfpixelix.ui.composables.MaxWidthTopBar
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 import com.daniebeler.pfpixelix.ui.composables.timelines.TimelineHelpCard
 import com.daniebeler.pfpixelix.ui.composables.widgets.InfinitePostsList
@@ -66,13 +67,15 @@ fun HomeTimelineComposable(
             null
         } else {
             {
-                TimelineHelpCard(
-                    title = stringResource(Res.string.home),
-                    description = stringResource(Res.string.home_timeline_explained),
-                    onDiscard = {
-                        viewModel.discardHelp()
-                    }
-                )
+                MaxWidthTopBar(hasBackground = false) {
+                    TimelineHelpCard(
+                        title = stringResource(Res.string.home),
+                        description = stringResource(Res.string.home_timeline_explained),
+                        onDiscard = {
+                            viewModel.discardHelp()
+                        }
+                    )
+                }
             }
 
         }

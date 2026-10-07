@@ -11,7 +11,6 @@ import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
@@ -20,6 +19,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.service.platform.PlatformFeatures
+import com.daniebeler.pfpixelix.ui.composables.MaxWidthTopBar
 import com.daniebeler.pfpixelix.ui.composables.profile.SwitchViewComposable
 import com.daniebeler.pfpixelix.ui.composables.profile.ViewEnum
 import com.daniebeler.pfpixelix.ui.composables.profile.postsWrapperComposable
@@ -32,7 +32,6 @@ import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.photo
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InfinitePostsList(
     items: List<Post>,
@@ -107,10 +106,13 @@ fun InfinitePostsList(
 
                             if (showViewSwitcher) {
                                 item(key = "switch_view_key", span = StaggeredGridItemSpan.FullLine) {
-                                    SwitchViewComposable(
-                                        postsCount = postsCount,
-                                        viewType = view,
-                                        onViewChange = { changeView(it) })
+                                    MaxWidthTopBar (hasBackground = false) {
+                                        SwitchViewComposable(
+                                            postsCount = postsCount,
+                                            viewType = view,
+                                            onViewChange = { changeView(it) })
+                                    }
+
                                 }
                             }
                             postsWrapperComposable(

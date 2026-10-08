@@ -1,27 +1,26 @@
 package com.daniebeler.pfpixelix.ui.composables.widgets
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
-import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
-import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
-import androidx.compose.foundation.lazy.staggeredgrid.items
-import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.service.platform.PlatformFeatures
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyStateComposable
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AccountListScreen(
     title: String,
@@ -34,6 +33,8 @@ fun AccountListScreen(
     onRefresh: () -> Unit,
     itemContent: @Composable (Account) -> Unit
 ) {
+    val listState = rememberLazyListState()
+
     ScreenScaffold(title = title, navController = navController) {
         CustomPullToRefreshBox(
             isRefreshing = isRefreshing,
@@ -42,13 +43,16 @@ fun AccountListScreen(
             animatedBox = true,
             enabled = PlatformFeatures.supportsPullToRefresh
         ) {
-            LazyVerticalStaggeredGrid(
-                columns = StaggeredGridCells.Adaptive(300.dp),
+            LazyColumn(
+                state = listState,
                 contentPadding = PaddingValues(top = 24.dp),
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 items(items, key = { it.id }) { account ->
-                    itemContent(account)
+                    Box(modifier = Modifier.widthIn(max = 600.dp).fillMaxWidth()) {
+                        itemContent(account)
+                    }
                 }
             }
             if (items.isEmpty()) {

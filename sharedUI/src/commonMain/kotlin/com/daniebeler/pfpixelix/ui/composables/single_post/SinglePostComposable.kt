@@ -5,9 +5,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -21,6 +23,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
@@ -29,6 +32,7 @@ import androidx.compose.ui.unit.sp
 import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.service.platform.PlatformFeatures
+import com.daniebeler.pfpixelix.ui.composables.MaxWidthTopBar
 import com.daniebeler.pfpixelix.ui.composables.post.PostComposable
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
@@ -62,51 +66,10 @@ fun SinglePostComposable(
         }
     }
 
-    Scaffold(contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top)) { paddingValues ->
-        Box(
-            modifier = Modifier.padding(paddingValues)
-                .padding(top = TopAppBarDefaults.TopAppBarExpandedHeight - 24.dp)
-                .fillMaxSize()
-        ) {
-            CustomPullToRefreshBox(
-                isRefreshing = viewModel.postState.isRefreshing,
-                onRefresh = { viewModel.getPost(postId, true) },
-                modifier = Modifier.fillMaxSize(),
-                enabled = PlatformFeatures.supportsPullToRefresh,
-                animatedBox = true
-            ) {
-                Column(
-                    modifier = Modifier.verticalScroll(scrollState)
-                        .padding(top = 28.dp, start = 4.dp, end = 4.dp, bottom = 28.dp)
-                ) {
-                    if (viewModel.postState.post != null) {
-                        PostComposable(
-                            viewModel.postState.post!!, navController, postGetsDeleted = {
-                                navController.navigate(Destination.HomeTabOwnProfile) {
-                                    launchSingleTop = true
-                                    restoreState = true
-                                    popUpTo(navController.graph.findStartDestination().id) {
-                                        inclusive = false
-                                        saveState = false
-                                    }
-                                }
-                            },
-                            setZindex = { },
-                            openReplies,
-                            fullQuality = true
-                        )
-                    }
-                }
-            }
-
-            if (!viewModel.postState.isRefreshing) {
-                LoadingComposable(isLoading = viewModel.postState.isLoading)
-            }
-            ErrorComposable(message = viewModel.postState.error)
-        }
-
-        TopAppBar(
-            modifier = Modifier.clip(
+    Scaffold(contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top), topBar = {
+        MaxWidthTopBar {
+            TopAppBar(
+                modifier = Modifier.clip(
                 RoundedCornerShape(bottomStart = 24.dp, bottomEnd = 24.dp)
             ), title = {
                 Column {
@@ -133,6 +96,58 @@ fun SinglePostComposable(
             }, colors = TopAppBarDefaults.mediumTopAppBarColors(
                 containerColor = MaterialTheme.colorScheme.surfaceContainer
             )
-        )
+            )
+        }
+    }) { paddingValues ->
+        Box(
+            modifier = Modifier.padding(paddingValues).fillMaxSize(),
+        ) {
+            CustomPullToRefreshBox(
+                isRefreshing = viewModel.postState.isRefreshing,
+                onRefresh = { viewModel.getPost(postId, true) },
+                modifier = Modifier.fillMaxSize(),
+                enabled = PlatformFeatures.supportsPullToRefresh,
+                animatedBox = true
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+
+
+                    Column(
+                        modifier = Modifier.verticalScroll(scrollState).widthIn(max = 800.dp)
+                            .padding(top = 28.dp, start = 4.dp, end = 4.dp, bottom = 28.dp)
+                    ) {
+                        if (viewModel.postState.post != null) {
+                            PostComposable(
+                                viewModel.postState.post!!,
+                                navController,
+                                postGetsDeleted = {
+                                    navController.navigate(Destination.HomeTabOwnProfile) {
+                                        launchSingleTop = true
+                                        restoreState = true
+                                        popUpTo(navController.graph.findStartDestination().id) {
+                                            inclusive = false
+                                            saveState = false
+                                        }
+                                    }
+                                },
+                                setZindex = { },
+                                openReplies,
+                                fullQuality = true
+                            )
+                        }
+                    }
+                }
+            }
+
+            if (!viewModel.postState.isRefreshing) {
+                LoadingComposable(isLoading = viewModel.postState.isLoading)
+            }
+            ErrorComposable(message = viewModel.postState.error)
+        }
+
+
     }
 }

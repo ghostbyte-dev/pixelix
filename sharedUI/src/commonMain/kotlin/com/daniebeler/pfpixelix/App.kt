@@ -14,7 +14,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Badge
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FloatingToolbarColors
 import androidx.compose.material3.FloatingToolbarDefaults
 import androidx.compose.material3.FloatingToolbarExitDirection
@@ -60,7 +59,6 @@ import androidx.navigation3.scene.DialogSceneStrategy
 import androidx.navigation3.scene.SinglePaneSceneStrategy
 import androidx.navigation3.ui.NavDisplay
 import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
-import co.touchlab.kermit.Logger
 import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.di.AppComponent
 import com.daniebeler.pfpixelix.di.LocalAppComponent
@@ -98,7 +96,7 @@ val LocalSnackbarPresenter = compositionLocalOf<(String) -> Unit> {
     error("No LocalSnackbarPresenter provided")
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun App(
     appComponent: AppComponent,
@@ -342,7 +340,6 @@ private enum class HomeTab(
     )
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun BottomBarFloating(
     navController: AppNavigator,

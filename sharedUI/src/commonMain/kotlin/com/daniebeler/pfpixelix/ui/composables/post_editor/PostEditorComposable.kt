@@ -60,6 +60,7 @@ import androidx.navigationevent.compose.rememberNavigationEventState
 import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.service.file.PlatformFile
+import com.daniebeler.pfpixelix.ui.composables.MaxWidthTopBar
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposableDialog
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pfpixelix.ui.composables.widgets.CustomLoader
@@ -93,7 +94,7 @@ import pixelix.app.generated.resources.publish
 import pixelix.app.generated.resources.release
 import pixelix.app.generated.resources.save
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun PostEditorComposable(
     navController: AppNavigator,
@@ -104,11 +105,11 @@ fun PostEditorComposable(
     LaunchedEffect(viewModel, navController) {
         viewModel.navigationEffects.collect { effect ->
             when (effect) {
-                PostEditorNavigationEffect.PostCreated ->
-                    navController.navigate(Destination.HomeTabOwnProfile) {
-                        launchSingleTop = true
-                        restoreState = true
-                    }
+                PostEditorNavigationEffect.PostCreated -> navController.navigate(Destination.HomeTabOwnProfile) {
+                    launchSingleTop = true
+                    restoreState = true
+                }
+
                 is PostEditorNavigationEffect.PostUpdated -> {
                     navController.popBackStack()
                     navController.navigate(Destination.Post(effect.postId, refresh = true)) {
@@ -148,96 +149,108 @@ fun PostEditorComposable(
     Scaffold(
         contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top), topBar = {
             val topBarButtonSize = ButtonDefaults.ExtraSmallContainerHeight
-            CenterAlignedTopAppBar(
-                navigationIcon = {
-                    if (viewModel.isOnGeneralPage) {
-                        OutlinedButton(
-                            contentPadding = ButtonDefaults.contentPaddingFor(
-                                topBarButtonSize, hasStartIcon = true
-                            ),
-                            onClick = {
-                                viewModel.isOnGeneralPage = false
-                            },
-                        ) {
-                            Icon(
-                                vectorResource(Res.drawable.arrow_left),
-                                contentDescription = "",
-                                modifier = Modifier.size(ButtonDefaults.iconSizeFor(topBarButtonSize)),
-                            )
-                            Spacer(Modifier.size(ButtonDefaults.iconSpacingFor(topBarButtonSize)))
-                            Text(
-                                text = (if (viewModel.mode == EditorMode.EDIT) stringResource(Res.string.edit_images) else stringResource(
-                                    Res.string.back
-                                )), style = ButtonDefaults.textStyleFor(topBarButtonSize)
-                            )
+            MaxWidthTopBar {
+                CenterAlignedTopAppBar(
+                    navigationIcon = {
+                        if (viewModel.isOnGeneralPage) {
+                            OutlinedButton(
+                                contentPadding = ButtonDefaults.contentPaddingFor(
+                                    topBarButtonSize, hasStartIcon = true
+                                ),
+                                onClick = {
+                                    viewModel.isOnGeneralPage = false
+                                },
+                            ) {
+                                Icon(
+                                    vectorResource(Res.drawable.arrow_left),
+                                    contentDescription = "",
+                                    modifier = Modifier.size(
+                                        ButtonDefaults.iconSizeFor(
+                                            topBarButtonSize
+                                        )
+                                    ),
+                                )
+                                Spacer(Modifier.size(ButtonDefaults.iconSpacingFor(topBarButtonSize)))
+                                Text(
+                                    text = (if (viewModel.mode == EditorMode.EDIT) stringResource(
+                                        Res.string.edit_images
+                                    ) else stringResource(
+                                        Res.string.back
+                                    )), style = ButtonDefaults.textStyleFor(topBarButtonSize)
+                                )
+                            }
+                        } else {
+                            OutlinedButton(
+                                onClick = {
+                                    if (viewModel.mediaItems.isEmpty()) {
+                                        navController.navigateUp()
+                                    } else {
+                                        focusManager.clearFocus()
+                                        isCancelAlertOpen = true
+                                    }
+                                },
+                            ) {
+                                Text(
+                                    text = stringResource(Res.string.cancel),
+                                    style = ButtonDefaults.textStyleFor(topBarButtonSize)
+                                )
+                            }
                         }
-                    } else {
-                        OutlinedButton(
-                            onClick = {
-                                if (viewModel.mediaItems.isEmpty()) {
-                                    navController.navigateUp()
-                                } else {
-                                    focusManager.clearFocus()
-                                    isCancelAlertOpen = true
-                                }
-                            },
-                        ) {
-                            Text(
-                                text = stringResource(Res.string.cancel),
-                                style = ButtonDefaults.textStyleFor(topBarButtonSize)
-                            )
+                    }, title = {
+                        Text(
+                            text = if (viewModel.mode == EditorMode.EDIT) stringResource(Res.string.edit_post) else stringResource(
+                                Res.string.new_post
+                            ), fontWeight = FontWeight.Bold, fontSize = 18.sp
+                        )
+                    }, actions = {
+                        if (viewModel.mediaItems.isNotEmpty() && !viewModel.isOnGeneralPage) {
+                            Button(
+                                contentPadding = ButtonDefaults.contentPaddingFor(
+                                    topBarButtonSize, hasEndIcon = true
+                                ),
+                                enabled = viewModel.mediaItems.all { !it.isLoading },
+                                onClick = { viewModel.isOnGeneralPage = true },
+                            ) {
+                                Text(
+                                    stringResource(Res.string.next),
+                                    style = ButtonDefaults.textStyleFor(topBarButtonSize)
+                                )
+                                Spacer(Modifier.size(ButtonDefaults.iconSpacingFor(topBarButtonSize)))
+                                Icon(
+                                    vectorResource(Res.drawable.arrow_right),
+                                    contentDescription = "",
+                                    modifier = Modifier.size(
+                                        ButtonDefaults.iconSizeFor(
+                                            topBarButtonSize
+                                        )
+                                    ),
+                                )
+                            }
                         }
-                    }
-                }, title = {
-                    Text(
-                        text = if (viewModel.mode == EditorMode.EDIT) stringResource(Res.string.edit_post) else stringResource(
-                            Res.string.new_post
-                        ), fontWeight = FontWeight.Bold, fontSize = 18.sp
-                    )
-                }, actions = {
-                    if (viewModel.mediaItems.isNotEmpty() && !viewModel.isOnGeneralPage) {
-                        Button(
-                            contentPadding = ButtonDefaults.contentPaddingFor(
-                                topBarButtonSize, hasEndIcon = true
-                            ),
-                            enabled = viewModel.mediaItems.all { !it.isLoading },
-                            onClick = { viewModel.isOnGeneralPage = true },
-                        ) {
-                            Text(
-                                stringResource(Res.string.next),
-                                style = ButtonDefaults.textStyleFor(topBarButtonSize)
-                            )
-                            Spacer(Modifier.size(ButtonDefaults.iconSpacingFor(topBarButtonSize)))
-                            Icon(
-                                vectorResource(Res.drawable.arrow_right),
-                                contentDescription = "",
-                                modifier = Modifier.size(ButtonDefaults.iconSizeFor(topBarButtonSize)),
-                            )
-                        }
-                    }
 
-                    if (viewModel.isOnGeneralPage) {
-                        Button(
-                            contentPadding = ButtonDefaults.contentPaddingFor(
-                                topBarButtonSize
-                            ),
-                            enabled = viewModel.isEdited,
-                            onClick = {
-                                focusManager.clearFocus()
-                                showReleaseAlert = true
-                            },
-                        ) {
-                            Text(
-                                text = if (viewModel.mode == EditorMode.EDIT) stringResource(Res.string.save) else stringResource(
-                                    Res.string.publish
-                                ), style = ButtonDefaults.textStyleFor(topBarButtonSize)
-                            )
+                        if (viewModel.isOnGeneralPage) {
+                            Button(
+                                contentPadding = ButtonDefaults.contentPaddingFor(
+                                    topBarButtonSize
+                                ),
+                                enabled = viewModel.isEdited,
+                                onClick = {
+                                    focusManager.clearFocus()
+                                    showReleaseAlert = true
+                                },
+                            ) {
+                                Text(
+                                    text = if (viewModel.mode == EditorMode.EDIT) stringResource(Res.string.save) else stringResource(
+                                        Res.string.publish
+                                    ), style = ButtonDefaults.textStyleFor(topBarButtonSize)
+                                )
+                            }
                         }
-                    }
-                }, colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceContainer
+                    }, colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.surfaceContainer
+                    )
                 )
-            )
+            }
         }) { paddingValues ->
         Box(modifier = Modifier.fillMaxSize().imePadding()) {
             NavigationBackHandler(
@@ -250,125 +263,134 @@ fun PostEditorComposable(
             if (viewModel.isOnGeneralPage) {
                 GeneralTab(viewModel, paddingValues)
             } else {
-                Column(Modifier.padding(paddingValues)) {
-                    if (viewModel.mediaItems.isNotEmpty()) {
-                        LazyRow(
-                            modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            contentPadding = PaddingValues(horizontal = 16.dp)
-                        ) {
-                            itemsIndexed(viewModel.mediaItems) { index, image ->
-                                val isSelected = pagerState.currentPage == index
+                MaxWidthTopBar (hasBackground = false) {
+                    Column(Modifier.padding(paddingValues)) {
+                        if (viewModel.mediaItems.isNotEmpty()) {
+                            LazyRow(
+                                modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                contentPadding = PaddingValues(horizontal = 16.dp)
+                            ) {
+                                itemsIndexed(viewModel.mediaItems) { index, image ->
+                                    val isSelected = pagerState.currentPage == index
 
-                                Box(
-                                    contentAlignment = Alignment.Center,
-                                    modifier = Modifier.size(80.dp).clip(RoundedCornerShape(12.dp))
-                                        .alpha(if (isSelected) 1f else 0.5f).then(
-                                            if (isSelected) {
-                                                Modifier.border(
-                                                    width = 3.dp,
-                                                    color = MaterialTheme.colorScheme.primary,
-                                                    shape = RoundedCornerShape(12.dp)
-                                                )
-                                            } else {
-                                                Modifier
-                                            }
-                                        ).clickable {
-                                            scope.launch {
-                                                pagerState.animateScrollToPage(index)
-                                            }
-                                        }) {
-                                    AsyncImage(
-                                        model = image.imageUri.getPlatformUriObject(),
-                                        contentDescription = "Thumbnail $index",
-                                        contentScale = ContentScale.Crop,
-                                        modifier = Modifier.fillMaxSize()
-                                    )
-
-                                    if (image.isLoading) {
-                                        Box(
+                                    Box(
+                                        contentAlignment = Alignment.Center,
+                                        modifier = Modifier.size(80.dp)
+                                            .clip(RoundedCornerShape(12.dp))
+                                            .alpha(if (isSelected) 1f else 0.5f).then(
+                                                if (isSelected) {
+                                                    Modifier.border(
+                                                        width = 3.dp,
+                                                        color = MaterialTheme.colorScheme.primary,
+                                                        shape = RoundedCornerShape(12.dp)
+                                                    )
+                                                } else {
+                                                    Modifier
+                                                }
+                                            ).clickable {
+                                                scope.launch {
+                                                    pagerState.animateScrollToPage(index)
+                                                }
+                                            }) {
+                                        AsyncImage(
+                                            model = image.imageUri.getPlatformUriObject(),
+                                            contentDescription = "Thumbnail $index",
+                                            contentScale = ContentScale.Crop,
                                             modifier = Modifier.fillMaxSize()
-                                                .background(Color.Black.copy(alpha = 0.3f))
                                         )
 
-                                        LoadingComposable(
-                                            size = 24.dp,
+                                        if (image.isLoading) {
+                                            Box(
+                                                modifier = Modifier.fillMaxSize()
+                                                    .background(Color.Black.copy(alpha = 0.3f))
+                                            )
+
+                                            LoadingComposable(
+                                                size = 24.dp,
+                                            )
+                                        }
+                                    }
+                                }
+
+                                item {
+                                    val addImageTabIndex = viewModel.mediaItems.size
+                                    val isSelected = pagerState.currentPage == addImageTabIndex
+
+                                    Box(
+                                        modifier = Modifier.size(80.dp)
+                                            .clip(RoundedCornerShape(12.dp))
+                                            .background(MaterialTheme.colorScheme.surfaceVariant)
+                                            .alpha(if (isSelected) 1f else 0.5f).then(
+                                                if (isSelected) {
+                                                    Modifier.border(
+                                                        width = 3.dp,
+                                                        color = MaterialTheme.colorScheme.primary,
+                                                        shape = RoundedCornerShape(12.dp)
+                                                    )
+                                                } else {
+                                                    Modifier
+                                                }
+                                            ).clickable {
+                                                scope.launch {
+                                                    pagerState.animateScrollToPage(addImageTabIndex)
+                                                }
+                                            }, contentAlignment = Alignment.Center
+                                    ) {
+                                        Icon(
+                                            imageVector = vectorResource(Res.drawable.add),
+                                            contentDescription = "General Post Settings",
+                                            tint = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
                                         )
                                     }
                                 }
                             }
-
-                            item {
-                                val addImageTabIndex = viewModel.mediaItems.size
-                                val isSelected = pagerState.currentPage == addImageTabIndex
-
-                                Box(
-                                    modifier = Modifier.size(80.dp).clip(RoundedCornerShape(12.dp))
-                                        .background(MaterialTheme.colorScheme.surfaceVariant)
-                                        .alpha(if (isSelected) 1f else 0.5f).then(
-                                            if (isSelected) {
-                                                Modifier.border(
-                                                    width = 3.dp,
-                                                    color = MaterialTheme.colorScheme.primary,
-                                                    shape = RoundedCornerShape(12.dp)
-                                                )
-                                            } else {
-                                                Modifier
-                                            }
-                                        ).clickable {
-                                            scope.launch {
-                                                pagerState.animateScrollToPage(addImageTabIndex)
-                                            }
-                                        }, contentAlignment = Alignment.Center
-                                ) {
-                                    Icon(
-                                        imageVector = vectorResource(Res.drawable.add),
-                                        contentDescription = "General Post Settings",
-                                        tint = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
-                                    )
-                                }
-                            }
                         }
-                    }
 
-                    HorizontalPager(
-                        state = pagerState,
-                        beyondViewportPageCount = 2,
-                        modifier = Modifier.weight(1f)
-                            .background(MaterialTheme.colorScheme.background)
-                    ) { tabIndex ->
-                        if (viewModel.mediaItems.isEmpty()) {
-                            EmptyImageTab { file, metadata -> viewModel.addImage(file, metadata) }
-                        } else {
-                            if (tabIndex < viewModel.mediaItems.size) {
-                                ImageTab(
-                                    image = viewModel.mediaItems[tabIndex],
-                                    canMoveLeft = tabIndex > 0,
-                                    canMoveRight = tabIndex < viewModel.mediaItems.size - 1,
-                                    onMoveLeft = {
-                                        viewModel.moveImage(tabIndex, tabIndex - 1)
-                                        scope.launch { pagerState.animateScrollToPage(tabIndex - 1) }
-                                    },
-                                    onMoveRight = {
-                                        viewModel.moveImage(tabIndex, tabIndex + 1)
-                                        scope.launch { pagerState.animateScrollToPage(tabIndex + 1) }
-                                    },
-                                    onDelete = {
-                                        viewModel.removeImage(tabIndex)
-                                    },
-                                    updateMetadata = {
-                                        viewModel.updateImageMetadata(
-                                            tabIndex, it
-                                        )
-                                    },
-                                    capabilities = viewModel.capabilities.value,
-                                    availableLicenses = viewModel.licensesState.licenses
-                                )
-                            } else {
+                        HorizontalPager(
+                            state = pagerState,
+                            beyondViewportPageCount = 2,
+                            modifier = Modifier.weight(1f)
+                                .background(MaterialTheme.colorScheme.background)
+                        ) { tabIndex ->
+                            if (viewModel.mediaItems.isEmpty()) {
                                 EmptyImageTab { file, metadata ->
                                     viewModel.addImage(
-                                        file, metadata
+                                        file,
+                                        metadata
                                     )
+                                }
+                            } else {
+                                if (tabIndex < viewModel.mediaItems.size) {
+                                    ImageTab(
+                                        image = viewModel.mediaItems[tabIndex],
+                                        canMoveLeft = tabIndex > 0,
+                                        canMoveRight = tabIndex < viewModel.mediaItems.size - 1,
+                                        onMoveLeft = {
+                                            viewModel.moveImage(tabIndex, tabIndex - 1)
+                                            scope.launch { pagerState.animateScrollToPage(tabIndex - 1) }
+                                        },
+                                        onMoveRight = {
+                                            viewModel.moveImage(tabIndex, tabIndex + 1)
+                                            scope.launch { pagerState.animateScrollToPage(tabIndex + 1) }
+                                        },
+                                        onDelete = {
+                                            viewModel.removeImage(tabIndex)
+                                        },
+                                        updateMetadata = {
+                                            viewModel.updateImageMetadata(
+                                                tabIndex, it
+                                            )
+                                        },
+                                        capabilities = viewModel.capabilities.value,
+                                        availableLicenses = viewModel.licensesState.licenses
+                                    )
+                                } else {
+                                    EmptyImageTab { file, metadata ->
+                                        viewModel.addImage(
+                                            file, metadata
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -411,8 +433,7 @@ fun PostEditorComposable(
                 TextButton(onClick = {
                     scope.launch {
                         viewModel.compressImage(
-                            viewModel.mediaAdditionError.uri,
-                            viewModel.mediaAdditionError.metadata
+                            viewModel.mediaAdditionError.uri, viewModel.mediaAdditionError.metadata
                         )
                     }
                 }) {

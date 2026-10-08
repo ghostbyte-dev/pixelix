@@ -4,20 +4,20 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.only
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
@@ -31,18 +31,19 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -50,6 +51,8 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
@@ -86,7 +89,6 @@ import pixelix.app.generated.resources.server_url
 import pixelix.app.generated.resources.vernissage_full_logo_black
 import pixelix.app.generated.resources.vernissage_full_logo_white
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginComposable(
     isCloseable: Boolean = false,
@@ -107,93 +109,95 @@ fun LoginComposable(
                 navController.popBackStack()
             }
         })
-    Box(Modifier.imePadding().fillMaxSize().background(MaterialTheme.colorScheme.surfaceContainer)) {
-        Scaffold(contentWindowInsets = WindowInsets.systemBars.only(WindowInsetsSides.Top)) { innerPadding ->
-            Column(Modifier.imePadding().fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally,) {
+
+    Box(
+        Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.surfaceContainer)
+            .imePadding()
+    ) {
+        Column(
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .widthIn(max = 600.dp)
+                .fillMaxSize()
+                .statusBarsPadding()
+        ) {
+            BoxWithConstraints(Modifier.fillMaxSize()) {
+                val viewportHeight = maxHeight
+                val density = LocalDensity.current
+                var headerHeight by remember { mutableStateOf(0.dp) }
+
                 Column(
-                    modifier = Modifier.widthIn(max = 600.dp).fillMaxWidth()
-                        .background(MaterialTheme.colorScheme.surfaceContainer)
-                        .padding(paddingValues = innerPadding)
-                        .verticalScroll(rememberScrollState())
+                    modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Box(
-                        modifier = Modifier.padding(start = 16.dp, top = 12.dp),
+                    Column(
+                        modifier = Modifier.onSizeChanged {
+                            headerHeight = with(density) { it.height.toDp() }
+                        },
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         if (isCloseable) {
-                            IconButton(
-                                onClick = {
-                                    viewModel.onClose()
-                                    navController.popBackStack()
-                                },
-                                modifier = Modifier.clip(CircleShape)
-                                    .background(MaterialTheme.colorScheme.primary)
-                            ) {
-                                Icon(
-                                    imageVector = vectorResource(Res.drawable.close),
-                                    contentDescription = "",
-                                    tint = MaterialTheme.colorScheme.onPrimary
-                                )
+                            Box(Modifier.fillMaxWidth().padding(start = 16.dp, top = 12.dp)) {
+                                IconButton(
+                                    onClick = {
+                                        viewModel.onClose()
+                                        navController.popBackStack()
+                                    },
+                                    modifier = Modifier.clip(CircleShape)
+                                        .background(MaterialTheme.colorScheme.primary)
+                                ) {
+                                    Icon(
+                                        imageVector = vectorResource(Res.drawable.close),
+                                        contentDescription = "",
+                                        tint = MaterialTheme.colorScheme.onPrimary
+                                    )
+                                }
                             }
+                        } else {
+                            Spacer(Modifier.height(48.dp))
                         }
-                    }
 
-                    if (!isCloseable) {
-                        Spacer(Modifier.height(48.dp))
-                    }
-
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Image(
                             modifier = Modifier.size(100.dp).clip(CircleShape),
                             painter = painterResource(
-                                if (dark) {
-                                    Res.drawable.pixelix_logo_black_xxl
-                                } else {
-                                    Res.drawable.pixelix_logo_white_xxl
-                                }
+                                if (dark) Res.drawable.pixelix_logo_black_xxl
+                                else Res.drawable.pixelix_logo_white_xxl
                             ),
                             contentDescription = null
                         )
 
-                        Spacer(modifier = Modifier.height(12.dp))
+                        Spacer(Modifier.height(12.dp))
 
-                        Text(
-                            text = "Welcome to Pixelix", style = MaterialTheme.typography.titleLarge
-                        )
+                        Text(text = "Welcome to Pixelix", style = MaterialTheme.typography.titleLarge)
 
-                        Spacer(modifier = Modifier.height(36.dp))
+                        Spacer(Modifier.height(36.dp))
+                    }
 
-                        Column(
-                            modifier = Modifier.fillMaxWidth().clip(
-                                RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)
-                            ).background(MaterialTheme.colorScheme.background)
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp))
+                            .background(MaterialTheme.colorScheme.background)
+                            .heightIn(min = viewportHeight - headerHeight)
+                            .navigationBarsPadding()
+                    ) {
+                        Spacer(Modifier.height(16.dp))
 
-                        ) {
-                            Spacer(modifier = Modifier.height(16.dp))
+                        when (viewModel.currentStep) {
+                            LoginStep.PLATFORM_SELECTION -> PlatformSelectionLayout(
+                                onPlatformSelected = { viewModel.selectPlatform(it) }
+                            )
 
-                            when (viewModel.currentStep) {
-                                LoginStep.PLATFORM_SELECTION -> {
-                                    PlatformSelectionLayout(
-                                        onPlatformSelected = { platform ->
-                                            viewModel.selectPlatform(platform)
-                                        })
-                                }
-
-                                LoginStep.SERVER_INPUT -> {
-                                    ServerInputLayout(
-                                        viewModel = viewModel
-                                    )
-                                }
-
-                            }
-
+                            LoginStep.SERVER_INPUT -> ServerInputLayout(viewModel = viewModel)
                         }
                     }
                 }
             }
-
         }
-        if (viewModel.serversSuggestionsManager.suggestionsOpen) {
 
+        if (viewModel.serversSuggestionsManager.suggestionsOpen) {
             Box(
                 modifier = Modifier.align(Alignment.BottomCenter).fillMaxWidth()
                     .background(MaterialTheme.colorScheme.surfaceContainerHighest)
@@ -202,11 +206,9 @@ fun LoginComposable(
                     state = suggestionsState,
                     bottomBarPadding = false,
                     onSelected = { selected ->
-                        Logger.v(tag="suggestions") {"on selected"}
+                        Logger.v(tag = "suggestions") { "on selected" }
                         viewModel.selectSuggestion(
-                            viewModel.serversSuggestionsManager.selectSuggestion(
-                                selected
-                            )
+                            viewModel.serversSuggestionsManager.selectSuggestion(selected)
                         )
                     })
             }
@@ -214,22 +216,17 @@ fun LoginComposable(
     }
 
     viewModel.error?.let {
-        AlertDialog(title = {
-            Text(text = stringResource(Res.string.error))
-        }, text = {
-            Text(text = it)
-        }, onDismissRequest = {
-            viewModel.error = null
-        }, confirmButton = {
-            TextButton(onClick = {
-                viewModel.error = null
-            }) {
-                Text(stringResource(Res.string.ok))
-            }
-        })
+        AlertDialog(
+            title = { Text(text = stringResource(Res.string.error)) },
+            text = { Text(text = it) },
+            onDismissRequest = { viewModel.error = null },
+            confirmButton = {
+                TextButton(onClick = { viewModel.error = null }) {
+                    Text(stringResource(Res.string.ok))
+                }
+            })
     }
 }
-
 
 @Composable
 fun ServerInputLayout(

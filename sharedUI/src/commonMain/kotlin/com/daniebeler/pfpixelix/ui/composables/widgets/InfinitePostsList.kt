@@ -77,10 +77,10 @@ fun InfinitePostsList(
                         val gridContentWidth = maxWidth
 
                         val columnCount = when (view) {
-                            ViewEnum.Grid -> maxOf(3, (maxWidth / 120.dp).toInt())
-                            ViewEnum.Masonry -> maxOf(2, (maxWidth / 150.dp).toInt())
-                            ViewEnum.LargeMasonry -> maxOf(1, (maxWidth / 350.dp).toInt())
-                            ViewEnum.Timeline -> maxOf(1, (maxWidth / 350.dp).toInt())
+                            ViewEnum.Grid -> maxOf(3, (maxWidth / 200.dp).toInt())
+                            ViewEnum.Masonry -> maxOf(2, (maxWidth / 250.dp).toInt())
+                            ViewEnum.LargeMasonry -> maxOf(1, (maxWidth / 450.dp).toInt())
+                            ViewEnum.Timeline -> maxOf(1, (maxWidth / 450.dp).toInt())
                         }
 
                         val columns = StaggeredGridCells.Fixed(columnCount)

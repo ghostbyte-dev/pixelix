@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -66,187 +67,203 @@ fun AboutInstanceComposable(
         navController = navController
     ) {
         LazyColumn(
-            state = lazyListState
+            modifier = Modifier.fillMaxWidth(),
+            state = lazyListState,
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             if (!viewModel.instanceState.isLoading && viewModel.instanceState.error.isEmpty()) {
                 item {
-                    Box(
-                        Modifier.fillParentMaxWidth().height(24.dp)
-                            .background(MaterialTheme.colorScheme.surfaceContainer)
-                    )
-                    AsyncImage(
-                        model = viewModel.instanceState.instance?.thumbnailUrl,
-                        contentDescription = null,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    Spacer(modifier = Modifier.height(18.dp))
-                    viewModel.instanceState.instance?.let {
-                        Text(
-                            text = if (it.description.length > 100) {
-                                it.shortDescription
-                            } else {
-                                it.description
-                            }, Modifier.padding(12.dp, 0.dp)
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(18.dp))
-
-                    Text(
-                        text = stringResource(Res.string.stats),
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp,
-                        modifier = Modifier.padding(12.dp, 0.dp)
-                    )
-
-                    Row(
-                        horizontalArrangement = Arrangement.SpaceEvenly,
-                        modifier = Modifier.fillMaxWidth()
+                    Column(
+                        Modifier.widthIn(max = 600.dp).fillMaxWidth()
                     ) {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        AsyncImage(
+                            model = viewModel.instanceState.instance?.thumbnailUrl,
+                            contentDescription = null,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                        Spacer(modifier = Modifier.height(18.dp))
+                        viewModel.instanceState.instance?.let {
                             Text(
-                                text = StringFormat.groupDigits(
-                                    viewModel.instanceState.instance?.stats?.userCount
-                                ), fontWeight = FontWeight.Bold, fontSize = 18.sp
+                                text = if (it.description.length > 100) {
+                                    it.shortDescription
+                                } else {
+                                    it.description
+                                }, Modifier.padding(12.dp, 0.dp)
                             )
-                            Text(text = stringResource(Res.string.users), fontSize = 12.sp)
                         }
 
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text(
-                                text = StringFormat.groupDigits(
-                                    viewModel.instanceState.instance?.stats?.statusCount
-                                ), fontWeight = FontWeight.Bold, fontSize = 18.sp
-                            )
-                            Text(text = pluralStringResource(Res.plurals.posts, viewModel.instanceState.instance?.stats?.statusCount ?: 0), fontSize = 12.sp)
-                        }
-                    }
+                        Spacer(modifier = Modifier.height(18.dp))
 
-                    Spacer(modifier = Modifier.height(18.dp))
-
-                    viewModel.instanceState.instance?.admin?.let { account ->
                         Text(
-                            text = stringResource(Res.string.admin),
+                            text = stringResource(Res.string.stats),
                             fontWeight = FontWeight.Bold,
                             fontSize = 18.sp,
                             modifier = Modifier.padding(12.dp, 0.dp)
                         )
 
-                        Box(Modifier.padding(8.dp)) {
-                            AccountListItem(
-                                account = account,
-                                relationship = null,
-                                navController = navController,
-                                index = 0,
-                                count = 1,
-                                onClick = {
-                                    navController.navigate(
-                                        Destination.Profile(
-                                            account.id, account.username
-                                        )
-                                    )
-                                })
+                        Row(
+                            horizontalArrangement = Arrangement.SpaceEvenly,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Text(
+                                    text = StringFormat.groupDigits(
+                                        viewModel.instanceState.instance?.stats?.userCount
+                                    ), fontWeight = FontWeight.Bold, fontSize = 18.sp
+                                )
+                                Text(text = stringResource(Res.string.users), fontSize = 12.sp)
+                            }
+
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Text(
+                                    text = StringFormat.groupDigits(
+                                        viewModel.instanceState.instance?.stats?.statusCount
+                                    ), fontWeight = FontWeight.Bold, fontSize = 18.sp
+                                )
+                                Text(
+                                    text = pluralStringResource(
+                                        Res.plurals.posts,
+                                        viewModel.instanceState.instance?.stats?.statusCount ?: 0
+                                    ), fontSize = 12.sp
+                                )
+                            }
                         }
+
+                        Spacer(modifier = Modifier.height(18.dp))
+
+                        viewModel.instanceState.instance?.admin?.let { account ->
+                            Text(
+                                text = stringResource(Res.string.admin),
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 18.sp,
+                                modifier = Modifier.padding(12.dp, 0.dp)
+                            )
+
+                            Box(Modifier.padding(8.dp)) {
+                                AccountListItem(
+                                    account = account,
+                                    relationship = null,
+                                    navController = navController,
+                                    index = 0,
+                                    count = 1,
+                                    onClick = {
+                                        navController.navigate(
+                                            Destination.Profile(
+                                                account.id, account.username
+                                            )
+                                        )
+                                    })
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(18.dp))
+
+                        Text(
+                            text = "Legal",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 18.sp,
+                            modifier = Modifier.padding(start = 12.dp, bottom = 8.dp)
+                        )
+
+                        val privacyPath =
+                            if (viewModel.backendType == BackendType.PIXELFED) "/site/privacy" else "/privacy"
+                        val termsPath =
+                            if (viewModel.backendType == BackendType.PIXELFED) "/site/terms" else "/terms"
+                        val domain = DomainFormat.formatDomain(
+                            viewModel.instanceState.instance?.domain ?: ""
+                        )
+
+                        val linkColors =
+                            ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.surfaceContainer)
+
+                        SegmentedListItem(
+                            onClick = { viewModel.instanceState.instance?.let { viewModel.openUrl("https://$domain$privacyPath") } },
+                            colors = linkColors,
+                            shapes = ListItemDefaults.segmentedShapes(index = 0, count = 2),
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 1.dp),
+                            content = {
+                                Text(
+                                    text = stringResource(Res.string.privacy_policy),
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            })
+
+                        SegmentedListItem(
+                            onClick = { viewModel.instanceState.instance?.let { viewModel.openUrl("https://$domain$termsPath") } },
+                            colors = linkColors,
+                            shapes = ListItemDefaults.segmentedShapes(index = 1, count = 2),
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 1.dp),
+                            content = {
+                                Text(
+                                    text = stringResource(Res.string.terms_of_use),
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            })
+
+                        Spacer(modifier = Modifier.height(18.dp))
+
+                        Text(
+                            text = stringResource(Res.string.rules),
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 18.sp,
+                            modifier = Modifier.padding(start = 12.dp, bottom = 8.dp)
+                        )
                     }
-
-                    Spacer(modifier = Modifier.height(18.dp))
-
-                    Text(
-                        text = "Legal",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp,
-                        modifier = Modifier.padding(start = 12.dp, bottom = 8.dp)
-                    )
-
-                    val privacyPath =
-                        if (viewModel.backendType == BackendType.PIXELFED) "/site/privacy" else "/privacy"
-                    val termsPath =
-                        if (viewModel.backendType == BackendType.PIXELFED) "/site/terms" else "/terms"
-                    val domain =
-                        DomainFormat.formatDomain(viewModel.instanceState.instance?.domain ?: "")
-
-                    val linkColors =
-                        ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.surfaceContainer)
-
-                    SegmentedListItem(
-                        onClick = { viewModel.instanceState.instance?.let { viewModel.openUrl("https://$domain$privacyPath") } },
-                        colors = linkColors,
-                        shapes = ListItemDefaults.segmentedShapes(index = 0, count = 2),
-                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 1.dp),
-                        content = {
-                            Text(
-                                text = stringResource(Res.string.privacy_policy),
-                                color = MaterialTheme.colorScheme.primary
-                            )
-                        })
-
-                    SegmentedListItem(
-                        onClick = { viewModel.instanceState.instance?.let { viewModel.openUrl("https://$domain$termsPath") } },
-                        colors = linkColors,
-                        shapes = ListItemDefaults.segmentedShapes(index = 1, count = 2),
-                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 1.dp),
-                        content = {
-                            Text(
-                                text = stringResource(Res.string.terms_of_use),
-                                color = MaterialTheme.colorScheme.primary
-                            )
-                        })
-
-                    Spacer(modifier = Modifier.height(18.dp))
-
-                    Text(
-                        text = stringResource(Res.string.rules),
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp,
-                        modifier = Modifier.padding(start = 12.dp, bottom = 8.dp)
-                    )
                 }
 
                 val rules = viewModel.instanceState.instance?.rules ?: emptyList()
 
                 itemsIndexed(rules) { index, rule ->
-                    SegmentedListItem(
-                        enabled = false,
-                        onClick = {},
-                        colors = colors,
-                        shapes = ListItemDefaults.segmentedShapes(
-                            index = index, count = rules.size
-                        ),
-                        modifier = Modifier.padding(8.dp, 1.dp),
-                        leadingContent = {
-                            Text(
-                                text = rule.id,
-                                style = MaterialTheme.typography.headlineSmall,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.primary,
-                            )
-                        },
-                        content = {
-                            Text(
-                                text = rule.text,
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurface,
-                            )
-                        })
+                    Box(
+                        modifier = Modifier.widthIn(max = 600.dp).fillMaxWidth()
+                    ) {
+                        SegmentedListItem(
+                            enabled = false,
+                            onClick = {},
+                            colors = colors,
+                            shapes = ListItemDefaults.segmentedShapes(
+                                index = index, count = rules.size
+                            ),
+                            modifier = Modifier.padding(8.dp, 1.dp),
+                            leadingContent = {
+                                Text(
+                                    text = rule.id,
+                                    style = MaterialTheme.typography.headlineSmall,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.primary,
+                                )
+                            },
+                            content = {
+                                Text(
+                                    text = rule.text,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSurface,
+                                )
+                            })
+                    }
                 }
 
 
                 item {
-                    Spacer(modifier = Modifier.height(18.dp))
+                    Column(
+                        modifier = Modifier.widthIn(max = 600.dp).fillMaxWidth()
+                    ) {
+                        Spacer(modifier = Modifier.height(18.dp))
 
-                    Text(
-                        text = stringResource(Res.string.instance_version),
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp,
-                        modifier = Modifier.padding(12.dp, 0.dp)
-                    )
+                        Text(
+                            text = stringResource(Res.string.instance_version),
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 18.sp,
+                            modifier = Modifier.padding(12.dp, 0.dp)
+                        )
 
-                    Text(
-                        text = viewModel.instanceState.instance?.version ?: "",
-                        modifier = Modifier.padding(12.dp, 0.dp)
-                    )
+                        Text(
+                            text = viewModel.instanceState.instance?.version ?: "",
+                            modifier = Modifier.padding(12.dp, 0.dp)
+                        )
 
-                    Spacer(modifier = Modifier.height(32.dp))
+                        Spacer(modifier = Modifier.height(32.dp))
+                    }
                 }
             }
 

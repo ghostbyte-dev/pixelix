@@ -1,12 +1,16 @@
 package com.daniebeler.pfpixelix.ui.composables.settings.followed_hashtags
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
-import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
-import androidx.compose.foundation.lazy.staggeredgrid.items
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.daniebeler.pfpixelix.di.injectViewModel
@@ -32,7 +36,11 @@ fun FollowedHashtagsComposable(
     navController: AppNavigator,
     viewModel: FollowedHashtagsViewModel = injectViewModel(key = "followed-hashtags-key") { followedHashtagsViewModel }
 ) {
-    ScreenScaffold(title = stringResource(Res.string.followed_hashtags), navController = navController) {
+    val listState = rememberLazyListState()
+
+    ScreenScaffold(
+        title = stringResource(Res.string.followed_hashtags), navController = navController
+    ) {
         CustomPullToRefreshBox(
             isRefreshing = viewModel.followedHashtagsState.isRefreshing,
             onRefresh = { viewModel.getFollowedHashtags(true) },
@@ -40,16 +48,18 @@ fun FollowedHashtagsComposable(
             enabled = PlatformFeatures.supportsPullToRefresh,
             animatedBox = true
         ) {
-            LazyVerticalStaggeredGrid(
-                columns = StaggeredGridCells.Adaptive(300.dp),
-                verticalItemSpacing = 4.dp,
+            LazyColumn(
+                state = listState,
                 contentPadding = PaddingValues(top = 24.dp),
                 modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                    items(viewModel.followedHashtagsState.followedHashtags) { tag ->
+                items(viewModel.followedHashtagsState.followedHashtags) { tag ->
+                    Box(modifier = Modifier.widthIn(max = 600.dp).fillMaxWidth()) {
                         CustomHashtag(hashtag = tag, navController = navController)
                     }
                 }
+            }
 
             if (viewModel.followedHashtagsState.followedHashtags.isEmpty()) {
                 if (viewModel.followedHashtagsState.isLoading && !viewModel.followedHashtagsState.isRefreshing) {
@@ -57,7 +67,10 @@ fun FollowedHashtagsComposable(
                 }
 
                 if (viewModel.followedHashtagsState.error.isNotEmpty()) {
-                    ErrorComposable(message = viewModel.followedHashtagsState.error, modifier = Modifier.fillMaxSize().padding(36.dp, 20.dp))
+                    ErrorComposable(
+                        message = viewModel.followedHashtagsState.error,
+                        modifier = Modifier.fillMaxSize().padding(36.dp, 20.dp)
+                    )
                 }
 
                 if (!viewModel.followedHashtagsState.isLoading && viewModel.followedHashtagsState.error.isEmpty()) {

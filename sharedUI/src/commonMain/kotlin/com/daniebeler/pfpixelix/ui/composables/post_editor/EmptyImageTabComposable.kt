@@ -1,11 +1,15 @@
 package com.daniebeler.pfpixelix.ui.composables.post_editor
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -39,49 +43,57 @@ import pixelix.app.generated.resources.select_images_description
 @Composable
 fun EmptyImageTab(addImage: (KmpUri, MediaAttachmentMetadataRequest) -> Unit) {
     val scope = rememberCoroutineScope()
-    Column(
-        modifier = Modifier.padding(16.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.TopCenter
     ) {
-        val launcher = rememberFilePickerLauncher(
-            type = FileKitType.ImageAndVideo, mode = FileKitMode.Multiple()
-        ) { files ->
-            files?.forEach { file ->
-                scope.launch(Dispatchers.Default) {
-                    try {
-                        val bytes = file.readBytes()
+        Column(
+            modifier = Modifier.widthIn(max = 800.dp).fillMaxHeight().padding(16.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            val launcher = rememberFilePickerLauncher(
+                type = FileKitType.ImageAndVideo, mode = FileKitMode.Multiple()
+            ) { files ->
+                files?.forEach { file ->
+                    scope.launch(Dispatchers.Default) {
+                        try {
+                            val bytes = file.readBytes()
 
-                        val extractedMetadata = parseExifMetadata(bytes)
+                            val extractedMetadata = parseExifMetadata(bytes)
 
-                        withContext(Dispatchers.Main) {
-                            addImage(file.toKmpUri(), extractedMetadata)
+                            withContext(Dispatchers.Main) {
+                                addImage(file.toKmpUri(), extractedMetadata)
+                            }
+                        } catch (e: Throwable) {
+                            e.printStackTrace()
                         }
-                    } catch (e: Throwable) {
-                        e.printStackTrace()
                     }
                 }
             }
-        }
 
-        Text(stringResource(Res.string.select_images_description), textAlign = TextAlign.Center)
-        Spacer(Modifier.height(12.dp))
+            Text(stringResource(Res.string.select_images_description), textAlign = TextAlign.Center)
+            Spacer(Modifier.height(12.dp))
 
-        val buttonSize = ButtonDefaults.MediumContainerHeight
-        Button(
-            contentPadding = ButtonDefaults.contentPaddingFor(buttonSize, hasStartIcon = true),
-            onClick = {
-                launcher.launch()
-            },
-        ) {
+            val buttonSize = ButtonDefaults.MediumContainerHeight
+            Button(
+                contentPadding = ButtonDefaults.contentPaddingFor(buttonSize, hasStartIcon = true),
+                onClick = {
+                    launcher.launch()
+                },
+            ) {
 
-            Icon(
-                vectorResource(Res.drawable.photo),
-                contentDescription = "",
-                modifier = Modifier.size(ButtonDefaults.iconSizeFor(buttonSize)),
-            )
-            Spacer(Modifier.size(ButtonDefaults.iconSpacingFor(buttonSize)))
-            Text(stringResource(Res.string.select_images), style = ButtonDefaults.textStyleFor(buttonSize))
+                Icon(
+                    vectorResource(Res.drawable.photo),
+                    contentDescription = "",
+                    modifier = Modifier.size(ButtonDefaults.iconSizeFor(buttonSize)),
+                )
+                Spacer(Modifier.size(ButtonDefaults.iconSpacingFor(buttonSize)))
+                Text(
+                    stringResource(Res.string.select_images),
+                    style = ButtonDefaults.textStyleFor(buttonSize)
+                )
+            }
         }
     }
 }

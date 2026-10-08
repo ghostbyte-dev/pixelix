@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -107,10 +108,10 @@ fun ImageTab(
     availableLicenses: List<License>
 ) {
     val verticalScrollState = rememberScrollState()
-    Box(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+    Box(modifier = Modifier.fillMaxSize().padding(16.dp), contentAlignment = Alignment.TopCenter) {
         Column(
             verticalArrangement = Arrangement.spacedBy(12.dp),
-            modifier = Modifier.verticalScroll(verticalScrollState).padding(bottom = 24.dp)
+            modifier = Modifier.verticalScroll(verticalScrollState).widthIn(max = 800.dp).padding(bottom = 24.dp)
         ) {
             Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth()) {
                 AsyncImage(

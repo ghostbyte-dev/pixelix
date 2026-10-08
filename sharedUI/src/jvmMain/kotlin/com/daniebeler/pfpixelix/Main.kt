@@ -21,6 +21,7 @@ import java.net.ServerSocket
 import java.net.Socket
 import java.util.concurrent.ConcurrentLinkedQueue
 import kotlin.concurrent.thread
+import kotlin.system.exitProcess
 
 private val pendingUrls = ConcurrentLinkedQueue<String>()
 
@@ -37,7 +38,7 @@ fun desktopApp(args: Array<String>) {
 
     if (isAppAlreadyRunning(protocolUrl)) {
         // If it's already running, the function sends the URL to the main app and exits
-        //System.exit(0)
+        exitProcess(0)
     }
 
     startLinkListener { newUrl ->

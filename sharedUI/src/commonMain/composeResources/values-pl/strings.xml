@@ -451,4 +451,5 @@
     <string name="unpin_post">Odepnij wpis</string>
     <string name="unpinning">odpinanie…</string>
     <string name="pinning">przypinanie…</string>
+    <string name="error">Błąd</string>
 </resources>

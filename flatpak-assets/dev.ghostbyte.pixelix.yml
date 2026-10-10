@@ -52,6 +52,7 @@ modules:
         skip:
           - build
           - .gradle
+          - .flatpak-gradle
           - .git
           - .idea
           - .kotlin
@@ -62,8 +63,8 @@ modules:
 
       # Gradle distribution (the wrapper can't download it offline)
       - type: archive
-        url: https://services.gradle.org/distributions/gradle-9.5.0-bin.zip
-        sha256: 553c78f50dafcd54d65b9a444649057857469edf836431389695608536d6b746
+        url: https://services.gradle.org/distributions/gradle-9.6.0-bin.zip
+        sha256: bbaeb2fef8710818cf0e261201dab964c572f92b942812df0c3620d62a529a01
         dest: gradle-dist
 
       # Make Gradle resolve everything from the offline repo

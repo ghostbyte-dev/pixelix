@@ -1,9 +1,12 @@
 package com.daniebeler.pfpixelix.ui.composables.explore.trending.trending_accounts
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -11,10 +14,12 @@ import androidx.compose.material3.ButtonGroup
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.service.platform.PlatformFeatures
+import com.daniebeler.pfpixelix.ui.composables.MaxWidthTopBar
 import com.daniebeler.pfpixelix.ui.composables.explore.trending.TrendingRange
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyStateComposable
@@ -55,43 +60,49 @@ fun TrendingAccountsComposable(
             state = lazyListState,
             modifier = Modifier.fillMaxSize().padding(horizontal = 4.dp),
             contentPadding = PaddingValues(top = 32.dp, bottom = 72.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(20.dp),
             content = {
                 if (viewModel.capabilities.value.trending.supportsMultipleProfileTimeRanges) {
                     item {
-                        ButtonGroup(overflowIndicator = { Text(dailyLabel) }) {
-                            toggleableItem(
-                                weight = 1f,
-                                checked = viewModel.timeRange == TrendingRange.DAILY,
-                                onCheckedChange = { viewModel.changeTimeRange(TrendingRange.DAILY) },
-                                label = dailyLabel,
-                                icon = {
-                                    if (viewModel.timeRange == TrendingRange.DAILY) {
-                                        Icon(imageVector = calendarIcon, contentDescription = "")
-                                    }
-                                })
+                        MaxWidthTopBar(hasBackground = false) {
+                            ButtonGroup(overflowIndicator = { Text(dailyLabel) }) {
+                                toggleableItem(
+                                    checked = viewModel.timeRange == TrendingRange.DAILY,
+                                    onCheckedChange = { viewModel.changeTimeRange(TrendingRange.DAILY) },
+                                    label = dailyLabel,
+                                    icon = {
+                                        if (viewModel.timeRange == TrendingRange.DAILY) {
+                                            Icon(
+                                                imageVector = calendarIcon, contentDescription = ""
+                                            )
+                                        }
+                                    })
 
-                            toggleableItem(
-                                weight = 1f,
-                                checked = viewModel.timeRange == TrendingRange.MONTHLY,
-                                onCheckedChange = { viewModel.changeTimeRange(TrendingRange.MONTHLY) },
-                                label = monthlyLabel,
-                                icon = {
-                                    if (viewModel.timeRange == TrendingRange.MONTHLY) {
-                                        Icon(imageVector = calendarIcon, contentDescription = "")
-                                    }
-                                })
+                                toggleableItem(
+                                    checked = viewModel.timeRange == TrendingRange.MONTHLY,
+                                    onCheckedChange = { viewModel.changeTimeRange(TrendingRange.MONTHLY) },
+                                    label = monthlyLabel,
+                                    icon = {
+                                        if (viewModel.timeRange == TrendingRange.MONTHLY) {
+                                            Icon(
+                                                imageVector = calendarIcon, contentDescription = ""
+                                            )
+                                        }
+                                    })
 
-                            toggleableItem(
-                                weight = 1f,
-                                checked = viewModel.timeRange == TrendingRange.YEARLY,
-                                onCheckedChange = { viewModel.changeTimeRange(TrendingRange.YEARLY) },
-                                label = yearlyLabel,
-                                icon = {
-                                    if (viewModel.timeRange == TrendingRange.YEARLY) {
-                                        Icon(imageVector = calendarIcon, contentDescription = "")
-                                    }
-                                })
+                                toggleableItem(
+                                    checked = viewModel.timeRange == TrendingRange.YEARLY,
+                                    onCheckedChange = { viewModel.changeTimeRange(TrendingRange.YEARLY) },
+                                    label = yearlyLabel,
+                                    icon = {
+                                        if (viewModel.timeRange == TrendingRange.YEARLY) {
+                                            Icon(
+                                                imageVector = calendarIcon, contentDescription = ""
+                                            )
+                                        }
+                                    })
+                            }
                         }
                     }
                 }
@@ -99,9 +110,11 @@ fun TrendingAccountsComposable(
                 items(viewModel.trendingAccountsState.trendingAccounts, key = {
                     it.id
                 }) {
-                    TrendingAccountElement(
-                        account = it, navController = navController
-                    )
+                    Box(modifier = Modifier.widthIn(max = 800.dp).fillMaxWidth()) {
+                        TrendingAccountElement(
+                            account = it, navController = navController
+                        )
+                    }
                 }
             })
         if (viewModel.trendingAccountsState.trendingAccounts.isEmpty()) {

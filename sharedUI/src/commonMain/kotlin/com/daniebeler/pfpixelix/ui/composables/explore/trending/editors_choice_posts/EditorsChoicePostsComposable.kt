@@ -2,21 +2,20 @@ package com.daniebeler.pfpixelix.ui.composables.explore.trending.editors_choice_
 
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.di.injectViewModel
+import com.daniebeler.pfpixelix.ui.composables.MaxWidthTopBar
 import com.daniebeler.pfpixelix.ui.composables.timelines.TimelineHelpCard
 import com.daniebeler.pfpixelix.ui.composables.timelines.parametric_timeline_screens.ParametricTimelineViewModel
 import com.daniebeler.pfpixelix.ui.composables.widgets.InfinitePostsList
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import org.jetbrains.compose.resources.stringResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.editors_choice_posts
 import pixelix.app.generated.resources.editors_choice_posts_explained
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun EditorsChoicePostsComposable(
     navController: AppNavigator,
@@ -45,15 +44,16 @@ fun EditorsChoicePostsComposable(
                 null
             } else {
                 {
-                    TimelineHelpCard(
-                        title = stringResource(Res.string.editors_choice_posts),
-                        description = stringResource(Res.string.editors_choice_posts_explained),
-                        onDiscard = {
-                            viewModel.discardHelp()
-                        }
-                    )
+                    MaxWidthTopBar(hasBackground = false) {
+                        TimelineHelpCard(
+                            title = stringResource(Res.string.editors_choice_posts),
+                            description = stringResource(Res.string.editors_choice_posts_explained),
+                            onDiscard = {
+                                viewModel.discardHelp()
+                            }
+                        )
+                    }
                 }
-
             })
     }
 }

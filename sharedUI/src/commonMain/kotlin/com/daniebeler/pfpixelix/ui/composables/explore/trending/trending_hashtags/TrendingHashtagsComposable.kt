@@ -8,16 +8,14 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ButtonGroup
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.service.platform.PlatformFeatures
+import com.daniebeler.pfpixelix.ui.composables.MaxWidthTopBar
 import com.daniebeler.pfpixelix.ui.composables.explore.trending.TrendingRange
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyStateComposable
@@ -25,6 +23,7 @@ import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pfpixelix.ui.composables.widgets.CustomPullToRefreshBox
 import com.daniebeler.pfpixelix.ui.composables.widgets.InfiniteListHandler
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import com.daniebeler.pfpixelix.utils.StringFormat
 import org.jetbrains.compose.resources.pluralStringResource
@@ -38,7 +37,6 @@ import pixelix.app.generated.resources.no_trending_hashtags
 import pixelix.app.generated.resources.posts
 import pixelix.app.generated.resources.yearly
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun TrendingHashtagsComposable(
     navController: AppNavigator,
@@ -66,39 +64,47 @@ fun TrendingHashtagsComposable(
             content = {
                 if (viewModel.capabilities.value.trending.supportsMultipleHashtagTimeRanges) {
                     item {
-                        ButtonGroup(overflowIndicator = { Text(dailyLabel) }) {
-                            toggleableItem(
-                                weight = 1f,
-                                checked = viewModel.timeRange == TrendingRange.DAILY,
-                                onCheckedChange = { viewModel.changeTimeRange(TrendingRange.DAILY) },
-                                label = dailyLabel,
-                                icon = {
-                                    if (viewModel.timeRange == TrendingRange.DAILY) {
-                                        Icon(imageVector = calendarIcon, contentDescription = "")
-                                    }
-                                })
+                        MaxWidthTopBar(hasBackground = false) {
+                            ButtonGroup(overflowIndicator = { Text(dailyLabel) }) {
+                                toggleableItem(
+                                    checked = viewModel.timeRange == TrendingRange.DAILY,
+                                    onCheckedChange = { viewModel.changeTimeRange(TrendingRange.DAILY) },
+                                    label = dailyLabel,
+                                    icon = {
+                                        if (viewModel.timeRange == TrendingRange.DAILY) {
+                                            Icon(
+                                                imageVector = calendarIcon,
+                                                contentDescription = ""
+                                            )
+                                        }
+                                    })
 
-                            toggleableItem(
-                                weight = 1f,
-                                checked = viewModel.timeRange == TrendingRange.MONTHLY,
-                                onCheckedChange = { viewModel.changeTimeRange(TrendingRange.MONTHLY) },
-                                label = monthlyLabel,
-                                icon = {
-                                    if (viewModel.timeRange == TrendingRange.MONTHLY) {
-                                        Icon(imageVector = calendarIcon, contentDescription = "")
-                                    }
-                                })
+                                toggleableItem(
+                                    checked = viewModel.timeRange == TrendingRange.MONTHLY,
+                                    onCheckedChange = { viewModel.changeTimeRange(TrendingRange.MONTHLY) },
+                                    label = monthlyLabel,
+                                    icon = {
+                                        if (viewModel.timeRange == TrendingRange.MONTHLY) {
+                                            Icon(
+                                                imageVector = calendarIcon,
+                                                contentDescription = ""
+                                            )
+                                        }
+                                    })
 
-                            toggleableItem(
-                                weight = 1f,
-                                checked = viewModel.timeRange == TrendingRange.YEARLY,
-                                onCheckedChange = { viewModel.changeTimeRange(TrendingRange.YEARLY) },
-                                label = yearlyLabel,
-                                icon = {
-                                    if (viewModel.timeRange == TrendingRange.YEARLY) {
-                                        Icon(imageVector = calendarIcon, contentDescription = "")
-                                    }
-                                })
+                                toggleableItem(
+                                    checked = viewModel.timeRange == TrendingRange.YEARLY,
+                                    onCheckedChange = { viewModel.changeTimeRange(TrendingRange.YEARLY) },
+                                    label = yearlyLabel,
+                                    icon = {
+                                        if (viewModel.timeRange == TrendingRange.YEARLY) {
+                                            Icon(
+                                                imageVector = calendarIcon,
+                                                contentDescription = ""
+                                            )
+                                        }
+                                    })
+                            }
                         }
                     }
                 }

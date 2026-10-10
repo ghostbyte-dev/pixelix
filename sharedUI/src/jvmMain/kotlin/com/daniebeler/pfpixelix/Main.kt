@@ -82,7 +82,7 @@ fun desktopApp(args: Array<String>) {
         Window(
             title = "Pixelix",
             state = rememberWindowState(
-                width = 400.dp, height = 800.dp, position = WindowPosition.Aligned(Alignment.Center)
+                width = 1400.dp, height = 800.dp, position = WindowPosition.Aligned(Alignment.Center)
             ),
             onCloseRequest = ::exitApplication,
         ) {

@@ -1,17 +1,22 @@
 package com.daniebeler.pfpixelix.ui.composables.explore.trending.editors_choice_accounts
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.service.platform.PlatformFeatures
+import com.daniebeler.pfpixelix.ui.composables.MaxWidthTopBar
 import com.daniebeler.pfpixelix.ui.composables.explore.trending.trending_accounts.TrendingAccountElement
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyStateComposable
@@ -46,24 +51,28 @@ fun EditorsChoiceAccountsComposable(
             modifier = Modifier.fillMaxSize().padding(horizontal = 4.dp),
             contentPadding = PaddingValues(top = 32.dp, bottom = 72.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
             content = {
                 if (viewModel.showHelp) {
-                   item {
-                       TimelineHelpCard(
-                           title = stringResource(Res.string.editors_choice_accounts),
-                           description = stringResource(Res.string.editors_choice_accounts_explained),
-                           onDiscard = {
-                               viewModel.discardHelp()
-                           }
-                       )
-                   }
+                    item {
+                        MaxWidthTopBar(hasBackground = false) {
+                            TimelineHelpCard(
+                                title = stringResource(Res.string.editors_choice_accounts),
+                                description = stringResource(Res.string.editors_choice_accounts_explained),
+                                onDiscard = {
+                                    viewModel.discardHelp()
+                                })
+                        }
+                    }
                 }
                 items(viewModel.accountsState.accounts, key = {
                     it.id
                 }) {
-                    TrendingAccountElement(
-                        account = it, navController = navController
-                    )
+                    Box(modifier = Modifier.widthIn(max = 800.dp).fillMaxWidth()) {
+                        TrendingAccountElement(
+                            account = it, navController = navController
+                        )
+                    }
                 }
             })
         if (viewModel.accountsState.accounts.isEmpty()) {

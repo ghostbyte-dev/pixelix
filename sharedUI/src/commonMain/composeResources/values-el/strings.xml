@@ -115,9 +115,9 @@
     <string name="empty">Κενό</string>
     <string name="follow_accounts_or_hashtags_to_fill_your_home_timeline">Ακολούθησε προφίλ ή ετικέτες για να γεμίσεις την αρχική ροή σου</string>
     <string name="no_posts">Καμία Ανάρτηση</string>
-    <string name="home_timeline_explained">Η αρχική ροή σού δείχνει αναρτήσεις από άτομα και ετικέτες που ακολουθείς</string>
-    <string name="local_timeline_explained">Η Τοπική ροή εμφανίζει αναρτήσεις από όλους τους χρήστες στον διακομιστή σου</string>
-    <string name="global_timeline_explained">Η Καθολική ροή δείχνει αναρτήσεις από όλους τους χρήστες σε όλους τους διακομιστές με τους οποίους συνομιλεί ο διακομιστής σου</string>
+    <string name="home_timeline_explained">Η αρχική ροή δείχνει αναρτήσεις από άτομα και ετικέτες που ακολουθείς.</string>
+    <string name="local_timeline_explained">Η Τοπική ροή εμφανίζει αναρτήσεις από όλους τους χρήστες του διακομιστή σου.</string>
+    <string name="global_timeline_explained">Η Καθολική ροή δείχνει αναρτήσεις από όλους τους χρήστες σ' όλους τους διακομιστές που επικοινωνεί ο διακομιστής σου.</string>
     <string name="this_user_has_not_postet_anything_yet">Αυτός ο χρήστης δεν έχει δημοσιεύσει τίποτα ακόμα</string>
     <string name="you_don_t_have_any_notifications">Δεν έχεις ειδοποιήσεις</string>
     <string name="view_more">δες περισσότερα</string>
@@ -285,4 +285,48 @@
     <string name="no_categories">Καμία κατηγορία</string>
     <string name="no_cameras">Δεν υπάρχουν κάμερες</string>
     <string name="no_lenses">Δεν υπάρχουν φακοί</string>
+    <string name="posts_title">Αναρτήσεις</string>
+    <string name="license_label">Άδεια</string>
+    <plurals name="seconds_ago">
+        <item quantity="one">%1$d δευτερόλεπτο πριν</item>
+        <item quantity="other">%1$d δευτερόλεπτα πριν</item>
+    </plurals>
+    <plurals name="minutes_ago">
+        <item quantity="one">%1$d λεπτό πριν</item>
+        <item quantity="other">%1$d λεπτά πριν</item>
+    </plurals>
+    <plurals name="hours_ago">
+        <item quantity="one">%1$d ώρα πριν</item>
+        <item quantity="other">%1$d ώρες πριν</item>
+    </plurals>
+    <plurals name="days_ago">
+        <item quantity="one">%1$d ημέρα πριν</item>
+        <item quantity="other">%1$d ημέρες πριν</item>
+    </plurals>
+    <plurals name="weeks_ago">
+        <item quantity="one">%1$d εβδομάδα πριν</item>
+        <item quantity="other">%1$d εβδομάδες πριν</item>
+    </plurals>
+    <plurals name="months_ago">
+        <item quantity="one">%1$d μήνας πριν</item>
+        <item quantity="other">%1$d μήνες πριν</item>
+    </plurals>
+    <plurals name="years_ago">
+        <item quantity="one">πριν %1$d έτος</item>
+        <item quantity="other">πριν %1$d έτη</item>
+    </plurals>
+    <string name="swipe_between_tabs">Σύρε για Εναλλαγή Καρτελών</string>
+    <string name="double_tap_to_like">Διπλό πάτημα για like σε αναρτήσεις</string>
+    <string name="discard">Απόρριψη</string>
+    <string name="are_you_sure">Σίγουρα;</string>
+    <string name="cancel_post_warning">Θες να απορρίψεις αυτή την ανάρτηση;</string>
+    <string name="cancel_profile_edit">Θέλετε να απορρίψετε τις αλλαγές;</string>
+    <string name="cancel_post_edit">Θέλετε να απορρίψετε τις αλλαγές;</string>
+    <string name="registration">Εγγραφή</string>
+    <string name="open">ανοιχτό</string>
+    <string name="closed">κλειστό</string>
+    <string name="jump_to_top">Άλμα στην κορυφή</string>
+    <string name="manually_accept_new_followers">Χειροκίνητη αποδοχή νέων ακολούθων</string>
+    <string name="include_public_posts_in_search_engines">Συμπερίληψη δημόσιες αναρτήσεις στις μηχανές αναζήτησης</string>
+    <string name="include_profile_in_search_engines">Συμπερίληψη προφίλ στις μηχανές αναζήτησης</string>
 </resources>

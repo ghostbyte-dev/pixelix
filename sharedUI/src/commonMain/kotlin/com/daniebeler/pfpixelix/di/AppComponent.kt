@@ -52,6 +52,7 @@ import com.daniebeler.pfpixelix.ui.events.GlobalNavigator
 import com.daniebeler.pfpixelix.ui.events.GlobalNavigatorImpl
 import com.daniebeler.pfpixelix.ui.events.NotificationBadgeRefresher
 import com.daniebeler.pfpixelix.ui.events.NotificationBadgeState
+import com.daniebeler.pfpixelix.ui.events.PushNotificationIntentHandler
 import com.daniebeler.pfpixelix.ui.events.SearchFieldFocus
 import com.daniebeler.pfpixelix.ui.events.SystemFileShare
 import com.daniebeler.pfpixelix.ui.events.SystemUrlHandler
@@ -90,6 +91,7 @@ abstract class AppComponent(
     abstract val systemFileShare: SystemFileShare
 
     abstract val accountIntentHandler: AccountIntentHandler
+    abstract val pushNotificationIntentHandler: PushNotificationIntentHandler
 
     abstract val authService: AuthService
     abstract val accountService: AccountService

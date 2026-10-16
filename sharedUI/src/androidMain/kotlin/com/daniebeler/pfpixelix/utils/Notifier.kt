@@ -26,23 +26,22 @@ class Notifier(var context: Context) {
     fun showNotification(
         notification: PushNotification
     ) {
-        Logger.d(tag="PushNotification") {
+        Logger.d(tag = "PushNotification") {
             "show Notification" +
                     "$notification"
         }
 
         if (!NotificationManagerCompat.from(context).areNotificationsEnabled()) {
-            Logger.w(tag="PushNotification") { "Notifications disabled at OS level — not shown" }
+            Logger.w(tag = "PushNotification") { "Notifications disabled at OS level — not shown" }
             return
         }
-        //TODO: deep link not implemented yet
+
         val deepLinkIntent = Intent(
-            Intent.ACTION_VIEW,
-            "pixelix://notifications".toUri(),
             context,
             AppActivity::class.java
         ).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            putExtra("navigation_destination", "push_notification")
         }
 
         val pendingIntent = PendingIntent.getActivity(

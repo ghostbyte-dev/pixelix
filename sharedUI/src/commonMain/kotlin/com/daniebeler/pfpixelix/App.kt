@@ -102,8 +102,7 @@ val LocalSnackbarPresenter = compositionLocalOf<(String) -> Unit> {
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun App(
-    appComponent: AppComponent,
-    exitApp: () -> Unit
+    appComponent: AppComponent, exitApp: () -> Unit
 ) {
     val uriHandler = LocalUriHandler.current
     DisposableEffect(uriHandler) {
@@ -200,8 +199,7 @@ fun App(
                                 distributorPreference = appComponent.preferences.pushDistributor,
                                 setDistributorPreference = { distributor ->
                                     appComponent.preferences.pushDistributor = distributor
-                                }
-                            )
+                                })
                         }
                     }
                 }
@@ -259,19 +257,18 @@ fun App(
                                 )
 
                                 val currentDestination = navigationState.currentDestination
-                                val showBottomBar = currentDestination == Destination.Feeds ||
-                                    currentDestination is Destination.Search ||
-                                    currentDestination == Destination.Notifications ||
-                                    currentDestination == Destination.OwnProfile ||
-                                    currentDestination in HomeTab.entries.map { it.destination }
+                                val showBottomBar =
+                                    currentDestination == Destination.Feeds || currentDestination is Destination.Search || currentDestination == Destination.Notifications || currentDestination == Destination.OwnProfile || currentDestination in HomeTab.entries.map { it.destination }
 
                                 if (showBottomBar) {
                                     Box(
                                         modifier = Modifier.align(Alignment.BottomCenter)
                                     ) {
                                         BottomBarFloating(
-                                            navController, navigationState.currentDestination,
-                                            navigationState.currentTopLevel, scrollBehaviorBottom
+                                            navController,
+                                            navigationState.currentDestination,
+                                            navigationState.currentTopLevel,
+                                            scrollBehaviorBottom
                                         )
 
                                     }
@@ -298,6 +295,17 @@ fun App(
                                 Destination.Profile(accountPair.first, accountPair.second)
                             )
                         }
+                    }
+                }
+
+                LaunchedEffect(Unit) {
+                    appComponent.pushNotificationIntentHandler.pendingNotifications.collect {
+                        Logger.d(tag = "pushNotification") {
+                            "collecting intent"
+                        }
+                        navController.navigate(
+                            Destination.HomeTabNotifications
+                        )
                     }
                 }
 
@@ -392,22 +400,22 @@ private fun BottomBarFloating(
                     colors = IconButtonDefaults.iconButtonColors(
                         containerColor = containerColor, contentColor = contentColor
                     ), onClick = {
-                            if (!isSelected) {
-                                navController.navigate(tab.destination) {
-                                    launchSingleTop = true
-                                    restoreState = true
-                                    popUpTo(navController.graph.findStartDestination().id) {
-                                        inclusive = false
-                                        saveState = true
-                                    }
-                                }
-                            } else {
-                                if (currentDestination is Destination.Search || currentTopLevel == Destination.HomeTabSearch) {
-                                    appComponent.searchFieldFocus.focus()
-                                } else if (currentDestination == Destination.Feeds || currentTopLevel == Destination.HomeTabFeeds) {
-                                    appComponent.backToTopTrigger.scrollToTop()
+                        if (!isSelected) {
+                            navController.navigate(tab.destination) {
+                                launchSingleTop = true
+                                restoreState = true
+                                popUpTo(navController.graph.findStartDestination().id) {
+                                    inclusive = false
+                                    saveState = true
                                 }
                             }
+                        } else {
+                            if (currentDestination is Destination.Search || currentTopLevel == Destination.HomeTabSearch) {
+                                appComponent.searchFieldFocus.focus()
+                            } else if (currentDestination == Destination.Feeds || currentTopLevel == Destination.HomeTabFeeds) {
+                                appComponent.backToTopTrigger.scrollToTop()
+                            }
+                        }
                     }) {
                     if (tab == HomeTab.OwnProfile && avatar != null) {
                         AsyncImage(
@@ -428,9 +436,7 @@ private fun BottomBarFloating(
                 }
                 if (tab == HomeTab.Notifications && unreadCount > 0) {
                     Badge(
-                        modifier = Modifier
-                            .align(Alignment.TopEnd)
-                            .offset(x = (-4).dp, y = 4.dp)
+                        modifier = Modifier.align(Alignment.TopEnd).offset(x = (-4).dp, y = 4.dp)
                     ) {
                         Text(if (unreadCount > 99) "99+" else unreadCount.toString())
                     }

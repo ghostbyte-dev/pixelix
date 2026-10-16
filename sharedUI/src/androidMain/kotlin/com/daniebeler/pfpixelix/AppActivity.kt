@@ -67,9 +67,6 @@ class AppActivity : ComponentActivity() {
         if (destination == "profile" && accountId != null && username != null) {
             onExternalNotification(accountId, username)
         } else if (destination == "push_notification") {
-            Logger.d(tag="pushNotification") {
-                "received intent push notification"
-            }
             val pushNotificationIntentHandler = MyApplication.appComponent.pushNotificationIntentHandler
             pushNotificationIntentHandler.onNotificationsOpen()
         }

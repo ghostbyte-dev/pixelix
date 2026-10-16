@@ -177,6 +177,14 @@ fun App(
                     }
                 }
 
+                LaunchedEffect(Unit) {
+                    appComponent.pushNotificationIntentHandler.pendingNotifications.collect {
+                        navController.navigate(
+                            Destination.HomeTabNotifications
+                        )
+                    }
+                }
+
                 //Note that wrapping something in key
                 // won't actually clean up any ViewModel instances associated with destinations -
                 // they'll continue to exist and run for the entire lifetime of the containing
@@ -295,17 +303,6 @@ fun App(
                                 Destination.Profile(accountPair.first, accountPair.second)
                             )
                         }
-                    }
-                }
-
-                LaunchedEffect(Unit) {
-                    appComponent.pushNotificationIntentHandler.pendingNotifications.collect {
-                        Logger.d(tag = "pushNotification") {
-                            "collecting intent"
-                        }
-                        navController.navigate(
-                            Destination.HomeTabNotifications
-                        )
                     }
                 }
 

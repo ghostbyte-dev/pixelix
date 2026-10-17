@@ -777,27 +777,41 @@ private fun PostActionBar(
 
         displayLocation?.let { loc ->
             val label = when {
-                loc.name.isNullOrBlank() && loc.country?.name.isNullOrEmpty() -> null
+                loc.name.isNullOrBlank() && loc.country?.name.isNullOrBlank() -> null
                 loc.name.isNullOrBlank() -> loc.country?.name
                 loc.country?.name.isNullOrBlank() -> loc.name
-                else -> "${loc.name}, ${loc.country.name}"
+                else -> "${loc.name}, ${loc.country?.name}"
             }
+
             if (label != null) {
-                if (currentAttachment?.metadata?.longitude != null && currentAttachment.metadata.latitude != null) {
-                    MetadataItem(
-                        Res.drawable.location, label
-                    ) {
-                        viewModel.openUrl("https://www.openstreetmap.org/?mlat=${currentAttachment.metadata.latitude}&mlon=${currentAttachment.metadata.longitude}")
-                    }
-                } else if (loc.longitude != null && loc.latitude != null) {
-                    MetadataItem(
-                        Res.drawable.location, label
-                    ) {
-                        viewModel.openUrl("https://www.openstreetmap.org/?mlat=${loc.latitude}&mlon=${loc.longitude}")
-                    }
-                } else {
-                    MetadataItem(Res.drawable.location, label)
+                val locationId = loc.id
+                val locationSlug = loc.slug
+
+                val attachmentLat = currentAttachment?.metadata?.latitude
+                val attachmentLon = currentAttachment?.metadata?.longitude
+                val mapUrl = when {
+                    attachmentLat != null && attachmentLon != null -> "https://www.openstreetmap.org/?mlat=$attachmentLat&mlon=$attachmentLon"
+
+                    loc.latitude != null && loc.longitude != null -> "https://www.openstreetmap.org/?mlat=${loc.latitude}&mlon=${loc.longitude}"
+
+                    else -> null
                 }
+
+                val onClick: (() -> Unit)? = when {
+                    locationId != null && !locationSlug.isNullOrBlank() -> ({
+                        navController.navigate(
+                            Destination.Place(locationId, locationSlug)
+                        )
+                    })
+
+                    mapUrl != null -> ({ viewModel.openUrl(mapUrl) })
+
+                    else -> null
+                }
+
+                MetadataItem(
+                    Res.drawable.location, label, onClick = onClick
+                )
             }
         }
 
@@ -878,8 +892,8 @@ private fun MetadataItem(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier.padding(vertical = 4.dp).then(
             if (isClickable) {
-                Modifier.clickable { onClick() }
-            } else Modifier)) {
+            Modifier.clickable { onClick() }
+        } else Modifier)) {
         Icon(
             imageVector = vectorResource(icon),
             tint = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -970,10 +984,10 @@ private fun PostDeleteDialog(viewModel: PostViewModel) {
 
     AlertDialog(
         icon = {
-            Icon(
-                imageVector = vectorResource(Res.drawable.trash), contentDescription = null
-            )
-        },
+        Icon(
+            imageVector = vectorResource(Res.drawable.trash), contentDescription = null
+        )
+    },
         title = { Text(text = stringResource(Res.string.delete_post)) },
         text = { Text(text = stringResource(Res.string.this_action_cannot_be_undone)) },
         onDismissRequest = { viewModel.deleteDialog = null },
@@ -1047,22 +1061,22 @@ fun PostImage(
         Box(modifier = Modifier.zIndex(2f).snapBackZoomable(zoomState).pointerInput(Unit) {
             detectTapGestures(
                 onDoubleTap = if (viewModel.isDoubleTapEnabled) {
-                    {
-                        CoroutineScope(Dispatchers.Default).launch {
-                            viewModel.likePost(postId, updatePost)
-                            like()
-                            showHeart = true
-                        }
+                {
+                    CoroutineScope(Dispatchers.Default).launch {
+                        viewModel.likePost(postId, updatePost)
+                        like()
+                        showHeart = true
                     }
-                } else null, onTap = {
-                    if (isMasonry) {
-                        navController.navigate(Destination.Post(postId))
-                    } else {
-                        if (mediaAttachment.type != "video") {
-                            showMediaDialog = mediaAttachment
-                        }
+                }
+            } else null, onTap = {
+                if (isMasonry) {
+                    navController.navigate(Destination.Post(postId))
+                } else {
+                    if (mediaAttachment.type != "video") {
+                        showMediaDialog = mediaAttachment
                     }
-                })
+                }
+            })
         }) {
             if (mediaAttachment.type != "video") {
                 ImageWrapper(
@@ -1092,12 +1106,9 @@ fun PostImage(
 
         if (pinned) {
             Box(
-                modifier = Modifier.padding(8.dp).align(Alignment.TopStart)
-                    .background(
-                        MaterialTheme.colorScheme.surfaceContainer.copy(0.8f),
-                        RoundedCornerShape(8.dp)
-                    ).size(28.dp).zIndex(3f),
-                contentAlignment = Alignment.Center
+                modifier = Modifier.padding(8.dp).align(Alignment.TopStart).background(
+                    MaterialTheme.colorScheme.surfaceContainer.copy(0.8f), RoundedCornerShape(8.dp)
+                ).size(28.dp).zIndex(3f), contentAlignment = Alignment.Center
             ) {
                 Icon(
                     imageVector = vectorResource(Res.drawable.pin),
@@ -1208,7 +1219,8 @@ fun MediaDialog(
                         mediaAttachment,
                         true,
                         { zoomState.setContentSize(it.painter.intrinsicSize) },
-                        { isLoading = false }, fillSizePopup = true
+                        { isLoading = false },
+                        fillSizePopup = true
                     )
                 } else {
                     VideoAttachment(

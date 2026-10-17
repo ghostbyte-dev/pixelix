@@ -1,0 +1,22 @@
+meta {
+  name: Get posts for a place
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/api/v1.1/places/posts/:id/:slug
+  body: none
+  auth: inherit
+}
+
+params:path {
+  slug: lustenau
+  id: 3176
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+  forwardAuthorizationHeader: false
+}

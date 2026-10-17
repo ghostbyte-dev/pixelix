@@ -26,6 +26,7 @@ import com.daniebeler.pfpixelix.ui.composables.hashtagMentionText.TextWithClicka
 import com.daniebeler.pfpixelix.ui.composables.mention.MentionViewModel
 import com.daniebeler.pfpixelix.ui.composables.notifications.CustomNotificationViewModel
 import com.daniebeler.pfpixelix.ui.composables.notifications.NotificationsViewModel
+import com.daniebeler.pfpixelix.ui.composables.places.PlaceViewModel
 import com.daniebeler.pfpixelix.ui.composables.post.PostViewModel
 import com.daniebeler.pfpixelix.ui.composables.post_editor.PostEditorViewModel
 import com.daniebeler.pfpixelix.ui.composables.profile.other_profile.OtherProfileViewModel
@@ -69,6 +70,7 @@ abstract class ViewModelComponent(
     abstract val exploreViewModel: ExploreViewModel
     abstract val followedHashtagsViewModel: FollowedHashtagsViewModel
     abstract val followersViewModel: FollowersViewModel
+    abstract val placeViewModel: PlaceViewModel
     abstract val globalTimelineViewModel: GlobalTimelineViewModel
     abstract val hashtagTimelineViewModel: HashtagTimelineViewModel
     abstract val parametricTimelineViewModel: ParametricTimelineViewModel

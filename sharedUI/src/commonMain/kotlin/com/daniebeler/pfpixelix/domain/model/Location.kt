@@ -5,7 +5,8 @@ data class Location(
     val name: String?,
     val latitude: String? = null,
     val longitude: String? = null,
-    val country: Country?
+    val country: Country?,
+    val slug: String? = null
 )
 
 data class Country(

@@ -85,6 +85,9 @@ sealed interface Destination : NavKey {
     data class Mention(val id: String) : Destination
 
     @Serializable
+    data class Place(val id: String, val slug: String) : Destination
+
+    @Serializable
     data object EditProfile : Destination
 
     @Serializable

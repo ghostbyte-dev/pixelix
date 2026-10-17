@@ -23,7 +23,11 @@ kotlin {
     jvmToolchain(21)
     android {
         namespace = "com.daniebeler.pfpixelix"
-        compileSdk = 37
+        compileSdk {
+            version = release(37) {
+                minorApiLevel = 1
+            }
+        }
         minSdk = 26
 
         androidResources { enable = true }

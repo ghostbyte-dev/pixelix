@@ -20,5 +20,7 @@ fun PixelfedPlaceDto.toDomain(): Location {
         name = this.name,
         latitude = null,
         longitude = null,
-        country = this.country?.let { Country(id = null, name = it, code = null) })
+        country = this.country?.let { Country(id = null, name = it, code = null) },
+        slug = this.slug
+    )
 }

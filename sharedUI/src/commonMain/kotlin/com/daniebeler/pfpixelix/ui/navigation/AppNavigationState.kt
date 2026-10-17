@@ -55,6 +55,7 @@ internal val navigationSavedStateConfiguration = SavedStateConfiguration {
             subclass(Destination.HomeTabNewPost::class, Destination.HomeTabNewPost.serializer())
             subclass(Destination.HomeTabNotifications::class, Destination.HomeTabNotifications.serializer())
             subclass(Destination.HomeTabOwnProfile::class, Destination.HomeTabOwnProfile.serializer())
+            subclass(Destination.Place::class, Destination.Place.serializer())
         }
     }
 }

@@ -74,6 +74,7 @@ import com.daniebeler.pfpixelix.ui.navigation.rememberAppNavigationState
 import com.daniebeler.pfpixelix.ui.theme.PixelixTheme
 import com.daniebeler.pfpixelix.utils.end
 import com.daniebeler.pfpixelix.utils.initializePushNotifications
+import com.daniebeler.pfpixelix.utils.registerPushAfterLogin
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -201,6 +202,10 @@ fun App(
 
                     if (capabilities.general.supportsPushNotifications) {
                         activeUser?.let { it ->
+                            registerPushAfterLogin(
+                                pushSubscriptionService = appComponent.pushSubscriptionService,
+                                activeUser = it
+                            )
                             initializePushNotifications(
                                 context = appComponent.context,
                                 activeUser = it,

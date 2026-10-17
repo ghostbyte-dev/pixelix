@@ -5,7 +5,6 @@
 //  Created by Daniel Hiebeler on 17.10.26.
 //
 
-import Foundation
 import ComposeApp
 
 final class SwiftWebPushKeyProvider: NSObject, WebPushKeyProvider {

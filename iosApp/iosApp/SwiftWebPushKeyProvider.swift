@@ -6,6 +6,9 @@
 //
 
 import Foundation
+import CryptoKit
+import Security
+
 struct WebPushKeys {
     let privateKey: P256.KeyAgreement.PrivateKey
     let auth: Data   // 16 bytes

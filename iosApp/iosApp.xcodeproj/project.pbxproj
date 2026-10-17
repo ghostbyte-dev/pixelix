@@ -7,12 +7,16 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		37C6ABB43083900700672185 /* WebPushKeyStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37C6ABB33083900700672185 /* WebPushKeyStore.swift */; };
+		37C6ABB63083901E00672185 /* SwiftWebPushKeyProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37C6ABB53083901E00672185 /* SwiftWebPushKeyProvider.swift */; };
 		A93A953B29CC810C00F8E227 /* iosApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A93A953A29CC810C00F8E227 /* iosApp.swift */; };
 		A93A953F29CC810D00F8E227 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A93A953E29CC810D00F8E227 /* Assets.xcassets */; };
 		A93A954229CC810D00F8E227 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A93A954129CC810D00F8E227 /* Preview Assets.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		37C6ABB33083900700672185 /* WebPushKeyStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebPushKeyStore.swift; sourceTree = "<group>"; };
+		37C6ABB53083901E00672185 /* SwiftWebPushKeyProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftWebPushKeyProvider.swift; sourceTree = "<group>"; };
 		A93A953729CC810C00F8E227 /* Pixelix.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Pixelix.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A93A953A29CC810C00F8E227 /* iosApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iosApp.swift; sourceTree = "<group>"; };
 		A93A953E29CC810D00F8E227 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -53,6 +57,8 @@
 				A93A953A29CC810C00F8E227 /* iosApp.swift */,
 				A93A953E29CC810D00F8E227 /* Assets.xcassets */,
 				A93A954029CC810D00F8E227 /* Preview Content */,
+				37C6ABB33083900700672185 /* WebPushKeyStore.swift */,
+				37C6ABB53083901E00672185 /* SwiftWebPushKeyProvider.swift */,
 			);
 			path = iosApp;
 			sourceTree = "<group>";
@@ -163,7 +169,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				37C6ABB43083900700672185 /* WebPushKeyStore.swift in Sources */,
 				A93A953B29CC810C00F8E227 /* iosApp.swift in Sources */,
+				37C6ABB63083901E00672185 /* SwiftWebPushKeyProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

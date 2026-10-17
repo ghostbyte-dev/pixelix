@@ -2,6 +2,7 @@ package com.daniebeler.pfpixelix.utils
 
 import android.content.Context
 import co.touchlab.kermit.Logger
+import com.daniebeler.pfpixelix.domain.service.general.PushSubscriptionService
 import org.unifiedpush.android.connector.UnifiedPush
 import org.unifiedpush.android.connector.keys.DefaultKeyManager
 
@@ -49,4 +50,9 @@ actual fun initializePushNotifications(
 
     UnifiedPush.register(ctx, activeUser, keyManager = keyManager)
 
+}
+actual suspend fun registerPushAfterLogin(
+    pushSubscriptionService: PushSubscriptionService,
+    activeUser: String
+) {
 }

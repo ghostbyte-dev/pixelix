@@ -26,13 +26,8 @@ class Notifier(var context: Context) {
     fun showNotification(
         notification: PushNotification
     ) {
-        Logger.d(tag = "PushNotification") {
-            "show Notification" +
-                    "$notification"
-        }
 
         if (!NotificationManagerCompat.from(context).areNotificationsEnabled()) {
-            Logger.w(tag = "PushNotification") { "Notifications disabled at OS level — not shown" }
             return
         }
 

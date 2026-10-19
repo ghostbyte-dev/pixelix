@@ -63,7 +63,7 @@ internal val topLevelDestinations: Set<Destination> = setOf(
     Destination.HomeTabFeeds,
     Destination.HomeTabSearch,
     Destination.HomeTabNewPost,
-    Destination.HomeTabNotifications,
+    Destination.HomeTabNotifications(refresh = false),
     Destination.HomeTabOwnProfile,
 )
 

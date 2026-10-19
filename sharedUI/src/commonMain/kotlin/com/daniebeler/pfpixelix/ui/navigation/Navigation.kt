@@ -154,7 +154,7 @@ sealed interface Destination : NavKey {
     data object HomeTabNewPost : Destination
 
     @Serializable
-    data object HomeTabNotifications : Destination
+    data class HomeTabNotifications(val refresh: Boolean) : Destination
 
     @Serializable
     data object HomeTabOwnProfile : Destination
@@ -194,8 +194,8 @@ internal fun appEntryProvider(
         PostEditorComposable(navigator, emptyList())
     }
 
-    entry<Destination.HomeTabNotifications>() {
-        NotificationsComposable(navigator)
+    entry<Destination.HomeTabNotifications> { args ->
+        NotificationsComposable(navigator, refresh = args.refresh)
     }
 
     entry<Destination.HomeTabOwnProfile> {

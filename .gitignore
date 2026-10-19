@@ -19,3 +19,4 @@ xcuserdata/
 node_modules
 package*.json
 /androidApp/release
+flatpak-sources.json

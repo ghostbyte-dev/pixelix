@@ -181,7 +181,7 @@ fun App(
                 LaunchedEffect(Unit) {
                     appComponent.pushNotificationIntentHandler.pendingNotifications.collect {
                         navController.navigate(
-                            Destination.HomeTabNotifications
+                            Destination.HomeTabNotifications(refresh = true)
                         )
                     }
                 }
@@ -195,7 +195,7 @@ fun App(
                     navController.clearBackStack(Destination.HomeTabFeeds)
                     navController.clearBackStack(Destination.HomeTabSearch)
                     navController.clearBackStack(Destination.HomeTabNewPost)
-                    navController.clearBackStack(Destination.HomeTabNotifications)
+                    navController.clearBackStack(Destination.HomeTabNotifications(refresh = false))
                     navController.clearBackStack(Destination.HomeTabOwnProfile)
 
                     val capabilities = appComponent.authService.getCurrentCapabilities()
@@ -345,7 +345,7 @@ private enum class HomeTab(
         Res.string.search
     ),
     Notifications(
-        Destination.HomeTabNotifications,
+        Destination.HomeTabNotifications(refresh = false),
         Res.drawable.notifications,
         Res.drawable.notifications_strong,
         Res.string.notifications

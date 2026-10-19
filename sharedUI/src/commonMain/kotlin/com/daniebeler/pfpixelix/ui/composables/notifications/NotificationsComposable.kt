@@ -36,6 +36,7 @@ import androidx.compose.material3.ToggleButtonDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -70,9 +71,14 @@ import pixelix.app.generated.resources.you_don_t_have_any_notifications
 @Composable
 fun NotificationsComposable(
     navController: AppNavigator,
+    refresh: Boolean = false,
     viewModel: NotificationsViewModel = injectViewModel(key = "notifications-viewmodel-key") { notificationsViewModel }
 ) {
-
+    LaunchedEffect(refresh) {
+        if (refresh) {
+            viewModel.refresh()
+        }
+    }
     val staggeredGridState = rememberLazyStaggeredGridState()
     val scrollState = rememberScrollState()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()

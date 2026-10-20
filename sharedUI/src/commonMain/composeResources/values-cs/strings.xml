@@ -253,7 +253,7 @@
     </plurals>
     <plurals name="minutes_ago">
         <item quantity="one">před %1$d minutou</item>
-        <item quantity="few">před %1$d minutama</item>
+        <item quantity="few">před %1$d minutami</item>
         <item quantity="many">před %1$d minutami</item>
         <item quantity="other">před %1$d minutami</item>
     </plurals>

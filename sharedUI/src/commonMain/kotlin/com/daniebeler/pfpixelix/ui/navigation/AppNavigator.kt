@@ -1,5 +1,6 @@
 package com.daniebeler.pfpixelix.ui.navigation
 
+import co.touchlab.kermit.Logger
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 
@@ -17,6 +18,9 @@ class AppNavigator internal constructor(
     ) {
         val navigationOptions = NavigationOptions().apply(options)
         if (destination in state.backStacks) {
+            Logger.d(tag = "pushNotification") {
+                "is in backstacks"
+            }
             state.currentTopLevel = destination
             if (!navigationOptions.restoreState) {
                 state.currentBackStack.apply {
@@ -25,6 +29,9 @@ class AppNavigator internal constructor(
                 }
             }
         } else if (!navigationOptions.launchSingleTop || state.currentDestination != destination) {
+            Logger.d(tag = "pushNotification") {
+                "is not in backstacks"
+            }
             state.currentBackStack.add(destination)
         }
     }

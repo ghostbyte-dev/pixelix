@@ -154,7 +154,17 @@ sealed interface Destination : NavKey {
     data object HomeTabNewPost : Destination
 
     @Serializable
-    data class HomeTabNotifications(val refresh: Boolean) : Destination
+    data class HomeTabNotifications(val refresh: Boolean) : Destination {
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (other == null || this::class != other::class) return false
+            return true
+        }
+
+        override fun hashCode(): Int {
+            return HomeTabNotifications.hashCode()
+        }
+    }
 
     @Serializable
     data object HomeTabOwnProfile : Destination

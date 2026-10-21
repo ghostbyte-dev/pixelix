@@ -59,7 +59,6 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation3.scene.DialogSceneStrategy
 import androidx.navigation3.scene.SinglePaneSceneStrategy
 import androidx.navigation3.ui.NavDisplay
-import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import co.touchlab.kermit.Logger
 import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.di.AppComponent
@@ -68,6 +67,7 @@ import com.daniebeler.pfpixelix.ui.composables.profile.own_profile.AccountSwitch
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.PreferencesComposable
 import com.daniebeler.pfpixelix.ui.composables.widgets.ReverseModalNavigationDrawer
 import com.daniebeler.pfpixelix.ui.events.GlobalNavigationEvent
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import com.daniebeler.pfpixelix.ui.navigation.appEntryProvider
 import com.daniebeler.pfpixelix.ui.navigation.rememberAppNavigationState
@@ -180,9 +180,17 @@ fun App(
 
                 LaunchedEffect(Unit) {
                     appComponent.pushNotificationIntentHandler.pendingNotifications.collect {
-                        navController.navigate(
-                            Destination.HomeTabNotifications(refresh = true)
-                        )
+                        Logger.d(tag = "pushNotification") {
+                            "navigate to notifications"
+                        }
+                        navController.navigate(Destination.HomeTabNotifications(refresh = true)) {
+                            launchSingleTop = true
+                            restoreState = true
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                inclusive = false
+                                saveState = true
+                            }
+                        }
                     }
                 }
 
@@ -196,6 +204,7 @@ fun App(
                     navController.clearBackStack(Destination.HomeTabSearch)
                     navController.clearBackStack(Destination.HomeTabNewPost)
                     navController.clearBackStack(Destination.HomeTabNotifications(refresh = false))
+                    navController.clearBackStack(Destination.HomeTabNotifications(refresh = true))
                     navController.clearBackStack(Destination.HomeTabOwnProfile)
 
                     val capabilities = appComponent.authService.getCurrentCapabilities()
@@ -358,7 +367,6 @@ private enum class HomeTab(
     )
 }
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 private fun BottomBarFloating(
     navController: AppNavigator,
@@ -390,7 +398,7 @@ private fun BottomBarFloating(
         )
     ) {
         HomeTab.entries.forEachIndexed { _, tab ->
-            val isSelected = currentTopLevel == tab.destination
+            val isSelected = currentDestination == tab.destination
 
 
             val containerColor =

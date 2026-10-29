@@ -25,21 +25,3 @@ fun PixelfedUpdatePostDto.toDomain(): UpdatePost {
         place = this.location?.toDomain()
     )
 }
-
-fun UpdatePost.toDto(): PixelfedUpdatePostDto {
-    return PixelfedUpdatePostDto(
-        status = this.status,
-        mediaIds = this.mediaIds,
-        sensitive = this.sensitive,
-        spoilerText = this.spoilerText,
-        location = this.place?.let {
-            PixelfedPlaceDto(
-                id = it.id,
-                slug = null,
-                name = it.name,
-                country = it.country?.name,
-                url = null
-            )
-        }
-    )
-}

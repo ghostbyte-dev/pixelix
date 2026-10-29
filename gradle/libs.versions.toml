@@ -11,6 +11,7 @@ materialVersion = "1.13.0-alpha02"
 navigation3 = "1.2.0-rc01"
 navigation3Browser = "1.1.0"
 composeNavigationEvent = "1.1.0"
+maplibreCompose = "0.20.0"
 
 #JetBrains
 kotlinx-coroutines = "1.11.0"
@@ -112,6 +113,9 @@ ui-tooling = { module = "org.jetbrains.compose.ui:ui-tooling", version.ref = "co
 androidx-exifinterface = { group = "androidx.exifinterface", name = "exifinterface", version.ref = "exifinterface" }
 vanniktech-blurhash = { module = "com.vanniktech:blurhash", version.ref = "blurhash" }
 metadata-extractor = { module = "com.drewnoakes:metadata-extractor", version.ref = "metadataExtractor" }
+
+maplibre-compose = { module = "org.maplibre.compose:maplibre-compose", version.ref = "maplibreCompose" }
+maplibre-compose-material3 = { module = "org.maplibre.compose:maplibre-compose-material3", version.ref = "maplibreCompose" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

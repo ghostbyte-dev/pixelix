@@ -2,21 +2,14 @@ package com.daniebeler.pfpixelix.ui.composables.places
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBars
-import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -26,21 +19,14 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.daniebeler.pfpixelix.di.injectViewModel
-import com.daniebeler.pfpixelix.domain.service.platform.PlatformFeatures
 import com.daniebeler.pfpixelix.ui.composables.MaxWidthTopBar
-import com.daniebeler.pfpixelix.ui.composables.post.PostComposable
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
-import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposable
-import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
-import com.daniebeler.pfpixelix.ui.composables.timelines.TimelineHelpCard
-import com.daniebeler.pfpixelix.ui.composables.widgets.CustomPullToRefreshBox
 import com.daniebeler.pfpixelix.ui.composables.widgets.InfinitePostsList
 import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.ui.navigation.Destination
@@ -48,14 +34,10 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.arrow_left
-import pixelix.app.generated.resources.by
 import pixelix.app.generated.resources.explore_trending_profiles
 import pixelix.app.generated.resources.follow_accounts_or_hashtags_to_fill_your_home_timeline
-import pixelix.app.generated.resources.home
-import pixelix.app.generated.resources.home_timeline_explained
 import pixelix.app.generated.resources.no_posts
 import pixelix.app.generated.resources.photo
-import pixelix.app.generated.resources.post
 
 @Composable
 fun PlaceComposable(
@@ -84,7 +66,8 @@ fun PlaceComposable(
                             fontSize = 18.sp
                         )
                         Text(
-                            text = viewModel.postsForPlaceState.data?.place?.country?.name ?: "Country",
+                            text = viewModel.postsForPlaceState.data?.place?.country?.name
+                                ?: "Country",
                             fontSize = 12.sp,
                             lineHeight = 6.sp
                         )
@@ -122,17 +105,19 @@ fun PlaceComposable(
                     heading = stringResource(Res.string.no_posts),
                     message = stringResource(Res.string.follow_accounts_or_hashtags_to_fill_your_home_timeline),
                     buttonText = stringResource(Res.string.explore_trending_profiles),
-                    onClick = { navController.navigate(Destination.Search(1)) }
-                ),
-                getItemsPaginated = {  },
-                onRefresh = {  },
+                    onClick = { navController.navigate(Destination.Search(1)) }),
+                getItemsPaginated = { },
+                onRefresh = { },
                 itemGetsDeleted = { },
                 postGetsUpdated = { },
                 staggeredGridState = staggeredGridState,
-            )
+                before = {
+                    viewModel.postsForPlaceState.coordinates?.let { coords ->
+                        MapComposable(
+                            lat = coords.latitude, lon = coords.longitude
+                        )
+                    }
+                })
         }
-
-
     }
-
 }

@@ -21,12 +21,22 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 
+
+data class Coordinates(val latitude: Double, val longitude: Double)
 data class PostsForPlaceState(
     val isLoading: Boolean = false,
     val isRefreshing: Boolean = false,
     val data: PostsForPlace? = null,
-    val error: String = ""
-)
+    val error: String = "",
+) {
+    val place get() = data?.place
+
+    val coordinates: Coordinates?
+        get() {
+            val lat = place?.latitude ?: return null
+            val lon = place?.longitude ?: return null
+            return Coordinates(lat, lon)
+        }}
 
 
 class PlaceViewModel @Inject constructor(

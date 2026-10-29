@@ -1,6 +1,6 @@
 package com.daniebeler.pfpixelix.domain.model
 
-data class Location(
+data class Place(
     val id: String,
     val name: String?,
     val latitude: String? = null,

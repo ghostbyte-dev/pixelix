@@ -73,7 +73,7 @@ fun PixelfedPostDto.toDomain(): Post {
         reblogCount = activePost.reblogCount,
         inReplyToId = activePost.inReplyToId,
 
-        location = activePost.place?.toDomain(),
+        place = activePost.place?.toDomain(),
         likedBy = activePost.likedBy?.toDomain(),
         visibility = activePost.visibility.toDomain(),
         commentsDisabled = activePost.commentsDisabled,

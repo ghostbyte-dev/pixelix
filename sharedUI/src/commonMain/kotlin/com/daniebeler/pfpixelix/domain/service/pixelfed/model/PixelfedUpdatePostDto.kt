@@ -22,7 +22,7 @@ fun PixelfedUpdatePostDto.toDomain(): UpdatePost {
         mediaIds = this.mediaIds,
         sensitive = this.sensitive,
         spoilerText = this.spoilerText,
-        location = this.location?.toDomain()
+        place = this.location?.toDomain()
     )
 }
 
@@ -32,7 +32,7 @@ fun UpdatePost.toDto(): PixelfedUpdatePostDto {
         mediaIds = this.mediaIds,
         sensitive = this.sensitive,
         spoilerText = this.spoilerText,
-        location = this.location?.let {
+        location = this.place?.let {
             PixelfedPlaceDto(
                 id = it.id,
                 slug = null,

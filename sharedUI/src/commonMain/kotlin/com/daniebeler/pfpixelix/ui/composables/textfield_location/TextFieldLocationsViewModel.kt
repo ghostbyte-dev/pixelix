@@ -6,7 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.domain.model.Country
-import com.daniebeler.pfpixelix.domain.model.Location
+import com.daniebeler.pfpixelix.domain.model.Place
 import com.daniebeler.pfpixelix.domain.service.general.ExploreService
 import com.daniebeler.pfpixelix.domain.service.general.Session
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
@@ -32,7 +32,7 @@ class TextFieldLocationsViewModel @Inject constructor(
         }
     }
 
-    fun initializePlace(initialPlace: Location) {
+    fun initializePlace(initialPlace: Place) {
         countriesState = countriesState.copy(country = initialPlace.country)
         locationsSuggestions = LocationsState(location = initialPlace)
         locationText = initialPlace.name!!
@@ -78,7 +78,7 @@ class TextFieldLocationsViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    fun clickLocation(location: Location) {
+    fun clickLocation(location: Place) {
         locationsDropdownOpen = false
         locationsSuggestions = locationsSuggestions.copy(location = location)
     }

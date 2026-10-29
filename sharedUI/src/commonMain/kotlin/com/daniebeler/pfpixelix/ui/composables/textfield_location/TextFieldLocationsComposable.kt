@@ -25,7 +25,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import com.daniebeler.pfpixelix.di.injectViewModel
-import com.daniebeler.pfpixelix.domain.model.Location
+import com.daniebeler.pfpixelix.domain.model.Place
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposableDialog
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
@@ -41,8 +41,8 @@ import pixelix.app.generated.resources.location
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TextFieldLocationsComposable(
-    submit: (location: Location) -> Unit,
-    initialValue: Location?,
+    submit: (location: Place) -> Unit,
+    initialValue: Place?,
     labelStringId: StringResource,
     submitButton: (@Composable () -> Unit)?,
     modifier: Modifier?,

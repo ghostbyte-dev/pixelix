@@ -16,7 +16,7 @@ data class Post(
     var reblogged: Boolean,
     val bookmarked: Boolean,
     val mentions: List<Account>,
-    val location: Location?,
+    val place: Place?,
     val likedBy: LikedBy?,
     val visibility: Visibility,
     val inReplyToId: String?,

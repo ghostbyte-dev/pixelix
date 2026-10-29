@@ -12,7 +12,7 @@ import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
 import com.daniebeler.pfpixelix.domain.model.Instance
 import com.daniebeler.pfpixelix.domain.model.License
-import com.daniebeler.pfpixelix.domain.model.Location
+import com.daniebeler.pfpixelix.domain.model.Place
 import com.daniebeler.pfpixelix.domain.model.Visibility
 import com.daniebeler.pfpixelix.domain.model.request.FieldState
 import com.daniebeler.pfpixelix.domain.model.request.MediaAttachmentMetadataRequest
@@ -71,7 +71,7 @@ class PostEditorViewModel @Inject constructor(
         var id: String?,
         var isLoading: Boolean,
         var isError: Boolean,
-        var locationInitialValue: Location?,
+        var locationInitialValue: Place?,
         var metadata: MediaAttachmentMetadataRequest
     )
 
@@ -171,11 +171,11 @@ class PostEditorViewModel @Inject constructor(
                     originalContent = post.content
                     originalSensitive = post.sensitive
                     originalContentWarning = post.spoilerText
-                    originalLocationId = post.location?.id ?: ""
+                    originalLocationId = post.place?.id ?: ""
                     originalCommentsDisabled = post.commentsDisabled
                     originalMediaIds = post.mediaAttachments.map { it.id }
 
-                    post.location?.let {
+                    post.place?.let {
                         locationId = it.id
                     }
                     val mappedImages = post.mediaAttachments.map { media ->
@@ -185,12 +185,12 @@ class PostEditorViewModel @Inject constructor(
                             id = media.id,
                             isLoading = false,
                             isError = false,
-                            locationInitialValue = media.location,
+                            locationInitialValue = media.place,
                             metadata = MediaAttachmentMetadataRequest(
                                 id = media.id,
                                 description = media.description ?: "",
                                 blurhash = media.blurHash,
-                                locationId = media.location?.id,
+                                locationId = media.place?.id,
                                 license = media.license,
                                 lens = FieldState(media.metadata?.lens),
                                 make = FieldState(media.metadata?.make),

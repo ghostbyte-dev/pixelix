@@ -4,7 +4,7 @@ import com.daniebeler.pfpixelix.domain.model.Country
 import com.daniebeler.pfpixelix.domain.model.License
 import com.daniebeler.pfpixelix.domain.model.MediaAttachment
 import com.daniebeler.pfpixelix.domain.model.MediaMetadata
-import com.daniebeler.pfpixelix.domain.model.Location
+import com.daniebeler.pfpixelix.domain.model.Place
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -95,7 +95,7 @@ fun VernissageUploadedAttachment.toDomain(): MediaAttachment {
         description = this.description,
         metadata = null,
         type = null,
-        location = null,
+        place = null,
         license = null,
         aspectRatio = null
     )
@@ -113,7 +113,7 @@ fun VernissageMediaAttachmentDto.toDomain(): MediaAttachment {
         description = this.description,
         license = this.license?.toDomain(),
         aspectRatio = this.smallFile.aspect,
-        location = this.location?.toDomain()
+        place = this.location?.toDomain()
     )
 }
 
@@ -126,8 +126,8 @@ fun VernissageLicenseDto.toDomain(): License {
     )
 }
 
-fun VernissageLocationDto.toDomain(): Location {
-    return Location(
+fun VernissageLocationDto.toDomain(): Place {
+    return Place(
         id = this.id,
         name = this.name,
         latitude = this.lat?.replace(",", "."),

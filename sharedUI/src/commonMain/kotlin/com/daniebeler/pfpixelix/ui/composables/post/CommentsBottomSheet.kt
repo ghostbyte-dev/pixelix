@@ -118,7 +118,7 @@ fun CommentsBottomSheet(
                             favourited = false,
                             visibility = Visibility.PUBLIC,
                             spoilerText = "",
-                            location = null,
+                            place = null,
                             inReplyToId = null,
                             emojis = emptyList(),
                             reblogCount = 0,

@@ -756,8 +756,8 @@ private fun PostActionBar(
         }
 
         val currentAttachment = post.mediaAttachments.getOrNull(pagerState.currentPage)
-        val attachmentLocation = currentAttachment?.location
-        val postLocation = post.location
+        val attachmentLocation = currentAttachment?.place
+        val postLocation = post.place
         val displayLocation = attachmentLocation ?: postLocation
 
 

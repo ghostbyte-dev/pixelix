@@ -108,6 +108,7 @@ fun PlaceComposable(
                     onClick = { navController.navigate(Destination.Search(1)) }),
                 getItemsPaginated = { },
                 onRefresh = { },
+                refreshable = false,
                 itemGetsDeleted = { },
                 postGetsUpdated = { },
                 staggeredGridState = staggeredGridState,

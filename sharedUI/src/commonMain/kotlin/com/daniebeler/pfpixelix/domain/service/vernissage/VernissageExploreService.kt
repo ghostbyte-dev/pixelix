@@ -7,6 +7,8 @@ import com.daniebeler.pfpixelix.domain.model.Film
 import com.daniebeler.pfpixelix.domain.model.Lens
 import com.daniebeler.pfpixelix.domain.model.License
 import com.daniebeler.pfpixelix.domain.model.PagePaginatedResponse
+import com.daniebeler.pfpixelix.domain.model.Place
+import com.daniebeler.pfpixelix.domain.model.PostsForPlace
 import com.daniebeler.pfpixelix.domain.model.RelatedHashtag
 import com.daniebeler.pfpixelix.domain.model.Search
 import com.daniebeler.pfpixelix.domain.model.Tag
@@ -69,6 +71,11 @@ class VernissageExploreService(
     override fun searchLocations(searchText: String, countryCode: String?) = loadListResources {
         api.getLocations(countryCode, searchText).map { it.toDomain() }
     }
+
+    override fun getPostsForPlace(id: String, slug: String) = loadResource {
+        PostsForPlace(Place(id = "-1"), emptyList())
+    }
+
 
     override fun getAllCountries(): Flow<Resource<List<Country>>> = loadResource {
         api.getCountries().map { it.toDomain() }

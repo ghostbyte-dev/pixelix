@@ -53,6 +53,10 @@ class PixelfedExploreService(
         api.searchLocations(searchText).map { it.toDomain() }
     }
 
+    override fun getPostsForPlace(id: String, slug: String) = loadResource {
+        api.getPostsForPlace(id = id, slug = slug).toDomain()
+    }
+
     override fun getAllCountries(): Flow<Resource<List<Country>>> = loadResource {
         emptyList()
     }

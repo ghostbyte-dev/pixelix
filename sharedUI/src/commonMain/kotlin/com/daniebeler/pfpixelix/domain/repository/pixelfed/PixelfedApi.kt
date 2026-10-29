@@ -17,6 +17,7 @@ import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedNotificati
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedPlaceDto
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedPostContextDto
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedPostDto
+import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedPostsForPlaceDto
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedRelatedHashtagDto
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedRelationshipDto
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.PixelfedReportResponseDto
@@ -350,6 +351,12 @@ interface PixelfedApi {
     suspend fun searchLocations(
         @Query("q") searchText: String
     ): List<PixelfedPlaceDto>
+
+    @GET("api/v1.1/places/posts/{id}/{slug}")
+    suspend fun getPostsForPlace(
+        @Path("id") id: String,
+        @Path("slug") slug: String,
+    ): PixelfedPostsForPlaceDto
 
     @POST("api/v2/media")
     suspend fun uploadMedia(

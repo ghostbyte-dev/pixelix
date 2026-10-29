@@ -6,7 +6,6 @@ import android.content.Intent
 import android.net.Uri
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.core.content.FileProvider
-import co.touchlab.kermit.Logger
 import com.daniebeler.pfpixelix.MyApplication
 import com.daniebeler.pfpixelix.domain.service.general.BackendType
 import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
@@ -72,15 +71,6 @@ actual class Platform actual constructor(
     }
 
     actual fun dismissBrowser() {}
-
-    actual fun getAppVersion(): String {
-        return try {
-            context.packageManager.getPackageInfo(context.packageName, 0).versionName
-        } catch (e: Throwable) {
-            Logger.e("appVersionName", e)
-            null
-        }.orEmpty()
-    }
 
     actual fun pinWidget() {
         val appWidgetManager = AppWidgetManager.getInstance(context)

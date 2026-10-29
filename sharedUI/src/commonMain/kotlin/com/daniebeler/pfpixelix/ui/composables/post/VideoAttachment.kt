@@ -62,6 +62,7 @@ fun VideoPlayerContent(
     autoplay: Boolean,
     onReady: () -> Unit = {},
     allowFullscreenOnClick: Boolean = true,
+    modifier: Modifier = Modifier,
 ) {
     val coordinator = LocalVideoPlaybackCoordinator.current
     val isActive = coordinator.activeId == id
@@ -85,16 +86,16 @@ fun VideoPlayerContent(
     if (player.isPlaying) {
         KeepScreenOn()
     }
-    val modifier = if (allowFullscreenOnClick) {
-        Modifier.clickable {
+    val localModifier = if (allowFullscreenOnClick) {
+        modifier.clickable {
             coordinator.requestActive(id)
             player.toggleFullscreen()
         }
     } else {
-        Modifier
+        modifier
     }
     Column {
-        Box(modifier = modifier) {
+        Box(modifier = localModifier) {
             VideoPlayerSurface(playerState = player, modifier = Modifier.fillMaxWidth().run {
                 if (aspectRatio != null) aspectRatio(aspectRatio) else this
             }.isVisible(threshold = 50) { visible ->

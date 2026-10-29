@@ -9,7 +9,6 @@ class AboutPixelixViewModel @Inject constructor(
     private val platform: Platform,
     private val appIconService: AppIconService
 ) : ViewModel() {
-    val versionName = platform.getAppVersion()
     val appIcon = appIconService.currentIcon
 
     fun rateApp() {

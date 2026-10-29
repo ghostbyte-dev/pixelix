@@ -48,8 +48,6 @@ actual class Platform actual constructor(
 
     actual fun shareText(text: String) {}
 
-    actual fun getAppVersion(): String = "1.0.0"
-
     actual fun pinWidget() {}
 }
 

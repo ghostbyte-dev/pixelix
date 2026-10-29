@@ -52,6 +52,9 @@ import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.UseInAppBrowserPref
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
+import pixelix.app.generated.resources.version_name
+import pixelix.app.generated.resources.version_code
+import pixelix.app.generated.resources.version_commit_hash
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.app_customization
 import pixelix.app.generated.resources.close
@@ -180,7 +183,9 @@ fun PreferencesComposable(
             Spacer(modifier = Modifier.height(12.dp))
 
             Text(
-                text = "Pixelix v" + viewModel.versionName,
+                text = "Pixelix v${stringResource(Res.string.version_name)} " +
+                    "(${stringResource(Res.string.version_code)}) · " +
+                    stringResource(Res.string.version_commit_hash),
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center,
                 fontSize = 12.sp

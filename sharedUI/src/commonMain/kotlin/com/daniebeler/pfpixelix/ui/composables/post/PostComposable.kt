@@ -82,8 +82,8 @@ import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposableDialog
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.ui.navigation.Destination
-import com.daniebeler.pfpixelix.utils.BlurHashDecoder
 import com.daniebeler.pfpixelix.utils.formatLocalized
+import com.daniebeler.pfpixelix.utils.rememberBlurHashBitmap
 import com.daniebeler.pfpixelix.utils.timeAgo
 import com.daniebeler.pfpixelix.utils.zoomable.rememberZoomState
 import kotlinx.coroutines.CoroutineScope
@@ -203,7 +203,8 @@ fun PostComposable(
         animationSpec = tween(durationMillis = 200, easing = LinearEasing),
         finishedListener = { animateHeart = false })
 
-    val currentPost = viewModel.post ?: return
+    // Render the supplied post immediately; waiting for LaunchedEffect would collapse the item.
+    val currentPost = viewModel.post ?: post
 
     Column(
         modifier = modifier.clip(RoundedCornerShape(16.dp))
@@ -401,22 +402,49 @@ private fun PostMediaSection(
     navController: AppNavigator
 ) {
     if (post.mediaAttachments.isNotEmpty()) {
-        if (post.sensitive && !viewModel.showPost && viewModel.blurSensitiveContent) {
-            PostSensitiveOverlay(post = post, viewModel = viewModel, isMasonry = isMasonry)
-        } else {
-            PostMediaContent(
-                post = post,
-                viewModel = viewModel,
-                pagerState = pagerState,
-                postId = postId,
-                isMasonry = isMasonry,
-                roundedCornerShape = roundedCornerShape,
-                setZindex = setZindex,
-                onLikeAnimation = onLikeAnimation,
-                updatePost = updatePost,
-                fullQuality = fullQuality,
-                navController = navController
-            )
+        Column {
+            // The frame owns measurement for every state, including hidden sensitive media.
+            Box(
+                Modifier.fillMaxWidth().aspectRatio(post.mediaAttachments.postMediaAspectRatio())
+            ) {
+                if (post.sensitive && !viewModel.showPost && viewModel.blurSensitiveContent) {
+                    PostSensitiveOverlay(post = post, viewModel = viewModel, isMasonry = isMasonry)
+                } else {
+                    PostMediaContent(
+                        post = post,
+                        viewModel = viewModel,
+                        pagerState = pagerState,
+                        postId = postId,
+                        isMasonry = isMasonry,
+                        roundedCornerShape = roundedCornerShape,
+                        setZindex = setZindex,
+                        onLikeAnimation = onLikeAnimation,
+                        updatePost = updatePost,
+                        fullQuality = fullQuality,
+                        navController = navController
+                    )
+                }
+            }
+
+            // Keep the indicator's space even while sensitive media is hidden.
+            if (post.mediaAttachments.size > 1 && !isMasonry) {
+                Spacer(modifier = Modifier.height(5.dp))
+                Row(
+                    Modifier.wrapContentHeight().fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    repeat(pagerState.pageCount) { iteration ->
+                        val color = if (pagerState.currentPage == iteration) {
+                            MaterialTheme.colorScheme.primary
+                        } else {
+                            MaterialTheme.colorScheme.onBackground
+                        }
+                        Box(
+                            Modifier.padding(2.dp).clip(CircleShape).background(color).size(8.dp)
+                        )
+                    }
+                }
+            }
         }
     } else if (post.content.isNotBlank()) {
         Column(Modifier.padding(start = 16.dp, top = 8.dp, end = 16.dp)) {
@@ -443,26 +471,30 @@ private fun PostMediaSection(
     }
 }
 
+private fun List<MediaAttachment>.postMediaAspectRatio(): Float =
+    minOfOrNull { attachment ->
+        attachment.aspectRatio?.toFloat()?.takeIf { it.isFinite() && it > 0f }
+            ?: if (attachment.type == "video") 16f / 9f else 1f
+    } ?: 1f
+
 @Composable
 private fun PostSensitiveOverlay(post: Post, viewModel: PostViewModel, isMasonry: Boolean) {
     Box(
-        modifier = Modifier.fillMaxWidth().zIndex(80f)
+        modifier = Modifier.fillMaxSize().zIndex(80f)
             .clip(RoundedCornerShape(if (isMasonry) 8.dp else 16.dp))
     ) {
-        val blurHashBitmap = BlurHashDecoder.decode(post.mediaAttachments[0].blurHash)
-        val aspectRatio = post.mediaAttachments[0].aspectRatio?.toFloat() ?: 1.5f
-
+        val blurHashBitmap = rememberBlurHashBitmap(post.mediaAttachments[0].blurHash)
         if (blurHashBitmap != null) {
             Image(
                 blurHashBitmap,
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
-                modifier = Modifier.aspectRatio(aspectRatio)
+                modifier = Modifier.matchParentSize()
             )
         }
 
         Column(
-            Modifier.aspectRatio(aspectRatio).fillMaxWidth().padding(12.dp),
+            Modifier.fillMaxSize().padding(12.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
@@ -498,20 +530,15 @@ private fun PostMediaContent(
     navController: AppNavigator
 ) {
     if (post.mediaAttachments.count() > 1) {
-        val smallestAspectRatio = post.mediaAttachments.minByOrNull {
-            it.aspectRatio ?: 1.0
-        }
-        Box {
+        Box(Modifier.fillMaxSize()) {
             HorizontalPager(
                 state = pagerState, pageSpacing = if (isMasonry) {
                     4.dp
                 } else {
                     16.dp
-                }, modifier = Modifier.zIndex(50f).aspectRatio(
-                    smallestAspectRatio?.aspectRatio?.toFloat() ?: 1f
-                )
+                }, modifier = Modifier.fillMaxSize().zIndex(50f)
             ) { page ->
-                Box(modifier = Modifier.zIndex(10f)) {
+                Box(modifier = Modifier.fillMaxSize().zIndex(10f)) {
                     PostImage(
                         mediaAttachment = post.mediaAttachments[page],
                         postId = postId,
@@ -542,30 +569,8 @@ private fun PostMediaContent(
 
         }
 
-        if (!isMasonry) {
-            Spacer(modifier = Modifier.height(5.dp))
-
-            Row(
-                Modifier.wrapContentHeight().fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                repeat(pagerState.pageCount) { iteration ->
-                    val color = if (pagerState.currentPage == iteration) {
-                        MaterialTheme.colorScheme.primary
-                    } else {
-                        MaterialTheme.colorScheme.onBackground
-                    }
-                    Box(
-                        modifier = Modifier.padding(2.dp).clip(CircleShape).background(color)
-                            .size(8.dp)
-                    )
-                }
-            }
-        }
-
-
     } else if (post.mediaAttachments.isNotEmpty()) {
-        Box(modifier = Modifier.zIndex(10f)) {
+        Box(modifier = Modifier.fillMaxSize().zIndex(10f)) {
             PostImage(
                 mediaAttachment = post.mediaAttachments[0],
                 postId = postId,
@@ -1021,7 +1026,7 @@ fun PostImage(
 ) {
     var showHeart by remember { mutableStateOf(false) }
     val scale = animateFloatAsState(if (showHeart) 1f else 0f, label = "heart_filled animation")
-    var imageLoaded by remember { mutableStateOf(false) }
+    var imageLoaded by remember(mediaAttachment) { mutableStateOf(false) }
     LaunchedEffect(showHeart) {
         if (showHeart) {
             delay(1000.milliseconds)
@@ -1032,18 +1037,16 @@ fun PostImage(
     var altText by remember { mutableStateOf("") }
 
     Box(
-        modifier = Modifier.fillMaxWidth().zIndex(80f).clip(roundedCornerShape)
+        modifier = Modifier.fillMaxSize().zIndex(80f).clip(roundedCornerShape)
     ) {
-        val blurHashBitmap = BlurHashDecoder.decode(mediaAttachment.blurHash)
+        val blurHashBitmap = rememberBlurHashBitmap(mediaAttachment.blurHash)
 
         if (!imageLoaded && blurHashBitmap != null) {
             Image(
                 blurHashBitmap,
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
-                modifier = Modifier.aspectRatio(
-                    mediaAttachment.aspectRatio?.toFloat() ?: 1f
-                )
+                modifier = Modifier.matchParentSize()
             )
         }
 
@@ -1058,7 +1061,7 @@ fun PostImage(
             showAltTextIcon.value = true
         }
 
-        Box(modifier = Modifier.zIndex(2f).snapBackZoomable(zoomState).pointerInput(Unit) {
+        Box(modifier = Modifier.fillMaxSize().zIndex(2f).snapBackZoomable(zoomState).pointerInput(Unit) {
             detectTapGestures(
                 onDoubleTap = if (viewModel.isDoubleTapEnabled) {
                 {
@@ -1083,9 +1086,13 @@ fun PostImage(
                     mediaAttachment,
                     fullQuality,
                     { zoomState.setContentSize(it.painter.intrinsicSize) },
-                    { imageLoaded = true })
+                    { imageLoaded = true },
+                    modifier = Modifier.fillMaxSize())
             } else {
-                VideoAttachment(mediaAttachment, viewModel, { imageLoaded = true }, isMasonry)
+                VideoAttachment(
+                    mediaAttachment, viewModel, { imageLoaded = true }, isMasonry,
+                    modifier = Modifier.fillMaxSize()
+                )
             }
         }
 
@@ -1150,7 +1157,8 @@ private fun ImageWrapper(
     fullQuality: Boolean,
     setContentSize: (painter: AsyncImagePainter.State.Success) -> Unit,
     onSuccess: () -> Unit,
-    fillSizePopup: Boolean = false
+    fillSizePopup: Boolean = false,
+    modifier: Modifier = Modifier.fillMaxWidth()
 ) {
     AsyncImage(
         model = ImageRequest.Builder(LocalPlatformContext.current).data(
@@ -1162,9 +1170,9 @@ private fun ImageWrapper(
         ).size(Size.ORIGINAL).precision(Precision.EXACT).build(),
         contentDescription = null,
         modifier = if (fillSizePopup) {
-            Modifier.fillMaxSize()
+            modifier.fillMaxSize()
         } else {
-            Modifier.fillMaxWidth()
+            modifier
         },
         contentScale = if (fillSizePopup) {
             ContentScale.Fit
@@ -1247,6 +1255,7 @@ private fun VideoAttachment(
     viewModel: PostViewModel,
     onReady: () -> Unit,
     isMasonry: Boolean,
+    modifier: Modifier = Modifier,
 ) {
     VideoPlayerContent(
         id = attachment.id,
@@ -1257,5 +1266,6 @@ private fun VideoAttachment(
         autoplay = viewModel.isAutoplayVideos,
         onReady = onReady,
         allowFullscreenOnClick = !isMasonry,
+        modifier = modifier,
     )
 }

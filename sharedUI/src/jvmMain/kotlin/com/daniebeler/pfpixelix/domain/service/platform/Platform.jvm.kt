@@ -48,10 +48,6 @@ actual class Platform actual constructor(
 
     actual fun shareText(text: String) {}
 
-    actual fun getAppVersion(): String {
-        return "1.0.0"
-    }
-
     actual fun pinWidget() {}
     actual fun toSafeUri(platformFile: PlatformFile): KmpUri {
         return platformFile.toKmpUri()

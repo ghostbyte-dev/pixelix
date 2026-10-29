@@ -24,7 +24,6 @@ class PreferencesViewModel(
     val capabilities: StateFlow<Capabilities> = session.capabilities
     val backendType: BackendType = session.backendType.value
     val appIcon = appIconService.currentIcon
-    val versionName = platform.getAppVersion()
 
     fun logout() {
         viewModelScope.launch {

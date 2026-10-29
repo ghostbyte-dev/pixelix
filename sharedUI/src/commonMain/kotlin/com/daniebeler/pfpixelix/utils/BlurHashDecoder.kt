@@ -1,17 +1,50 @@
 package com.daniebeler.pfpixelix.utils
 
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.toArgb
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.withContext
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.pow
 import kotlin.math.withSign
 
-object BlurHashDecoder {
-    fun decode(blurHash: String?, width: Int? = 30, height: Int? = 60, punch: Float = 1f): ImageBitmap? {
+@Composable
+fun rememberBlurHashBitmap(
+    blurHash: String?,
+    width: Int? = 30,
+    height: Int? = 60,
+    punch: Float = 1f
+): ImageBitmap? {
+    var bitmap by remember(blurHash, width, height, punch) {
+        mutableStateOf<ImageBitmap?>(null)
+    }
+
+    LaunchedEffect(blurHash, width, height, punch) {
+        bitmap = BlurHashDecoder.decode(blurHash, width, height, punch)
+    }
+
+    return bitmap
+}
+
+private object BlurHashDecoder {
+    suspend fun decode(
+        blurHash: String?,
+        width: Int? = 30,
+        height: Int? = 60,
+        punch: Float = 1f
+    ): ImageBitmap? = withContext(Dispatchers.Default) {
         if (blurHash == null || width == null || height == null || blurHash.length < 6) {
-            return null
+            return@withContext null
         }
         require(width > 0) { "Width must be greater than zero" }
         require(height > 0) { "height must be greater than zero" }
@@ -20,7 +53,7 @@ object BlurHashDecoder {
         val numCompX = (numCompEnc % 9) + 1
         val numCompY = (numCompEnc / 9) + 1
         if (blurHash.length != 4 + 2 * numCompX * numCompY) {
-            return null
+            return@withContext null
         }
         val maxAcEnc = decode83(blurHash, 1, 2)
         val maxAc = (maxAcEnc + 1) / 166f
@@ -34,7 +67,7 @@ object BlurHashDecoder {
                 decodeAc(colorEnc, maxAc * punch)
             }
         }
-        return composeBitmap(width, height, numCompX, numCompY, colors)
+        composeBitmap(width, height, numCompX, numCompY, colors)
     }
 
     private fun decode83(str: String, from: Int = 0, to: Int = str.length): Int {
@@ -77,13 +110,14 @@ object BlurHashDecoder {
 
     private fun signedPow2(value: Float) = value.pow(2f).withSign(value)
 
-    private fun composeBitmap(
+    private suspend fun composeBitmap(
         width: Int, height: Int,
         numCompX: Int, numCompY: Int,
         colors: Array<FloatArray>
     ): ImageBitmap {
         val imageArray = IntArray(height * width)
         for (y in 0 until height) {
+            currentCoroutineContext().ensureActive()
             for (x in 0 until width) {
                 var r = 0f
                 var g = 0f

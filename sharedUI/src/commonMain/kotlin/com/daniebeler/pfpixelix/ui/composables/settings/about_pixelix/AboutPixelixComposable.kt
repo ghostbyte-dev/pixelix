@@ -38,6 +38,9 @@ import com.daniebeler.pfpixelix.ui.navigation.Destination
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
+import pixelix.app.generated.resources.version_name
+import pixelix.app.generated.resources.version_code
+import pixelix.app.generated.resources.version_commit_hash
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.about_pixelix
 import pixelix.app.generated.resources.browser
@@ -84,9 +87,17 @@ fun AboutPixelixComposable(
                     )
 
                     Text(
-                        text = "Version " + viewModel.versionName,
+                        text = "Version ${stringResource(Res.string.version_name)} (${stringResource(Res.string.version_code)})",
                         fontSize = 16.sp,
                         color = MaterialTheme.colorScheme.secondary
+                    )
+
+                    Text(
+                        text = stringResource(Res.string.version_commit_hash),
+                        fontSize = 12.sp,
+                        color = MaterialTheme.colorScheme.secondary,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(horizontal = 16.dp)
                     )
 
                 }

@@ -22,7 +22,6 @@ expect class Platform(
     fun openUrl(url: String)
     fun dismissBrowser()
     fun shareText(text: String)
-    fun getAppVersion(): String
     fun pinWidget()
 }
 

@@ -13,7 +13,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -25,7 +24,7 @@ import com.daniebeler.pfpixelix.di.LocalAppComponent
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.ui.navigation.Destination
-import com.daniebeler.pfpixelix.utils.BlurHashDecoder
+import com.daniebeler.pfpixelix.utils.rememberBlurHashBitmap
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.eye_off
@@ -51,7 +50,7 @@ fun CustomPost(
         .collectAsState(initial = prefs.hideSensitiveContent)
 
     val firstBlurHash = post.mediaAttachments.firstOrNull()?.blurHash ?: DEFAULT_BLUR_HASH
-    val blurHashBitmap = remember(firstBlurHash) { BlurHashDecoder.decode(firstBlurHash) }
+    val blurHashBitmap = rememberBlurHashBitmap(firstBlurHash)
 
     val handleClick: () -> Unit = {
         if (onClick != null) {

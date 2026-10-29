@@ -22,3 +22,4 @@ package*.json
 /flatpak-assets/flatpak-sources.json
 .flatpak-builder
 .flatpak-gradle
+/sharedUI/src/commonMain/composeResources/values/version.xml

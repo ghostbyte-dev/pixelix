@@ -12,7 +12,6 @@ import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.useContents
 import me.tatarka.inject.annotations.Inject
 import platform.CoreGraphics.CGRectMake
-import platform.Foundation.NSBundle
 import platform.Foundation.NSURL
 import platform.Foundation.NSURL.Companion.URLWithString
 import platform.SafariServices.SFSafariViewController
@@ -107,10 +106,6 @@ actual class Platform actual constructor(
     private fun isIpad(): Boolean {
         val device = UIDevice.currentDevice
         return device.userInterfaceIdiom == UIUserInterfaceIdiomPad
-    }
-
-    actual fun getAppVersion(): String {
-        return NSBundle.mainBundle.infoDictionary?.get("CFBundleShortVersionString").toString()
     }
 
     actual fun pinWidget() {}

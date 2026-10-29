@@ -16,15 +16,15 @@
 default_platform(:android)
 
 private_lane :get_android_version_code do
-  gradle_file = File.expand_path("../androidApp/build.gradle.kts", __dir__)
+  gradle_file = File.expand_path("../gradle.properties", __dir__)
   gradle_content = File.read(gradle_file)
-  gradle_content[/versionCode\s*=\s*(\d+)/, 1]
+  gradle_content[/^app\.versionCode=(\d+)/, 1]
 end
 
 private_lane :get_android_version_name do
-  gradle_file = File.expand_path("../androidApp/build.gradle.kts", __dir__)
+  gradle_file = File.expand_path("../gradle.properties", __dir__)
   gradle_content = File.read(gradle_file)
-  gradle_content[/versionName\s*=\s*"([^"]+)"/, 1]
+  gradle_content[/^app\.versionName=(.+)$/, 1]
 end
 
 private_lane :get_release_notes do |options|

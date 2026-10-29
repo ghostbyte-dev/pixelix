@@ -194,6 +194,56 @@ kotlin {
     }
 }
 
+val generateVersionResources = tasks.register("generateVersionResources") {
+    val commitHash = providers.exec {
+        workingDir(rootProject.layout.projectDirectory)
+        commandLine("git", "rev-parse", "HEAD")
+    }.standardOutput.asText.map { it.trim() }
+
+    inputs.property("versionName", providers.gradleProperty("app.versionName"))
+    inputs.property("versionCode", providers.gradleProperty("app.versionCode"))
+    inputs.property("commitHash", commitHash)
+    outputs.file(layout.projectDirectory.file("src/commonMain/composeResources/values/version.xml"))
+
+    doLast {
+        fun xmlEscape(value: String) = value.replace("&", "&amp;")
+            .replace("<", "&lt;").replace(">", "&gt;")
+            .replace("\"", "&quot;").replace("'", "&apos;")
+
+        outputs.files.singleFile.apply {
+            parentFile.mkdirs()
+            writeText(
+                """
+                <resources>
+                    <string name="version_name">${xmlEscape(inputs.properties.getValue("versionName").toString())}</string>
+                    <string name="version_code">${xmlEscape(inputs.properties.getValue("versionCode").toString())}</string>
+                    <string name="version_commit_hash">${xmlEscape(inputs.properties.getValue("commitHash").toString().take(8))}</string>
+                </resources>
+                """.trimIndent() + "\n"
+            )
+        }
+    }
+}
+
+// Xcode consumes this generated plist after its Gradle build phase.
+tasks.register("generateIosInfoPlist") {
+    inputs.file(rootProject.layout.projectDirectory.file("iosApp/iosApp/Info.plist"))
+    inputs.property("versionName", providers.gradleProperty("app.versionName"))
+    inputs.property("versionCode", providers.gradleProperty("app.versionCode"))
+    outputs.file(rootProject.layout.projectDirectory.file("iosApp/build/generated/Info.plist"))
+
+    doLast {
+        val template = inputs.files.singleFile.readText()
+        outputs.files.singleFile.apply {
+            parentFile.mkdirs()
+            writeText(
+                template.replace("@APP_VERSION_NAME@", inputs.properties.getValue("versionName").toString())
+                    .replace("@APP_VERSION_CODE@", inputs.properties.getValue("versionCode").toString())
+            )
+        }
+    }
+}
+
 compose.resources {
     packageOfResClass = "pixelix.app.generated.resources"
 }
@@ -208,5 +258,6 @@ dependencies {
 }
 
 tasks.configureEach {
+    if (name == "convertXmlValueResourcesForCommonMain") dependsOn(generateVersionResources)
     if (this is KspAATask && name != "kspCommonMainKotlinMetadata") dependsOn("kspCommonMainKotlinMetadata")
 }

@@ -5,16 +5,23 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.daniebeler.pfpixelix.di.AppScope
 import com.daniebeler.pfpixelix.domain.model.Notification
 import com.daniebeler.pfpixelix.domain.service.general.NotificationService
 import com.daniebeler.pfpixelix.domain.service.platform.Platform
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.ui.events.NotificationBadgeState
+import dev.zacsweers.metro.ContributesIntoMap
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.binding
+import dev.zacsweers.metrox.viewmodel.ViewModelKey
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import me.tatarka.inject.annotations.Inject
 
-class NotificationsViewModel @Inject constructor(
+@ViewModelKey
+@ContributesIntoMap(AppScope::class, binding<ViewModel>())
+@Inject
+class NotificationsViewModel(
     private val notificationService: NotificationService,
     private val platform: Platform,
     private val badgeState: NotificationBadgeState

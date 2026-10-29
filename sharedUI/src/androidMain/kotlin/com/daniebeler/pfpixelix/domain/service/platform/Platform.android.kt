@@ -12,9 +12,9 @@ import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
 import com.daniebeler.pfpixelix.utils.KmpContext
 import com.daniebeler.pfpixelix.utils.KmpUri
 import com.daniebeler.pfpixelix.widget.notifications.NotificationWidgetReceiver
+import dev.zacsweers.metro.Inject
 import io.github.vinceglb.filekit.PlatformFile
 import io.github.vinceglb.filekit.path
-import me.tatarka.inject.annotations.Inject
 import java.io.File
 
 @Inject

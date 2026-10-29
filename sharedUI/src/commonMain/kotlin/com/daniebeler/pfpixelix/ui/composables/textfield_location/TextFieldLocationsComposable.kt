@@ -24,9 +24,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
-import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.model.Place
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposableDialog
+import dev.zacsweers.metrox.viewmodel.metroViewModel
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
@@ -48,7 +48,7 @@ fun TextFieldLocationsComposable(
     modifier: Modifier?,
     imeAction: ImeAction,
     suggestionsBoxColor: Color,
-    viewModel: TextFieldLocationsViewModel = injectViewModel("textFieldLocationsViewModel") { textFieldLocationsViewModel }
+    viewModel: TextFieldLocationsViewModel = metroViewModel(key = "textFieldLocationsViewModel")
 ) {
 
     LaunchedEffect(viewModel.locationsSuggestions.location) {

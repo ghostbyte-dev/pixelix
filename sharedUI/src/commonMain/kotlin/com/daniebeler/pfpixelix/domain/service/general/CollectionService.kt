@@ -1,12 +1,13 @@
 package com.daniebeler.pfpixelix.domain.service.general
 
-import com.daniebeler.pfpixelix.di.AppSingleton
+import com.daniebeler.pfpixelix.di.AppScope
 import com.daniebeler.pfpixelix.domain.model.Collection
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.service.pixelfed.PixelfedCollectionService
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.flow.Flow
-import me.tatarka.inject.annotations.Inject
 
 
 interface CollectionService {
@@ -30,7 +31,7 @@ interface CollectionService {
 }
 
 @Inject
-@AppSingleton
+@SingleIn(AppScope::class)
 class CollectionServiceDelegate(
     private val session: Session,
     private val pixelfed: PixelfedCollectionService,

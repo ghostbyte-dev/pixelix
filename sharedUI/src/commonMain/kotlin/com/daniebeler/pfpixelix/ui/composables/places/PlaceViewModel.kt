@@ -6,20 +6,14 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.domain.model.PostsForPlace
-import com.daniebeler.pfpixelix.domain.model.Relationship
-import com.daniebeler.pfpixelix.domain.service.general.AccountService
-import com.daniebeler.pfpixelix.domain.service.general.AuthService
-import com.daniebeler.pfpixelix.domain.service.general.BackendType
 import com.daniebeler.pfpixelix.domain.service.general.ExploreService
 import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
-import com.daniebeler.pfpixelix.ui.composables.profile.AccountState
-import com.daniebeler.pfpixelix.ui.composables.profile.RelationshipState
 import com.daniebeler.pfpixelix.ui.composables.profile.ViewEnum
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import me.tatarka.inject.annotations.Inject
 
 
 data class Coordinates(val latitude: Double, val longitude: Double)

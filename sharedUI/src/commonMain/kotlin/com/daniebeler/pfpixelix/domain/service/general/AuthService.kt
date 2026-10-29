@@ -1,13 +1,14 @@
 package com.daniebeler.pfpixelix.domain.service.general
 
-import com.daniebeler.pfpixelix.di.AppSingleton
+import com.daniebeler.pfpixelix.di.AppScope
 import com.daniebeler.pfpixelix.domain.model.Credentials
 import com.daniebeler.pfpixelix.domain.model.SessionStorage
 import com.daniebeler.pfpixelix.domain.service.pixelfed.PixelfedAuthService
 import com.daniebeler.pfpixelix.domain.service.vernissage.VernissageAuthService
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import io.ktor.http.Url
 import kotlinx.coroutines.flow.Flow
-import me.tatarka.inject.annotations.Inject
 
 interface AuthService {
     companion object {
@@ -41,7 +42,7 @@ interface AuthService {
 }
 
 @Inject
-@AppSingleton
+@SingleIn(AppScope::class)
 class AuthServiceDelegate(
     private val session: Session,
     private val pixelfed: PixelfedAuthService,

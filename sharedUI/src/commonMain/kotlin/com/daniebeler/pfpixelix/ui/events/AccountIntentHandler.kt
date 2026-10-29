@@ -1,16 +1,17 @@
 package com.daniebeler.pfpixelix.ui.events
 
-import com.daniebeler.pfpixelix.di.AppSingleton
+import com.daniebeler.pfpixelix.di.AppScope
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import me.tatarka.inject.annotations.Inject
 
 /**
  * Open account intent flow
  * Pair<AccountId, String>
  */
 @Inject
-@AppSingleton
+@SingleIn(AppScope::class)
 class AccountIntentHandler {
     private val _pendingAccount = MutableSharedFlow<Pair<String, String>>(extraBufferCapacity = 1)
     val pendingAccount = _pendingAccount.asSharedFlow()

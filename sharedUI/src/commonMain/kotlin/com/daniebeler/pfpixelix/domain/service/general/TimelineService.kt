@@ -1,15 +1,16 @@
 package com.daniebeler.pfpixelix.domain.service.general
 
-import com.daniebeler.pfpixelix.di.AppSingleton
+import com.daniebeler.pfpixelix.di.AppScope
 import com.daniebeler.pfpixelix.domain.model.PaginatedResponse
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.repository.pixelfed.PixelfedApi
 import com.daniebeler.pfpixelix.domain.service.pixelfed.PixelfedTimelineService
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.domain.service.vernissage.VernissageTimelineService
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import me.tatarka.inject.annotations.Inject
 
 
 interface TimelineService {
@@ -63,7 +64,7 @@ interface TimelineService {
 }
 
 @Inject
-@AppSingleton
+@SingleIn(AppScope::class)
 class TimelineServiceDelegate(
     private val session: Session,
     private val pixelfed: PixelfedTimelineService,

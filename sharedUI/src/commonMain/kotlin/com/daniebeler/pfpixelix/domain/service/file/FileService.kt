@@ -7,10 +7,10 @@ import coil3.disk.DiskCache
 import com.daniebeler.pfpixelix.di.AppComponent
 import com.daniebeler.pfpixelix.utils.KmpUri
 import com.daniebeler.pfpixelix.utils.toPlatformFile
+import dev.zacsweers.metro.Inject
 import io.github.vinceglb.filekit.ImageFormat
 import io.github.vinceglb.filekit.PlatformFile
 import io.ktor.client.*
-import me.tatarka.inject.annotations.Inject
 
 
 /**

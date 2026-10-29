@@ -1,6 +1,6 @@
 package com.daniebeler.pfpixelix.domain.service.general
 
-import com.daniebeler.pfpixelix.di.AppSingleton
+import com.daniebeler.pfpixelix.di.AppScope
 import com.daniebeler.pfpixelix.domain.model.FediseaInstance
 import com.daniebeler.pfpixelix.domain.model.FediseaServersResponse
 import com.daniebeler.pfpixelix.domain.model.FediseaSoftware
@@ -10,8 +10,9 @@ import com.daniebeler.pfpixelix.domain.service.pixelfed.PixelfedExploreService
 import com.daniebeler.pfpixelix.domain.service.pixelfed.PixelfedInstanceService
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.domain.service.vernissage.VernissageInstanceService
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.flow.Flow
-import me.tatarka.inject.annotations.Inject
 
 interface InstanceService {
 
@@ -21,7 +22,7 @@ interface InstanceService {
 }
 
 @Inject
-@AppSingleton
+@SingleIn(AppScope::class)
 class InstanceServiceDelegate(
     private val session: Session,
     private val pixelfed: PixelfedInstanceService,

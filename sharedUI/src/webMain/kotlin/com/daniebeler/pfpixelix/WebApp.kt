@@ -4,14 +4,14 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.window.ComposeViewport
 import coil3.SingletonImageLoader
 import com.daniebeler.pfpixelix.di.AppComponent
-import com.daniebeler.pfpixelix.di.create
 import com.daniebeler.pfpixelix.domain.service.icon.WebAppIconManager
 import com.daniebeler.pfpixelix.utils.KmpContext
 import com.daniebeler.pfpixelix.utils.configureLogger
+import dev.zacsweers.metro.createGraphFactory
 
 @OptIn(ExperimentalComposeUiApi::class)
 fun webApp() {
-    val appComponent = AppComponent.create(
+    val appComponent = createGraphFactory<AppComponent.Factory>().create(
         object : KmpContext() {},
         WebAppIconManager()
     )

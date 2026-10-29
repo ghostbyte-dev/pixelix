@@ -37,9 +37,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
-import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
-import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.ui.composables.MaxWidthTopBar
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
+import dev.zacsweers.metrox.viewmodel.metroViewModel
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
@@ -56,7 +56,7 @@ fun FollowersMainComposable(
     accountId: String,
     username: String,
     isFollowers: Boolean,
-    viewModel: FollowersViewModel = injectViewModel(key = "followers-viewmodel-key") { followersViewModel }
+    viewModel: FollowersViewModel = metroViewModel(key = "followers-viewmodel-key")
 ) {
 
     LaunchedEffect(Unit) {

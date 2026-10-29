@@ -6,8 +6,9 @@ import androidx.compose.material3.ListItemDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.basic.SettingPref
+import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.ClearCacheViewModel
+import dev.zacsweers.metrox.viewmodel.metroViewModel
 import org.jetbrains.compose.resources.stringResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.clear_cache
@@ -16,7 +17,7 @@ import pixelix.app.generated.resources.save
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun ClearCachePref(drawerState: DrawerState) {
-    val viewModel = injectViewModel("ClearCacheViewModel") { clearCacheViewModel }
+    val viewModel = metroViewModel<ClearCacheViewModel>(key = "ClearCacheViewModel")
     val cacheSize = viewModel.cacheSize.collectAsStateWithLifecycle("")
 
     LaunchedEffect(drawerState.isOpen) {

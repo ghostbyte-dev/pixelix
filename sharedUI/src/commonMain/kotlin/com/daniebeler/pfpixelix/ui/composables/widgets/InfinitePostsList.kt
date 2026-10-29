@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.daniebeler.pfpixelix.domain.model.Post
+import com.daniebeler.pfpixelix.domain.model.distinctByUiKey
 import com.daniebeler.pfpixelix.domain.service.platform.PlatformFeatures
 import com.daniebeler.pfpixelix.ui.composables.MaxWidthTopBar
 import com.daniebeler.pfpixelix.ui.composables.profile.SwitchViewComposable
@@ -63,6 +64,11 @@ fun InfinitePostsList(
     staggeredGridState: LazyStaggeredGridState = rememberLazyStaggeredGridState()
 ) {
     val coordinator = remember { VideoPlaybackCoordinator() }
+    val uniquePosts = remember(items) { items.distinctByUiKey() }
+    val mediaOnly = view != ViewEnum.Timeline
+    val displayedPosts = remember(uniquePosts, mediaOnly) {
+        if (mediaOnly) uniquePosts.filter { it.mediaAttachments.isNotEmpty() } else uniquePosts
+    }
 
     CustomPullToRefreshBox(
         isRefreshing = isRefreshing,
@@ -98,6 +104,7 @@ fun InfinitePostsList(
                             if (before != null) {
                                 item(
                                     key = "before_list_key",
+                                    contentType = "before_posts",
                                     span = StaggeredGridItemSpan.FullLine
                                 ) {
                                     before()
@@ -105,7 +112,11 @@ fun InfinitePostsList(
                             }
 
                             if (showViewSwitcher) {
-                                item(key = "switch_view_key", span = StaggeredGridItemSpan.FullLine) {
+                                item(
+                                    key = "switch_view_key",
+                                    contentType = "view_switcher",
+                                    span = StaggeredGridItemSpan.FullLine
+                                ) {
                                     MaxWidthTopBar (hasBackground = false) {
                                         SwitchViewComposable(
                                             postsCount = postsCount,
@@ -116,7 +127,7 @@ fun InfinitePostsList(
                                 }
                             }
                             postsWrapperComposable(
-                                posts = items,
+                                posts = displayedPosts,
                                 isLoading = isLoading,
                                 isRefreshing = isRefreshing,
                                 endReached = endReached,
@@ -135,6 +146,7 @@ fun InfinitePostsList(
                             if (items.isEmpty() && !isLoading && error.isEmpty()) {
                                 item(
                                     key = "empty_state_key",
+                                    contentType = "empty_state",
                                     span = StaggeredGridItemSpan.FullLine
                                 ) {
                                     EmptyStateComposableWithoutRefresh(
@@ -146,6 +158,7 @@ fun InfinitePostsList(
                             if (after != null) {
                                 item(
                                     key = "after_list_key",
+                                    contentType = "after_posts",
                                     span = StaggeredGridItemSpan.FullLine
                                 ) {
                                     after()

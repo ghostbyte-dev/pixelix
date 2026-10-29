@@ -25,14 +25,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import coil3.compose.AsyncImage
-import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.model.Relationship
 import com.daniebeler.pfpixelix.ui.composables.widgets.FollowButton
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import com.daniebeler.pfpixelix.utils.StringFormat
+import dev.zacsweers.metrox.viewmodel.metroViewModel
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.vectorResource
@@ -56,7 +56,7 @@ fun AccountListItem(
     colors: ListItemColors = ListItemDefaults.segmentedColors(
         containerColor = MaterialTheme.colorScheme.surfaceContainerLow
     ),
-    viewModel: CustomAccountViewModel = injectViewModel(key = "custom-account" + account.id) { customAccountViewModel }
+    viewModel: CustomAccountViewModel = metroViewModel(key = "custom-account" + account.id)
 ) {
     SegmentedListItem(
         onClick = {
@@ -154,7 +154,7 @@ fun CustomAccount(
     showFollowers: Boolean = true,
     onClick: () -> Unit = {},
     removeSavedSearch: (() -> Unit)? = null,
-    viewModel: CustomAccountViewModel = injectViewModel(key = "custom-account" + account.id) { customAccountViewModel }
+    viewModel: CustomAccountViewModel = metroViewModel(key = "custom-account" + account.id)
 ) {
     AccountRow(
         account = account, showFollowers = showFollowers, modifier = Modifier.clickable {

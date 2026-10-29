@@ -29,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onVisibilityChanged
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -98,7 +99,7 @@ fun VideoPlayerContent(
         Box(modifier = localModifier) {
             VideoPlayerSurface(playerState = player, modifier = Modifier.fillMaxWidth().run {
                 if (aspectRatio != null) aspectRatio(aspectRatio) else this
-            }.isVisible(threshold = 50) { visible ->
+            }.onVisibilityChanged(minFractionVisible = 0.5f) { visible ->
                 videoFrameIsVisible = visible
                 coordinator.setVisible(id, visible)
             }) {

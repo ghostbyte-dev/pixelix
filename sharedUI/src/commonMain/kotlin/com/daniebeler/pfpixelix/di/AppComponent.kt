@@ -1,7 +1,9 @@
 package com.daniebeler.pfpixelix.di
 
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.lifecycle.ViewModel
 import co.touchlab.kermit.Logger
 import coil3.ImageLoader
 import coil3.memory.MemoryCache
@@ -58,6 +60,16 @@ import com.daniebeler.pfpixelix.utils.KmpContext
 import com.daniebeler.pfpixelix.utils.coilContext
 import de.jensklingenberg.ktorfit.Ktorfit
 import de.jensklingenberg.ktorfit.converter.CallConverterFactory
+import dev.zacsweers.metro.Binds
+import dev.zacsweers.metro.ContributesBinding
+import dev.zacsweers.metro.DependencyGraph
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.Provides
+import dev.zacsweers.metro.Qualifier
+import dev.zacsweers.metro.SingleIn
+import dev.zacsweers.metrox.viewmodel.ManualViewModelAssistedFactory
+import dev.zacsweers.metrox.viewmodel.MetroViewModelFactory
+import dev.zacsweers.metrox.viewmodel.ViewModelGraph
 import io.ktor.client.HttpClient
 import io.ktor.client.plugins.HttpSend
 import io.ktor.client.plugins.HttpTimeout
@@ -68,23 +80,26 @@ import io.ktor.client.plugins.plugin
 import io.ktor.http.Url
 import io.ktor.http.set
 import io.ktor.serialization.kotlinx.json.json
+import kotlin.reflect.KClass
 import kotlinx.serialization.json.Json
-import me.tatarka.inject.annotations.Component
-import me.tatarka.inject.annotations.KmpComponentCreate
-import me.tatarka.inject.annotations.Provides
-import me.tatarka.inject.annotations.Qualifier
-import me.tatarka.inject.annotations.Scope
 
-@Scope
-@Target(AnnotationTarget.CLASS, AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER)
-annotation class AppSingleton
+abstract class AppScope private constructor()
 
-@AppSingleton
-@Component
-abstract class AppComponent(
-    @get:Provides val context: KmpContext,
-    @get:Provides val iconManager: AppIconManager,
-) {
+val LocalAppComponent = staticCompositionLocalOf<AppComponent> { error("no AppComponent") }
+
+@Inject
+@ContributesBinding(AppScope::class)
+@SingleIn(AppScope::class)
+class PixelixViewModelFactory(
+    override val viewModelProviders: Map<KClass<out ViewModel>, () -> ViewModel>,
+    override val manualAssistedFactoryProviders:
+        Map<KClass<out ManualViewModelAssistedFactory>, () -> ManualViewModelAssistedFactory>,
+) : MetroViewModelFactory()
+
+@DependencyGraph(AppScope::class)
+abstract class AppComponent : ViewModelGraph {
+    abstract val context: KmpContext
+    abstract val iconManager: AppIconManager
     abstract val systemUrlHandler: SystemUrlHandler
     abstract val systemFileShare: SystemFileShare
 
@@ -101,50 +116,48 @@ abstract class AppComponent(
     abstract val globalNavigator: GlobalNavigator
     abstract val notificationBadgeState: NotificationBadgeState
 
-    @Provides
-    fun bindGlobalNavigator(impl: GlobalNavigatorImpl): GlobalNavigator = impl
+    @Binds
+    abstract val GlobalNavigatorImpl.bindGlobalNavigator: GlobalNavigator
+
+    @Binds
+    abstract val TimelineServiceDelegate.provideTimelineService: TimelineService
+
+    @Binds
+    abstract val ExploreServiceDelegate.provideExploreService: ExploreService
+
+    @Binds
+    abstract val AppIconServiceDelegate.provideAppIconService: AppIconService
+
+    @Binds
+    abstract val PostEditorServiceDelegate.providePostEditorService: PostEditorService
+
+    @Binds
+    abstract val PostServiceDelegate.providePostService: PostService
+
+    @Binds
+    abstract val WidgetServiceDelegate.provideWidgetService: WidgetService
+
+    @Binds
+    abstract val NotificationServiceDelegate.provideNotificationService: NotificationService
+
+    @Binds
+    abstract val InstanceServiceDelegate.provideInstanceService: InstanceService
+
+    @Binds
+    abstract val AuthServiceDelegate.provideAuthService: AuthService
+
+    @Binds
+    abstract val AccountServiceDelegate.provideAccountService: AccountService
+
+    @Binds
+    abstract val CollectionServiceDelegate.provideCollectionService: CollectionService
+
+    @Binds
+    abstract val DirectMessagesServiceDelegate.provideDirectMessagesService: DirectMessagesService
 
     @Provides
-    fun provideTimelineService(delegate: TimelineServiceDelegate): TimelineService = delegate
-
-    @Provides
-    fun provideExploreService(delegate: ExploreServiceDelegate): ExploreService = delegate
-
-    @Provides
-    fun provideAppIconService(delegate: AppIconServiceDelegate): AppIconService = delegate
-
-    @Provides
-    fun providePostEditorService(delegate: PostEditorServiceDelegate): PostEditorService = delegate
-
-    @Provides
-    fun providePostService(delegate: PostServiceDelegate): PostService = delegate
-
-    @Provides
-    fun provideWidgetService(delegate: WidgetServiceDelegate): WidgetService = delegate
-
-    @Provides
-    fun provideNotificationService(delegate: NotificationServiceDelegate): NotificationService =
-        delegate
-
-    @Provides
-    fun provideInstanceService(delegate: InstanceServiceDelegate): InstanceService = delegate
-
-    @Provides
-    fun provideAuthService(delegate: AuthServiceDelegate): AuthService = delegate
-
-    @Provides
-    fun provideAccountService(delegate: AccountServiceDelegate): AccountService = delegate
-
-    @Provides
-    fun provideCollectionService(delegate: CollectionServiceDelegate): CollectionService = delegate
-
-    @Provides
-    fun provideDirectMessagesService(delegate: DirectMessagesServiceDelegate): DirectMessagesService =
-        delegate
-
-    @get:Provides
-    @get:AppSingleton
-    val json = Json {
+    @SingleIn(AppScope::class)
+    fun provideJson(): Json = Json {
         ignoreUnknownKeys = true
         isLenient = true
         explicitNulls = false
@@ -165,7 +178,7 @@ abstract class AppComponent(
     annotation class SimpleClient
 
     @Provides
-    @AppSingleton
+    @SingleIn(AppScope::class)
     @PixelfedClient
     fun providePixelfedHttpClient(
         json: Json,
@@ -219,7 +232,7 @@ abstract class AppComponent(
     }
 
     @Provides
-    @AppSingleton
+    @SingleIn(AppScope::class)
     fun providePixelfedApi(@PixelfedClient client: HttpClient): PixelfedApi =
         Ktorfit.Builder()
             .converterFactories(CallConverterFactory())
@@ -229,7 +242,7 @@ abstract class AppComponent(
             .createPixelfedApi()
 
     @Provides
-    @AppSingleton
+    @SingleIn(AppScope::class)
     @VernissageClient
     fun provideVernissageHttpClient(
         json: Json,
@@ -276,7 +289,7 @@ abstract class AppComponent(
     }
 
     @Provides
-    @AppSingleton
+    @SingleIn(AppScope::class)
     @SimpleClient
     fun provideSimpleHttpClient(): HttpClient {
         return HttpClient {
@@ -285,7 +298,7 @@ abstract class AppComponent(
     }
 
     @Provides
-    @AppSingleton
+    @SingleIn(AppScope::class)
     fun provideVernissageApi(@VernissageClient client: HttpClient): VernissageApi =
         Ktorfit.Builder()
             .converterFactories(CallConverterFactory())
@@ -295,22 +308,22 @@ abstract class AppComponent(
             .createVernissageApi()
 
     @Provides
-    @AppSingleton
+    @SingleIn(AppScope::class)
     fun providePreferences(): DataStore<Preferences> =
         FileService.createPreferences("settings.preferences_pb")
 
     @Provides
-    @AppSingleton
+    @SingleIn(AppScope::class)
     fun provideSavedSearchesDataStore(): DataStore<SavedSearches> =
         FileService.createDataStore("saved_searches_2.json", SavedSearchesSerializer)
 
     @Provides
-    @AppSingleton
+    @SingleIn(AppScope::class)
     fun provideSessionStorageDataStore(): DataStore<SessionStorage> =
         FileService.createDataStore("session_storage_datastore.json", SessionStorageSerializer)
 
     @Provides
-    @AppSingleton
+    @SingleIn(AppScope::class)
     fun provideImageLoader(): ImageLoader =
         ImageLoader.Builder(context.coilContext)
             .memoryCachePolicy(CachePolicy.ENABLED)
@@ -323,11 +336,11 @@ abstract class AppComponent(
             .diskCache(FileService.createDiskCache())
             .build()
 
-    companion object
+    @DependencyGraph.Factory
+    fun interface Factory {
+        fun create(
+            @Provides context: KmpContext,
+            @Provides iconManager: AppIconManager,
+        ): AppComponent
+    }
 }
-
-@KmpComponentCreate
-expect fun AppComponent.Companion.create(
-    context: KmpContext,
-    iconManager: AppIconManager,
-): AppComponent

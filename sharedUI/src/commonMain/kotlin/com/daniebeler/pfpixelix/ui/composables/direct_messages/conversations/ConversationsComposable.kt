@@ -37,7 +37,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.service.platform.PlatformFeatures
 import com.daniebeler.pfpixelix.ui.composables.SheetItem
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
@@ -50,6 +49,7 @@ import com.daniebeler.pfpixelix.ui.composables.widgets.InfiniteListHandler
 import com.daniebeler.pfpixelix.ui.composables.widgets.ScreenScaffold
 import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.ui.navigation.Destination
+import dev.zacsweers.metrox.viewmodel.metroViewModel
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
@@ -69,7 +69,7 @@ import pixelix.app.generated.resources.you_don_t_have_any_notifications
 @Composable
 fun ConversationsComposable(
     navController: AppNavigator,
-    viewModel: ConversationsViewModel = injectViewModel(key = "conversations-viewmodel-key") { conversationsViewModel }
+    viewModel: ConversationsViewModel = metroViewModel(key = "conversations-viewmodel-key")
 ) {
 
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)

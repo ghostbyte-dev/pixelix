@@ -32,12 +32,12 @@ import androidx.compose.ui.text.withLink
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
-import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import coil3.compose.AsyncImage
-import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.model.Emoji
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.ui.navigation.Destination
+import dev.zacsweers.metrox.viewmodel.metroViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -56,7 +56,7 @@ fun HashtagsMentionsTextView(
     textSize: TextUnit? = null,
     maximumLines: Int = Int.MAX_VALUE,
     emojis: List<Emoji> = emptyList(),
-    viewModel: TextWithClickableHashtagsAndMentionsViewModel = injectViewModel(key = "hashtags-mentions-tv$text") { textWithClickableHashtagsAndMentionsViewModel }
+    viewModel: TextWithClickableHashtagsAndMentionsViewModel = metroViewModel(key = "hashtags-mentions-tv$text")
 ) {
     var expanded by remember { mutableStateOf(false) }
     val maxLines = if (expanded) Int.MAX_VALUE else maximumLines

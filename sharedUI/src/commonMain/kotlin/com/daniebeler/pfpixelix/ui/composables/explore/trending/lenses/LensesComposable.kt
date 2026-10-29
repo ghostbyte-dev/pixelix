@@ -3,12 +3,12 @@ package com.daniebeler.pfpixelix.ui.composables.explore.trending.lenses
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.runtime.Composable
-import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
-import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.ui.composables.explore.trending.PagePaginatedListScreen
 import com.daniebeler.pfpixelix.ui.composables.explore.trending.trending_hashtags.ExploreGridElement
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import com.daniebeler.pfpixelix.utils.StringFormat
+import dev.zacsweers.metrox.viewmodel.metroViewModel
 import org.jetbrains.compose.resources.pluralStringResource
 import org.jetbrains.compose.resources.stringResource
 import pixelix.app.generated.resources.Res
@@ -20,7 +20,7 @@ import pixelix.app.generated.resources.posts
 @Composable
 fun LensesComposable(
     navController: AppNavigator,
-    viewModel: LensesViewModel = injectViewModel(key = "lenses-key") { lensesViewModel }
+    viewModel: LensesViewModel = metroViewModel(key = "lenses-key")
 ) {
 
     PagePaginatedListScreen(

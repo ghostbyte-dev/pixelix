@@ -1,6 +1,6 @@
 package com.daniebeler.pfpixelix.domain.service.general
 
-import com.daniebeler.pfpixelix.di.AppSingleton
+import com.daniebeler.pfpixelix.di.AppScope
 import com.daniebeler.pfpixelix.domain.model.Chat
 import com.daniebeler.pfpixelix.domain.model.Conversation
 import com.daniebeler.pfpixelix.domain.model.Message
@@ -11,9 +11,10 @@ import com.daniebeler.pfpixelix.domain.service.pixelfed.PixelfedDirectMessagesSe
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.domain.service.utils.loadListResources
 import com.daniebeler.pfpixelix.domain.service.utils.loadResource
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.flow.Flow
 import kotlinx.serialization.json.Json
-import me.tatarka.inject.annotations.Inject
 
 interface DirectMessagesService {
     fun getConversations(): Flow<Resource<List<Conversation>>>
@@ -26,7 +27,7 @@ interface DirectMessagesService {
 }
 
 @Inject
-@AppSingleton
+@SingleIn(AppScope::class)
 class DirectMessagesServiceDelegate(
     private val session: Session,
     private val pixelfed: PixelfedDirectMessagesService,

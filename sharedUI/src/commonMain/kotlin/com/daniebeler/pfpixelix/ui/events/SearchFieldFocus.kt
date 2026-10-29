@@ -1,13 +1,14 @@
 package com.daniebeler.pfpixelix.ui.events
 
-import com.daniebeler.pfpixelix.di.AppSingleton
+import com.daniebeler.pfpixelix.di.AppScope
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
-import me.tatarka.inject.annotations.Inject
 
-@AppSingleton
+@SingleIn(AppScope::class)
 @Inject
 class SearchFieldFocus {
     private val eventsFlow = MutableSharedFlow<Boolean>()

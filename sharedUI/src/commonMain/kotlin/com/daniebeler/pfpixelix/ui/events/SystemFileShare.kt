@@ -1,17 +1,18 @@
 package com.daniebeler.pfpixelix.ui.events
 
-import com.daniebeler.pfpixelix.di.AppSingleton
+import com.daniebeler.pfpixelix.di.AppScope
 import com.daniebeler.pfpixelix.utils.KmpUri
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import me.tatarka.inject.annotations.Inject
 
 @Inject
-@AppSingleton
+@SingleIn(AppScope::class)
 class SystemFileShare {
     private val shareFilesRequestQueue = Channel<List<KmpUri>>(
         capacity = 1,

@@ -5,13 +5,13 @@ import androidx.compose.foundation.pager.PagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.unit.dp
-import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.di.LocalAppComponent
-import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.ui.composables.MaxWidthTopBar
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 import com.daniebeler.pfpixelix.ui.composables.timelines.TimelineHelpCard
 import com.daniebeler.pfpixelix.ui.composables.widgets.InfinitePostsList
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
+import dev.zacsweers.metrox.viewmodel.metroViewModel
 import org.jetbrains.compose.resources.stringResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.local
@@ -22,7 +22,7 @@ fun LocalTimelineComposable(
     pagerState: PagerState,
     tabIndex: Int,
     navController: AppNavigator,
-    viewModel: LocalTimelineViewModel = injectViewModel(key = "local-timeline-key") { localTimelineViewModel }
+    viewModel: LocalTimelineViewModel = metroViewModel(key = "local-timeline-key")
 ) {
     val staggeredGridState = rememberLazyStaggeredGridState()
     val appComponent = LocalAppComponent.current

@@ -7,10 +7,10 @@ import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
 import com.daniebeler.pfpixelix.utils.KmpContext
 import com.daniebeler.pfpixelix.utils.KmpUri
 import com.daniebeler.pfpixelix.utils.toKmpUri
+import dev.zacsweers.metro.Inject
 import io.github.vinceglb.filekit.PlatformFile
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.useContents
-import me.tatarka.inject.annotations.Inject
 import platform.CoreGraphics.CGRectMake
 import platform.Foundation.NSURL
 import platform.Foundation.NSURL.Companion.URLWithString
@@ -23,8 +23,8 @@ import platform.UIKit.UITabBarController
 import platform.UIKit.UIUserInterfaceIdiomPad
 import platform.UIKit.UIViewController
 import platform.UIKit.popoverPresentationController
-import platform.darwin.dispatch_get_main_queue
 import platform.darwin.dispatch_async
+import platform.darwin.dispatch_get_main_queue
 
 @Inject
 actual class Platform actual constructor(

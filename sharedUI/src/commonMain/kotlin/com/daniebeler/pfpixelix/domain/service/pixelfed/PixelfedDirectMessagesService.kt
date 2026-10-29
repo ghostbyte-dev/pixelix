@@ -6,8 +6,8 @@ import com.daniebeler.pfpixelix.domain.service.general.DirectMessagesService
 import com.daniebeler.pfpixelix.domain.service.pixelfed.model.toDomain
 import com.daniebeler.pfpixelix.domain.service.utils.loadListResources
 import com.daniebeler.pfpixelix.domain.service.utils.loadResource
+import dev.zacsweers.metro.Inject
 import kotlinx.serialization.json.Json
-import me.tatarka.inject.annotations.Inject
 
 @Inject
 class PixelfedDirectMessagesService(

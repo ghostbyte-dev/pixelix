@@ -1,13 +1,14 @@
 package com.daniebeler.pfpixelix.domain.service.general
 
-import com.daniebeler.pfpixelix.di.AppSingleton
+import com.daniebeler.pfpixelix.di.AppScope
 import com.daniebeler.pfpixelix.domain.model.Notification
 import com.daniebeler.pfpixelix.domain.model.PaginatedResponse
 import com.daniebeler.pfpixelix.domain.service.pixelfed.PixelfedNotificationService
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.domain.service.vernissage.VernissageNotificationService
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.flow.Flow
-import me.tatarka.inject.annotations.Inject
 
 interface NotificationService {
     fun getNotifications(maxNotificationId: String? = null): Flow<Resource<PaginatedResponse<Notification>>>
@@ -16,7 +17,7 @@ interface NotificationService {
 }
 
 @Inject
-@AppSingleton
+@SingleIn(AppScope::class)
 class NotificationServiceDelegate(
     private val session: Session,
     private val pixelfed: PixelfedNotificationService,

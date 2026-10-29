@@ -59,7 +59,6 @@ import androidx.compose.ui.semantics.traversalIndex
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.di.LocalAppComponent
-import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.model.SavedSearchItem
 import com.daniebeler.pfpixelix.domain.model.SavedSearchType
@@ -75,6 +74,7 @@ import com.daniebeler.pfpixelix.ui.composables.widgets.CustomPullToRefreshBox
 import com.daniebeler.pfpixelix.ui.composables.widgets.InfinitePostsList
 import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.ui.navigation.Destination
+import dev.zacsweers.metrox.viewmodel.metroViewModel
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -95,7 +95,7 @@ import pixelix.app.generated.resources.search
 fun ExploreComposable(
     navController: AppNavigator,
     initialPage: Int = 0,
-    viewModel: ExploreViewModel = injectViewModel(key = "search-viewmodel-key") { exploreViewModel }
+    viewModel: ExploreViewModel = metroViewModel(key = "search-viewmodel-key")
 ) {
     val focusRequester = remember { FocusRequester() }
     val textFieldState = rememberTextFieldState()

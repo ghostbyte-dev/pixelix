@@ -70,7 +70,7 @@ fun TrendingComposable(
         HorizontalPager(
             userScrollEnabled = isSwipeEnabled,
             state = pagerState,
-            beyondViewportPageCount = 3,
+            beyondViewportPageCount = 0,
             modifier = Modifier.padding(top = 24.dp)
                 .background(MaterialTheme.colorScheme.background)
         ) { tabIndex ->

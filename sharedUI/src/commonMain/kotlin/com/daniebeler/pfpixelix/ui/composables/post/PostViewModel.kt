@@ -7,6 +7,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import co.touchlab.kermit.Logger
+import com.daniebeler.pfpixelix.di.AppScope
 import com.daniebeler.pfpixelix.domain.model.Instance
 import com.daniebeler.pfpixelix.domain.model.LikedBy
 import com.daniebeler.pfpixelix.domain.model.MutedAccount
@@ -35,6 +36,10 @@ import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.ui.composables.post.reply.OwnReplyState
 import com.daniebeler.pfpixelix.ui.composables.post.reply.RepliesState
 import com.daniebeler.pfpixelix.ui.composables.profile.RelationshipState
+import dev.zacsweers.metro.ContributesIntoMap
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.binding
+import dev.zacsweers.metrox.viewmodel.ViewModelKey
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
@@ -42,10 +47,12 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import me.tatarka.inject.annotations.Inject
 
 
-class PostViewModel @Inject constructor(
+@ViewModelKey
+@ContributesIntoMap(AppScope::class, binding<ViewModel>())
+@Inject
+class PostViewModel(
     private val postService: PostService,
     private val prefs: UserPreferences,
     private val postEditorService: PostEditorService,
@@ -122,6 +129,9 @@ class PostViewModel @Inject constructor(
         viewModelScope.launch {
             prefs.blurSensitiveContentFlow.collect { blurSensitiveContent = it }
         }
+        viewModelScope.launch {
+            prefs.enableVolumeFlow.collect { volume = it }
+        }
     }
 
     fun toggleVolume(newVolume: Boolean) {
@@ -131,15 +141,6 @@ class PostViewModel @Inject constructor(
 
     fun updatePost(post: Post) {
         this.post = post
-        getVolume()
-    }
-
-    private fun getVolume() {
-        viewModelScope.launch {
-            prefs.enableVolumeFlow.collect { res ->
-                volume = res
-            }
-        }
     }
 
     fun getInstance() {

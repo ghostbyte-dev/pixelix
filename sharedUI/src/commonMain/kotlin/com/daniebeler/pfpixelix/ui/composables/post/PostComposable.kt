@@ -44,20 +44,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.composed
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.LayoutCoordinates
-import androidx.compose.ui.layout.boundsInRoot
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
@@ -73,7 +69,6 @@ import coil3.compose.LocalPlatformContext
 import coil3.request.ImageRequest
 import coil3.size.Precision
 import coil3.size.Size
-import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.model.MediaAttachment
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.ui.composables.hashtagMentionText.HashtagsMentionsTextView
@@ -86,9 +81,12 @@ import com.daniebeler.pfpixelix.utils.formatLocalized
 import com.daniebeler.pfpixelix.utils.rememberBlurHashBitmap
 import com.daniebeler.pfpixelix.utils.timeAgo
 import com.daniebeler.pfpixelix.utils.zoomable.rememberZoomState
+import dev.zacsweers.metrox.viewmodel.metroViewModel
+import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import net.engawapg.lib.zoomable.snapBackZoomable
 import net.engawapg.lib.zoomable.zoomable
@@ -133,7 +131,6 @@ import pixelix.app.generated.resources.software
 import pixelix.app.generated.resources.tag
 import pixelix.app.generated.resources.this_action_cannot_be_undone
 import pixelix.app.generated.resources.trash
-import kotlin.time.Duration.Companion.milliseconds
 
 private val HeartRedColor = Color(0xFFDD2E44)
 
@@ -151,7 +148,7 @@ fun PostComposable(
     modifier: Modifier = Modifier,
     updatePost: (post: Post) -> Unit = {},
     fullQuality: Boolean,
-    viewModel: PostViewModel = injectViewModel(key = "post" + post.id) { postViewModel }
+    viewModel: PostViewModel = metroViewModel(key = "post" + post.id)
 ) {
     var postId by remember { mutableStateOf(post.id) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -290,7 +287,7 @@ fun MasonryPost(
     post: Post,
     navController: AppNavigator,
     roundedCornerShape: RoundedCornerShape,
-    viewModel: PostViewModel = injectViewModel(key = "post" + post.id) { postViewModel }
+    viewModel: PostViewModel = metroViewModel(key = "post" + post.id)
 ) {
     var postId by remember { mutableStateOf(post.id) }
 
@@ -1051,6 +1048,13 @@ fun PostImage(
         }
 
         val zoomState = rememberZoomState()
+        var loadOriginalSize by remember(mediaAttachment) { mutableStateOf(false) }
+        if (mediaAttachment.type != "video") {
+            LaunchedEffect(mediaAttachment, zoomState) {
+                snapshotFlow { zoomState.scale > 1f }.first { it }
+                loadOriginalSize = true
+            }
+        }
         val showAltTextIcon = remember { mutableStateOf(true) }
 
         if (zoomState.scale != 1f) {
@@ -1087,6 +1091,7 @@ fun PostImage(
                     fullQuality,
                     { zoomState.setContentSize(it.painter.intrinsicSize) },
                     { imageLoaded = true },
+                    loadOriginalSize = loadOriginalSize,
                     modifier = Modifier.fillMaxSize())
             } else {
                 VideoAttachment(
@@ -1158,16 +1163,33 @@ private fun ImageWrapper(
     setContentSize: (painter: AsyncImagePainter.State.Success) -> Unit,
     onSuccess: () -> Unit,
     fillSizePopup: Boolean = false,
+    loadOriginalSize: Boolean = false,
     modifier: Modifier = Modifier.fillMaxWidth()
 ) {
-    AsyncImage(
-        model = ImageRequest.Builder(LocalPlatformContext.current).data(
-            if (fullQuality) {
-                mediaAttachment.url
-            } else {
-                mediaAttachment.previewUrl ?: mediaAttachment.url
+    val context = LocalPlatformContext.current
+    var lastLoadedPainter by remember(mediaAttachment) { mutableStateOf<Painter?>(null) }
+    val originalSize = fillSizePopup || loadOriginalSize
+    val imageUrl = if (fullQuality || originalSize) {
+        mediaAttachment.url
+    } else {
+        mediaAttachment.previewUrl ?: mediaAttachment.url
+    }
+    val imageRequest = remember(context, imageUrl, originalSize) {
+        ImageRequest.Builder(context)
+            .data(imageUrl)
+            .apply {
+                if (originalSize) {
+                    size(Size.ORIGINAL)
+                    precision(Precision.EXACT)
+                }
             }
-        ).size(Size.ORIGINAL).precision(Precision.EXACT).build(),
+            .build()
+    }
+
+    AsyncImage(
+        model = imageRequest,
+        placeholder = lastLoadedPainter,
+        error = lastLoadedPainter,
         contentDescription = null,
         modifier = if (fillSizePopup) {
             modifier.fillMaxSize()
@@ -1180,29 +1202,10 @@ private fun ImageWrapper(
             ContentScale.FillWidth
         },
         onSuccess = { state ->
+            lastLoadedPainter = state.painter
             setContentSize(state)
             onSuccess()
         })
-}
-
-fun Modifier.isVisible(
-    threshold: Int, onVisibilityChange: (Boolean) -> Unit
-) = composed {
-    Modifier.onGloballyPositioned { layoutCoordinates: LayoutCoordinates ->
-        val layoutHeight = layoutCoordinates.size.height
-        val thresholdHeight = layoutHeight * threshold / 100
-        val layoutTop = layoutCoordinates.positionInRoot().y
-        val layoutBottom = layoutTop + layoutHeight
-
-        val parent = layoutCoordinates.parentLayoutCoordinates
-        parent?.boundsInRoot()?.let { rect: Rect ->
-            val parentTop = rect.top
-            val parentBottom = rect.bottom
-            val isVisible =
-                parentBottom - layoutTop > thresholdHeight && parentTop < layoutBottom - thresholdHeight
-            onVisibilityChange(isVisible)
-        }
-    }
 }
 
 @Composable

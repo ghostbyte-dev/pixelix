@@ -9,6 +9,7 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.daniebeler.pfpixelix.di.AppScope
 import com.daniebeler.pfpixelix.domain.model.request.UpdateFieldRequest
 import com.daniebeler.pfpixelix.domain.model.request.UpdateUserRequest
 import com.daniebeler.pfpixelix.domain.service.general.AccountService
@@ -17,11 +18,17 @@ import com.daniebeler.pfpixelix.domain.service.suggestions.HashtagMentionsSugges
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.utils.KmpUri
 import com.daniebeler.pfpixelix.utils.toKmpUri
+import dev.zacsweers.metro.ContributesIntoMap
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.binding
+import dev.zacsweers.metrox.viewmodel.ViewModelKey
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import me.tatarka.inject.annotations.Inject
 
-class EditProfileViewModel @Inject constructor(
+@ViewModelKey
+@ContributesIntoMap(AppScope::class, binding<ViewModel>())
+@Inject
+class EditProfileViewModel(
     private val accountService: AccountService,
     val hashtagMentionsSuggestionsManager: HashtagMentionsSuggestionsManager,
     session: Session

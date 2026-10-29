@@ -1,7 +1,7 @@
 package com.daniebeler.pfpixelix.domain.service.vernissage
 
 import androidx.datastore.core.DataStore
-import com.daniebeler.pfpixelix.di.AppSingleton
+import com.daniebeler.pfpixelix.di.AppScope
 import com.daniebeler.pfpixelix.domain.model.Credentials
 import com.daniebeler.pfpixelix.domain.model.SessionStorage
 import com.daniebeler.pfpixelix.domain.repository.vernissage.VernissageAuthApi.Companion.createVernissageAuthApi
@@ -13,18 +13,19 @@ import com.daniebeler.pfpixelix.domain.service.platform.redirectUrl
 import com.daniebeler.pfpixelix.domain.service.search.SavedSearchesService
 import com.daniebeler.pfpixelix.domain.service.vernissage.model.JwtClaims
 import com.daniebeler.pfpixelix.ui.events.SystemUrlHandler
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import io.ktor.http.*
+import kotlin.io.encoding.Base64
+import kotlin.io.encoding.ExperimentalEncodingApi
+import kotlin.random.Random
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.json.Json
-import me.tatarka.inject.annotations.Inject
-import kotlin.io.encoding.Base64
-import kotlin.io.encoding.ExperimentalEncodingApi
-import kotlin.random.Random
 
 @Inject
-@AppSingleton
+@SingleIn(AppScope::class)
 class VernissageAuthService(
     private val urlHandler: SystemUrlHandler,
     private val session: Session,

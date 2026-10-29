@@ -2,7 +2,7 @@ package com.daniebeler.pfpixelix.domain.service.pixelfed
 
 import androidx.compose.ui.graphics.ImageBitmap
 import co.touchlab.kermit.Logger
-import com.daniebeler.pfpixelix.di.AppSingleton
+import com.daniebeler.pfpixelix.di.AppScope
 import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.model.PaginatedResponse
 import com.daniebeler.pfpixelix.domain.model.Relationship
@@ -21,6 +21,8 @@ import com.daniebeler.pfpixelix.domain.service.utils.loadListResources
 import com.daniebeler.pfpixelix.domain.service.utils.loadResource
 import com.daniebeler.pfpixelix.utils.encodeToPngBytes
 import com.daniebeler.pfpixelix.utils.executeAndParsePagination
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import io.github.vinceglb.filekit.ImageFormat
 import io.ktor.client.request.forms.MultiPartFormDataContent
 import io.ktor.client.request.forms.formData
@@ -36,10 +38,9 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.withContext
-import me.tatarka.inject.annotations.Inject
 
 @Inject
-@AppSingleton
+@SingleIn(AppScope::class)
 class PixelfedAccountService(
     private val authService: AuthService,
     private val api: PixelfedApi,

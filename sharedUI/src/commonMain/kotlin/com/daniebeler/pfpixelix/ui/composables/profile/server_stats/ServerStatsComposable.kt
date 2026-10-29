@@ -40,24 +40,24 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
-import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.model.FediseaInstance
 import com.daniebeler.pfpixelix.domain.model.FediseaSoftware
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pfpixelix.ui.composables.widgets.CardButton
 import com.daniebeler.pfpixelix.utils.StringFormat
+import dev.zacsweers.metrox.viewmodel.metroViewModel
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.active_users
 import pixelix.app.generated.resources.chevron_right
+import pixelix.app.generated.resources.closed
 import pixelix.app.generated.resources.fediverse_logo
 import pixelix.app.generated.resources.instance_version
 import pixelix.app.generated.resources.instances
 import pixelix.app.generated.resources.license_label
 import pixelix.app.generated.resources.open
 import pixelix.app.generated.resources.registration
-import pixelix.app.generated.resources.closed
 import pixelix.app.generated.resources.total_posts
 import pixelix.app.generated.resources.total_users
 
@@ -65,7 +65,7 @@ import pixelix.app.generated.resources.total_users
 @Composable
 fun DomainSoftwareComposable(
     domain: String,
-    viewModel: ServerStatsViewModel = injectViewModel(key = "serverstats$domain") { serverStatsViewModel }
+    viewModel: ServerStatsViewModel = metroViewModel(key = "serverstats$domain")
 ) {
     var showBottomSheet by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)

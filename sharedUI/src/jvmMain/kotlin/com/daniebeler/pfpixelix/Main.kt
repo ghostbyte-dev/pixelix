@@ -9,10 +9,10 @@ import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 import coil3.SingletonImageLoader
 import com.daniebeler.pfpixelix.di.AppComponent
-import com.daniebeler.pfpixelix.di.create
 import com.daniebeler.pfpixelix.domain.service.icon.DesktopAppIconManager
 import com.daniebeler.pfpixelix.utils.KmpContext
 import com.daniebeler.pfpixelix.utils.configureJavaLogger
+import dev.zacsweers.metro.createGraphFactory
 import io.github.vinceglb.filekit.FileKit
 import java.awt.Desktop
 import java.awt.Dimension
@@ -51,7 +51,7 @@ fun desktopApp(args: Array<String>) {
         FileKit.init("com.daniebeler.pfpixelix")
         configureJavaLogger(true)
 
-        val appComponent = AppComponent.create(
+        val appComponent = createGraphFactory<AppComponent.Factory>().create(
             object : KmpContext() {}, DesktopAppIconManager()
         )
 

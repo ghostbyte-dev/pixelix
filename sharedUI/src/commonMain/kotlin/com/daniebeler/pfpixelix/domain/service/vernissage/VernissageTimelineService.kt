@@ -4,8 +4,8 @@ import com.daniebeler.pfpixelix.domain.repository.vernissage.VernissageApi
 import com.daniebeler.pfpixelix.domain.service.general.TimelineService
 import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
 import com.daniebeler.pfpixelix.domain.service.utils.loadVernissagePaginatedListResources
+import dev.zacsweers.metro.Inject
 import io.ktor.http.encodeURLPath
-import me.tatarka.inject.annotations.Inject
 
 @Inject
 class VernissageTimelineService(

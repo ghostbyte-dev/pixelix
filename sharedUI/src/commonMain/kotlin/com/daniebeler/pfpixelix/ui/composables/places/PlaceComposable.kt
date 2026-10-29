@@ -24,12 +24,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.ui.composables.MaxWidthTopBar
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 import com.daniebeler.pfpixelix.ui.composables.widgets.InfinitePostsList
 import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.ui.navigation.Destination
+import dev.zacsweers.metrox.viewmodel.metroViewModel
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
@@ -44,7 +44,7 @@ fun PlaceComposable(
     navController: AppNavigator,
     placeId: String,
     slug: String,
-    viewModel: PlaceViewModel = injectViewModel(key = "place-viewmodel-key$placeId$slug") { placeViewModel }
+    viewModel: PlaceViewModel = metroViewModel(key = "place-viewmodel-key$placeId$slug")
 ) {
 
     val staggeredGridState = rememberLazyStaggeredGridState()

@@ -11,12 +11,12 @@ import coil3.disk.DiskCache
 import com.daniebeler.pfpixelix.di.AppComponent
 import com.daniebeler.pfpixelix.domain.repository.serializers.SavedSearchesSerializer
 import com.daniebeler.pfpixelix.utils.io
+import dev.zacsweers.metro.Inject
 import io.github.vinceglb.filekit.*
 import io.ktor.client.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import kotlinx.coroutines.Dispatchers
-import me.tatarka.inject.annotations.Inject
 import okio.FileSystem
 import okio.Path
 import okio.Path.Companion.toPath

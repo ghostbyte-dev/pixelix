@@ -2,7 +2,7 @@ package com.daniebeler.pfpixelix.domain.service.vernissage
 
 import androidx.compose.ui.graphics.ImageBitmap
 import co.touchlab.kermit.Logger
-import com.daniebeler.pfpixelix.di.AppSingleton
+import com.daniebeler.pfpixelix.di.AppScope
 import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.model.Relationship
 import com.daniebeler.pfpixelix.domain.model.Settings
@@ -20,11 +20,14 @@ import com.daniebeler.pfpixelix.domain.service.utils.loadListResources
 import com.daniebeler.pfpixelix.domain.service.utils.loadResource
 import com.daniebeler.pfpixelix.domain.service.utils.loadVernissagePaginatedListResources
 import com.daniebeler.pfpixelix.utils.encodeToPngBytes
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import io.github.vinceglb.filekit.ImageFormat
 import io.ktor.client.request.forms.MultiPartFormDataContent
 import io.ktor.client.request.forms.formData
 import io.ktor.http.Headers
 import io.ktor.http.HttpHeaders
+import kotlin.collections.emptyList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -34,11 +37,9 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.withContext
-import me.tatarka.inject.annotations.Inject
-import kotlin.collections.emptyList
 
 @Inject
-@AppSingleton
+@SingleIn(AppScope::class)
 class VernissageAccountService(
     private val authService: AuthService,
     private val api: VernissageApi,

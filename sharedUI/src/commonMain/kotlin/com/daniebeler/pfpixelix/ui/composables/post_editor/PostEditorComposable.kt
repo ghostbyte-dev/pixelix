@@ -55,7 +55,6 @@ import androidx.navigationevent.NavigationEventInfo
 import androidx.navigationevent.compose.NavigationBackHandler
 import androidx.navigationevent.compose.rememberNavigationEventState
 import coil3.compose.AsyncImage
-import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.service.file.PlatformFile
 import com.daniebeler.pfpixelix.ui.composables.MaxWidthTopBar
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposableDialog
@@ -67,6 +66,7 @@ import com.daniebeler.pfpixelix.utils.KmpUri
 import com.daniebeler.pfpixelix.utils.getPlatformUriObject
 import com.daniebeler.pfpixelix.utils.parseExifMetadata
 import com.daniebeler.pfpixelix.utils.toKmpUri
+import dev.zacsweers.metrox.viewmodel.metroViewModel
 import io.github.vinceglb.filekit.readBytes
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -98,7 +98,7 @@ import pixelix.app.generated.resources.save
 fun PostEditorComposable(
     navController: AppNavigator,
     uris: List<KmpUri>? = null,
-    viewModel: PostEditorViewModel = injectViewModel(key = "post-editor-viewmodel-key") { newPostViewModel }
+    viewModel: PostEditorViewModel = metroViewModel(key = "post-editor-viewmodel-key")
 ) {
     val focusManager = LocalFocusManager.current
     LaunchedEffect(viewModel, navController) {

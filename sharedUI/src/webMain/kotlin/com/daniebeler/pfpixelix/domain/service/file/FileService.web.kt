@@ -12,6 +12,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.PreferencesSerializer
 import coil3.disk.DiskCache
 import com.daniebeler.pfpixelix.di.AppComponent
+import dev.zacsweers.metro.Inject
 import io.github.vinceglb.filekit.BrowserFile
 import io.github.vinceglb.filekit.FileKit
 import io.github.vinceglb.filekit.ImageFormat
@@ -22,12 +23,11 @@ import io.github.vinceglb.filekit.path
 import io.github.vinceglb.filekit.readBytes
 import io.github.vinceglb.filekit.utils.toJsArray
 import io.ktor.client.HttpClient
+import kotlin.js.Promise
 import kotlinx.coroutines.await
-import me.tatarka.inject.annotations.Inject
 import okio.FileSystem
 import okio.Path
 import okio.Path.Companion.toPath
-import kotlin.js.Promise
 
 @Inject
 actual class FileService actual constructor(

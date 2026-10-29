@@ -30,17 +30,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
-import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.ui.composables.widgets.ButtonRowElement
 import com.daniebeler.pfpixelix.ui.composables.widgets.ScreenScaffold
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.ui.navigation.Destination
+import dev.zacsweers.metrox.viewmodel.metroViewModel
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
-import pixelix.app.generated.resources.version_name
-import pixelix.app.generated.resources.version_code
-import pixelix.app.generated.resources.version_commit_hash
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.about_pixelix
 import pixelix.app.generated.resources.browser
@@ -50,12 +47,15 @@ import pixelix.app.generated.resources.mastodon_logo
 import pixelix.app.generated.resources.shield
 import pixelix.app.generated.resources.star
 import pixelix.app.generated.resources.vernissage_logo
+import pixelix.app.generated.resources.version_code
+import pixelix.app.generated.resources.version_commit_hash
+import pixelix.app.generated.resources.version_name
 import pixelix.app.generated.resources.website
 
 @Composable
 fun AboutPixelixComposable(
     navController: AppNavigator,
-    viewModel: AboutPixelixViewModel = injectViewModel(key = "about-pixelix-viewmodel-key") { aboutPixelixViewModel }
+    viewModel: AboutPixelixViewModel = metroViewModel(key = "about-pixelix-viewmodel-key")
 ) {
     val scrollState = rememberScrollState()
 

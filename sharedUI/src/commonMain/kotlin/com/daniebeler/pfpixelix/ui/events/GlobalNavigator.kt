@@ -1,10 +1,11 @@
 package com.daniebeler.pfpixelix.ui.events
 
-import com.daniebeler.pfpixelix.di.AppSingleton
+import com.daniebeler.pfpixelix.di.AppScope
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import me.tatarka.inject.annotations.Inject
 
 sealed interface GlobalNavigationEvent {
     data object NavigateToLogin : GlobalNavigationEvent
@@ -15,7 +16,7 @@ interface GlobalNavigator {
     suspend fun emit(event: GlobalNavigationEvent)
 }
 
-@AppSingleton
+@SingleIn(AppScope::class)
 @Inject
 class GlobalNavigatorImpl : GlobalNavigator {
     private val _navigationEvents = MutableSharedFlow<GlobalNavigationEvent>(extraBufferCapacity = 1)

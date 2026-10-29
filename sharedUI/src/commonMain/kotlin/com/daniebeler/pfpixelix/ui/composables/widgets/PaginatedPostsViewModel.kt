@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daniebeler.pfpixelix.domain.model.PaginatedResponse
 import com.daniebeler.pfpixelix.domain.model.Post
+import com.daniebeler.pfpixelix.domain.model.distinctByUiKey
 import com.daniebeler.pfpixelix.domain.service.general.PostService
 import com.daniebeler.pfpixelix.domain.service.preferences.UserPreferences
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
@@ -16,7 +17,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import me.tatarka.inject.annotations.Inject
 
 abstract class PaginatedPostsViewModel(
     private val prefs: UserPreferences,
@@ -42,7 +42,7 @@ abstract class PaginatedPostsViewModel(
         fetchPage(null).onEach { result ->
             timelineState = when (result) {
                 is Resource.Success -> TimelineState(
-                    posts = result.data.data,
+                    posts = result.data.data.distinctByUiKey(),
                     nextId = result.data.next
                 )
 
@@ -74,7 +74,7 @@ abstract class PaginatedPostsViewModel(
                         )
                     } else {
                         timelineState.copy(
-                            posts = timelineState.posts + (result.data.data),
+                            posts = (timelineState.posts + result.data.data).distinctByUiKey(),
                             nextId = result.data.next,
                             isLoading = false,
                             isRefreshing = false,

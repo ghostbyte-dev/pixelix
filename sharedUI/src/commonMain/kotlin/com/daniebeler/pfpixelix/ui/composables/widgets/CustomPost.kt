@@ -47,7 +47,7 @@ fun CustomPost(
 ) {
     val prefs = LocalAppComponent.current.preferences
     val blurSensitiveContent by prefs.blurSensitiveContentFlow
-        .collectAsState(initial = prefs.hideSensitiveContent)
+        .collectAsState(initial = prefs.blurSensitiveContent)
 
     val firstBlurHash = post.mediaAttachments.firstOrNull()?.blurHash ?: DEFAULT_BLUR_HASH
     val blurHashBitmap = rememberBlurHashBitmap(firstBlurHash)

@@ -1,6 +1,6 @@
 package com.daniebeler.pfpixelix.domain.service.general
 
-import com.daniebeler.pfpixelix.di.AppSingleton
+import com.daniebeler.pfpixelix.di.AppScope
 import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.model.NewReport
 import com.daniebeler.pfpixelix.domain.model.PaginatedResponse
@@ -11,9 +11,10 @@ import com.daniebeler.pfpixelix.domain.repository.pixelfed.PixelfedApi
 import com.daniebeler.pfpixelix.domain.service.pixelfed.PixelfedPostService
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.domain.service.vernissage.VernissagePostService
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import me.tatarka.inject.annotations.Inject
 
 interface PostService {
     fun getPostById(postId: String): Flow<Resource<Post>>
@@ -162,7 +163,7 @@ fun List<ReplyNode>.updatePost(nodeId: String, transform: (Post) -> Post): List<
 }
 
 @Inject
-@AppSingleton
+@SingleIn(AppScope::class)
 class PostServiceDelegate(
     private val session: Session,
     private val pixelfed: PixelfedPostService,

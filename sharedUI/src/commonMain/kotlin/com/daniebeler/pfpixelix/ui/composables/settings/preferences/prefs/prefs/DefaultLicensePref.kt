@@ -27,10 +27,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.daniebeler.pfpixelix.di.LocalAppComponent
-import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.model.License
 import com.daniebeler.pfpixelix.ui.composables.licences_dropdown.LicensesDropdownComposable
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.basic.SettingPref
+import dev.zacsweers.metrox.viewmodel.metroViewModel
 import org.jetbrains.compose.resources.stringResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.default_license
@@ -40,7 +40,7 @@ import pixelix.app.generated.resources.ok
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun DefaultLicensePref(
-    viewModel: DefaultLicenseViewModel = injectViewModel("DefaultLicenseViewmodel") { defaultLicenseViewModel }
+    viewModel: DefaultLicenseViewModel = metroViewModel(key = "DefaultLicenseViewmodel")
 ) {
     val showAlert = remember { mutableStateOf(false) }
 

@@ -1,6 +1,7 @@
 @file:OptIn(ExperimentalWasmDsl::class)
 
 import com.google.devtools.ksp.gradle.KspAATask
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
@@ -9,6 +10,7 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.ksp)
+    alias(libs.plugins.metro)
     alias(libs.plugins.kotlinx.serialization)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.ktorfit)
@@ -103,7 +105,7 @@ kotlin {
             implementation(libs.ktorfit.call)
 
             //DI
-            implementation(libs.kotlin.inject.runtime)
+            implementation(libs.metro.viewmodel.compose)
 
             //datastore
             implementation(libs.androidx.datastore.preferences)
@@ -261,15 +263,9 @@ compose.resources {
 }
 
 dependencies {
-    listOf(
-        "kspAndroid", "kspJvm", "kspIosArm64", "kspIosSimulatorArm64", "kspWasmJs"
-    ).forEach {
-        add(it, libs.kotlin.inject.compiler.ksp)
-    }
     androidRuntimeClasspath(libs.ui.tooling)
 }
 
 tasks.configureEach {
     if (name == "convertXmlValueResourcesForCommonMain") dependsOn(generateVersionResources)
-    if (this is KspAATask && name != "kspCommonMainKotlinMetadata") dependsOn("kspCommonMainKotlinMetadata")
 }

@@ -42,7 +42,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
-import com.daniebeler.pfpixelix.di.injectViewModel
+import dev.zacsweers.metrox.viewmodel.metroViewModel
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -58,7 +58,7 @@ import pixelix.app.generated.resources.change_app_icon_dialog_content
 @Composable
 fun IconSelectionComposable(
     navController: AppNavigator,
-    viewModel: IconSelectionViewModel = injectViewModel(key = "iconselectionvm") { iconSelectionViewModel }
+    viewModel: IconSelectionViewModel = metroViewModel(key = "iconselectionvm")
 ) {
     val lazyGridState = rememberLazyGridState()
     val (newIcon, setNewIcon) = remember { mutableStateOf<DrawableResource?>(null) }

@@ -2,14 +2,16 @@ package com.daniebeler.pfpixelix.ui.composables.timelines.parametric_timeline_sc
 
 import androidx.compose.runtime.Composable
 import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
-import com.daniebeler.pfpixelix.di.injectViewModel
+import dev.zacsweers.metrox.viewmodel.assistedMetroViewModel
 
 @Composable
 fun LensTimelineComposable(
     navController: AppNavigator,
     lens: String,
-    viewModel: ParametricTimelineViewModel = injectViewModel(key = "lens-$lens") {
-        parametricTimelineViewModel.apply { init(ParametricTimelineViewModel.FetchType.LENS, lens) }
+    viewModel: ParametricTimelineViewModel = assistedMetroViewModel<
+        ParametricTimelineViewModel, ParametricTimelineViewModel.Factory
+    >(key = "lens-$lens") {
+        create(ParametricTimelineViewModel.FetchType.LENS, lens)
     }
 ) {
     TimelineScreen(

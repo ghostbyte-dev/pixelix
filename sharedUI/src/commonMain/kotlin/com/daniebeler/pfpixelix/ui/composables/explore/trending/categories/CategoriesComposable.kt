@@ -10,7 +10,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.service.platform.PlatformFeatures
 import com.daniebeler.pfpixelix.ui.composables.explore.trending.trending_hashtags.ExploreGridElement
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
@@ -20,6 +19,7 @@ import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pfpixelix.ui.composables.widgets.CustomPullToRefreshBox
 import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.ui.navigation.Destination
+import dev.zacsweers.metrox.viewmodel.metroViewModel
 import org.jetbrains.compose.resources.stringResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.no_categories
@@ -27,7 +27,7 @@ import pixelix.app.generated.resources.no_categories
 @Composable
 fun CategoriesComposable(
     navController: AppNavigator,
-    viewModel: CategoriesViewModel = injectViewModel(key = "categories-key") { categoriesViewModel }
+    viewModel: CategoriesViewModel = metroViewModel(key = "categories-key")
 ) {
     val lazyListState = rememberLazyListState()
 

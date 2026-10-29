@@ -1,13 +1,14 @@
 package com.daniebeler.pfpixelix.ui.events
 
-import com.daniebeler.pfpixelix.di.AppSingleton
+import com.daniebeler.pfpixelix.di.AppScope
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import me.tatarka.inject.annotations.Inject
 
 @Inject
-@AppSingleton
+@SingleIn(AppScope::class)
 class NotificationBadgeState {
     private val _count = MutableStateFlow(0)
     val count: StateFlow<Int> = _count.asStateFlow()

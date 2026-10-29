@@ -5,12 +5,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.ui.composables.MaxWidthTopBar
 import com.daniebeler.pfpixelix.ui.composables.timelines.TimelineHelpCard
 import com.daniebeler.pfpixelix.ui.composables.timelines.parametric_timeline_screens.ParametricTimelineViewModel
 import com.daniebeler.pfpixelix.ui.composables.widgets.InfinitePostsList
 import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
+import dev.zacsweers.metrox.viewmodel.assistedMetroViewModel
 import org.jetbrains.compose.resources.stringResource
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.editors_choice_posts
@@ -19,8 +19,10 @@ import pixelix.app.generated.resources.editors_choice_posts_explained
 @Composable
 fun EditorsChoicePostsComposable(
     navController: AppNavigator,
-    viewModel: ParametricTimelineViewModel = injectViewModel(key = "editors-choice-posts") {
-        parametricTimelineViewModel.apply { init(ParametricTimelineViewModel.FetchType.EDITORS_CHOICE_POSTS) }
+    viewModel: ParametricTimelineViewModel = assistedMetroViewModel<
+        ParametricTimelineViewModel, ParametricTimelineViewModel.Factory
+    >(key = "editors-choice-posts") {
+        create(ParametricTimelineViewModel.FetchType.EDITORS_CHOICE_POSTS)
     }
 ) {
     BoxWithConstraints(modifier = Modifier.fillMaxSize()) {

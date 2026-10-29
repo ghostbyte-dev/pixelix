@@ -66,11 +66,11 @@ import androidx.navigationevent.NavigationEventInfo
 import androidx.navigationevent.compose.NavigationBackHandler
 import androidx.navigationevent.compose.rememberNavigationEventState
 import co.touchlab.kermit.Logger
-import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.service.general.BackendType
 import com.daniebeler.pfpixelix.ui.composables.states.LoadingComposable
 import com.daniebeler.pfpixelix.ui.composables.widgets.SuggestionsBar
 import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
+import dev.zacsweers.metrox.viewmodel.metroViewModel
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -93,7 +93,7 @@ import pixelix.app.generated.resources.vernissage_full_logo_white
 fun LoginComposable(
     isCloseable: Boolean = false,
     navController: AppNavigator,
-    viewModel: LoginViewModel = injectViewModel("LoginViewModel") { loginViewModel }
+    viewModel: LoginViewModel = metroViewModel(key = "LoginViewModel")
 ) {
     val dark = MaterialTheme.colorScheme.background.luminance() < 0.5
     val suggestionsState by viewModel.serversSuggestionsManager.suggestionsState.collectAsStateWithLifecycle()

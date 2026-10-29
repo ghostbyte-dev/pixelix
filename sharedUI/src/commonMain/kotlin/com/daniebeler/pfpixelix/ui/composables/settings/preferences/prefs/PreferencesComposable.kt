@@ -29,8 +29,6 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
-import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.service.platform.PlatformFeatures
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.AutoplayVideoPref
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.CaptionTemplate
@@ -50,11 +48,10 @@ import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.SwipeBetweenTimelines
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.ThemePref
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.prefs.UseInAppBrowserPref
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
+import dev.zacsweers.metrox.viewmodel.metroViewModel
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
-import pixelix.app.generated.resources.version_name
-import pixelix.app.generated.resources.version_code
-import pixelix.app.generated.resources.version_commit_hash
 import pixelix.app.generated.resources.Res
 import pixelix.app.generated.resources.app_customization
 import pixelix.app.generated.resources.close
@@ -62,6 +59,9 @@ import pixelix.app.generated.resources.content_settings
 import pixelix.app.generated.resources.new_post_settings
 import pixelix.app.generated.resources.other
 import pixelix.app.generated.resources.settings
+import pixelix.app.generated.resources.version_code
+import pixelix.app.generated.resources.version_commit_hash
+import pixelix.app.generated.resources.version_name
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -69,7 +69,7 @@ fun PreferencesComposable(
     navController: AppNavigator,
     drawerState: DrawerState,
     closePreferencesDrawer: () -> Unit,
-    viewModel: PreferencesViewModel = injectViewModel(key = "preferences-viewmodel-key") { preferencesViewModel }
+    viewModel: PreferencesViewModel = metroViewModel(key = "preferences-viewmodel-key")
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 

@@ -1,6 +1,6 @@
 package com.daniebeler.pfpixelix.domain.service.general
 
-import com.daniebeler.pfpixelix.di.AppSingleton
+import com.daniebeler.pfpixelix.di.AppScope
 import com.daniebeler.pfpixelix.domain.model.MediaAttachment
 import com.daniebeler.pfpixelix.domain.model.Post
 import com.daniebeler.pfpixelix.domain.model.request.MediaAttachmentMetadataRequest
@@ -9,8 +9,9 @@ import com.daniebeler.pfpixelix.domain.service.pixelfed.PixelfedPostEditorServic
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.domain.service.vernissage.VernissagePostEditorService
 import com.daniebeler.pfpixelix.utils.KmpUri
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.flow.Flow
-import me.tatarka.inject.annotations.Inject
 
 interface PostEditorService {
 
@@ -26,7 +27,7 @@ interface PostEditorService {
 }
 
 @Inject
-@AppSingleton
+@SingleIn(AppScope::class)
 class PostEditorServiceDelegate(
     private val session: Session,
     private val pixelfed: PixelfedPostEditorService,

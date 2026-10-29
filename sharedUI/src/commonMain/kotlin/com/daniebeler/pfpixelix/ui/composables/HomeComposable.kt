@@ -40,14 +40,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
-import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.di.LocalAppComponent
-import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.ui.composables.contribute.ContributeBottomSheet
 import com.daniebeler.pfpixelix.ui.composables.timelines.global_timeline.GlobalTimelineComposable
 import com.daniebeler.pfpixelix.ui.composables.timelines.home_timeline.HomeTimelineComposable
 import com.daniebeler.pfpixelix.ui.composables.timelines.local_timeline.LocalTimelineComposable
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.ui.navigation.Destination
+import dev.zacsweers.metrox.viewmodel.metroViewModel
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
@@ -69,7 +69,7 @@ import pixelix.app.generated.resources.settings
 fun HomeComposable(
     navController: AppNavigator,
     openPreferencesDrawer: () -> Unit,
-    viewModel: HomeViewModel = injectViewModel("homeViewModel") { homeViewModel },
+    viewModel: HomeViewModel = metroViewModel(key = "homeViewModel"),
 ) {
     val pagerState = rememberPagerState(viewModel.defaultTab) { 3 }
     val scope = rememberCoroutineScope()
@@ -208,7 +208,7 @@ fun HomeComposable(
 
             HorizontalPager(
                 state = pagerState,
-                beyondViewportPageCount = 3,
+                beyondViewportPageCount = 0,
                 userScrollEnabled = viewModel.isSwipeBetweenTabsEnabled,
                 modifier = Modifier.background(MaterialTheme.colorScheme.background)
             ) { tabIndex ->

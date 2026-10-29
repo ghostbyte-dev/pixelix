@@ -6,7 +6,6 @@ import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.scene.DialogSceneStrategy
 import com.daniebeler.pfpixelix.EdgeToEdgeDialogProperties
-import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.ui.composables.HomeComposable
 import com.daniebeler.pfpixelix.ui.composables.collection.CollectionComposable
 import com.daniebeler.pfpixelix.ui.composables.direct_messages.chat.ChatComposable
@@ -38,6 +37,7 @@ import com.daniebeler.pfpixelix.ui.composables.timelines.parametric_timeline_scr
 import com.daniebeler.pfpixelix.ui.composables.timelines.parametric_timeline_screens.LensTimelineComposable
 import com.daniebeler.pfpixelix.utils.KmpUri
 import com.daniebeler.pfpixelix.utils.toKmpUri
+import dev.zacsweers.metrox.viewmodel.metroViewModel
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -251,7 +251,7 @@ internal fun appEntryProvider(
 
     entry<Destination.EditPost> { args ->
         val viewModel: PostEditorViewModel =
-            injectViewModel(key = "edit-post-${args.id}") { newPostViewModel }
+            metroViewModel(key = "edit-post-${args.id}")
 
         LaunchedEffect(args.id) {
             viewModel.initForEdit(args.id)

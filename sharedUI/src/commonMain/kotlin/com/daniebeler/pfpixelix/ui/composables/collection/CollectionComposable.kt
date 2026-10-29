@@ -38,14 +38,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
-import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.ui.composables.MaxWidthTopBar
 import com.daniebeler.pfpixelix.ui.composables.profile.ViewEnum
-import com.daniebeler.pfpixelix.ui.composables.widgets.ButtonRowElement
 import com.daniebeler.pfpixelix.ui.composables.states.EmptyState
 import com.daniebeler.pfpixelix.ui.composables.states.ErrorComposableDialog
+import com.daniebeler.pfpixelix.ui.composables.widgets.ButtonRowElement
 import com.daniebeler.pfpixelix.ui.composables.widgets.InfinitePostsList
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
+import dev.zacsweers.metrox.viewmodel.metroViewModel
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 import pixelix.app.generated.resources.Res
@@ -54,11 +54,11 @@ import pixelix.app.generated.resources.arrow_left
 import pixelix.app.generated.resources.by
 import pixelix.app.generated.resources.cancel
 import pixelix.app.generated.resources.confirm
-import pixelix.app.generated.resources.more_menu
-import pixelix.app.generated.resources.heart
-import pixelix.app.generated.resources.open_in_browser
-import pixelix.app.generated.resources.open
 import pixelix.app.generated.resources.edit
+import pixelix.app.generated.resources.heart
+import pixelix.app.generated.resources.more_menu
+import pixelix.app.generated.resources.open
+import pixelix.app.generated.resources.open_in_browser
 import pixelix.app.generated.resources.share
 import pixelix.app.generated.resources.share_this_collection
 
@@ -67,7 +67,7 @@ import pixelix.app.generated.resources.share_this_collection
 fun CollectionComposable(
     navController: AppNavigator,
     collectionId: String,
-    viewModel: CollectionViewModel = injectViewModel(key = "collection-viewmodel-key") { collectionViewModel }
+    viewModel: CollectionViewModel = metroViewModel(key = "collection-viewmodel-key")
 ) {
 
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)

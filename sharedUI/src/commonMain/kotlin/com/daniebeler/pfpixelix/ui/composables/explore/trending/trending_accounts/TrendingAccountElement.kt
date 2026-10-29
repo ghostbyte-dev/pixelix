@@ -18,19 +18,19 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
-import com.daniebeler.pfpixelix.di.injectViewModel
 import com.daniebeler.pfpixelix.domain.model.Account
-import com.daniebeler.pfpixelix.ui.composables.widgets.CustomPost
 import com.daniebeler.pfpixelix.ui.composables.custom_account.CustomAccount
 import com.daniebeler.pfpixelix.ui.composables.hashtagMentionText.HashtagsMentionsTextView
+import com.daniebeler.pfpixelix.ui.composables.widgets.CustomPost
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.ui.navigation.Destination
+import dev.zacsweers.metrox.viewmodel.metroViewModel
 
 @Composable
 fun TrendingAccountElement(
     account: Account,
     navController: AppNavigator,
-    viewModel: TrendingAccountElementViewModel = injectViewModel(key = account.id) { trendingAccountElementViewModel }
+    viewModel: TrendingAccountElementViewModel = metroViewModel(key = account.id)
 ) {
     LaunchedEffect(account) {
         viewModel.loadItems(account.id, account.username)

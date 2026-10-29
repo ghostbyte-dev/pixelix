@@ -10,6 +10,7 @@ import androidx.compose.ui.text.input.getTextBeforeSelection
 import com.daniebeler.pfpixelix.domain.service.general.ExploreService
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.ui.composables.post.SuggestionsState
+import dev.zacsweers.metro.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,9 +18,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
-import me.tatarka.inject.annotations.Inject
 
-class HashtagMentionsSuggestionsManager @Inject constructor(
+@Inject
+class HashtagMentionsSuggestionsManager(
     private val exploreService: ExploreService
 ) {
     var suggestionsOpen by mutableStateOf(false)

@@ -1,8 +1,7 @@
 package com.daniebeler.pfpixelix.domain.service.general
 
 import androidx.compose.ui.graphics.ImageBitmap
-import com.daniebeler.pfpixelix.di.AppSingleton
-import com.daniebeler.pfpixelix.domain.service.utils.Resource
+import com.daniebeler.pfpixelix.di.AppScope
 import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.model.MutedAccount
 import com.daniebeler.pfpixelix.domain.model.PaginatedResponse
@@ -12,10 +11,12 @@ import com.daniebeler.pfpixelix.domain.model.request.UpdateUserRequest
 import com.daniebeler.pfpixelix.domain.model.request.UserBlockRequest
 import com.daniebeler.pfpixelix.domain.model.request.UserMuteRequest
 import com.daniebeler.pfpixelix.domain.service.pixelfed.PixelfedAccountService
+import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.domain.service.vernissage.VernissageAccountService
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
-import me.tatarka.inject.annotations.Inject
 
 interface AccountService {
     val refreshSignal: MutableSharedFlow<Unit>
@@ -63,7 +64,7 @@ interface AccountService {
 }
 
 @Inject
-@AppSingleton
+@SingleIn(AppScope::class)
 class AccountServiceDelegate(
     private val session: Session,
     private val pixelfed: PixelfedAccountService,

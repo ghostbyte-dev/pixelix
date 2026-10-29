@@ -58,7 +58,6 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation3.scene.DialogSceneStrategy
 import androidx.navigation3.scene.SinglePaneSceneStrategy
 import androidx.navigation3.ui.NavDisplay
-import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import coil3.compose.AsyncImage
 import com.daniebeler.pfpixelix.di.AppComponent
 import com.daniebeler.pfpixelix.di.LocalAppComponent
@@ -66,11 +65,14 @@ import com.daniebeler.pfpixelix.ui.composables.profile.own_profile.AccountSwitch
 import com.daniebeler.pfpixelix.ui.composables.settings.preferences.prefs.PreferencesComposable
 import com.daniebeler.pfpixelix.ui.composables.widgets.ReverseModalNavigationDrawer
 import com.daniebeler.pfpixelix.ui.events.GlobalNavigationEvent
+import com.daniebeler.pfpixelix.ui.navigation.AppNavigator
 import com.daniebeler.pfpixelix.ui.navigation.Destination
 import com.daniebeler.pfpixelix.ui.navigation.appEntryProvider
 import com.daniebeler.pfpixelix.ui.navigation.rememberAppNavigationState
 import com.daniebeler.pfpixelix.ui.theme.PixelixTheme
 import com.daniebeler.pfpixelix.utils.end
+import dev.zacsweers.metrox.viewmodel.LocalMetroViewModelFactory
+import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -90,7 +92,6 @@ import pixelix.app.generated.resources.notifications_strong
 import pixelix.app.generated.resources.profile
 import pixelix.app.generated.resources.search
 import pixelix.app.generated.resources.search_strong
-import kotlin.time.Duration.Companion.milliseconds
 
 val LocalSnackbarPresenter = compositionLocalOf<(String) -> Unit> {
     error("No LocalSnackbarPresenter provided")
@@ -135,7 +136,8 @@ fun App(
 
 
     CompositionLocalProvider(
-        LocalAppComponent provides appComponent
+        LocalAppComponent provides appComponent,
+        LocalMetroViewModelFactory provides appComponent.metroViewModelFactory
     ) {
         PixelixTheme {
             var activeUser by remember { mutableStateOf<String?>("unknown") }

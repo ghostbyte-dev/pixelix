@@ -1,6 +1,6 @@
 package com.daniebeler.pfpixelix.domain.service.general
 
-import com.daniebeler.pfpixelix.di.AppSingleton
+import com.daniebeler.pfpixelix.di.AppScope
 import com.daniebeler.pfpixelix.domain.model.Account
 import com.daniebeler.pfpixelix.domain.model.Camera
 import com.daniebeler.pfpixelix.domain.model.Category
@@ -20,9 +20,10 @@ import com.daniebeler.pfpixelix.domain.service.pixelfed.PixelfedExploreService
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.domain.service.vernissage.VernissageExploreService
 import com.daniebeler.pfpixelix.ui.composables.explore.trending.TrendingRange
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import me.tatarka.inject.annotations.Inject
 
 
 interface ExploreService {
@@ -68,7 +69,7 @@ interface ExploreService {
 
 
 @Inject
-@AppSingleton
+@SingleIn(AppScope::class)
 class ExploreServiceDelegate(
     private val session: Session,
     private val pixelfed: PixelfedExploreService,

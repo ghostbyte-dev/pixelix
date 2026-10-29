@@ -1,9 +1,10 @@
 package com.daniebeler.pfpixelix.domain.service.general
 
-import com.daniebeler.pfpixelix.di.AppSingleton
+import com.daniebeler.pfpixelix.di.AppScope
 import com.daniebeler.pfpixelix.domain.service.pixelfed.PixelfedAppIconService
+import dev.zacsweers.metro.Inject
+import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.flow.StateFlow
-import me.tatarka.inject.annotations.Inject
 import org.jetbrains.compose.resources.DrawableResource
 
 interface AppIconService {
@@ -21,7 +22,7 @@ interface AppIconManager {
 }
 
 @Inject
-@AppSingleton
+@SingleIn(AppScope::class)
 class AppIconServiceDelegate(
     private val session: Session,
     private val pixelfed: PixelfedAppIconService,

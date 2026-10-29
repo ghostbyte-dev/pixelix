@@ -9,6 +9,8 @@ import com.daniebeler.pfpixelix.domain.service.general.BackendType
 import com.daniebeler.pfpixelix.domain.service.general.FediseaService
 import com.daniebeler.pfpixelix.domain.service.utils.Resource
 import com.daniebeler.pfpixelix.ui.composables.post.SuggestionsState
+import dev.zacsweers.metro.Inject
+import kotlin.time.Duration.Companion.milliseconds
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -19,10 +21,9 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import me.tatarka.inject.annotations.Inject
-import kotlin.time.Duration.Companion.milliseconds
 
-class ServersSuggestionsManager @Inject constructor(
+@Inject
+class ServersSuggestionsManager(
     private val fediseaService: FediseaService,
 ) {
     var suggestionsOpen by mutableStateOf(false)

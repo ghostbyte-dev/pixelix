@@ -32,3 +32,6 @@ data class Post(
 
 val Post.uiKey: String
     get() = if (reblogId != null) "${id}_reblog_${reblogId}" else id
+
+// Pages can overlap; deduplicate by the same identity used by lazy layouts.
+internal fun List<Post>.distinctByUiKey(): List<Post> = distinctBy { it.uiKey }

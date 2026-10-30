@@ -1,7 +1,5 @@
 @file:OptIn(ExperimentalWasmDsl::class)
 
-import com.google.devtools.ksp.gradle.KspAATask
-import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
@@ -197,6 +195,7 @@ kotlin {
             //map
             implementation(libs.maplibre.compose)
             implementation(libs.maplibre.compose.material3)
+            runtimeOnly("org.maplibre.compose:maplibre-compose-runtime-vulkan-linux-x64:0.20.0")
         }
     }
 

@@ -5,14 +5,14 @@ meta {
 }
 
 get {
-  url: {{baseUrl}}/api/v1/accounts/{{accountId}}/statuses?pinned=true&_pe=1
+  url: {{baseUrl}}/api/v1/accounts/{{accountId}}/statuses?_pe=1&pinned=false
   body: none
   auth: inherit
 }
 
 params:query {
-  pinned: true
   _pe: 1
+  pinned: false
   ~max_id: 713725685741393502
   ~limit: 
 }

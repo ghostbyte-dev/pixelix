@@ -38,16 +38,16 @@ actual fun MapComposable(lat: Double, lon: Double) {
                 pitch { enabled = false }
             }
         }) {
-        Icon(
-            imageVector = vectorResource(Res.drawable.location),
-            contentDescription = "",
-            tint = MaterialTheme.colorScheme.error,
-            modifier = Modifier
-                .placedAt(
-                    position = Position(latitude = lat, longitude = lon),
-                    alignment = Alignment.BottomCenter // tip of the pin sits on the point
-                )
-                .size(40.dp)
-        )
+//        Icon(
+//            imageVector = vectorResource(Res.drawable.location),
+//            contentDescription = "",
+//            tint = MaterialTheme.colorScheme.error,
+//            modifier = Modifier
+//                .placedAt(
+//                    position = Position(latitude = lat, longitude = lon),
+//                    alignment = Alignment.BottomCenter // tip of the pin sits on the point
+//                )
+//                .size(40.dp)
+//        )
     }
 }

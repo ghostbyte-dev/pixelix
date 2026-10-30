@@ -35,6 +35,7 @@ actual fun MapComposable(lat: Double, lon: Double) {
         interactions = MapInteractions {
             camera {
                 rotate { enabled = false }
+                pitch { enabled = false }
             }
         }) {
         Icon(

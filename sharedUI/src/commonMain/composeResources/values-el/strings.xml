@@ -329,4 +329,6 @@
     <string name="manually_accept_new_followers">Χειροκίνητη αποδοχή νέων ακολούθων</string>
     <string name="include_public_posts_in_search_engines">Συμπερίληψη δημόσιες αναρτήσεις στις μηχανές αναζήτησης</string>
     <string name="include_profile_in_search_engines">Συμπερίληψη προφίλ στις μηχανές αναζήτησης</string>
+    <string name="no_films">Όχι ταινίες</string>
+    <string name="optional_end_date">Προαιρετική ημερομηνία λήξης</string>
 </resources>

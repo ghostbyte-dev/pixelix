@@ -15,6 +15,7 @@ import com.daniebeler.pfpixelix.ui.composables.explore.ExploreComposable
 import com.daniebeler.pfpixelix.ui.composables.followers.FollowersMainComposable
 import com.daniebeler.pfpixelix.ui.composables.mention.MentionComposable
 import com.daniebeler.pfpixelix.ui.composables.notifications.NotificationsComposable
+import com.daniebeler.pfpixelix.ui.composables.places.PlaceComposable
 import com.daniebeler.pfpixelix.ui.composables.post_editor.PostEditorComposable
 import com.daniebeler.pfpixelix.ui.composables.post_editor.PostEditorViewModel
 import com.daniebeler.pfpixelix.ui.composables.profile.other_profile.OtherProfileComposable
@@ -83,6 +84,9 @@ sealed interface Destination : NavKey {
 
     @Serializable
     data class Mention(val id: String) : Destination
+
+    @Serializable
+    data class Place(val id: String, val slug: String) : Destination
 
     @Serializable
     data object EditProfile : Destination
@@ -321,5 +325,9 @@ internal fun appEntryProvider(
 
     entry<Destination.Mention> { args ->
         MentionComposable(navController = navigator, mentionId = args.id)
+    }
+
+    entry<Destination.Place> { args ->
+        PlaceComposable(navController = navigator, placeId = args.id, slug = args.slug)
     }
 }

@@ -5,5 +5,5 @@ data class UpdatePost(
     val mediaIds: List<String>?,
     val sensitive: Boolean?,
     val spoilerText: String?,
-    val location: Location?
+    val place: Place?
 )

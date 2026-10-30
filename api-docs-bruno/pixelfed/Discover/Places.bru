@@ -1,0 +1,11 @@
+meta {
+  name: Places
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{baseUrl}}/api/pixelfed/v2/discover/posts/places
+  body: none
+  auth: inherit
+}

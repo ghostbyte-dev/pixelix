@@ -52,6 +52,6 @@ fun PixelfedMediaAttachmentDto.toDomain(): MediaAttachment {
         description = this.description,
         license = this.license?.toDomain(),
         aspectRatio = this.meta?.original?.aspect,
-        location = null
+        place = null
     )
 }

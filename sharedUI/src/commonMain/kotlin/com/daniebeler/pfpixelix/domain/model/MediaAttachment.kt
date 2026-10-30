@@ -19,7 +19,7 @@ data class MediaAttachment(
     val type: String?,
     val description: String?,
     val license: License?,
-    val location: Location?
+    val place: Place?
 )
 
 data class MediaMetadata(

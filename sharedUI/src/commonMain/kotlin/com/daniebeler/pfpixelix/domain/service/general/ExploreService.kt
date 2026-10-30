@@ -8,10 +8,11 @@ import com.daniebeler.pfpixelix.domain.model.Country
 import com.daniebeler.pfpixelix.domain.model.Film
 import com.daniebeler.pfpixelix.domain.model.Lens
 import com.daniebeler.pfpixelix.domain.model.License
-import com.daniebeler.pfpixelix.domain.model.Location
-import com.daniebeler.pfpixelix.domain.model.PagePaginatedResponse
 import com.daniebeler.pfpixelix.domain.model.PaginatedResponse
+import com.daniebeler.pfpixelix.domain.model.PagePaginatedResponse
+import com.daniebeler.pfpixelix.domain.model.Place
 import com.daniebeler.pfpixelix.domain.model.Post
+import com.daniebeler.pfpixelix.domain.model.PostsForPlace
 import com.daniebeler.pfpixelix.domain.model.RelatedHashtag
 import com.daniebeler.pfpixelix.domain.model.Search
 import com.daniebeler.pfpixelix.domain.model.Tag
@@ -31,7 +32,8 @@ interface ExploreService {
 
     fun search(searchText: String, type: String? = null, limit: Int = 5, includePosts: Boolean): Flow<Resource<Search>>
 
-    fun searchLocations(searchText: String, countryCode: String?): Flow<Resource<List<Location>>>
+    fun searchLocations(searchText: String, countryCode: String?): Flow<Resource<List<Place>>>
+    fun getPostsForPlace(id: String, slug: String): Flow<Resource<PostsForPlace>>
     fun getAllCountries(): Flow<Resource<List<Country>>>
 
     fun getTrendingHashtags(range: TrendingRange, maxId: String? = null): Flow<Resource<PaginatedResponse<Tag>>>
@@ -92,7 +94,9 @@ class ExploreServiceDelegate(
         includePosts: Boolean
     ): Flow<Resource<Search>> = current.search(searchText, type, limit, includePosts)
 
-    override fun searchLocations(searchText: String, countryCode: String?): Flow<Resource<List<Location>>> = current.searchLocations(searchText, countryCode)
+    override fun searchLocations(searchText: String, countryCode: String?): Flow<Resource<List<Place>>> = current.searchLocations(searchText, countryCode)
+
+    override fun getPostsForPlace(id: String, slug: String): Flow<Resource<PostsForPlace>> = current.getPostsForPlace(id, slug)
 
     override fun getAllCountries(): Flow<Resource<List<Country>>> = current.getAllCountries()
 

@@ -1,0 +1,22 @@
+meta {
+  name: Search Location
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/api/v1.1/compose/search/location?limit=5&q=vien
+  body: none
+  auth: inherit
+}
+
+params:query {
+  limit: 5
+  q: vien
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+  forwardAuthorizationHeader: false
+}

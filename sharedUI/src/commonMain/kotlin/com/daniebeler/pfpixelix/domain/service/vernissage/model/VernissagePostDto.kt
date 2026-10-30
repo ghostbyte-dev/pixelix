@@ -77,7 +77,7 @@ data class VernissagePostDto @OptIn(ExperimentalSerializationApi::class) constru
             //inReplyToId = activePost.inReplyToId,
             inReplyToId = replyToStatusId,
             // Nested nullable options
-            location = null,
+            place = null,
             //place = activePost.place?.toDomain(),
             //likedBy = activePost.likedBy?.toDomain(),
             likedBy = null,

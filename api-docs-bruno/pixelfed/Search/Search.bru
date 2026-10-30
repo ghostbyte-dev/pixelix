@@ -1,0 +1,22 @@
+meta {
+  name: Search
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/v2/search?_pe=1&q=vienna
+  body: none
+  auth: inherit
+}
+
+params:query {
+  _pe: 1
+  q: vienna
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+  forwardAuthorizationHeader: false
+}

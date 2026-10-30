@@ -1,6 +1,5 @@
-@file:OptIn(ExperimentalKotlinGradlePluginApi::class, ExperimentalWasmDsl::class)
+@file:OptIn(ExperimentalWasmDsl::class)
 
-import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
@@ -23,7 +22,11 @@ kotlin {
     jvmToolchain(21)
     android {
         namespace = "com.daniebeler.pfpixelix"
-        compileSdk = 37
+        compileSdk {
+            version = release(37) {
+                minorApiLevel = 1
+            }
+        }
         minSdk = 26
 
         androidResources { enable = true }
@@ -162,6 +165,11 @@ kotlin {
 
             //blurhash
             implementation(libs.vanniktech.blurhash)
+
+            //map
+            implementation(libs.maplibre.compose)
+            implementation(libs.maplibre.compose.material3)
+            runtimeOnly("org.maplibre.compose:maplibre-compose-runtime-vulkan-android:0.20.0")
         }
 
         iosMain.dependencies {
@@ -169,6 +177,10 @@ kotlin {
 
             //blurhash
             implementation(libs.vanniktech.blurhash)
+
+            //map
+            implementation(libs.maplibre.compose)
+            implementation(libs.maplibre.compose.material3)
         }
 
         jvmMain.dependencies {
@@ -179,6 +191,11 @@ kotlin {
             implementation(libs.metadata.extractor)
             //blurhash
             implementation(libs.vanniktech.blurhash)
+
+            //map
+            implementation(libs.maplibre.compose)
+            implementation(libs.maplibre.compose.material3)
+            runtimeOnly("org.maplibre.compose:maplibre-compose-runtime-vulkan-linux-x64:0.20.0")
         }
     }
 

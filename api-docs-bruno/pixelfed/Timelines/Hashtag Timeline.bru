@@ -5,13 +5,17 @@ meta {
 }
 
 get {
-  url: {{baseUrl}}/api/v1/timelines/tag/photos?limit=20
+  url: {{baseUrl}}/api/v1/timelines/tag/:tag?limit=20
   body: none
   auth: inherit
 }
 
-query {
+params:query {
   limit: 20
   ~_pe: 1
   ~max_id: 
+}
+
+params:path {
+  tag: vienna
 }

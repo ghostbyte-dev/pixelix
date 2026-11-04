@@ -39,6 +39,7 @@ enum class VernissageNotificationType {
     @SerialName("favourite") FAVOURITE,
     @SerialName("update") UPDATE,
     @SerialName("newComment") NEW_COMMENT,
+    @SerialName("directMessage") DIRECT_MESSAGE,
     UNDEFINED;
 
     fun toDomain(): NotificationType {
@@ -51,6 +52,7 @@ enum class VernissageNotificationType {
             FAVOURITE -> NotificationType.FAVOURITE
             UPDATE -> NotificationType.UPDATE
             NEW_COMMENT -> NotificationType.NEW_COMMENT
+            DIRECT_MESSAGE -> NotificationType.DIRECT_MESSAGE
             UNDEFINED -> NotificationType.UNDEFINED
         }
     }

@@ -407,4 +407,19 @@
     <string name="select_images_description">Selezionare una o più immagini per aggiungerle al tuo post</string>
     <string name="country">Paese</string>
     <string name="add_account">Aggiungi account</string>
+    <string name="error">Errore</string>
+    <string name="categories">Categorie</string>
+    <string name="lenses">Lenti</string>
+    <string name="select_images">Seleziona immagini</string>
+    <string name="loading_countries">Caricamento paesi…</string>
+    <string name="city">Città</string>
+    <string name="loading_cities">Caricamento città…</string>
+    <string name="support_headline">Aiuta a migliorare Pixelix</string>
+    <string name="sponsor_title">Sponsor</string>
+    <string name="sponsor_btn_title">Sponsor</string>
+    <string name="report_title">Segnala un bug</string>
+    <string name="report_btn_title">Segnala un problema</string>
+    <string name="feedback_title">Condividi feedback</string>
+    <string name="translations_title">Traduzioni</string>
+    <string name="pin_post">Fissa post</string>
 </resources>

@@ -253,7 +253,7 @@
     </plurals>
     <plurals name="minutes_ago">
         <item quantity="one">před %1$d minutou</item>
-        <item quantity="few">před %1$d minutama</item>
+        <item quantity="few">před %1$d minutami</item>
         <item quantity="many">před %1$d minutami</item>
         <item quantity="other">před %1$d minutami</item>
     </plurals>
@@ -343,7 +343,7 @@
     <string name="adult_or_sensitive_content">Obsah pro dospělé nebo citlivý obsah</string>
     <string name="terrorism">Terorismus</string>
     <string name="swipe_between_tabs">Posuň pro přepnutí stran</string>
-    <string name="requested">Navrhnuto</string>
+    <string name="requested">Zažádáno</string>
     <string name="accept_follow_request">Schválit žádost o sledování</string>
     <string name="reject_follow_request">Zamítnout žádost o sledování</string>
     <string name="reason">Důvod</string>
@@ -393,4 +393,5 @@
     <string name="unpinning">odepínání...</string>
     <string name="unpin_post">Odepnout příspěvek</string>
     <string name="pin_post">Připnout příspěvek</string>
+    <string name="error">Chyba</string>
 </resources>

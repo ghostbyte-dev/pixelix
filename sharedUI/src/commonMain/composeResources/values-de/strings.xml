@@ -417,4 +417,5 @@
     <string name="unpin_post">Beitrag lösen</string>
     <string name="unpinning">löse Beitrag...</string>
     <string name="pinning">hefte Beitrag an...</string>
+    <string name="error">Fehler</string>
 </resources>
